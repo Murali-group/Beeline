@@ -38,8 +38,9 @@ def run(RunnerObj):
     nIter = str(RunnerObj.params['nIter'])
     nRep = str(RunnerObj.params['nRep'])
     
-    cmdToRun = ' '.join(['sudo docker run -v ~/ModelEval:/SCODE/data/  scode:base /bin/sh -c \"ruby run_R.rb',
-                    inputPath +'/ExpressionData.csv', inputPath + '/PseudoTime.csv', nGenes, z, nCells, 
-                          nIter, nRep, '\"'])
+    cmdToRun = ' '.join(['docker run -v ~/ModelEval:/SCODE/data/  scode:base /bin/sh -c \"ruby run_R.rb',
+                    inputPath +'ExpressionData.csv', inputPath + 'PseudoTime.csv', 
+                         ' data/outputs/dataset1/SCODE/ ',
+                         nGenes, z, nCells, nIter, nRep, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)
