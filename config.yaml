@@ -18,8 +18,8 @@ input_settings:
     #
     datasets:
         - name: "dataset1"
-          ex_filename: "exp_train.txt"
-          pt_filename: "time_train.txt"
+          ex_filename: "ExpressionData.csv"
+          pt_filename: "PseudoTime.csv"
 
 
 
@@ -39,7 +39,7 @@ input_settings:
               nGenes: [100]
               z: [4]
               nCells: [356]         
-              iIter: [100]
+              nIter: [100]
               nRep: [2]
 
         - name: "SCNS"

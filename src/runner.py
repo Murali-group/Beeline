@@ -21,3 +21,7 @@ class Runner(object):
         
     def generateInputs(self):
         InputMapper[self.name](self)
+        
+        
+    def run(self):
+        AlgorithmMapper[self.name](self)
