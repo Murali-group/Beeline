@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 def generateInputs(Runner):
     '''
@@ -15,6 +16,12 @@ def generateInputs(Runner):
 def run(Runner):
     '''
     Function to run SCNS algorithm
+    '''
+    expressionFile = 'test'
+    
+def parseOutput(Runner):
+    '''
+    Function to parse output from SCNS
     '''
     expressionFile = 'test'
     

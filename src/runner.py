@@ -9,6 +9,10 @@ InputMapper = {'SCODE':SCODE.generateInputs,
 AlgorithmMapper = {'SCODE':SCODE.run,
             'SCNS':SCNS.run}
 
+
+OutputParser = {'SCODE':SCODE.parseOutput, 
+            'SCNS':SCNS.parseOutput}
+
 class Runner(object):
     '''
     A runnable analysis to be incorporated into the pipeline
@@ -25,3 +29,7 @@ class Runner(object):
         
     def run(self):
         AlgorithmMapper[self.name](self)
+
+
+    def parseOutput(self):
+        OutputParser[self.name](self)

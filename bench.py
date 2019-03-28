@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
+# In[ ]:
 
 
 import yaml
@@ -15,6 +15,7 @@ import concurrent.futures
 from typing import Dict, List
 from src.runner import Runner
 import os
+from src.plotPR import PRCurves
 
 class InputSettings(object):
     def __init__(self,
@@ -23,7 +24,6 @@ class InputSettings(object):
         self.datadir = datadir
         self.datasets = datasets
         self.algorithms = algorithms
-
 
 class OutputSettings(object):
     '''
@@ -69,9 +69,9 @@ class Evaluation(object):
                 data['inputDir'] = Path.cwd().joinpath(self.input_settings.datadir.joinpath(dataset['name']))
                 print(data['inputDir'])
                 runners[order] = Runner(data)
-                order += 1
-
+                order += 1            
         return runners
+
 
     def execute_runners(self, parallel=False, num_threads=1):
         '''
@@ -96,6 +96,15 @@ class Evaluation(object):
             else:
                 for runner in self.runners[batch]:
                     runner.run(output_dir=base_output_dir)
+                    
+            
+    def PR_runners(self):
+        '''
+        Plot PR curves for each dataset
+        for all the algorithms
+        '''
+        for dataset in self.input_settings.datasets:              
+            PRCurves(dataset, self.input_settings)
                 
                 
 class ConfigParser(object):
@@ -168,7 +177,7 @@ def parse_arguments():
     return opts
 
 
-# In[2]:
+# In[ ]:
 
 
 with open("config.yaml", 'r') as conf:
@@ -181,7 +190,7 @@ print('Evaluation started')
 print('Evaluation complete')
 
 
-# In[3]:
+# In[9]:
 
 
 evaluation.input_settings.datasets
@@ -203,19 +212,19 @@ Path.cwd().joinpath(evaluation.input_settings.datadir)
 # In[6]:
 
 
-evaluation.runners[0].generateInputs()
+#evaluation.runners[0].generateInputs()
 
 
-# In[17]:
+# In[5]:
 
 
 #os.system("jupyter nbconvert --to script bench.ipynb")
 
 
-# In[4]:
+# In[25]:
 
 
-evaluation.runners[0].run()
+evaluation.PR_runners()
 
 
 # In[ ]:
