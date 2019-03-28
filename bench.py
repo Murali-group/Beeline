@@ -15,7 +15,7 @@ import concurrent.futures
 from typing import Dict, List
 from src.runner import Runner
 import os
-from src.plotPR import PRCurves
+from src.plotCurves import EvalCurves
 
 class InputSettings(object):
     def __init__(self,
@@ -24,6 +24,7 @@ class InputSettings(object):
         self.datadir = datadir
         self.datasets = datasets
         self.algorithms = algorithms
+
 
 class OutputSettings(object):
     '''
@@ -98,13 +99,13 @@ class Evaluation(object):
                     runner.run(output_dir=base_output_dir)
                     
             
-    def PR_runners(self):
+    def evaluate_runners(self):
         '''
-        Plot PR curves for each dataset
+        Plot PR and ROC curves for each dataset
         for all the algorithms
         '''
         for dataset in self.input_settings.datasets:              
-            PRCurves(dataset, self.input_settings)
+            EvalCurves(dataset, self.input_settings)
                 
                 
 class ConfigParser(object):
@@ -224,7 +225,7 @@ Path.cwd().joinpath(evaluation.input_settings.datadir)
 # In[25]:
 
 
-evaluation.PR_runners()
+evaluation.evaluate_runners()
 
 
 # In[ ]:
