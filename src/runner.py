@@ -1,16 +1,21 @@
 import src.scodeRunner as SCODE
 import src.scnsRunner as SCNS
+import src.sinceritiesRunner as SINCERITIES
+
 from pathlib import Path
 
 
 InputMapper = {'SCODE':SCODE.generateInputs,
-            'SCNS':SCNS.generateInputs}
+               'SINCERITIES':SINCERITIES.generateInputs,
+               'SCNS':SCNS.generateInputs}
 
 AlgorithmMapper = {'SCODE':SCODE.run,
+            'SINCERITIES':SINCERITIES.run,
             'SCNS':SCNS.run}
 
 
 OutputParser = {'SCODE':SCODE.parseOutput, 
+            'SINCERITIES':SINCERITIES.parseOutput,
             'SCNS':SCNS.parseOutput}
 
 class Runner(object):

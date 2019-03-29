@@ -47,6 +47,11 @@ input_settings:
         - name: "SCNS"
           params: 
               should_run: [False]
+              
+              
+        - name: "SINCERITIES"
+          params: 
+              should_run: [True]
 
               
 

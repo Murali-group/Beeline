@@ -8,7 +8,8 @@ sns.set(rc={"lines.linewidth": 2}, palette  = "Set1", style = "ticks")
 
 def EvalCurves(dataDict, inputSettings):
     '''
-    Computes
+    Computes PR and ROC curves
+    for a given dataset and a set of algorithms
     '''
     
     # Read file for trueEdges
@@ -16,10 +17,7 @@ def EvalCurves(dataDict, inputSettings):
                                 '/' +dataDict['trueEdges'],
                                 sep = '\t', header = 0, index_col = None)
 
-    tp = 0
-    fp = 0
-    total = 0 # total predictions made
-    totalTrue = trueEdgesFile.shape[0] # Condition Positives
+
     
     # Initialize data dictionaries
     precisionDict = {}
@@ -29,6 +27,12 @@ def EvalCurves(dataDict, inputSettings):
     
     outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
     for algo in inputSettings.algorithms:
+
+        tp = 0
+        fp = 0
+        total = 0 # total predictions made
+        totalTrue = trueEdgesFile.shape[0] # Condition Positives
+        
         # check if the output rankedEdges file exists
         if Path(outDir + '/' +algo[0]+'/rankedEdges.csv').exists():
             precisionDict[algo[0]] = [] # Initialize Precsion
@@ -68,6 +72,7 @@ def EvalCurves(dataDict, inputSettings):
     ## Make PR curves
     legendList = []
     for key in precisionDict.keys():
+        print(key)
         sns.lineplot(recallDict[key],precisionDict[key])
         legendList.append(str(key) + ' (AUPRC = ' + str("%.2f" % (AUPRC[key]))+')')
 
@@ -82,7 +87,7 @@ def EvalCurves(dataDict, inputSettings):
     
     ## Make ROC curves
     legendList = []
-    for key in precisionDict.keys():
+    for key in recallDict.keys():
         sns.lineplot(FPRDict[key],recallDict[key])
         legendList.append(key)
         
