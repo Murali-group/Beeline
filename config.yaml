@@ -52,6 +52,11 @@ input_settings:
         - name: "SINCERITIES"
           params: 
               should_run: [True]
+                            
+              
+        - name: "PIDC"
+          params: 
+              should_run: [True]
 
               
 

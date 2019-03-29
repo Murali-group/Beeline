@@ -1,22 +1,27 @@
 import src.scodeRunner as SCODE
 import src.scnsRunner as SCNS
 import src.sinceritiesRunner as SINCERITIES
+import src.pidcRunner as PIDC
 
 from pathlib import Path
 
 
 InputMapper = {'SCODE':SCODE.generateInputs,
                'SINCERITIES':SINCERITIES.generateInputs,
-               'SCNS':SCNS.generateInputs}
+               'SCNS':SCNS.generateInputs,
+               'PIDC':PIDC.generateInputs}
 
 AlgorithmMapper = {'SCODE':SCODE.run,
             'SINCERITIES':SINCERITIES.run,
-            'SCNS':SCNS.run}
+            'SCNS':SCNS.run,
+            'PIDC':PIDC.run}
+
 
 
 OutputParser = {'SCODE':SCODE.parseOutput, 
             'SINCERITIES':SINCERITIES.parseOutput,
-            'SCNS':SCNS.parseOutput}
+            'SCNS':SCNS.parseOutput,
+            'PIDC':PIDC.parseOutput}
 
 class Runner(object):
     '''
