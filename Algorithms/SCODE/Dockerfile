@@ -1,4 +1,4 @@
-FROM r-base
+FROM r-base:3.5.3
 
 LABEL maintainer = "Aditya Pratapa <adyprat@vt.edu>"
 
@@ -14,8 +14,10 @@ RUN git clone https://github.com/hmatsu1226/SCODE
 
 WORKDIR SCODE/
 
+RUN git checkout a0512f8ec29aac188c9c27a8e89ddd2464e6d84d
+
 RUN R -e "install.packages('MASS')"
 
-RUN ruby run_R.rb data/exp_train.txt data/time_train.txt out 100 4 356 100 2
+# RUN ruby run_R.rb data/exp_train.txt data/time_train.txt out 100 4 356 100 2
 
 
