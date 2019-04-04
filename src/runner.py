@@ -2,6 +2,7 @@ import src.scodeRunner as SCODE
 import src.scnsRunner as SCNS
 import src.sinceritiesRunner as SINCERITIES
 import src.pidcRunner as PIDC
+import src.grnvbemRunner as GRNVBEM
 
 from pathlib import Path
 
@@ -9,19 +10,24 @@ from pathlib import Path
 InputMapper = {'SCODE':SCODE.generateInputs,
                'SINCERITIES':SINCERITIES.generateInputs,
                'SCNS':SCNS.generateInputs,
-               'PIDC':PIDC.generateInputs}
+               'PIDC':PIDC.generateInputs,
+               'GRNVBEM':GRNVBEM.generateInputs}
 
 AlgorithmMapper = {'SCODE':SCODE.run,
             'SINCERITIES':SINCERITIES.run,
             'SCNS':SCNS.run,
-            'PIDC':PIDC.run}
+            'PIDC':PIDC.run,
+            'GRNVBEM':GRNVBEM.run}
+
 
 
 
 OutputParser = {'SCODE':SCODE.parseOutput, 
             'SINCERITIES':SINCERITIES.parseOutput,
             'SCNS':SCNS.parseOutput,
-            'PIDC':PIDC.parseOutput}
+            'PIDC':PIDC.parseOutput,
+            'GRNVBEM':GRNVBEM.parseOutput}
+
 
 class Runner(object):
     '''

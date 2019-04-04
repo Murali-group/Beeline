@@ -28,11 +28,6 @@ def EvalCurves(dataDict, inputSettings):
     outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
     for algo in inputSettings.algorithms:
 
-        tp = 0
-        fp = 0
-        total = 0 # total predictions made
-        totalTrue = trueEdgesFile.shape[0] # Condition Positives
-        
         # check if the output rankedEdges file exists
         if Path(outDir + '/' +algo[0]+'/rankedEdges.csv').exists():
             precisionDict[algo[0]] = [] # Initialize Precsion
@@ -40,6 +35,12 @@ def EvalCurves(dataDict, inputSettings):
             FPRDict[algo[0]] = [] # Initialize FPR
             predEdgesFile = pd.read_csv(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                                         sep = '\t', header =  0, index_col = None)
+            
+            
+            tp = 0
+            fp = 0
+            total = 0 # total predictions made
+            totalTrue = trueEdgesFile.shape[0] # Condition Positives
             pOld = 0
             rOld = 0
             AUPRC[algo[0]] = 0 # Initialize AUPRC

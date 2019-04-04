@@ -23,6 +23,4 @@ WORKDIR VBEM/
 
 ENV LD_LIBRARY_PATH /opt/mcr/v96/runtime/glnxa64:/opt/mcr/v96/bin/glnxa64
 
-RUN ./GRNVBEM mESC/mESC.csv tOut.txt
-
-RUN  cat tOut.txt
+RUN mkdir data/

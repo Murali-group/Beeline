@@ -49,7 +49,6 @@ def parseOutput(RunnerObj):
         
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = None)
-    
     outFile = open(outDir + 'rankedEdges.csv','w')
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 

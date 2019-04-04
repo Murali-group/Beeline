@@ -38,11 +38,11 @@ input_settings:
         - name: "SCODE"
           params:
               should_run: [True]
-              nGenes: [100]
+              nGenes: [47]
               z: [4]
               nCells: [356]         
               nIter: [100]
-              nRep: [2]
+              nRep: [5]
 
         - name: "SCNS"
           params: 
@@ -55,6 +55,11 @@ input_settings:
                             
               
         - name: "PIDC"
+          params: 
+              should_run: [True]
+
+
+        - name: "GRNVBEM"
           params: 
               should_run: [True]
 

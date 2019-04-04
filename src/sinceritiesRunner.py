@@ -31,11 +31,11 @@ def run(RunnerObj):
                     "/SINCERITIES/ExpressionData.csv"
     
     # make output dirs if they do not exist:
-    outDir = "data/outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINCERITIES/"
+    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINCERITIES/"
     os.makedirs(outDir, exist_ok = True)
     
-    outPath = str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run -v ~/ModelEval:/SINCERITIES/ scinerities:base /bin/sh -c \"Rscript MAIN.R', 
+    outPath = "data/" + str(outDir) + 'outFile.txt'
+    cmdToRun = ' '.join(['docker run -v ~/ModelEval:/SINCERITIES/data/ sincerities:base /bin/sh -c \"Rscript MAIN.R', 
                          inputPath, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)
