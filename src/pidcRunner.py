@@ -31,7 +31,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = 'data/'+ str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run -v ~/ModelEval:/data pidc:base /bin/sh -c \"julia runPIDC.jl', 
+    cmdToRun = ' '.join(['docker run --rm -v ~/ModelEval:/data pidc:base /bin/sh -c \"julia runPIDC.jl', 
                          inputPath, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)

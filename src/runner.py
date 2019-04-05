@@ -3,6 +3,8 @@ import src.scnsRunner as SCNS
 import src.sinceritiesRunner as SINCERITIES
 import src.pidcRunner as PIDC
 import src.grnvbemRunner as GRNVBEM
+import src.genie3Runner as GENIE3
+import src.grnboost2Runner as GRNBOOST2
 
 from pathlib import Path
 
@@ -11,14 +13,18 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'SINCERITIES':SINCERITIES.generateInputs,
                'SCNS':SCNS.generateInputs,
                'PIDC':PIDC.generateInputs,
-               'GRNVBEM':GRNVBEM.generateInputs}
+               'GRNVBEM':GRNVBEM.generateInputs,
+               'GENIE3':GENIE3.generateInputs,
+               'GRNBOOST2':GRNBOOST2.generateInputs}
+
 
 AlgorithmMapper = {'SCODE':SCODE.run,
             'SINCERITIES':SINCERITIES.run,
             'SCNS':SCNS.run,
             'PIDC':PIDC.run,
-            'GRNVBEM':GRNVBEM.run}
-
+            'GRNVBEM':GRNVBEM.run,
+            'GENIE3':GENIE3.run,
+            'GRNBOOST2':GRNBOOST2.run}
 
 
 
@@ -26,7 +32,9 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'SINCERITIES':SINCERITIES.parseOutput,
             'SCNS':SCNS.parseOutput,
             'PIDC':PIDC.parseOutput,
-            'GRNVBEM':GRNVBEM.parseOutput}
+            'GRNVBEM':GRNVBEM.parseOutput,
+            'GENIE3':GENIE3.parseOutput,
+            'GRNBOOST2':GRNBOOST2.parseOutput}
 
 
 class Runner(object):

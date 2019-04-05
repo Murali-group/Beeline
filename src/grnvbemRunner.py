@@ -41,7 +41,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run -v ~/ModelEval:/VBEM/data/ grnvbem:base /bin/sh -c \"./GRNVBEM ', 
+    cmdToRun = ' '.join(['docker run --rm -v ~/ModelEval:/VBEM/data/ grnvbem:base /bin/sh -c \"./GRNVBEM ', 
                          inputPath, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)
@@ -50,7 +50,7 @@ def run(RunnerObj):
 
 def parseOutput(RunnerObj):
     '''
-    Function to parse outputs from SCODE.
+    Function to parse outputs from GRNVBEM.
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNVBEM/"
@@ -64,7 +64,6 @@ def parseOutput(RunnerObj):
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 
     for idx, row in OutDF.sort_values(['Probability'], ascending = False).iterrows():
-        print(row)
         outFile.write('\t'.join([row['Parent'],row['Child'],str(row['Probability'])])+'\n')
     outFile.close()
     

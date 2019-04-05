@@ -42,7 +42,7 @@ def run(RunnerObj):
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCODE/"
     os.makedirs(outDir, exist_ok = True)
     
-    cmdToRun = ' '.join(['docker run -v ~/ModelEval:/SCODE/data/  scode:base /bin/sh -c \"ruby run_R.rb',
+    cmdToRun = ' '.join(['docker run --rm -v ~/ModelEval:/SCODE/data/  scode:base /bin/sh -c \"ruby run_R.rb',
                     inputPath +'ExpressionData.csv', inputPath + 'PseudoTime.csv', 
                          ' data/'+outDir,
                          nGenes, z, nCells, nIter, nRep, '\"'])
