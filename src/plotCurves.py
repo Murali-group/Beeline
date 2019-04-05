@@ -4,7 +4,7 @@ import seaborn as sns
 from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sns
-sns.set(rc={"lines.linewidth": 2}, palette  = "Set1", style = "ticks")
+sns.set(rc={"lines.linewidth": 2}, palette  = "deep", style = "ticks")
 
 def EvalCurves(dataDict, inputSettings):
     '''
@@ -24,7 +24,7 @@ def EvalCurves(dataDict, inputSettings):
     recallDict = {}
     FPRDict = {}
     AUPRC = {}
-    
+    AUROC = {}
     outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
     for algo in inputSettings.algorithms:
 
@@ -44,6 +44,8 @@ def EvalCurves(dataDict, inputSettings):
             pOld = 0
             rOld = 0
             AUPRC[algo[0]] = 0 # Initialize AUPRC
+            AUROC[algo[0]] = 0 # Initialize AUROC
+            
             for idx, row in predEdgesFile.iterrows():
                 if trueEdgesFile.loc[(trueEdgesFile['Gene1'] == row['Gene1']) & \
                                      (trueEdgesFile['Gene2'] == row['Gene2'])].shape[0] > 0:
@@ -65,7 +67,14 @@ def EvalCurves(dataDict, inputSettings):
                 FPRDict[algo[0]].append(float(fp)) # List of FP values
                 
             FPRDict[algo[0]] = [val/float(total - totalTrue) for val in FPRDict[algo[0]]] # update FPR
-
+            tprOld = 0
+            fprOld = 0
+            for idx in range(len(FPRDict[algo[0]])):
+                tprNew = recallDict[algo[0]][idx]
+                fprNew = FPRDict[algo[0]][idx]
+                AUROC[algo[0]] += ((fprNew - fprOld)*(tprOld + tprNew)/2)
+                tprOld = tprNew
+                fprOld = fprNew
         else:
             print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                   ' does not exist. Skipping...')
@@ -74,7 +83,7 @@ def EvalCurves(dataDict, inputSettings):
     legendList = []
     for key in precisionDict.keys():
         print(key)
-        sns.lineplot(recallDict[key],precisionDict[key])
+        sns.lineplot(recallDict[key],precisionDict[key], ci=None)
         legendList.append(str(key) + ' (AUPRC = ' + str("%.2f" % (AUPRC[key]))+')')
 
     plt.xlim(0,1)    
@@ -89,8 +98,8 @@ def EvalCurves(dataDict, inputSettings):
     ## Make ROC curves
     legendList = []
     for key in recallDict.keys():
-        sns.lineplot(FPRDict[key],recallDict[key])
-        legendList.append(key)
+        sns.lineplot(FPRDict[key],recallDict[key], ci=None)
+        legendList.append(key + ' (AUROC = ' + str("%.2f" % (AUROC[key]))+')')
         
     plt.plot([0, 1], [0, 1], linewidth = 1.5, color = 'k', linestyle = '--')
 

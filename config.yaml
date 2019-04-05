@@ -17,10 +17,10 @@ input_settings:
     #   pt_filename: a file containing pseudotime ordering
     #
     datasets:
-        - name: "dataset1"
+        - name: "DS1"
           ex_filename: "ExpressionData.csv"
           pt_filename: "PseudoTime.csv"
-          trueEdges: "reference_TFTF_network.txt"
+          trueEdges: "referenceNetwork.txt"
 
 
 
@@ -38,15 +38,15 @@ input_settings:
         - name: "SCODE"
           params:
               should_run: [True]
-              nGenes: [47]
+              nGenes: [10]
               z: [4]
-              nCells: [356]         
+              nCells: [90]         
               nIter: [100]
               nRep: [5]
 
-        - name: "SCNS"
-          params: 
-              should_run: [False]
+        #- name: "SCNS"
+        #  params: 
+        #      should_run: [False]
               
               
         - name: "SINCERITIES"
