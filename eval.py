@@ -206,7 +206,7 @@ def main():
         evaluation.runners[idx].run()
 
     for idx in range(len(evaluation.runners)):
-        evaluation.runners[idx].parseOutputs()
+        evaluation.runners[idx].parseOutput()
 
 
     evaluation.evaluate_runners()
