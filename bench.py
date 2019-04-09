@@ -14,6 +14,16 @@ from multiprocessing import Pool, cpu_count
 import concurrent.futures
 from typing import Dict, List
 from src.runner import Runner
+import yaml
+import argparse
+import itertools
+from collections import defaultdict
+from pathlib import Path
+import multiprocessing
+from multiprocessing import Pool, cpu_count
+import concurrent.futures
+from typing import Dict, List
+from src.runner import Runner
 import os
 from src.plotCurves import EvalCurves
 
@@ -177,58 +187,27 @@ def parse_arguments():
 
     return opts
 
-
 # In[ ]:
-
 
 with open("config.yaml", 'r') as conf:
     evaluation = ConfigParser.parse(conf)
 print(evaluation)
 print('Evaluation started')
 
-# Do something
+for idx in range(len(evaluation.runners)):
+    evaluation.runners[idx].generateInputs()
+    
+for idx in range(len(evaluation.runners)):
+    evaluation.runners[idx].run()
+
+for idx in range(len(evaluation.runners)):
+    evaluation.runners[idx].parseOutputs()
+
+
+    evaluation.evaluate_runners()
 
 print('Evaluation complete')
 
-
-# In[9]:
-
-
-evaluation.input_settings.datasets
-
-
-# In[4]:
-
-
-for alg in evaluation.input_settings.algorithms:
-    print(alg)
-
-
-# In[5]:
-
-
-Path.cwd().joinpath(evaluation.input_settings.datadir)
-
-
-# In[6]:
-
-
-#evaluation.runners[0].generateInputs()
-
-
-# In[5]:
-
-
-#os.system("jupyter nbconvert --to script bench.ipynb")
-
-
-# In[25]:
-
-
-evaluation.evaluate_runners()
-
-
-# In[ ]:
 
 
 
