@@ -17,10 +17,10 @@ input_settings:
     #   pt_filename: a file containing pseudotime ordering
     #
     datasets:
-        - name: "DS1"
+        - name: "DS3"
           ex_filename: "ExpressionData.csv"
           pt_filename: "PseudoTime.csv"
-          trueEdges: "referenceNetwork.txt"
+          trueEdges: "randNet.tsv"
 
 
 
@@ -40,7 +40,7 @@ input_settings:
               should_run: [True]
               nGenes: [10]
               z: [4]
-              nCells: [90]         
+              nCells: [210]         
               nIter: [100]
               nRep: [5]
 
@@ -71,6 +71,10 @@ input_settings:
               
               
         - name: "GRNBOOST2"
+          params: 
+              should_run: [True]
+              
+        - name: "LEAP"
           params: 
               should_run: [True]
 

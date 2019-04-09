@@ -5,6 +5,7 @@ import src.pidcRunner as PIDC
 import src.grnvbemRunner as GRNVBEM
 import src.genie3Runner as GENIE3
 import src.grnboost2Runner as GRNBOOST2
+import src.leapRunner as LEAP
 
 from pathlib import Path
 
@@ -15,7 +16,9 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'PIDC':PIDC.generateInputs,
                'GRNVBEM':GRNVBEM.generateInputs,
                'GENIE3':GENIE3.generateInputs,
-               'GRNBOOST2':GRNBOOST2.generateInputs}
+               'GRNBOOST2':GRNBOOST2.generateInputs,
+               'LEAP':LEAP.generateInputs}
+
 
 
 AlgorithmMapper = {'SCODE':SCODE.run,
@@ -24,7 +27,8 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'PIDC':PIDC.run,
             'GRNVBEM':GRNVBEM.run,
             'GENIE3':GENIE3.run,
-            'GRNBOOST2':GRNBOOST2.run}
+            'GRNBOOST2':GRNBOOST2.run,
+            'LEAP':LEAP.run}
 
 
 
@@ -34,7 +38,8 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'PIDC':PIDC.parseOutput,
             'GRNVBEM':GRNVBEM.parseOutput,
             'GENIE3':GENIE3.parseOutput,
-            'GRNBOOST2':GRNBOOST2.parseOutput}
+            'GRNBOOST2':GRNBOOST2.parseOutput,
+            'LEAP': LEAP.parseOutput}
 
 
 class Runner(object):
