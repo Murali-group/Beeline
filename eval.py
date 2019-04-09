@@ -1,3 +1,19 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
+import yaml
+import argparse
+import itertools
+from collections import defaultdict
+from pathlib import Path
+import multiprocessing
+from multiprocessing import Pool, cpu_count
+import concurrent.futures
+from typing import Dict, List
+from src.runner import Runner
 import yaml
 import argparse
 import itertools
@@ -182,8 +198,19 @@ def main():
     print(evaluation)
     print('Evaluation started')
 
-    # Do something
+
+    for idx in range(len(evaluation.runners)):
+        evaluation.runners[idx].generateInputs()
+
+    for idx in range(len(evaluation.runners)):
+        evaluation.runners[idx].run()
+
+    for idx in range(len(evaluation.runners)):
+        evaluation.runners[idx].parseOutputs()
+
+
     evaluation.evaluate_runners()
+
 
 
     print('Evaluation complete')
