@@ -19,7 +19,7 @@ def generateInputs(RunnerObj):
         newExpressionData = ExpressionData.T.copy()
         PTData = pd.read_csv(RunnerObj.inputDir.joinpath('PseudoTime.csv'),
                              header = 0, index_col = 0)
-        newExpressionData['Time'] = PTData['Time']
+        newExpressionData['Time'] = PTData['Experiment']
         newExpressionData.to_csv(RunnerObj.inputDir.joinpath("SINCERITIES/ExpressionData.csv"),
                              sep = ',', header  = True, index = False)
     

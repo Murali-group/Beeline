@@ -17,10 +17,10 @@ input_settings:
     #   pt_filename: a file containing pseudotime ordering
     #
     datasets:
-        - name: "DS3"
+        - name: "DS4"
           ex_filename: "ExpressionData.csv"
           pt_filename: "PseudoTime.csv"
-          trueEdges: "randNet.tsv"
+          trueEdges: "randomNetwork.tsv"
 
 
 
@@ -75,6 +75,10 @@ input_settings:
               should_run: [True]
               
         - name: "LEAP"
+          params: 
+              should_run: [True]
+                            
+        - name: "JUMP3"
           params: 
               should_run: [True]
 

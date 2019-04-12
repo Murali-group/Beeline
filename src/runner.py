@@ -6,6 +6,7 @@ import src.grnvbemRunner as GRNVBEM
 import src.genie3Runner as GENIE3
 import src.grnboost2Runner as GRNBOOST2
 import src.leapRunner as LEAP
+import src.jump3Runner as JUMP3
 
 from pathlib import Path
 
@@ -17,7 +18,9 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'GRNVBEM':GRNVBEM.generateInputs,
                'GENIE3':GENIE3.generateInputs,
                'GRNBOOST2':GRNBOOST2.generateInputs,
-               'LEAP':LEAP.generateInputs}
+               'LEAP':LEAP.generateInputs,
+               'JUMP3':JUMP3.generateInputs}
+
 
 
 
@@ -28,7 +31,8 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'GRNVBEM':GRNVBEM.run,
             'GENIE3':GENIE3.run,
             'GRNBOOST2':GRNBOOST2.run,
-            'LEAP':LEAP.run}
+            'LEAP':LEAP.run,
+            'JUMP3':JUMP3.run}
 
 
 
@@ -39,7 +43,9 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'GRNVBEM':GRNVBEM.parseOutput,
             'GENIE3':GENIE3.parseOutput,
             'GRNBOOST2':GRNBOOST2.parseOutput,
-            'LEAP': LEAP.parseOutput}
+            'LEAP': LEAP.parseOutput,
+            'JUMP3': JUMP3.parseOutput}
+
 
 
 class Runner(object):
