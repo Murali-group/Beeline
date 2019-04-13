@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
+from sklearn import preprocessing
 
 def generateInputs(RunnerObj):
     '''
@@ -19,7 +20,10 @@ def generateInputs(RunnerObj):
         newExpressionData = ExpressionData.T.copy()
         PTData = pd.read_csv(RunnerObj.inputDir.joinpath('PseudoTime.csv'),
                              header = 0, index_col = 0)
-        newExpressionData['Time'] = PTData['Time']
+        # Acc. to JUMP3:
+        # In input argument Time, the first time point of each time series must be 0.
+        # Also has to be an integer!
+        newExpressionData['Time'] = PTData['Time']-PTData['Time'].min()
         if 'Experiment' in PTData:
             newExpressionData['Experiment'] = PTData['Experiment']
         else:
