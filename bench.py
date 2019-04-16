@@ -189,24 +189,26 @@ def parse_arguments():
 
 # In[ ]:
 
-with open("config.yaml", 'r') as conf:
-    evaluation = ConfigParser.parse(conf)
-print(evaluation)
-print('Evaluation started')
+if __name__ == "__main__":
+    opts = parse_arguments()
+    with open(opts.config, 'r') as conf:
+        evaluation = ConfigParser.parse(conf)
+    print(evaluation)
+    print('Evaluation started')
 
-for idx in range(len(evaluation.runners)):
-    evaluation.runners[idx].generateInputs()
-    
-for idx in range(len(evaluation.runners)):
-    evaluation.runners[idx].run()
+    for idx in range(len(evaluation.runners)):
+        evaluation.runners[idx].generateInputs()
+        
+    for idx in range(len(evaluation.runners)):
+        evaluation.runners[idx].run()
 
-for idx in range(len(evaluation.runners)):
-    evaluation.runners[idx].parseOutputs()
+    for idx in range(len(evaluation.runners)):
+        evaluation.runners[idx].parseOutputs()
 
 
-    evaluation.evaluate_runners()
+        evaluation.evaluate_runners()
 
-print('Evaluation complete')
+    print('Evaluation complete')
 
 
 
