@@ -7,6 +7,7 @@ import src.genie3Runner as GENIE3
 import src.grnboost2Runner as GRNBOOST2
 import src.leapRunner as LEAP
 import src.jump3Runner as JUMP3
+import src.ppcorRunner as PPCOR
 
 from pathlib import Path
 
@@ -19,7 +20,9 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'GENIE3':GENIE3.generateInputs,
                'GRNBOOST2':GRNBOOST2.generateInputs,
                'LEAP':LEAP.generateInputs,
-               'JUMP3':JUMP3.generateInputs}
+               'JUMP3':JUMP3.generateInputs,
+               'PPCOR':PPCOR.generateInputs}
+
 
 
 
@@ -32,7 +35,8 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'GENIE3':GENIE3.run,
             'GRNBOOST2':GRNBOOST2.run,
             'LEAP':LEAP.run,
-            'JUMP3':JUMP3.run}
+            'JUMP3':JUMP3.run,
+            'PPCOR':PPCOR.run}
 
 
 
@@ -44,7 +48,8 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'GENIE3':GENIE3.parseOutput,
             'GRNBOOST2':GRNBOOST2.parseOutput,
             'LEAP': LEAP.parseOutput,
-            'JUMP3': JUMP3.parseOutput}
+            'JUMP3': JUMP3.parseOutput,
+            'PPCOR':PPCOR.parseOutput}
 
 
 

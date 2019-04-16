@@ -17,10 +17,10 @@ input_settings:
     #   pt_filename: a file containing pseudotime ordering
     #
     datasets:
-        - name: "DS4"
+        - name: "HSC"
           ex_filename: "ExpressionData.csv"
           pt_filename: "PseudoTime.csv"
-          trueEdges: "randomNetwork.tsv"
+          trueEdges: "refNetwork.tsv"
 
 
 
@@ -38,9 +38,9 @@ input_settings:
         - name: "SCODE"
           params:
               should_run: [True]
-              nGenes: [10]
+              nGenes: [11]
               z: [4]
-              nCells: [210]         
+              nCells: [570]         
               nIter: [100]
               nRep: [5]
 
@@ -81,6 +81,11 @@ input_settings:
         - name: "JUMP3"
           params: 
               should_run: [True]
+              
+        - name: "PPCOR"
+          params: 
+              should_run: [True]
+              pVal: [0.01]
 
 # Output Settings: initialize base output folder names
 output_settings:
