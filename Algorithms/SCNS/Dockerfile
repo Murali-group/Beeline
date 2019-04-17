@@ -29,6 +29,7 @@ WORKDIR SynthesisEngine
 RUN xbuild SynthesisEngine.sln
 
 RUN cp bin/Release/* .
+
 #RUN mkdir outDir
 #RUN mono SynthesisEngine.exe cmpStates.csv cmpEdges.csv cmpParameters.csv cmp_initial_states.txt cmp_target_states.txt outDir
 #WORKDIR outDir/
