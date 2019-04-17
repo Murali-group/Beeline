@@ -30,8 +30,8 @@ def run(RunnerObj):
     inputPath = "data/" + str(RunnerObj.inputDir).split("ModelEval/")[1] + \
                     "/SCINGE/ExpressionData.csv"
     
-v    # make output dirs if they do not exist:
-   outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCINGE/"
+    # make output dirs if they do not exist:
+    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCINGE/"
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) 
