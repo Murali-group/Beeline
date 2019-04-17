@@ -20,6 +20,9 @@ def generateInputs(RunnerObj):
         newExpressionData = ExpressionData.T.copy()
         PTData = pd.read_csv(RunnerObj.inputDir.joinpath('PseudoTime.csv'),
                              header = 0, index_col = 0)
+        # make sure the indices are strings for both dataframes
+        newExpressionData.index = newExpressionData.index.map(str) 
+        PTData.index = PTData.index.map(str) 
         # Acc. to JUMP3:
         # In input argument Time, the first time point of each time series must be 0.
         # Also has to be an integer!
@@ -28,7 +31,8 @@ def generateInputs(RunnerObj):
             newExpressionData['Experiment'] = PTData['Experiment']
         else:
             # generate it from cell number Ex_y, where x is experiment number
-            newExpressionData['Experiment'] = [int(x.split('_')[0].strip('E')) for x in PTData.index.astype(str)]
+            #newExpressionData['Experiment'] = [int(x.split('_')[0].strip('E')) for x in PTData.index.astype(str)]
+            newExpressionData['Experiment'] = 1
             
         newExpressionData.to_csv(RunnerObj.inputDir.joinpath("JUMP3/ExpressionData.csv"),
                              sep = ',', header  = True, index = False)
