@@ -28,7 +28,7 @@ def generateInputs(RunnerObj):
             newExpressionData['Experiment'] = PTData['Experiment']
         else:
             # generate it from cell number Ex_y, where x is experiment number
-            newExpressionData['Experiment'] = [int(x.split('_')[0].strip('E')) for x in PTData.index]
+            newExpressionData['Experiment'] = [int(x.split('_')[0].strip('E')) for x in PTData.index.astype(str)]
             
         newExpressionData.to_csv(RunnerObj.inputDir.joinpath("JUMP3/ExpressionData.csv"),
                              sep = ',', header  = True, index = False)

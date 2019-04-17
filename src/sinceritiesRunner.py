@@ -19,6 +19,9 @@ def generateInputs(RunnerObj):
         newExpressionData = ExpressionData.T.copy()
         PTData = pd.read_csv(RunnerObj.inputDir.joinpath('PseudoTime.csv'),
                              header = 0, index_col = 0)
+        # make sure the indices are strings for both dataframes
+        newExpressionData.index = newExpressionData.index.map(str) 
+        PTData.index = PTData.index.map(str) 
         newExpressionData['Time'] = PTData['Time']
         newExpressionData.to_csv(RunnerObj.inputDir.joinpath("SINCERITIES/ExpressionData.csv"),
                              sep = ',', header  = True, index = False)

@@ -20,7 +20,7 @@ def generateInputs(RunnerObj):
                              header = 0, index_col = 0)
         
         # Order columns by PseudoTime
-        newExpressionData = ExpressionData[PTData.sort_values(['PseudoTime']).index]
+        newExpressionData = ExpressionData[PTData.sort_values(['PseudoTime']).index.astype(str)]
         
         newExpressionData.insert(loc = 0, column = 'GENES', \
                                                      value = newExpressionData.index)
