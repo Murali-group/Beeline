@@ -1,6 +1,6 @@
 # ModelEval
 
-This is a repository
+This is the main repository for GRN model evaluation
 
-- Creating base docker. From the Dockerfile, `docker build -t modeleval .`
-- Push it to docker hub, using instructions here https://ropenscilabs.github.io/r-docker-tutorial/04-Dockerhub.html
+- To create the docker containers for each of the algorithms run `. initialize.sh`
+- To run te evaluation pipeline, run `python eval.py --config config.yaml`
