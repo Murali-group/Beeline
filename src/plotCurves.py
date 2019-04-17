@@ -15,7 +15,9 @@ def EvalCurves(dataDict, inputSettings):
     # Read file for trueEdges
     trueEdgesFile = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
                                 '/' +dataDict['trueEdges'],
-                                sep = '\t', header = 0, index_col = None)
+                                sep = '\t' if '.tsv' in dataDict['trueEdges'] else ',', 
+                                header = 0, index_col = None)
+    print(trueEdgesFile.head())
 
 
     
