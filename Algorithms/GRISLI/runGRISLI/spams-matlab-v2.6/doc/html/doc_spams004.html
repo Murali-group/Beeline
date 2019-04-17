@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.23">
+
+<META name="Author" content="Julien Mairal">
+<link rel="stylesheet" href="doc_spams.css"><link rel="stylesheet" type="text/css" href="doc_spams.css">
+<title>Dictionary Learning and Matrix Factorization Toolbox</title>
+</head>
+<body>
+<a href="doc_spams003.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams005.html"><img src="next_motif.gif" alt="Next"></a>
+<hr>
+<h2 class="section" id="sec4">3  Dictionary Learning and Matrix Factorization Toolbox</h2>
+<ul>
+<li><a href="doc_spams004.html#sec5">Function mexTrainDL</a>
+</li><li><a href="doc_spams004.html#sec6">Function mexTrainDL_Memory</a>
+</li><li><a href="doc_spams004.html#sec7">Function mexStructTrainDL</a>
+</li><li><a href="doc_spams004.html#sec8">Function nmf</a>
+</li><li><a href="doc_spams004.html#sec9">Function nnsc</a>
+</li><li><a href="doc_spams004.html#sec10">Function mexArchetypalAnalysis</a>
+</li></ul>
+<p>
+This is the section for dictionary learning and matrix factorization, corresponding to [<a href="doc_spams010.html#mairal7">20</a>, <a href="doc_spams010.html#mairal9">21</a>].</p>
+<h3 class="subsection" id="sec5">3.1  Function mexTrainDL</h3>
+<p>
+This is the main function of the toolbox, implementing the learning algorithms of [<a href="doc_spams010.html#mairal9">21</a>].
+Given a training set <span class="c009">x</span><sup>1</sup>,…, . It aims at solving
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">D</span> ∈ <span class="c008">C</span></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">lim</td></tr>
+<tr><td class="dcell c012"><span class="c007">n</span> → +∞</td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">i</span>=1</td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α<sup><span class="c007">i</span></sup></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell">⎛<br>
+⎜<br>
+⎝</td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell"> ||<span class="c009">x</span><sup><span class="c007">i</span></sup>−<span class="c009">D</span>α<sup><span class="c007">i</span></sup>||<sub>2</sub><sup>2</sup> + ψ(α<sup><span class="c007">i</span></sup>)</td><td class="dcell">⎞<br>
+⎟<br>
+⎠</td><td class="dcell">.
+    (1)</td></tr>
+</table><p>
+ψ is a sparsity-inducing regularizer and <span class="c008">C</span> is a constraint set for the dictionary. As shown in [<a href="doc_spams010.html#mairal9">21</a>]
+and in the help file below, various combinations can be used for ψ and <span class="c008">C</span> for solving different matrix factorization problems.
+What is more, positivity constraints can be added to α as well. The function admits several modes for choosing the optimization parameters, using the parameter-free strategy proposed in [<a href="doc_spams010.html#mairal7">20</a>], or using the parameters <span class="c007">t</span><sub>0</sub> and ρ presented
+in [<a href="doc_spams010.html#mairal9">21</a>]. <span class="c010">Note that for problems of a reasonable size, and when </span>ψ<span class="c010"> is the </span>ℓ<sub>1</sub><span class="c010">-norm,
+the function mexTrainDL_Memory can be faster but uses more memory.</span></p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   [D [model]]=mexTrainDL(X,param[,model]);<br>
+%          model is optional<br>
+%<br>
+% Name: mexTrainDL<br>
+%<br>
+% Description: mexTrainDL is an efficient implementation of the<br>
+%     dictionary learning technique presented in<br>
+%<br>
+%     "Online Learning for Matrix Factorization and Sparse Coding"<br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     arXiv:0908.0050<br>
+%     <br>
+%     "Online Dictionary Learning for Sparse Coding"      <br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     ICML 2009.<br>
+%<br>
+%     Note that if you use param.mode=1 or 2, if the training set has a<br>
+%     reasonable size and you have enough memory on your computer, you <br>
+%     should use mexTrainDL_Memory instead.<br>
+% <br>
+%<br>
+%     It addresses the dictionary learning problems<br>
+%        1) if param.mode=0<br>
+%     min_{D in C} (1/n) sum_{i=1}^n (1/2)||x_i-Dalpha_i||_2^2  s.t. ...<br>
+%                                                  ||alpha_i||_1 &lt;= lambda<br>
+%        2) if param.mode=1<br>
+%     min_{D in C} (1/n) sum_{i=1}^n  ||alpha_i||_1  s.t.  ...<br>
+%                                           ||x_i-Dalpha_i||_2^2 &lt;= lambda<br>
+%        3) if param.mode=2<br>
+%     min_{D in C} (1/n) sum_{i=1}^n (1/2)||x_i-Dalpha_i||_2^2 + ... <br>
+%                                  lambda||alpha_i||_1 + lambda_2||alpha_i||_2^2<br>
+%        4) if param.mode=3, the sparse coding is done with OMP<br>
+%     min_{D in C} (1/n) sum_{i=1}^n (1/2)||x_i-Dalpha_i||_2^2  s.t. ... <br>
+%                                                  ||alpha_i||_0 &lt;= lambda<br>
+%        5) if param.mode=4, the sparse coding is done with OMP<br>
+%     min_{D in C} (1/n) sum_{i=1}^n  ||alpha_i||_0  s.t.  ...<br>
+%                                           ||x_i-Dalpha_i||_2^2 &lt;= lambda<br>
+%        6) if param.mode=5, the sparse coding is done with OMP<br>
+%     min_{D in C} (1/n) sum_{i=1}^n 0.5||x_i-Dalpha_i||_2^2 +lambda||alpha_i||_0  <br>
+%                                           <br>
+%<br>
+%     C is a convex set verifying<br>
+%        1) if param.modeD=0<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  ||d_j||_2^2 &lt;= 1 }<br>
+%        2) if param.modeD=1<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  ||d_j||_2^2 + ... <br>
+%                                                  gamma1||d_j||_1 &lt;= 1 }<br>
+%        3) if param.modeD=2<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  ||d_j||_2^2 + ... <br>
+%                                  gamma1||d_j||_1 + gamma2 FL(d_j) &lt;= 1 }<br>
+%        4) if param.modeD=3<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  (1-gamma1)||d_j||_2^2 + ... <br>
+%                                  gamma1||d_j||_1 &lt;= 1 }<br>
+%<br>
+%     Potentially, n can be very large with this algorithm.<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+%         param: struct<br>
+%            param.D: (optional) double m x p matrix   (dictionary)<br>
+%              p is the number of elements in the dictionary<br>
+%              When D is not provided, the dictionary is initialized <br>
+%              with random elements from the training set.<br>
+%           param.K (size of the dictionary, optional is param.D is provided)<br>
+%           param.lambda  (parameter)<br>
+%           param.lambda2  (optional, by default 0)<br>
+%           param.iter (number of iterations).  If a negative number is <br>
+%              provided it will perform the computation during the<br>
+%              corresponding number of seconds. For instance param.iter=-5<br>
+%              learns the dictionary during 5 seconds.<br>
+%           param.mode (optional, see above, by default 2) <br>
+%           param.posAlpha (optional, adds positivity constraints on the<br>
+%             coefficients, false by default, not compatible with <br>
+%             param.mode =3,4)<br>
+%           param.modeD (optional, see above, by default 0)<br>
+%           param.posD (optional, adds positivity constraints on the <br>
+%             dictionary, false by default, not compatible with <br>
+%             param.modeD=2)<br>
+%           param.gamma1 (optional parameter for param.modeD &gt;= 1)<br>
+%           param.gamma2 (optional parameter for param.modeD = 2)<br>
+%           param.batchsize (optional, size of the minibatch, by default <br>
+%              512)<br>
+%           param.iter_updateD (optional, number of BCD iterations for the dictionary<br>
+%              update step, by default 1)<br>
+%           param.modeParam (optimization mode).<br>
+%              1) if param.modeParam=0, the optimization uses the <br>
+%                 parameter free strategy of the ICML paper<br>
+%              2) if param.modeParam=1, the optimization uses the <br>
+%                 parameters rho as in arXiv:0908.0050<br>
+%              3) if param.modeParam=2, the optimization uses exponential <br>
+%                 decay weights with updates of the form <br>
+%                 A_{t} &lt;- rho A_{t-1} + alpha_t alpha_t^T<br>
+%           param.rho (optional) tuning parameter (see paper arXiv:0908.0050)<br>
+%           param.t0 (optional) tuning parameter (see paper arXiv:0908.0050)<br>
+%           param.clean (optional, true by default. prunes <br>
+%              automatically the dictionary from unused elements).<br>
+%           param.verbose (optional, true by default, increase verbosity)<br>
+%           param.numThreads (optional, number of threads for exploiting<br>
+%              multi-core / multi-cpus. By default, it takes the value -1,<br>
+%              which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: <br>
+%         param.D: double m x p matrix   (dictionary)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%         - single precision setting <br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<br>
+I=double(imread(<span class="c003">'data/lena.png'</span>))/255;<br>
+<span class="c001">% extract 8 x 8 patches</span><br>
+X=im2col(I,[8 8],<span class="c003">'sliding'</span>);<br>
+X=X-repmat(<span class="c002">mean</span>(X),[<span class="c002">size</span>(X,1) 1]);<br>
+X=X ./ repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+<br>
+param.K=256;  <span class="c001">% learns a dictionary with 100 elements</span><br>
+param.lambda=0.15;<br>
+param.numThreads=-1; <span class="c001">% number of threads</span><br>
+param.batchsize=400;<br>
+param.verbose=false;<br>
+<br>
+param.iter=1000;  <span class="c001">% let us see what happens after 1000 iterations.<br>
+<br>
+%%%%%%%%%% FIRST EXPERIMENT %%%%%%%%%%%</span><br>
+<span class="c002">tic</span><br>
+D = mexTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'Evaluating cost function...\n'</span>);<br>
+alpha=mexLasso(X,D,param);<br>
+R=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-D*alpha).^2)+param.lambda*<span class="c002">sum</span>(<span class="c002">abs</span>(alpha)));<br>
+ImD=displayPatches(D);<br>
+<span class="c002">subplot</span>(1,3,1);<br>
+<span class="c002">imagesc</span>(ImD); <span class="c002">colormap</span>(<span class="c003">'gray'</span>);<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);<br>
+<span class="c002">drawnow</span>;<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'*********** SECOND EXPERIMENT ***********\n'</span>);<br>
+<span class="c001">%%%%%%%%%% SECOND EXPERIMENT %%%%%%%%%%%<br>
+% Train on half of the training set, then retrain on the second part</span><br>
+X1=X(:,1:<span class="c002">floor</span>(<span class="c002">size</span>(X,2)/2));<br>
+X2=X(:,<span class="c002">floor</span>(<span class="c002">size</span>(X,2)/2):<span class="c002">end</span>);<br>
+param.iter=500;<br>
+<span class="c002">tic</span><br>
+[D model] = mexTrainDL(X1,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Evaluating cost function...\n'</span>);<br>
+alpha=mexLasso(X,D,param);<br>
+R=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-D*alpha).^2)+param.lambda*<span class="c002">sum</span>(<span class="c002">abs</span>(alpha)));<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);<br>
+<span class="c002">tic</span><br>
+<span class="c001">% Then reuse the learned model to retrain a few iterations more.</span><br>
+param2=param;<br>
+param2.D=D;<br>
+[D model] = mexTrainDL(X2,param2,model);<br>
+<span class="c001">%[D] = mexTrainDL(X,param);</span><br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Evaluating cost function...\n'</span>);<br>
+alpha=mexLasso(X,D,param);<br>
+R=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-D*alpha).^2)+param.lambda*<span class="c002">sum</span>(<span class="c002">abs</span>(alpha)));<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);<br>
+<br>
+<span class="c001">% let us add sparsity to the dictionary itself</span><br>
+<span class="c002">fprintf</span>(<span class="c003">'*********** THIRD EXPERIMENT ***********\n'</span>);<br>
+param.modeParam=0;<br>
+param.iter=1000;<br>
+param.gamma1=0.3;<br>
+param.modeD=1;<br>
+<span class="c002">tic</span><br>
+[D] = mexTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Evaluating cost function...\n'</span>);<br>
+alpha=mexLasso(X,D,param);<br>
+R=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-D*alpha).^2)+param.lambda*<span class="c002">sum</span>(<span class="c002">abs</span>(alpha)));<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);<br>
+<span class="c002">tic<br>
+subplot</span>(1,3,2);<br>
+ImD=displayPatches(D);<br>
+<span class="c002">imagesc</span>(ImD); <span class="c002">colormap</span>(<span class="c003">'gray'</span>);<br>
+<span class="c002">drawnow</span>;<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'*********** FOURTH EXPERIMENT ***********\n'</span>);<br>
+param.modeParam=0;<br>
+param.iter=1000;<br>
+param.gamma1=0.3;<br>
+param.modeD=3;<br>
+<span class="c002">tic</span><br>
+[D] = mexTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Evaluating cost function...\n'</span>);<br>
+alpha=mexLasso(X,D,param);<br>
+R=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-D*alpha).^2)+param.lambda*<span class="c002">sum</span>(<span class="c002">abs</span>(alpha)));<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);<br>
+<span class="c002">tic<br>
+subplot</span>(1,3,3);<br>
+ImD=displayPatches(D);<br>
+<span class="c002">imagesc</span>(ImD); <span class="c002">colormap</span>(<span class="c003">'gray'</span>);<br>
+<span class="c002">drawnow</span>;</td></tr>
+</table>
+<h3 class="subsection" id="sec6">3.2  Function mexTrainDL_Memory</h3>
+<p>
+Memory-consuming version of mexTrainDL. This function is well adapted to small/medium-size problems:
+It requires storing all the coefficients α and is therefore impractical
+for very large datasets. However, in many situations, one can afford this memory cost and it is better to use this method, which
+is faster than mexTrainDL.
+Note that unlike mexTrainDL this function does not allow warm-restart.</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   [D]=mexTrainDL(X,param);<br>
+%<br>
+% Name: mexTrainDL_Memory<br>
+%<br>
+% Description: mexTrainDL_Memory is an efficient but memory consuming <br>
+%     variant of the dictionary learning technique presented in<br>
+%<br>
+%     "Online Learning for Matrix Factorization and Sparse Coding"<br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     arXiv:0908.0050<br>
+%     <br>
+%     "Online Dictionary Learning for Sparse Coding"      <br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     ICML 2009.<br>
+%<br>
+%     Contrary to the approaches above, the algorithm here <br>
+%        does require to store all the coefficients from all the training<br>
+%        signals. For this reason this variant can not be used with large<br>
+%        training sets, but is more efficient than the regular online<br>
+%        approach for training sets of reasonable size.<br>
+%<br>
+%     It addresses the dictionary learning problems<br>
+%        1) if param.mode=1<br>
+%     min_{D in C} (1/n) sum_{i=1}^n  ||alpha_i||_1  s.t.  ...<br>
+%                                         ||x_i-Dalpha_i||_2^2 &lt;= lambda<br>
+%        2) if param.mode=2<br>
+%     min_{D in C} (1/n) sum_{i=1}^n (1/2)||x_i-Dalpha_i||_2^2 + ... <br>
+%                                                      lambda||alpha_i||_1  <br>
+%<br>
+%     C is a convex set verifying<br>
+%        1) if param.modeD=0<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  ||d_j||_2^2 &lt;= 1 }<br>
+%        1) if param.modeD=1<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  ||d_j||_2^2 + ... <br>
+%                                                  gamma1||d_j||_1 &lt;= 1 }<br>
+%        1) if param.modeD=2<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  ||d_j||_2^2 + ... <br>
+%                                  gamma1||d_j||_1 + gamma2 FL(d_j) &lt;= 1 }<br>
+%<br>
+%     Potentially, n can be very large with this algorithm.<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+%         param: struct<br>
+%            param.D: (optional) double m x p matrix   (dictionary)<br>
+%              p is the number of elements in the dictionary<br>
+%              When D is not provided, the dictionary is initialized <br>
+%              with random elements from the training set.<br>
+%           param.K (size of the dictionary, optional is param.D is provided)<br>
+%           param.lambda  (parameter)<br>
+%           param.iter (number of iterations).  If a negative number is <br>
+%              provided it will perform the computation during the<br>
+%              corresponding number of seconds. For instance param.iter=-5<br>
+%              learns the dictionary during 5 seconds.<br>
+%            param.mode (optional, see above, by default 2) <br>
+%            param.modeD (optional, see above, by default 0)<br>
+%            param.posD (optional, adds positivity constraints on the <br>
+%              dictionary, false by default, not compatible with <br>
+%              param.modeD=2)<br>
+%            param.gamma1 (optional parameter for param.modeD &gt;= 1)<br>
+%            param.gamma2 (optional parameter for param.modeD = 2)<br>
+%            param.batchsize (optional, size of the minibatch, by default <br>
+%              512)<br>
+%            param.iter_updateD (optional, number of BCD iterations for the dictionary <br>
+%                update step, by default 1)<br>
+%            param.modeParam (optimization mode).<br>
+%              1) if param.modeParam=0, the optimization uses the <br>
+%                 parameter free strategy of the ICML paper<br>
+%              2) if param.modeParam=1, the optimization uses the <br>
+%                 parameters rho as in arXiv:0908.0050<br>
+%              3) if param.modeParam=2, the optimization uses exponential <br>
+%                 decay weights with updates of the form <br>
+%                 A_{t} &lt;- rho A_{t-1} + alpha_t alpha_t^T<br>
+%            param.rho (optional) tuning parameter (see paper arXiv:0908.0050)<br>
+%            param.t0 (optional) tuning parameter (see paper arXiv:0908.0050)<br>
+%            param.clean (optional, true by default. prunes <br>
+%              automatically the dictionary from unused elements).<br>
+%            param.numThreads (optional, number of threads for exploiting<br>
+%              multi-core / multi-cpus. By default, it takes the value -1,<br>
+%              which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: <br>
+%         param.D: double m x p matrix   (dictionary)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%         - single precision setting (even though the output alpha is double <br>
+%           precision)<br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<br>
+I=double(imread(<span class="c003">'data/lena.png'</span>))/255;<br>
+<span class="c001">% extract 8 x 8 patches</span><br>
+X=im2col(I,[8 8],<span class="c003">'sliding'</span>);<br>
+X=X-repmat(<span class="c002">mean</span>(X),[<span class="c002">size</span>(X,1) 1]);<br>
+X=X ./ repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+X=X(:,1:10:<span class="c002">end</span>);<br>
+<br>
+param.K=200;  <span class="c001">% learns a dictionary with 100 elements</span><br>
+param.lambda=0.15;<br>
+param.numThreads=4; <span class="c001">% number of threads</span><br>
+<br>
+param.iter=100;  <span class="c001">% let us see what happens after 100 iterations.<br>
+<br>
+%%%%%%%%%% FIRST EXPERIMENT %%%%%%%%%%%</span><br>
+<span class="c002">tic</span><br>
+D = mexTrainDL_Memory(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'Evaluating cost function...\n'</span>);<br>
+alpha=mexLasso(X,D,param);<br>
+R=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-D*alpha).^2)+param.lambda*<span class="c002">sum</span>(<span class="c002">abs</span>(alpha)));<br>
+ImD=displayPatches(D);<br>
+<span class="c002">subplot</span>(1,3,1);<br>
+<span class="c002">imagesc</span>(ImD); <span class="c002">colormap</span>(<span class="c003">'gray'</span>);<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);<br>
+<br>
+<span class="c001">%%%%%%%%%% SECOND EXPERIMENT %%%%%%%%%%%</span><br>
+<span class="c002">tic</span><br>
+D = mexTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'Evaluating cost function...\n'</span>);<br>
+alpha=mexLasso(X,D,param);<br>
+R=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-D*alpha).^2)+param.lambda*<span class="c002">sum</span>(<span class="c002">abs</span>(alpha)));<br>
+ImD=displayPatches(D);<br>
+<span class="c002">subplot</span>(1,3,2);<br>
+<span class="c002">imagesc</span>(ImD); <span class="c002">colormap</span>(<span class="c003">'gray'</span>);<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);</td></tr>
+</table>
+<h3 class="subsection" id="sec7">3.3  Function mexStructTrainDL</h3>
+<p>
+This function allows to use mexTrainDL with structured regularization functions
+for the coefficients α. It internally uses the FISTA algorithm.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   [D [model]]=mexStructTrainDL(X,param[,model]);<br>
+%          model is optional<br>
+%<br>
+% Name: mexStructTrainDL<br>
+%<br>
+% Description: mexStructTrainDL is an efficient implementation of the<br>
+%     dictionary learning technique presented in<br>
+%<br>
+%     "Online Learning for Matrix Factorization and Sparse Coding"<br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     arXiv:0908.0050<br>
+%     <br>
+%     "Online Dictionary Learning for Sparse Coding"      <br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     ICML 2009.<br>
+%<br>
+%<br>
+%     It addresses the dictionary learning problems<br>
+%        min_{D in C} (1/n) sum_{i=1}^n 0.5||x_i-Dalpha_i||_2^2 + lambda psi(alpha)<br>
+%        where the regularization function psi depends on param.regul<br>
+%        (see mexProximalFlat for the description of psi,<br>
+%         and param.regul below for allowed values of regul)<br>
+%<br>
+%%     C is a convex set verifying<br>
+%        1) if param.modeD=0<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  ||d_j||_2^2 &lt;= 1 }<br>
+%        2) if param.modeD=1<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  ||d_j||_2^2 + ... <br>
+%                                                  gamma1||d_j||_1 &lt;= 1 }<br>
+%        3) if param.modeD=2<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  ||d_j||_2^2 + ... <br>
+%                                  gamma1||d_j||_1 + gamma2 FL(d_j) &lt;= 1 }<br>
+%        4) if param.modeD=3<br>
+%           C={  D in Real^{m x p}  s.t.  forall j,  (1-gamma1)||d_j||_2^2 + ... <br>
+%                                  gamma1||d_j||_1 &lt;= 1 }<br>
+<br>
+%<br>
+%     Potentially, n can be very large with this algorithm.<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+%         param: struct<br>
+%            param.D: (optional) double m x p matrix   (dictionary)<br>
+%              p is the number of elements in the dictionary<br>
+%              When D is not provided, the dictionary is initialized <br>
+%              with random elements from the training set.<br>
+%           param.K (size of the dictionary, optional is param.D is provided)<br>
+%           param.lambda  (parameter)<br>
+%           param.lambda2  (optional, by default 0)<br>
+%           param.lambda3 (optional, regularization parameter, 0 by default)<br>
+%           param.iter (number of iterations).  If a negative number is <br>
+%              provided it will perform the computation during the<br>
+%              corresponding number of seconds. For instance param.iter=-5<br>
+%              learns the dictionary during 5 seconds.<br>
+%           param.regul choice of regularization : one of<br>
+%               'l0' 'l1' 'l2' 'linf' 'none' 'elastic-net' 'fused-lasso'<br>
+%               'graph' 'graph-ridge' 'graph-l2' 'tree-l0' 'tree-l2' 'tree-linf' <br>
+%           param.tree struct (see documentation of mexProximalTree);<br>
+%               needed for param.regul of graph kind.<br>
+%           param.graph struct (see documentation of mexProximalGraph);<br>
+%               needed for param.regul of tree kind.<br>
+%           param.posAlpha (optional, adds positivity constraints on the<br>
+%               coefficients, false by default.<br>
+%           param.modeD (optional, see above, by default 0)<br>
+%           param.posD (optional, adds positivity constraints on the <br>
+%             dictionary, false by default, not compatible with <br>
+%             param.modeD=2)<br>
+%           param.gamma1 (optional parameter for param.modeD &gt;= 1)<br>
+%           param.gamma2 (optional parameter for param.modeD = 2)<br>
+%           param.batchsize (optional, size of the minibatch, by default <br>
+%              512)<br>
+%           param.iter_updateD (optional, number of BCD iterations for the dictionary<br>
+%              update step, by default 1)<br>
+%           param.modeParam (optimization mode).<br>
+%              1) if param.modeParam=0, the optimization uses the <br>
+%                 parameter free strategy of the ICML paper<br>
+%              2) if param.modeParam=1, the optimization uses the <br>
+%                 parameters rho as in arXiv:0908.0050<br>
+%              3) if param.modeParam=2, the optimization uses exponential <br>
+%                 decay weights with updates of the form <br>
+%                 A_{t} &lt;- rho A_{t-1} + alpha_t alpha_t^T<br>
+%            param.ista (optional, use ista instead of fista, false by default).<br>
+%            param.tol (optional, tolerance for stopping criteration, which is a relative duality gap<br>
+%            param.fixed_step (deactive the line search for L in fista and use param.K instead)<br>
+%           param.rho (optional) tuning parameter (see paper arXiv:0908.0050)<br>
+%           param.t0 (optional) tuning parameter (see paper arXiv:0908.0050)<br>
+%           param.clean (optional, true by default. prunes <br>
+%              automatically the dictionary from unused elements).<br>
+%           param.verbose (optional, true by default, increase verbosity)<br>
+%           param.numThreads (optional, number of threads for exploiting<br>
+%              multi-core / multi-cpus. By default, it takes the value -1,<br>
+%              which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: <br>
+%         param.D: double m x p matrix   (dictionary)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%         - single precision setting <br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<br>
+I=double(imread(<span class="c003">'data/lena.png'</span>))/255;<br>
+<span class="c001">% extract 8 x 8 patches</span><br>
+X=im2col(I,[8 8],<span class="c003">'sliding'</span>);<br>
+X=X-repmat(<span class="c002">mean</span>(X),[<span class="c002">size</span>(X,1) 1]);<br>
+X=X ./ repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+<br>
+param.K=64;  <span class="c001">% learns a dictionary with 64 elements</span><br>
+param.lambda=0.05;<br>
+param.numThreads=4; <span class="c001">% number of threads</span><br>
+param.batchsize=400;<br>
+param.tol = 1e-3<br>
+<br>
+param.iter=200;  <span class="c001">%</span><br>
+<br>
+<span class="c002">if</span> false<br>
+param.regul = <span class="c003">'l1'</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'with Fista Regression %s\n'</span>,param.regul);<br>
+<span class="c002">tic</span><br>
+D = mexStructTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<span class="c001">%</span><br>
+param.regul = <span class="c003">'l2'</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'with Fista Regression %s\n'</span>,param.regul);<br>
+<span class="c002">tic</span><br>
+D = mexStructTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<span class="c001">%</span><br>
+param.regul = <span class="c003">'elastic-net'</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'with Fista %s\n'</span>,param.regul);<br>
+param.lambda2=0.1;<br>
+<span class="c002">tic</span><br>
+D = mexStructTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<br>
+<span class="c001">%%% GRAPH</span><br>
+param.lambda=0.1; <span class="c001">% regularization parameter</span><br>
+param.tol=1e-5;<br>
+param.K = 10<br>
+graph.eta_g=[1 1 1 1 1];<br>
+graph.groups=<span class="c002">sparse</span>([0 0 0 1 0;<br>
+                     0 0 0 0 0;<br>
+                     0 0 0 0 0;<br>
+                     0 0 0 0 0;<br>
+                     0 0 1 0 0]);   <span class="c001">% g5 is included in g3, and g2 is included in g4</span><br>
+graph.groups_var=<span class="c002">sparse</span>([1 0 0 0 0;<br>
+                         1 0 0 0 0;<br>
+                         1 0 0 0 0 ;<br>
+                         1 1 0 0 0;<br>
+                         0 1 0 1 0;<br>
+                         0 1 0 1 0;<br>
+                         0 1 0 0 1;<br>
+                         0 0 0 0 1;<br>
+                         0 0 0 0 1;<br>
+                         0 0 1 0 0]); <span class="c001">% represents direct inclusion relations </span><br>
+<br>
+param.graph = graph<br>
+<br>
+param.regul = <span class="c003">'graph'</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'with Fista %s\n'</span>,param.regul);<br>
+<span class="c002">tic</span><br>
+D = mexStructTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<br>
+<span class="c001">%%<br>
+%%% TREE<br>
+%?pause;</span><br>
+param = rmfield(param,<span class="c003">'graph'</span>);<br>
+<br>
+<span class="c002">end</span><br>
+<br>
+<br>
+param.lambda=0.1; <span class="c001">% regularization parameter</span><br>
+param.tol=1e-5;<br>
+param.K = 10<br>
+<br>
+tree.own_variables=  int32([0 0 3 5 6 6 8 9]);   <span class="c001">% pointer to the first variable of each group</span><br>
+tree.N_own_variables=int32([0 3 2 1 0 2 1 1]); <span class="c001">% number of "root" variables in each group</span><br>
+tree.eta_g=[1 1 1 2 2 2 2.5 2.5];<br>
+tree.groups=<span class="c002">sparse</span>([0 0 0 0 0 0 0 0; ...<br>
+                    1 0 0 0 0 0 0 0; ...<br>
+                    0 1 0 0 0 0 0 0; ...<br>
+                    0 1 0 0 0 0 0 0; ...<br>
+                    1 0 0 0 0 0 0 0; ...<br>
+                    0 0 0 0 1 0 0 0; ...<br>
+                    0 0 0 0 1 0 0 0; ...<br>
+                    0 0 0 0 0 0 1 0]);  <span class="c001">% first group should always be the root of the tree</span><br>
+<br>
+param.tree = tree;<br>
+<br>
+param.regul = <span class="c003">'tree-l0'</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'with Fista %s\n'</span>,param.regul);<br>
+<br>
+<span class="c002">tic</span><br>
+D = mexStructTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<br>
+<span class="c001">%</span><br>
+param.regul = <span class="c003">'tree-l2'</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'with Fista %s\n'</span>,param.regul);<br>
+<span class="c002">tic</span><br>
+D = mexStructTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<br>
+<span class="c001">%</span><br>
+param.regul = <span class="c003">'tree-linf'</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'with Fista %s\n'</span>,param.regul);<br>
+<br>
+<span class="c002">tic</span><br>
+D = mexStructTrainDL(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);</td></tr>
+</table>
+<h3 class="subsection" id="sec8">3.4  Function nmf</h3>
+<p>
+This function is an example on how to use the function mexTrainDL for the
+problem of non-negative matrix factorization formulated in [<a href="doc_spams010.html#lee2">17</a>]. Note
+that mexTrainDL can be replaced by mexTrainDL_Memory in this function for
+small or medium datasets.</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   [U [,V]]=nmf(X,param);<br>
+%<br>
+% Name: nmf<br>
+%<br>
+% Description: mexTrainDL is an efficient implementation of the<br>
+%     non-negative matrix factorization technique presented in <br>
+%<br>
+%     "Online Learning for Matrix Factorization and Sparse Coding"<br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     arXiv:0908.0050<br>
+%     <br>
+%     "Online Dictionary Learning for Sparse Coding"      <br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     ICML 2009.<br>
+%<br>
+%     Potentially, n can be very large with this algorithm.<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+%         param: struct<br>
+%            param.K (number of required factors)<br>
+%            param.iter (number of iterations).  If a negative number <br>
+%              is provided it will perform the computation during the<br>
+%              corresponding number of seconds. For instance param.iter=-5<br>
+%              learns the dictionary during 5 seconds.<br>
+%            param.batchsize (optional, size of the minibatch, by default <br>
+%               512)<br>
+%            param.modeParam (optimization mode).<br>
+%               1) if param.modeParam=0, the optimization uses the <br>
+%                  parameter free strategy of the ICML paper<br>
+%               2) if param.modeParam=1, the optimization uses the <br>
+%                  parameters rho as in arXiv:0908.0050<br>
+%               3) if param.modeParam=2, the optimization uses exponential <br>
+%                  decay weights with updates of the form  <br>
+%                  A_{t} &lt;- rho A_{t-1} + alpha_t alpha_t^T<br>
+%            param.rho (optional) tuning parameter (see paper <br>
+%              arXiv:0908.0050)<br>
+%            param.t0 (optional) tuning parameter (see paper <br>
+%              arXiv:0908.0050)<br>
+%            param.clean (optional, true by default. prunes automatically <br>
+%              the dictionary from unused elements).<br>
+%            param.batch (optional, false by default, use batch learning <br>
+%              instead of online learning)<br>
+%            param.numThreads (optional, number of threads for exploiting<br>
+%                 multi-core / multi-cpus. By default, it takes the value -1,<br>
+%                 which automatically selects all the available CPUs/cores).<br>
+%         model: struct (optional) learned model for "retraining" the data.<br>
+%<br>
+% Output:<br>
+%         U: double m x p matrix   <br>
+%         V: double p x n matrix   (optional)<br>
+%         model: struct (optional) learned model to be used for <br>
+%           "retraining" the data.<br>
+%<br>
+% Author: Julien Mairal, 2009</span><br>
+<span class="c002">function</span> [U V] = nmf(X,param)<br>
+<br>
+param.lambda=0;<br>
+param.mode=2;<br>
+param.posAlpha=1;<br>
+param.posD=1;<br>
+param.whiten=0;<br>
+U=mexTrainDL(X,param);<br>
+param.pos=1;<br>
+<span class="c002">if</span> <span class="c002">nargout</span> == 2<br>
+   <span class="c002">if</span> <span class="c002">issparse</span>(X) <span class="c001">% todo allow sparse matrices X for mexLasso</span><br>
+      maxbatch=<span class="c002">ceil</span>(10000000/<span class="c002">size</span>(X,1));<br>
+      <span class="c002">for</span> jj = 1:maxbatch:<span class="c002">size</span>(X,2)<br>
+         indbatch=jj:<span class="c002">min</span>((jj+maxbatch-1),<span class="c002">size</span>(X,2));<br>
+         Xb=<span class="c002">full</span>(X(:,indbatch));<br>
+         V(:,indbatch)=mexLasso(Xb,U,param);<br>
+      <span class="c002">end</span><br>
+   <span class="c002">else</span><br>
+      V=mexLasso(X,U,param);<br>
+   <span class="c002">end<br>
+end</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<br>
+I=double(imread(<span class="c003">'data/lena.png'</span>))/255;<br>
+<span class="c001">% extract 8 x 8 patches</span><br>
+X=im2col(I,[16 16],<span class="c003">'sliding'</span>);<br>
+X=X(:,1:10:<span class="c002">end</span>);<br>
+X=X ./ repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+<br>
+param.K=49;  <span class="c001">% learns a dictionary with 100 elements</span><br>
+param.numThreads=4; <span class="c001">% number of threads</span><br>
+<br>
+param.iter=-5;  <span class="c001">% let us see what happens after 100 iterations.<br>
+<br>
+%%%%%%%%%% FIRST EXPERIMENT %%%%%%%%%%%</span><br>
+<span class="c002">tic</span><br>
+[U V] = nmf(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Dictionary Learning: %f\n'</span>,t);<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'Evaluating cost function...\n'</span>);<br>
+R=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-U*V).^2));<br>
+ImD=displayPatches(U);<br>
+<span class="c002">imagesc</span>(ImD); <span class="c002">colormap</span>(<span class="c003">'gray'</span>);<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);</td></tr>
+</table>
+<h3 class="subsection" id="sec9">3.5  Function nnsc</h3>
+<p>
+This function is an example on how to use the function mexTrainDL for the
+problem of non-negative sparse coding as defined in [<a href="doc_spams010.html#hoyer">14</a>]. Note that
+mexTrainDL can be replaced by mexTrainDL_Memory in this function for small or
+medium datasets.</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   [U [,V]]=nnsc(X,param);<br>
+%<br>
+% Name: nmf<br>
+%<br>
+% Description: mexTrainDL is an efficient implementation of the<br>
+%     non-negative sparse coding technique presented in <br>
+%<br>
+%     "Online Learning for Matrix Factorization and Sparse Coding"<br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     arXiv:0908.0050<br>
+%     <br>
+%     "Online Dictionary Learning for Sparse Coding"      <br>
+%     by Julien Mairal, Francis Bach, Jean Ponce and Guillermo Sapiro<br>
+%     ICML 2009.<br>
+%<br>
+%     Potentially, n can be very large with this algorithm.<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+%         param: struct<br>
+%           param.K (number of required factors)<br>
+%           param.lambda (parameter)<br>
+%           param.iter (number of iterations).  If a negative number <br>
+%              is provided it will perform the computation during the<br>
+%              corresponding number of seconds. For instance param.iter=-5<br>
+%              learns the dictionary during 5 seconds.<br>
+%           param.batchsize (optional, size of the minibatch, by default <br>
+%              512)<br>
+%           param.modeParam (optimization mode).<br>
+%              1) if param.modeParam=0, the optimization uses the <br>
+%                 parameter free strategy of the ICML paper<br>
+%              2) if param.modeParam=1, the optimization uses the <br>
+%                 parameters rho as in arXiv:0908.0050<br>
+%              3) if param.modeParam=2, the optimization uses exponential <br>
+%                 decay weights with updates of the form <br>
+%                 A_{t} &lt;- rho A_{t-1} + alpha_t alpha_t^T<br>
+%           param.rho (optional) tuning parameter (see paper<br>
+%              arXiv:0908.0050)<br>
+%           param.t0 (optional) tuning parameter (see paper <br>
+%              arXiv:0908.0050)<br>
+%           param.clean (optional, true by default. prunes automatically <br>
+%              the dictionary from unused elements).<br>
+%           param.batch (optional, false by default, use batch learning <br>
+%              instead of online learning)<br>
+%           param.numThreads (optional, number of threads for exploiting<br>
+%              multi-core / multi-cpus. By default, it takes the value -1,<br>
+%              which automatically selects all the available CPUs/cores).<br>
+%         model: struct (optional) learned model for "retraining" the data.<br>
+%<br>
+% Output:<br>
+%         U: double m x p matrix   <br>
+%         V: double p x n matrix   (optional)<br>
+%         model: struct (optional) learned model to be used for <br>
+%            "retraining" the data.<br>
+%<br>
+% Author: Julien Mairal, 2009</span><br>
+<span class="c002">function</span> [U V] = nnsc(X,param)<br>
+<br>
+param.mode=2;<br>
+param.posAlpha=1;<br>
+param.posD=1;<br>
+param.whiten=0;<br>
+U=mexTrainDL(X,param);<br>
+param.pos=1;<br>
+<span class="c002">if</span> <span class="c002">nargout</span> == 2<br>
+   V=mexLasso(X,U,param);<br>
+<span class="c002">end</span></td></tr>
+</table>
+<h3 class="subsection" id="sec10">3.6  Function mexArchetypalAnalysis</h3>
+<p>
+The function optimizes the archetypal analysis formulation of [<a href="doc_spams010.html#Cut94">7</a>]. It follows the
+methodology presented in the following paper [<a href="doc_spams010.html#ChenCVPR">37</a>].</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:  [Z [A,B]]=mexArchetypalAnalysis(X,param);<br>
+% Usage:  [Z [A,B]]=mexArchetypalAnalysis(X,Z,param);<br>
+%<br>
+% Name: mexArchetypalAnalysis<br>
+%<br>
+% Description: documentation to appear soon<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+% Output: Z: double %<br>
+%<br>
+% Author: Yuansi Chen and Julien Mairal, 2014</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<span class="c002">rand</span>(<span class="c003">'seed'</span>,0);<br>
+I=double(imread(<span class="c003">'data/lena.png'</span>))/255;<br>
+<span class="c001">% extract 8 x 8 patches</span><br>
+X=im2col(I,[8 8],<span class="c003">'sliding'</span>);<br>
+per=<span class="c002">randperm</span>(<span class="c002">size</span>(X,2));<br>
+X=X(:,per(1:10000));<br>
+X=X-repmat(<span class="c002">mean</span>(X),[<span class="c002">size</span>(X,1) 1]);<br>
+nrm=<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2));<br>
+me=<span class="c002">median</span>(nrm);<br>
+X=X ./ repmat(<span class="c002">max</span>(nrm,me),[<span class="c002">size</span>(X,1) 1]);<br>
+<br>
+param.p=64;  <span class="c001">% learns a dictionary with 64 elements</span><br>
+param.robust=false;<br>
+param.epsilon=1e-3;  <span class="c001">% width for Huber loss</span><br>
+param.computeXtX=true;<br>
+param.stepsFISTA=0;<br>
+param.stepsAS=10;<br>
+param.numThreads=-1;<br>
+<br>
+<span class="c001">%%%%%%%%%% FIRST EXPERIMENT %%%%%%%%%%%</span><br>
+<span class="c002">tic</span><br>
+[Z A B] = mexArchetypalAnalysis(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Archetypal Analysis: %f\n'</span>,t);<br>
+R=<span class="c002">norm</span>(X-Z*A,<span class="c003">'fro'</span>)^2;<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'Re-Evaluating cost function after re-updating A...\n'</span>);<br>
+paramdecomp.computeXtX=true;<br>
+paramdecomp.numThreads=-1;<br>
+A2=mexDecompSimplex(X,Z,param);<br>
+R=<span class="c002">norm</span>(X-Z*A2,<span class="c003">'fro'</span>)^2;<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);<br>
+<br>
+<span class="c001">%%%%%%%%%% Second EXPERIMENT %%%%%%%%%%%</span><br>
+<span class="c002">tic</span><br>
+[Z2 A2] = mexArchetypalAnalysis(X,param,Z);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Archetypal Analysis: %f\n'</span>,t);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Evaluating cost function...\n'</span>);<br>
+R=<span class="c002">norm</span>(X-Z2*A2,<span class="c003">'fro'</span>)^2;<br>
+<span class="c002">fprintf</span>(<span class="c003">'objective function: %f\n'</span>,R);<br>
+<br>
+<span class="c001">%%%%%%%%%% THIRD EXPERIMENT %%%%%%%%%%%</span><br>
+<span class="c002">tic</span><br>
+param.robust=true;<br>
+[Z3] = mexArchetypalAnalysis(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'time of computation for Robust Archetypal Analysis: %f\n'</span>,t);</td></tr>
+</table>
+<hr>
+<a href="doc_spams003.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams005.html"><img src="next_motif.gif" alt="Next"></a>
+</body>
+</html>

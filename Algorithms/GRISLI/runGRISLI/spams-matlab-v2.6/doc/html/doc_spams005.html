@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.23">
+
+<META name="Author" content="Julien Mairal">
+<link rel="stylesheet" href="doc_spams.css"><link rel="stylesheet" type="text/css" href="doc_spams.css">
+<title>Sparse Decomposition Toolbox</title>
+</head>
+<body>
+<a href="doc_spams004.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams006.html"><img src="next_motif.gif" alt="Next"></a>
+<hr>
+<h2 class="section" id="sec11">4  Sparse Decomposition Toolbox</h2>
+<ul>
+<li><a href="doc_spams005.html#sec12">Function mexOMP</a>
+</li><li><a href="doc_spams005.html#sec13">Function mexOMPMask</a>
+</li><li><a href="doc_spams005.html#sec14">Function mexRidgeRegression</a>
+</li><li><a href="doc_spams005.html#sec15">Function mexLasso</a>
+</li><li><a href="doc_spams005.html#sec16">Function mexLassoWeighted</a>
+</li><li><a href="doc_spams005.html#sec17">Function mexLassoMask</a>
+</li><li><a href="doc_spams005.html#sec18">Function mexCD</a>
+</li><li><a href="doc_spams005.html#sec19">Function mexSOMP</a>
+</li><li><a href="doc_spams005.html#sec20">Function mexL1L2BCD</a>
+</li><li><a href="doc_spams005.html#sec21">Function mexSparseProject</a>
+</li><li><a href="doc_spams005.html#sec22">Function mexDecompSimplex</a>
+</li></ul>
+<p>
+This toolbox implements several algorithms for solving signal reconstruction problems. It is mostly adapted for solving a large number of small/medium scale problems, but can be also efficient sometimes with large scale ones.
+</p>
+<h3 class="subsection" id="sec12">4.1  Function mexOMP</h3>
+<p>
+This is a fast implementation of the Orthogonal Matching Pursuit algorithm (or forward selection) [<a href="doc_spams010.html#mallat4">27</a>, <a href="doc_spams010.html#weisberg">35</a>]. Given a matrix of signals <span class="c009">X</span>=[<span class="c009">x</span><sup>1</sup>,…,<span class="c009">x</span><sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">m</span> × <span class="c007">n</span></sup> and a dictionary <span class="c009">D</span>=[<span class="c009">d</span><sup>1</sup>,…,<span class="c009">d</span><sup><span class="c007">p</span></sup>] in ℝ<sup><span class="c007">m</span> × <span class="c007">p</span></sup>, the algorithm computes a matrix <span class="c009">A</span>=[α<sup>1</sup>,…,α<sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">p</span> × <span class="c007">n</span></sup>,
+where for each column <span class="c009">x</span> of <span class="c009">X</span>, it returns a coefficient vector α which is an approximate solution of the following NP-hard problem
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> ||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup>   s.t.   ||α||<sub>0</sub> ≤ <span class="c007">L</span>,
+    (2)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell">  ||α||<sub>0</sub>   s.t.   ||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup> ≤ ε,
+    (3)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup> + λ ||α||<sub>0</sub>.
+    (4)</td></tr>
+</table><p>
+For efficienty reasons, the method first computes the covariance matrix
+<span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">D</span>, then for each signal, it computes <span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">x</span> and performs the
+decomposition with a Cholesky-based algorithm (see [<a href="doc_spams010.html#cotter">6</a>] for instance).</p><p>Note that mexOMP can return the “greedy” regularization path if needed (see below):
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   A=mexOMP(X,D,param);<br>
+% or       [A path]=mexOMP(X,D,param);<br>
+%<br>
+% Name: mexOMP<br>
+%<br>
+% Description: mexOMP is an efficient implementation of the<br>
+%     Orthogonal Matching Pursuit algorithm. It is optimized<br>
+%     for solving a large number of small or medium-sized <br>
+%     decomposition problem (and not for a single large one).<br>
+%     It first computes the Gram matrix D'D and then perform<br>
+%     a Cholesky-based OMP of the input signals in parallel.<br>
+%     X=[x^1,...,x^n] is a matrix of signals, and it returns<br>
+%     a matrix A=[alpha^1,...,alpha^n] of coefficients.<br>
+%     <br>
+%     it addresses for all columns x of X, <br>
+%         min_{alpha} ||alpha||_0  s.t  ||x-Dalpha||_2^2 &lt;= eps<br>
+%         or<br>
+%         min_{alpha} ||x-Dalpha||_2^2  s.t. ||alpha||_0 &lt;= L<br>
+%         or<br>
+%         min_{alpha} 0.5||x-Dalpha||_2^2 + lambda||alpha||_0 <br>
+%         <br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%            m is the signal size<br>
+%            n is the number of signals to decompose<br>
+%         D:  double m x p matrix   (dictionary)<br>
+%            p is the number of elements in the dictionary<br>
+%            All the columns of D should have unit-norm !<br>
+%         param: struct<br>
+%            param.L (optional, maximum number of elements in each decomposition, <br>
+%               min(m,p) by default)<br>
+%            param.eps (optional, threshold on the squared l2-norm of the residual,<br>
+%               0 by default<br>
+%            param.lambda (optional, penalty parameter, 0 by default<br>
+%            param.numThreads (optional, number of threads for exploiting<br>
+%            multi-core / multi-cpus. By default, it takes the value -1,<br>
+%            which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: A: double sparse p x n matrix (output coefficients)<br>
+%         path (optional): double dense p x L matrix (regularization path of the first signal)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%      - single precision setting (even though the output alpha is double <br>
+%        precision)<br>
+%      - Passing an int32 vector of length n to param.L provides<br>
+%        a different parameter L for each input signal x_i<br>
+%      - Passing a double vector of length n to param.eps and or param.lambda <br>
+%        provides a different parameter eps (or lambda) for each input signal x_i<br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'test mexOMP'</span>);<br>
+<br>
+<span class="c001">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Decomposition of a large number of signals<br>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span><br>
+X=<span class="c002">randn</span>(64,100000);<br>
+D=<span class="c002">randn</span>(64,256);<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+<span class="c001">% parameter of the optimization procedure are chosen</span><br>
+param.L=10; <span class="c001">% not more than 10 non-zeros coefficients</span><br>
+param.<span class="c002">eps</span>=0.0; <span class="c001">% squared norm of the residual should be less than 0.1</span><br>
+param.numThreads=4; <span class="c001">% number of processors/cores to use; the default choice is -1</span><br>
+                    <span class="c001">% and uses all the cores of the machine</span><br>
+<span class="c002">tic</span><br>
+alpha=mexOMP(X,D,param);<br>
+t=<span class="c002">toc<br>
+fprintf</span>(<span class="c003">'%f signals processed per second\n'</span>,<span class="c002">size</span>(X,2)/t);<br>
+<br>
+<span class="c001">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Regularization path of a single signal <br>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span><br>
+X=<span class="c002">randn</span>(64,1);<br>
+D=<span class="c002">randn</span>(64,10);<br>
+param.L=5;<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+[alpha <span class="c002">path</span>]=mexOMP(X,D,param);</td></tr>
+</table>
+<h3 class="subsection" id="sec13">4.2  Function mexOMPMask</h3>
+<p>
+This is a variant of mexOMP with the possibility of handling a binary mask.
+Given a binary mask <span class="c009">B</span>=[β<sup>1</sup>,…,β<sup><span class="c007">n</span></sup>] in {0,1}<sup><span class="c007">m</span> × <span class="c007">n</span></sup>, it returns a matrix <span class="c009">A</span>=[α<sup>1</sup>,…,α<sup><span class="c007">n</span></sup>] such that for every column <span class="c009">x</span> of <span class="c009">X</span>, β of <span class="c009">B</span>, it computes a column α of <span class="c009">A</span> by addressing
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> ||diag(β)(<span class="c009">x</span>−<span class="c009">D</span>α)||<sub>2</sub><sup>2</sup>   s.t.   ||α||<sub>0</sub> ≤ <span class="c007">L</span>,
+    (5)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell">  ||α||<sub>0</sub>   s.t.   ||diag(β)(<span class="c009">x</span>−<span class="c009">D</span>α)||<sub>2</sub><sup>2</sup> ≤ ε</td><td class="dcell"><table class="display"><tr><td class="dcell c012">||β||<sub>0</sub></td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012"><span class="c007">m</span></td></tr>
+</table></td><td class="dcell">,
+    (6)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||diag(β)(<span class="c009">x</span>−<span class="c009">D</span>α)||<sub>2</sub><sup>2</sup> +λ||α||<sub>0</sub>.
+    (7)</td></tr>
+</table><p>
+where diag(β) is a diagonal matrix with the entries of β on the diagonal.</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   A=mexOMPMask(X,D,B,param);<br>
+% or       [A path]=mexOMPMask(X,D,B,param);<br>
+%<br>
+% Name: mexOMPMask<br>
+%<br>
+% Description: mexOMPMask is a variant of mexOMP that allow using<br>
+%     a binary mask B<br>
+%     <br>
+%     for all columns x of X, and columns beta of B, it computes a column <br>
+%         alpha of A by addressing<br>
+%         min_{alpha} ||alpha||_0  s.t  ||diag(beta)*(x-Dalpha)||_2^2 <br>
+%                                                               &lt;= eps*||beta||_0/m<br>
+%         or<br>
+%         min_{alpha} ||diag(beta)*(x-Dalpha)||_2^2  s.t. ||alpha||_0 &lt;= L<br>
+%         or<br>
+%         min_{alpha} 0.5||diag(beta)*(x-Dalpha)||_2^2  + lambda||alpha||_0<br>
+%         <br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%            m is the signal size<br>
+%            n is the number of signals to decompose<br>
+%         D:  double m x p matrix   (dictionary)<br>
+%            p is the number of elements in the dictionary<br>
+%            All the columns of D should have unit-norm !<br>
+%         B:  boolean m x n matrix   (mask)<br>
+%               p is the number of elements in the dictionary<br>
+%         param: struct<br>
+%            param.L (optional, maximum number of elements in each decomposition, <br>
+%               min(m,p) by default)<br>
+%            param.eps (optional, threshold on the squared l2-norm of the residual,<br>
+%               0 by default<br>
+%            param.lambda (optional, penalty parameter, 0 by default<br>
+%            param.numThreads (optional, number of threads for exploiting<br>
+%            multi-core / multi-cpus. By default, it takes the value -1,<br>
+%            which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: A: double sparse p x n matrix (output coefficients)<br>
+%         path (optional): double dense p x L matrix <br>
+%                                     (regularization path of the first signal)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%      - single precision setting (even though the output alpha is double <br>
+%        precision)<br>
+%      - Passing an int32 vector of length n to param.L provides<br>
+%        a different parameter L for each input signal x_i<br>
+%      - Passing a double vector of length n to param.eps and or param.lambda <br>
+%        provides a different parameter eps (or lambda) for each input signal x_i<br>
+%<br>
+% Author: Julien Mairal, 2010</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+<span class="c002">fprintf</span>(<span class="c003">'test mexOMPMask\n'</span>);<br>
+<br>
+<span class="c001">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Decomposition of a large number of signals<br>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Data are generated</span><br>
+X=<span class="c002">randn</span>(100,100);<br>
+X=X./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+D=<span class="c002">randn</span>(100,20);<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+mask=(X &gt; 0); <span class="c001">% generating a binary mask<br>
+<br>
+% parameter of the optimization procedure are chosen</span><br>
+param.L=20; <span class="c001">% not more than 20 non-zeros coefficients (default: min(size(D,1),size(D,2)))</span><br>
+param.<span class="c002">eps</span>=0.01; <span class="c001">%</span><br>
+param.numThreads=-1; <span class="c001">% number of processors/cores to use; the default choice is -1</span><br>
+                     <span class="c001">% and uses all the cores of the machine</span><br>
+<span class="c002">tic</span><br>
+alpha=mexOMPMask(X,D,mask,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+<br>
+fprintf</span>(<span class="c003">'%f signals processed per second\n'</span>,<span class="c002">size</span>(X,2)/t);</td></tr>
+</table>
+<h3 class="subsection" id="sec14">4.3  Function mexRidgeRegression</h3>
+<p>
+This is a ridge regression solver using a conjugate gradient solver.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage: [W]=mexRidgeRegression(Y,X,W0,param);<br>
+%<br>
+% Name: mexRidgeRegression<br>
+%<br>
+% Description: mexFistaFlat solves sparse regularized problems.<br>
+%         X is a design matrix of size m x p<br>
+%         X=[x^1,...,x^n]', where the x_i's are the rows of X<br>
+%         Y=[y^1,...,y^n] is a matrix of size m x n<br>
+%         It implements a conjugate gradient solver for ridge regression<br>
+%         <br>
+% Inputs: Y:  double dense m x n matrix<br>
+%         X:  double dense or sparse m x p matrix   <br>
+%         W0:  double dense p x n matrix or p x Nn matrix (for multi-logistic loss)<br>
+%              initial guess<br>
+%         param: struct<br>
+%            param.lambda (regularization parameter)<br>
+%            param.numThreads (optional, number of threads for exploiting<br>
+%                multi-core / multi-cpus. By default, it takes the value -1,<br>
+%                which automatically selects all the available CPUs/cores).<br>
+%            param.itermax (optional, maximum number of iterations, 100 by default)<br>
+%            param.tol (optional, tolerance for stopping criteration, which is a relative duality gap<br>
+%                if it is available, or a relative change of parameters).<br>
+%<br>
+% Output:  W:  double dense p x n matrix <br>
+<br>
+% Author: Julien Mairal, 2013</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">format</span> compact;<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+param.numThreads=-1; <span class="c001">% all cores (-1 by default)</span><br>
+param.lambda=0.05; <span class="c001">% regularization parameter</span><br>
+<br>
+X=<span class="c002">randn</span>(100,200);<br>
+X=X-repmat(<span class="c002">mean</span>(X),[<span class="c002">size</span>(X,1) 1]);<br>
+X=mexNormalize(X);<br>
+Y=<span class="c002">randn</span>(100,1);<br>
+Y=Y-repmat(<span class="c002">mean</span>(Y),[<span class="c002">size</span>(Y,1) 1]);<br>
+Y=mexNormalize(Y);<br>
+W0=<span class="c002">zeros</span>(<span class="c002">size</span>(X,2),<span class="c002">size</span>(Y,2));<br>
+<span class="c001">% Regression experiments <br>
+% 100 regression problems with the same design matrix X.</span><br>
+<span class="c002">fprintf</span>(<span class="c003">'\nVarious regression experiments\n'</span>);<br>
+<span class="c002">fprintf</span>(<span class="c003">'\nRidge Regression with conjugate gradient solver\n'</span>);<br>
+<span class="c002">tic</span><br>
+[W]=mexRidgeRegression(Y,X,W0,param);<br>
+t=<span class="c002">toc</span></td></tr>
+</table>
+<h3 class="subsection" id="sec15">4.4  Function mexLasso</h3>
+<p>
+This is a fast implementation of the LARS algorithm [<a href="doc_spams010.html#efron">9</a>] (variant for solving the Lasso) for solving the Lasso or Elastic-Net. Given a matrix of signals <span class="c009">X</span>=[<span class="c009">x</span><sup>1</sup>,…,<span class="c009">x</span><sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">m</span> × <span class="c007">n</span></sup> and a dictionary <span class="c009">D</span> in ℝ<sup><span class="c007">m</span> × <span class="c007">p</span></sup>, depending on the input parameters, the algorithm returns a matrix of coefficients <span class="c009">A</span>=[α<sup>1</sup>,…,α<sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">p</span> × <span class="c007">n</span></sup> such that for every column <span class="c009">x</span> of <span class="c009">X</span>, the corresponding column α of <span class="c009">A</span> is the solution of
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> ||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup>   s.t.   ||α||<sub>1</sub> ≤ λ,
+    (8)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell">  ||α||<sub>1</sub>   s.t.   ||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup> ≤ λ, <a id="eq:lasso2"></a>
+    (9)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup> + λ ||α||<sub>1</sub> + </td><td class="dcell"><table class="display"><tr><td class="dcell c012">λ<sub>2</sub></td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||α||<sub>2</sub><sup>2</sup>. <a id="eq:lasso"></a>
+    (10)</td></tr>
+</table><p>
+For efficiency reasons, the method first compute the covariance matrix <span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">D</span>, then
+for each signal, it computes <span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">x</span> and performs the decomposition with a
+Cholesky-based algorithm (see [<a href="doc_spams010.html#efron">9</a>] for instance). The implementation
+has also an option to add <span class="c010">positivity constraints</span> on the solutions
+α. When the solution is very sparse and the problem size is
+reasonable, this approach can be very efficient. Moreover, it gives the
+solution with an exact precision, and its performance does not depend on the
+correlation of the dictionary elements, except when the solution is not unique
+(the algorithm breaks in this case).</p><p>Note that mexLasso can return the whole regularization path of the first signal <span class="c009">x</span><sub>1</sub>
+and can handle implicitely the matrix <span class="c009">D</span> if the quantities <span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">D</span> and <span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">x</span> are passed
+as an argument, see below:</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:  [A [path]]=mexLasso(X,D,param);<br>
+%  or:    [A [path]]=mexLasso(X,Q,q,param);<br>
+%<br>
+% Name: mexLasso<br>
+%<br>
+% Description: mexLasso is an efficient implementation of the<br>
+%     homotopy-LARS algorithm for solving the Lasso. <br>
+%     <br>
+%     if the function is called this way [A [path]]=mexLasso(X,D,param),<br>
+%     it aims at addressing the following problems<br>
+%     for all columns x of X, it computes one column alpha of A<br>
+%     that solves<br>
+%       1) when param.mode=0<br>
+%         min_{alpha} ||x-Dalpha||_2^2 s.t. ||alpha||_1 &lt;= lambda<br>
+%       2) when param.mode=1<br>
+%         min_{alpha} ||alpha||_1 s.t. ||x-Dalpha||_2^2 &lt;= lambda<br>
+%       3) when param.mode=2<br>
+%         min_{alpha} 0.5||x-Dalpha||_2^2 + lambda||alpha||_1 +0.5 lambda2||alpha||_2^2<br>
+%<br>
+%     if the function is called this way [A [path]]=mexLasso(X,Q,q,param),<br>
+%     it solves the above optimisation problem, when Q=D'D and q=D'x.<br>
+%<br>
+%     Possibly, when param.pos=true, it solves the previous problems<br>
+%     with positivity constraints on the vectors alpha<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+%         D:  double m x p matrix   (dictionary)<br>
+%               p is the number of elements in the dictionary<br>
+%         param: struct<br>
+%               param.lambda  (parameter)<br>
+%               param.lambda2  (optional parameter for solving the Elastic-Net)<br>
+%                              for mode=0 and mode=1, it adds a ridge on the Gram Matrix<br>
+%               param.L (optional), maximum number of steps of the homotopy algorithm (can<br>
+%                        be used as a stopping criterion)<br>
+%               param.pos (optional, adds non-negativity constraints on the<br>
+%                 coefficients, false by default)<br>
+%               param.mode (see above, by default: 2)<br>
+%               param.numThreads (optional, number of threads for exploiting<br>
+%                 multi-core / multi-cpus. By default, it takes the value -1,<br>
+%                 which automatically selects all the available CPUs/cores).<br>
+%               param.cholesky (optional, default false),  choose between Cholesky <br>
+%                 implementation or one based on the matrix inversion Lemma<br>
+%               param.ols (optional, default false), perform an orthogonal projection<br>
+%                 before returning the solution.<br>
+%               param.max_length_path (optional) maximum length of the path, by default 4*p<br>
+%<br>
+% Output: A: double sparse p x n matrix (output coefficients)<br>
+%         path: optional,  returns the regularisation path for the first signal<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%         - single precision setting (even though the output alpha is double <br>
+%           precision)<br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+<span class="c002">fprintf</span>(<span class="c003">'test mexLasso\n'</span>);<br>
+<span class="c001">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Decomposition of a large number of signals<br>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Data are generated</span><br>
+X=<span class="c002">randn</span>(100,100000);<br>
+X=X./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+D=<span class="c002">randn</span>(100,200);<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+<br>
+<span class="c001">% parameter of the optimization procedure are chosen<br>
+%param.L=20; % not more than 20 non-zeros coefficients (default: min(size(D,1),size(D,2)))</span><br>
+param.lambda=0.15; <span class="c001">% not more than 20 non-zeros coefficients</span><br>
+param.numThreads=-1; <span class="c001">% number of processors/cores to use; the default choice is -1</span><br>
+                     <span class="c001">% and uses all the cores of the machine</span><br>
+param.mode=2;        <span class="c001">% penalized formulation</span><br>
+<br>
+<span class="c002">tic</span><br>
+alpha=mexLasso(X,D,param);<br>
+t=<span class="c002">toc<br>
+fprintf</span>(<span class="c003">'%f signals processed per second\n'</span>,<span class="c002">size</span>(X,2)/t);<br>
+<br>
+<span class="c001">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Regularization path of a single signal <br>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span><br>
+X=<span class="c002">randn</span>(64,1);<br>
+D=<span class="c002">randn</span>(64,10);<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+param.lambda=0;<br>
+[alpha <span class="c002">path</span>]=mexLasso(X,D,param);</td></tr>
+</table>
+<h3 class="subsection" id="sec16">4.5  Function mexLassoWeighted</h3>
+<p>
+This is a fast implementation of a weighted version of LARS [<a href="doc_spams010.html#efron">9</a>]. Given a matrix of signals <span class="c009">X</span>=[<span class="c009">x</span><sup>1</sup>,…,<span class="c009">x</span><sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">m</span> × <span class="c007">n</span></sup>, a matrix of weights <span class="c009">W</span>=[<span class="c009">w</span><sup>1</sup>,…,<span class="c009">w</span><sup><span class="c007">n</span></sup>] ∈ ℝ<sup><span class="c007">p</span> × <span class="c007">n</span></sup>, and a dictionary <span class="c009">D</span> in ℝ<sup><span class="c007">m</span> × <span class="c007">p</span></sup>, depending on the input parameters, the algorithm returns a matrix of coefficients <span class="c009">A</span>=[α<sup>1</sup>,…,α<sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">p</span> × <span class="c007">n</span></sup>,
+such that for every column <span class="c009">x</span> of <span class="c009">X</span>, <span class="c009">w</span> of <span class="c009">W</span>, it computes a column α of <span class="c009">A</span>, which is the solution of
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> ||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup>   s.t.   ||diag(<span class="c009">w</span>)α||<sub>1</sub> ≤ λ,
+    (11)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell">  ||diag(<span class="c009">w</span>)α||<sub>1</sub>   s.t.   ||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup> ≤ λ,
+    (12)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup> + λ ||diag(<span class="c009">w</span>)α||<sub>1</sub>.
+    (13)</td></tr>
+</table><p>
+The implementation has also an option to add <span class="c010">positivity constraints</span> on
+the solutions α. This function is potentially useful for
+implementing efficiently the randomized Lasso of [<a href="doc_spams010.html#meinshausen">28</a>], or reweighted-ℓ<sub>1</sub> schemes [<a href="doc_spams010.html#candes4">4</a>].</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:  A=mexLassoWeighted(X,D,W,param);<br>
+%<br>
+% Name: mexLassoWeighted.  <br>
+%<br>
+% WARNING: This function has not been tested intensively<br>
+%<br>
+% Description: mexLassoWeighted is an efficient implementation of the<br>
+%     LARS algorithm for solving the weighted Lasso. It is optimized<br>
+%     for solving a large number of small or medium-sized <br>
+%     decomposition problem (and not for a single large one).<br>
+%     It first computes the Gram matrix D'D and then perform<br>
+%     a Cholesky-based OMP of the input signals in parallel.<br>
+%     For all columns x of X, and w of W, it computes one column alpha of A<br>
+%     which is the solution of<br>
+%       1) when param.mode=0<br>
+%         min_{alpha} ||x-Dalpha||_2^2   s.t.  <br>
+%                                     ||diag(w)alpha||_1 &lt;= lambda<br>
+%       2) when param.mode=1<br>
+%         min_{alpha} ||diag(w)alpha||_1  s.t.<br>
+%                                        ||x-Dalpha||_2^2 &lt;= lambda<br>
+%       3) when param.mode=2<br>
+%         min_{alpha} 0.5||x-Dalpha||_2^2  +  <br>
+%                                         lambda||diag(w)alpha||_1 <br>
+%     Possibly, when param.pos=true, it solves the previous problems<br>
+%     with positivity constraints on the vectors alpha<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+%         D:  double m x p matrix   (dictionary)<br>
+%               p is the number of elements in the dictionary<br>
+%         W:  double p x n matrix   (weights)<br>
+%         param: struct<br>
+%            param.lambda  (parameter)<br>
+%            param.L (optional, maximum number of elements of each <br>
+%            decomposition)<br>
+%            param.pos (optional, adds positivity constraints on the<br>
+%            coefficients, false by default)<br>
+%            param.mode (see above, by default: 2)<br>
+%            param.numThreads (optional, number of threads for exploiting<br>
+%            multi-core / multi-cpus. By default, it takes the value -1,<br>
+%            which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output:  A: double sparse p x n matrix (output coefficients)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%         - single precision setting (even though the output alpha is double <br>
+%           precision)<br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'test Lasso weighted\n'</span>);<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+<span class="c001">% Data are generated</span><br>
+X=<span class="c002">randn</span>(64,10000);<br>
+X=X./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+D=<span class="c002">randn</span>(64,256);<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+<br>
+<span class="c001">% parameter of the optimization procedure are chosen</span><br>
+param.L=20; <span class="c001">% not more than 20 non-zeros coefficients (default: min(size(D,1),size(D,2)))</span><br>
+param.lambda=0.15; <span class="c001">% not more than 20 non-zeros coefficients</span><br>
+param.numThreads=8; <span class="c001">% number of processors/cores to use; the default choice is -1</span><br>
+                    <span class="c001">% and uses all the cores of the machine</span><br>
+param.mode=2;       <span class="c001">% penalized formulation</span><br>
+<br>
+W=<span class="c002">rand</span>(<span class="c002">size</span>(D,2),<span class="c002">size</span>(X,2));<br>
+<br>
+<span class="c002">tic</span><br>
+alpha=mexLassoWeighted(X,D,W,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+<br>
+fprintf</span>(<span class="c003">'%f signals processed per second\n'</span>,<span class="c002">size</span>(X,2)/t);</td></tr>
+</table>
+<h3 class="subsection" id="sec17">4.6  Function mexLassoMask</h3>
+<p>
+This is a variant of mexLasso with the possibility of adding a mask <span class="c009">B</span>=[β<sup>1</sup>,…,β<sup><span class="c007">n</span></sup>], as in mexOMPMask.
+For every column <span class="c009">x</span> of <span class="c009">X</span>, β of <span class="c009">B</span>, it computes a column α of <span class="c009">A</span>, which is the solution of
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> ||diag(β)(<span class="c009">x</span>−<span class="c009">D</span>α)||<sub>2</sub><sup>2</sup>   s.t.   ||α||<sub>1</sub> ≤ λ,
+    (14)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell">  ||α||<sub>1</sub>   s.t.   ||diag(β)(<span class="c009">x</span>−<span class="c009">D</span>α)||<sub>2</sub><sup>2</sup> ≤ λ</td><td class="dcell"><table class="display"><tr><td class="dcell c012">||β||<sub>0</sub></td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012"><span class="c007">m</span></td></tr>
+</table></td><td class="dcell">,
+    (15)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||diag(β)(<span class="c009">x</span>−<span class="c009">D</span>α)||<sub>2</sub><sup>2</sup> + λ </td><td class="dcell"><table class="display"><tr><td class="dcell c012">||β||<sub>0</sub></td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012"><span class="c007">m</span></td></tr>
+</table></td><td class="dcell">||α||<sub>1</sub> + </td><td class="dcell"><table class="display"><tr><td class="dcell c012">λ<sub>2</sub></td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||α||<sub>2</sub><sup>2</sup>.
+    (16)</td></tr>
+</table><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   A=mexLassoMask(X,D,B,param);<br>
+%<br>
+% Name: mexLassoMask<br>
+%<br>
+% Description: mexLasso is a variant of mexLasso that handles<br>
+%     binary masks. It aims at addressing the following problems<br>
+%     for all columns x of X, and beta of B, it computes one column alpha of A<br>
+%     that solves<br>
+%       1) when param.mode=0<br>
+%         min_{alpha} ||diag(beta)(x-Dalpha)||_2^2 s.t. ||alpha||_1 &lt;= lambda<br>
+%       2) when param.mode=1<br>
+%         min_{alpha} ||alpha||_1 s.t. ||diag(beta)(x-Dalpha)||_2^2 <br>
+%                                                              &lt;= lambda*||beta||_0/m<br>
+%       3) when param.mode=2<br>
+%         min_{alpha} 0.5||diag(beta)(x-Dalpha)||_2^2 +<br>
+%                                                 lambda*(||beta||_0/m)*||alpha||_1 +<br>
+%                                                 (lambda2/2)||alpha||_2^2<br>
+%     Possibly, when param.pos=true, it solves the previous problems<br>
+%     with positivity constraints on the vectors alpha<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+%         D:  double m x p matrix   (dictionary)<br>
+%               p is the number of elements in the dictionary<br>
+%         B:  boolean m x n matrix   (mask)<br>
+%               p is the number of elements in the dictionary<br>
+%         param: struct<br>
+%               param.lambda  (parameter)<br>
+%               param.L (optional, maximum number of elements of each <br>
+%                 decomposition)<br>
+%               param.pos (optional, adds positivity constraints on the<br>
+%                 coefficients, false by default)<br>
+%               param.mode (see above, by default: 2)<br>
+%               param.lambda2  (optional parameter for solving the Elastic-Net)<br>
+%                              for mode=0 and mode=1, it adds a ridge on the Gram Matrix<br>
+%               param.numThreads (optional, number of threads for exploiting<br>
+%                 multi-core / multi-cpus. By default, it takes the value -1,<br>
+%                 which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: A: double sparse p x n matrix (output coefficients)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%         - single precision setting (even though the output alpha is double <br>
+%           precision)<br>
+%<br>
+% Author: Julien Mairal, 2010</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+<span class="c002">fprintf</span>(<span class="c003">'test mexLasso\n'</span>);<br>
+<br>
+<span class="c001">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Decomposition of a large number of signals<br>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Data are generated</span><br>
+X=<span class="c002">randn</span>(100,100);<br>
+X=X./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+D=<span class="c002">randn</span>(100,20);<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+mask=(X &gt; 0); <span class="c001">% generating a binary mask<br>
+<br>
+% parameter of the optimization procedure are chosen<br>
+%param.L=20; % not more than 20 non-zeros coefficients (default: min(size(D,1),size(D,2)))</span><br>
+param.lambda=0.15; <span class="c001">% not more than 20 non-zeros coefficients</span><br>
+param.numThreads=-1; <span class="c001">% number of processors/cores to use; the default choice is -1</span><br>
+                     <span class="c001">% and uses all the cores of the machine</span><br>
+param.mode=2;        <span class="c001">% penalized formulation</span><br>
+<br>
+<span class="c002">tic</span><br>
+alpha=mexLassoMask(X,D,mask,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+<br>
+fprintf</span>(<span class="c003">'%f signals processed per second\n'</span>,<span class="c002">size</span>(X,2)/t);</td></tr>
+</table>
+<h3 class="subsection" id="sec18">4.7  Function mexCD</h3>
+<p>
+Coordinate-descent approach for solving Eq. (<a href="#eq%3Alasso">10</a>) and
+Eq. (<a href="#eq%3Alasso2">9</a>). Note that unlike mexLasso, it is not implemented to solve the Elastic-Net formulation.
+To solve Eq. (<a href="#eq%3Alasso2">9</a>), the algorithm solves a
+sequence of problems of the form (<a href="#eq%3Alasso">10</a>) using simple heuristics.
+Coordinate descent is very simple and in practice very powerful. It performs
+better when the correlation between the dictionary elements is small.</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   A=mexCD(X,D,A0,param);<br>
+%<br>
+% Name: mexCD<br>
+%<br>
+% Description: mexCD addresses l1-decomposition problem with a <br>
+%     coordinate descent type of approach.<br>
+%     It is optimized for solving a large number of small or medium-sized <br>
+%     decomposition problem (and not for a single large one).<br>
+%     It first computes the Gram matrix D'D.<br>
+%     This method is particularly well adapted when there is low <br>
+%     correlation between the dictionary elements and when one can benefit <br>
+%     from a warm restart.<br>
+%     It aims at addressing the two following problems<br>
+%     for all columns x of X, it computes a column alpha of A such that<br>
+%       2) when param.mode=1<br>
+%         min_{alpha} ||alpha||_1 s.t. ||x-Dalpha||_2^2 &lt;= lambda<br>
+%         For this constraint setting, the method solves a sequence of <br>
+%         penalized problems (corresponding to param.mode=2) and looks<br>
+%         for the corresponding Lagrange multplier with a simple but<br>
+%         efficient heuristic.<br>
+%       3) when param.mode=2<br>
+%         min_{alpha} 0.5||x-Dalpha||_2^2 + lambda||alpha||_1 <br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+%         D:  double m x p matrix   (dictionary)<br>
+%               p is the number of elements in the dictionary<br>
+%               All the columns of D should have unit-norm !<br>
+%         A0:  double sparse p x n matrix   (initial guess)<br>
+%         param: struct<br>
+%            param.lambda  (parameter)<br>
+%            param.mode (optional, see above, by default 2)<br>
+%            param.itermax (maximum number of iterations)<br>
+%            param.tol (tolerance parameter)<br>
+%            param.numThreads (optional, number of threads for exploiting<br>
+%            multi-core / multi-cpus. By default, it takes the value -1,<br>
+%            which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: A: double sparse p x n matrix (output coefficients)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%         - single precision setting (even though the output alpha <br>
+%           is double precision)<br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'test mexCD\n'</span>);<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+<span class="c001">% Data are generated</span><br>
+X=<span class="c002">randn</span>(64,100);<br>
+X=X./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+D=<span class="c002">randn</span>(64,100);<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+<br>
+<span class="c001">% parameter of the optimization procedure are chosen</span><br>
+param.lambda=0.015; <span class="c001">% not more than 20 non-zeros coefficients</span><br>
+param.numThreads=4; <span class="c001">% number of processors/cores to use; the default choice is -1</span><br>
+param.mode=2;       <span class="c001">% penalized formulation</span><br>
+<br>
+<span class="c002">tic</span><br>
+alpha=mexLasso(X,D,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc</span><br>
+E=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-D*alpha).^2)+param.lambda*<span class="c002">sum</span>(<span class="c002">abs</span>(alpha)));<br>
+<span class="c002">fprintf</span>(<span class="c003">'%f signals processed per second for LARS\n'</span>,<span class="c002">size</span>(X,2)/t);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Objective function for LARS: %g\n'</span>,E);<br>
+<br>
+param.tol=0.001;<br>
+param.itermax=1000;<br>
+<span class="c002">tic</span><br>
+alpha2=mexCD(X,D,<span class="c002">sparse</span>(<span class="c002">size</span>(alpha,1),<span class="c002">size</span>(alpha,2)),param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+<br>
+fprintf</span>(<span class="c003">'%f signals processed per second for CD\n'</span>,<span class="c002">size</span>(X,2)/t);<br>
+E=<span class="c002">mean</span>(0.5*<span class="c002">sum</span>((X-D*alpha2).^2)+param.lambda*<span class="c002">sum</span>(<span class="c002">abs</span>(alpha2)));<br>
+<span class="c002">fprintf</span>(<span class="c003">'Objective function for CD: %g\n'</span>,E);<br>
+<span class="c002">fprintf</span>(<span class="c003">'With Random Design, CD can be much faster than LARS\n'</span>);</td></tr>
+</table>
+<h3 class="subsection" id="sec19">4.8  Function mexSOMP</h3>
+<p>
+This is a fast implementation of the Simultaneous Orthogonal Matching Pursuit algorithm. Given a set of matrices <span class="c009">X</span>=[<span class="c009">X</span><sup>1</sup>,…,<span class="c009">X</span><sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">m</span> × <span class="c007">N</span></sup>, where the <span class="c009">X</span><sup><span class="c007">i</span></sup>’s are in ℝ<sup><span class="c007">m</span> × <span class="c007">n</span><sub><span class="c007">i</span></sub></sup>, and a dictionary <span class="c009">D</span> in ℝ<sup><span class="c007">m</span> × <span class="c007">p</span></sup>, the algorithm returns a matrix of coefficients <span class="c009">A</span>=[<span class="c009">A</span><sup>1</sup>,…,<span class="c009">A</span><sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">p</span> × <span class="c007">N</span></sup> which is an approximate solution of the following NP-hard problem
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+∀ <span class="c007">i</span>   </td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">A</span><sup><span class="c007">i</span></sup> ∈ ℝ<sup><span class="c007">p</span> × <span class="c007">n</span><sub><span class="c007">i</span></sub></sup></td></tr>
+</table></td><td class="dcell"> ||<span class="c009">X</span><sup><span class="c007">i</span></sup>−<span class="c009">DA</span><sup><span class="c007">i</span></sup>||<sub><span class="c007">F</span></sub><sup>2</sup>   s.t.   ||<span class="c009">A</span><sup><span class="c007">i</span></sup>||<sub>0,∞</sub> ≤ <span class="c007">L</span>.
+    (17)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+∀ <span class="c007">i</span>   </td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">A</span><sup><span class="c007">i</span></sup> ∈ ℝ<sup><span class="c007">p</span> × <span class="c007">n</span><sub><span class="c007">i</span></sub></sup></td></tr>
+</table></td><td class="dcell">  ||<span class="c009">A</span><sup><span class="c007">i</span></sup>||<sub>0,∞</sub>   s.t.   ||<span class="c009">X</span><sup><span class="c007">i</span></sup>−<span class="c009">DA</span><sup><span class="c007">i</span></sup>||<sub><span class="c007">F</span></sub><sup>2</sup> ≤ ε <span class="c007">n</span><sub><span class="c007">i</span></sub>.
+    (18)</td></tr>
+</table><p>
+To be efficient, the method first compute the covariance matrix <span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">D</span>, then for each signal, it computes <span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">X</span><sup><span class="c007">i</span></sup> and performs the decomposition with a Cholesky-based algorithm.</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   alpha=mexSOMP(X,D,list_groups,param);<br>
+%<br>
+% Name: mexSOMP<br>
+%     (this function has not been intensively tested).<br>
+%<br>
+% Description: mexSOMP is an efficient implementation of a<br>
+%     Simultaneous Orthogonal Matching Pursuit algorithm. It is optimized<br>
+%     for solving a large number of small or medium-sized <br>
+%     decomposition problem (and not for a single large one).<br>
+%     It first computes the Gram matrix D'D and then perform<br>
+%     a Cholesky-based OMP of the input signals in parallel.<br>
+%     It aims at addressing the following NP-hard problem<br>
+%<br>
+%     X is a matrix structured in groups of signals, which we denote<br>
+%     by X=[X_1,...,X_n]<br>
+%     <br>
+%     for all matrices X_i of X, <br>
+%         min_{A_i} ||A_i||_{0,infty}  s.t  ||X_i-D A_i||_2^2 &lt;= eps*n_i<br>
+%         where n_i is the number of columns of X_i<br>
+%<br>
+%         or<br>
+%<br>
+%         min_{A_i} ||X_i-D A_i||_2^2  s.t. ||A_i||_{0,infty} &lt;= L<br>
+%         <br>
+%<br>
+% Inputs: X:  double m x N matrix   (input signals)<br>
+%            m is the signal size<br>
+%            N is the total number of signals <br>
+%         D:  double m x p matrix   (dictionary)<br>
+%            p is the number of elements in the dictionary<br>
+%            All the columns of D should have unit-norm !<br>
+%         list_groups : int32 vector containing the indices (starting at 0)<br>
+%            of the first elements of each groups.<br>
+%         param: struct<br>
+%            param.L (maximum number of elements in each decomposition)<br>
+%            param.eps (threshold on the squared l2-norm of the residual<br>
+%            param.numThreads (optional, number of threads for exploiting<br>
+%            multi-core / multi-cpus. By default, it takes the value -1,<br>
+%            which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: alpha: double sparse p x N matrix (output coefficients)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%      - single precision setting (even though the output alpha is double <br>
+%        precision)<br>
+%<br>
+% Author: Julien Mairal, 2010</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'test mexSOMP\n'</span>);<br>
+<br>
+<span class="c001">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Decomposition of a large number of groups <br>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span><br>
+X=<span class="c002">randn</span>(64,10000);<br>
+D=<span class="c002">randn</span>(64,200);<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+ind_groups=int32(0:10:9999); <span class="c001">% indices of the first signals in each group<br>
+<br>
+% parameter of the optimization procedure are chosen</span><br>
+param.L=10; <span class="c001">% not more than 10 non-zeros coefficients</span><br>
+param.<span class="c002">eps</span>=0.1; <span class="c001">% squared norm of the residual should be less than 0.1</span><br>
+param.numThreads=-1; <span class="c001">% number of processors/cores to use; the default choice is -1</span><br>
+                    <span class="c001">% and uses all the cores of the machine</span><br>
+<span class="c002">tic</span><br>
+alpha=mexSOMP(X,D,ind_groups,param);<br>
+t=<span class="c002">toc<br>
+fprintf</span>(<span class="c003">'%f signals processed per second\n'</span>,<span class="c002">size</span>(X,2)/t);</td></tr>
+</table>
+<h3 class="subsection" id="sec20">4.9  Function mexL1L2BCD</h3>
+<p>
+This is a fast implementation of a simultaneous signal decomposition formulation. Given a set of matrices <span class="c009">X</span>=[<span class="c009">X</span><sup>1</sup>,…,<span class="c009">X</span><sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">m</span> × <span class="c007">N</span></sup>, where the <span class="c009">X</span><sup><span class="c007">i</span></sup>’s are in ℝ<sup><span class="c007">m</span> × <span class="c007">n</span><sub><span class="c007">i</span></sub></sup>, and a dictionary <span class="c009">D</span> in ℝ<sup><span class="c007">m</span> × <span class="c007">p</span></sup>, the algorithm returns a matrix of coefficients <span class="c009">A</span>=[<span class="c009">A</span><sup>1</sup>,…,<span class="c009">A</span><sup><span class="c007">n</span></sup>] in ℝ<sup><span class="c007">p</span> × <span class="c007">N</span></sup> which is an approximate solution of the following NP-hard problem
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+∀ <span class="c007">i</span>   </td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">A</span><sup><span class="c007">i</span></sup> ∈ ℝ<sup><span class="c007">p</span> × <span class="c007">n</span><sub><span class="c007">i</span></sub></sup></td></tr>
+</table></td><td class="dcell"> ||<span class="c009">X</span><sup><span class="c007">i</span></sup>−<span class="c009">DA</span><sup><span class="c007">i</span></sup>||<sub><span class="c007">F</span></sub><sup>2</sup>   s.t.   ||<span class="c009">A</span><sup><span class="c007">i</span></sup>||<sub>1,2</sub> ≤ </td><td class="dcell"><table class="display"><tr><td class="dcell c012">λ</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012"><span class="c007">n</span><sub><span class="c007">i</span></sub></td></tr>
+</table></td><td class="dcell">.
+    (19)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+∀ <span class="c007">i</span>   </td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">A</span><sup><span class="c007">i</span></sup> ∈ ℝ<sup><span class="c007">p</span> × <span class="c007">n</span><sub><span class="c007">i</span></sub></sup></td></tr>
+</table></td><td class="dcell">  ||<span class="c009">A</span><sup><span class="c007">i</span></sup>||<sub>1,2</sub>   s.t.   ||<span class="c009">X</span><sup><span class="c007">i</span></sup>−<span class="c009">DA</span><sup><span class="c007">i</span></sup>||<sub><span class="c007">F</span></sub><sup>2</sup> ≤ λ <span class="c007">n</span><sub><span class="c007">i</span></sub>.
+    (20)</td></tr>
+</table><p>
+To be efficient, the method first compute the covariance matrix <span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">D</span>, then for each signal, it computes <span class="c009">D</span><sup><span class="c007">T</span></sup><span class="c009">X</span><sup><span class="c007">i</span></sup> and performs the decomposition with a Cholesky-based algorithm.</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   alpha=mexL1L2BCD(X,D,alpha0,list_groups,param);<br>
+%<br>
+% Name: mexL1L2BCD<br>
+%     (this function has not been intensively tested).<br>
+%<br>
+% Description: mexL1L2BCD is a solver for a <br>
+%     Simultaneous signal decomposition formulation based on block <br>
+%     coordinate descent.<br>
+%<br>
+%     X is a matrix structured in groups of signals, which we denote<br>
+%     by X=[X_1,...,X_n]<br>
+%     <br>
+%     if param.mode=2, it solves<br>
+%         for all matrices X_i of X, <br>
+%         min_{A_i} 0.5||X_i-D A_i||_2^2 + lambda/sqrt(n_i)||A_i||_{1,2}  <br>
+%         where n_i is the number of columns of X_i<br>
+%     if param.mode=1, it solves<br>
+%         min_{A_i} ||A_i||_{1,2} s.t. ||X_i-D A_i||_2^2  &lt;= n_i lambda<br>
+%         <br>
+%<br>
+% Inputs: X:  double m x N matrix   (input signals)<br>
+%            m is the signal size<br>
+%            N is the total number of signals <br>
+%         D:  double m x p matrix   (dictionary)<br>
+%            p is the number of elements in the dictionary<br>
+%         alpha0: double dense p x N matrix (initial solution)<br>
+%         list_groups : int32 vector containing the indices (starting at 0)<br>
+%            of the first elements of each groups.<br>
+%         param: struct<br>
+%            param.lambda (regularization parameter)<br>
+%            param.mode (see above, by default 2)<br>
+%            param.itermax (maximum number of iterations, by default 100)<br>
+%            param.tol (tolerance parameter, by default 0.001)<br>
+%            param.numThreads (optional, number of threads for exploiting<br>
+%            multi-core / multi-cpus. By default, it takes the value -1,<br>
+%            which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: alpha: double sparse p x N matrix (output coefficients)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%      - single precision setting (even though the output alpha is double <br>
+%        precision)<br>
+%<br>
+% Author: Julien Mairal, 2010</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+<br>
+<span class="c002">fprintf</span>(<span class="c003">'test mexL1L2BCD\n'</span>);<br>
+<span class="c001">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%<br>
+% Decomposition of a large number of groups <br>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span><br>
+X=<span class="c002">randn</span>(64,100);<br>
+D=<span class="c002">randn</span>(64,200);<br>
+D=D./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(D.^2)),[<span class="c002">size</span>(D,1) 1]);<br>
+ind_groups=int32(0:10:<span class="c002">size</span>(X,2)-1); <span class="c001">% indices of the first signals in each group<br>
+<br>
+% parameter of the optimization procedure are chosen</span><br>
+param.itermax=100;<br>
+param.tol=1e-3;<br>
+param.mode=2; <span class="c001">% penalty mode</span><br>
+param.lambda=0.15; <span class="c001">% squared norm of the residual should be less than 0.1</span><br>
+param.numThreads=-1; <span class="c001">% number of processors/cores to use; the default choice is -1</span><br>
+                    <span class="c001">% and uses all the cores of the machine</span><br>
+<span class="c002">tic</span><br>
+alpha0=<span class="c002">zeros</span>(<span class="c002">size</span>(D,2),<span class="c002">size</span>(X,2));<br>
+alpha=mexL1L2BCD(X,D,alpha0,ind_groups,param);<br>
+t=<span class="c002">toc<br>
+fprintf</span>(<span class="c003">'%f signals processed per second\n'</span>,<span class="c002">size</span>(X,2)/t);</td></tr>
+</table>
+<h3 class="subsection" id="sec21">4.10  Function mexSparseProject</h3>
+<p>
+This is a multi-purpose function, implementing fast algorithms for projecting
+on convex sets, but it also solves the fused lasso signal approximation
+problem. The proposed method is detailed in [<a href="doc_spams010.html#mairal9">21</a>]. The main problems
+addressed by this function are the following: Given a matrix
+<span class="c009">U</span>=[<span class="c009">u</span><sub>1</sub>,…,<span class="c009">u</span><sub><span class="c007">n</span></sub>] in ℝ<sup><span class="c007">m</span> × <span class="c007">n</span></sup>, it finds a matrix
+<span class="c009">V</span>=[<span class="c009">v</span><sub>1</sub>,…,<span class="c009">v</span><sub><span class="c007">n</span></sub>] in ℝ<sup><span class="c007">m</span> × <span class="c007">n</span></sup> so that for all column <span class="c009">u</span> of <span class="c009">U</span>,
+it computes a column <span class="c009">v</span> of <span class="c009">V</span> solving
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">v</span> ∈ ℝ<sup><span class="c007">m</span></sup></td></tr>
+</table></td><td class="dcell"> ||<span class="c009">u</span>−<span class="c009">v</span>||<sub>2</sub><sup>2</sup>    s.t.   ||<span class="c009">v</span>||<sub>1</sub> ≤ τ,
+    (21)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">v</span> ∈ ℝ<sup><span class="c007">m</span></sup></td></tr>
+</table></td><td class="dcell"> ||<span class="c009">u</span>−<span class="c009">v</span>||<sub>2</sub><sup>2</sup>    s.t.   λ<sub>1</sub>||<span class="c009">v</span>||<sub>1</sub> +λ<sub>2</sub>||<span class="c009">v</span>||<sub>2</sub><sup>2</sup>≤ τ,
+    (22)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">v</span> ∈ ℝ<sup><span class="c007">m</span></sup></td></tr>
+</table></td><td class="dcell"> ||<span class="c009">u</span>−<span class="c009">v</span>||<sub>2</sub><sup>2</sup>    s.t.   λ<sub>1</sub>||<span class="c009">v</span>||<sub>1</sub> +λ<sub>2</sub>||<span class="c009">v</span>||<sub>2</sub><sup>2</sup>+ λ<sub>3</sub> <span class="c007">FL</span>(<span class="c009">v</span>) ≤ τ,
+    (23)</td></tr>
+</table><p>
+or
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">v</span> ∈ ℝ<sup><span class="c007">m</span></sup></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||<span class="c009">u</span>−<span class="c009">v</span>||<sub>2</sub><sup>2</sup> + λ<sub>1</sub>||<span class="c009">v</span>||<sub>1</sub> +λ<sub>2</sub>||<span class="c009">v</span>||<sub>2</sub><sup>2</sup>+ λ<sub>3</sub> <span class="c007">FL</span>(<span class="c009">v</span>).
+    (24)</td></tr>
+</table><p>
+Note that for the two last cases, the method performs a small approximation.
+The method follows the regularization path, goes from one kink to another, and
+stop whenever the constraint is not satisfied anymore. The solution returned
+by the algorithm is the one obtained at the last kink of the regularization path,
+which is in practice close, but not exactly the same as the solution.
+This will be corrected in a future release of the toolbox.</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:  V=mexSparseProject(U,param);<br>
+%<br>
+% Name: mexSparseProject<br>
+%<br>
+% Description: mexSparseProject solves various optimization <br>
+%     problems, including projections on a few convex sets.<br>
+%     It aims at addressing the following problems<br>
+%     for all columns u of U in parallel<br>
+%       1) when param.mode=1 (projection on the l1-ball)<br>
+%           min_v ||u-v||_2^2  s.t.  ||v||_1 &lt;= thrs<br>
+%       2) when param.mode=2<br>
+%           min_v ||u-v||_2^2  s.t. ||v||_2^2 + lamuda1||v||_1 &lt;= thrs<br>
+%       3) when param.mode=3<br>
+%           min_v ||u-v||_2^2  s.t  ||v||_1 + 0.5lamuda1||v||_2^2 &lt;= thrs <br>
+%       4) when param.mode=4<br>
+%           min_v 0.5||u-v||_2^2 + lamuda1||v||_1  s.t  ||v||_2^2 &lt;= thrs<br>
+%       5) when param.mode=5<br>
+%           min_v 0.5||u-v||_2^2 + lamuda1||v||_1 +lamuda2 FL(v) + ... <br>
+%                                                   0.5lamuda_3 ||v||_2^2<br>
+%          where FL denotes a "fused lasso" regularization term.<br>
+%       6) when param.mode=6<br>
+%          min_v ||u-v||_2^2 s.t lamuda1||v||_1 +lamuda2 FL(v) + ...<br>
+%                                             0.5lamuda3||v||_2^2 &lt;= thrs<br>
+%           <br>
+%        When param.pos=true and param.mode &lt;= 4,<br>
+%        it solves the previous problems with positivity constraints <br>
+%<br>
+% Inputs: U:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to project<br>
+%         param: struct<br>
+%           param.thrs (parameter)<br>
+%           param.lambda1 (parameter)<br>
+%           param.lambda2 (parameter)<br>
+%           param.lambda3 (parameter)<br>
+%           param.mode (see above)<br>
+%           param.pos (optional, false by default)<br>
+%           param.numThreads (optional, number of threads for exploiting<br>
+%             multi-core / multi-cpus. By default, it takes the value -1,<br>
+%             which automatically selects all the available CPUs/cores).<br>
+%<br>
+% Output: V: double m x n matrix (output matrix)<br>
+%<br>
+% Note: this function admits a few experimental usages, which have not<br>
+%     been extensively tested:<br>
+%         - single precision setting <br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">clear</span> <span class="c002">all</span>;<br>
+<span class="c002">randn</span>(<span class="c003">'seed'</span>,0);<br>
+<span class="c001">% Data are generated</span><br>
+X=<span class="c002">randn</span>(20000,100);<br>
+X=X./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+<br>
+<span class="c001">% parameter of the optimization procedure are chosen</span><br>
+param.numThreads=-1; <span class="c001">% number of processors/cores to use; the default choice is -1</span><br>
+                    <span class="c001">% and uses all the cores of the machine</span><br>
+<br>
+param.pos=0;<br>
+param.mode=1;       <span class="c001">% projection on the l1 ball</span><br>
+param.thrs=2;<br>
+<span class="c002">tic</span><br>
+X1=mexSparseProject(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+fprintf</span>(<span class="c003">'%f signals of size %d projected per second\n'</span>,<span class="c002">size</span>(X,2)/t,<span class="c002">size</span>(X,1));<br>
+<span class="c002">fprintf</span>(<span class="c003">'Checking constraint: %f, %f\n'</span>,<span class="c002">min</span>(<span class="c002">sum</span>(<span class="c002">abs</span>(X1))),<span class="c002">max</span>(<span class="c002">sum</span>(<span class="c002">abs</span>(X1))));<br>
+<br>
+<br>
+param.mode=2;       <span class="c001">% projection on the Elastic-Net</span><br>
+param.lambda1=0.15;<br>
+<br>
+<span class="c002">tic</span><br>
+X1=mexSparseProject(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+fprintf</span>(<span class="c003">'%f signals of size %d projected per second\n'</span>,<span class="c002">size</span>(X,2)/t,<span class="c002">size</span>(X,1));<br>
+constraints=<span class="c002">sum</span>((X1.^2))+param.lambda1*<span class="c002">sum</span>(<span class="c002">abs</span>(X1));<br>
+<span class="c002">fprintf</span>(<span class="c003">'Checking constraint: %f, %f\n'</span>,<span class="c002">min</span>(constraints),<span class="c002">max</span>(constraints));<br>
+<br>
+param.mode=6;       <span class="c001">% projection on the FLSA</span><br>
+param.lambda1=0.7;<br>
+param.lambda2=0.7;<br>
+param.lambda3=1.0;<br>
+<br>
+X=<span class="c002">rand</span>(2000,100);<br>
+X=X./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+<br>
+<span class="c002">tic</span><br>
+X1=mexSparseProject(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+fprintf</span>(<span class="c003">'%f signals of size %d projected per second\n'</span>,<span class="c002">size</span>(X,2)/t,<span class="c002">size</span>(X,1));<br>
+constraints=0.5*param.lambda3*<span class="c002">sum</span>(X1.^2)+param.lambda1*<span class="c002">sum</span>(<span class="c002">abs</span>(X1))+param.lambda2*<span class="c002">sum</span>(<span class="c002">abs</span>(X1(2:<span class="c002">end</span>,:)-X1(1:<span class="c002">end</span>-1,:)));<br>
+<span class="c002">fprintf</span>(<span class="c003">'Checking constraint: %f, %f\n'</span>,<span class="c002">mean</span>(constraints),<span class="c002">max</span>(constraints));<br>
+<span class="c002">fprintf</span>(<span class="c003">'Projection is approximate (stops at a kink)\n'</span>,<span class="c002">mean</span>(constraints),<span class="c002">max</span>(constraints));<br>
+<br>
+param.mode=6;       <span class="c001">% projection on the FLSA</span><br>
+param.lambda1=0.7;<br>
+param.lambda2=0.7;<br>
+param.lambda3=1.0;<br>
+<br>
+X=<span class="c002">rand</span>(2000,100);<br>
+X=X./repmat(<span class="c002">sqrt</span>(<span class="c002">sum</span>(X.^2)),[<span class="c002">size</span>(X,1) 1]);<br>
+<br>
+<span class="c002">tic</span><br>
+X1=mexSparseProject(X,param);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+fprintf</span>(<span class="c003">'%f signals of size %d projected per second\n'</span>,<span class="c002">size</span>(X,2)/t,<span class="c002">size</span>(X,1));<br>
+constraints=0.5*param.lambda3*<span class="c002">sum</span>(X1.^2)+param.lambda1*<span class="c002">sum</span>(<span class="c002">abs</span>(X1))+param.lambda2*<span class="c002">sum</span>(<span class="c002">abs</span>(X1(2:<span class="c002">end</span>,:)-X1(1:<span class="c002">end</span>-1,:)));<br>
+<span class="c002">fprintf</span>(<span class="c003">'Checking constraint: %f, %f\n'</span>,<span class="c002">mean</span>(constraints),<span class="c002">max</span>(constraints));<br>
+<span class="c002">fprintf</span>(<span class="c003">'Projection is approximate (stops at a kink)\n'</span>,<span class="c002">mean</span>(constraints),<span class="c002">max</span>(constraints));</td></tr>
+</table>
+<h3 class="subsection" id="sec22">4.11  Function mexDecompSimplex</h3>
+<p>
+The function implements an active-set algorithm [<a href="doc_spams010.html#ChenCVPR">37</a>] for solving
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">   </td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012">α ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> </td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||<span class="c009">x</span>−<span class="c009">D</span>α||<sub>2</sub><sup>2</sup>   s.t.   α ≥ 0   and   </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">p</span></td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">j</span>=1</td></tr>
+</table></td><td class="dcell"> α[<span class="c007">j</span>] = 1.
+</td></tr>
+</table><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:  [A]=mexDecompSimplex(X,Z,param);<br>
+%<br>
+% Name: mexDecompSimplex<br>
+%<br>
+% Description: documentation to appear soon<br>
+%<br>
+% Inputs: X:  double m x n matrix   (input signals)<br>
+%               m is the signal size<br>
+%               n is the number of signals to decompose<br>
+% Output: Z: double %<br>
+%<br>
+% Author: Yuansi Chen and Julien Mairal, 2014</span></td></tr>
+</table>
+<hr>
+<a href="doc_spams004.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams006.html"><img src="next_motif.gif" alt="Next"></a>
+</body>
+</html>

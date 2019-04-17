@@ -1,0 +1,41 @@
+This file explains how to use the precompiled SPAMS library for Matlab.
+
+## Linux users
+
+1. Extract the toolbox:
+```
+VERSION="2.6"
+DA="2017-02-22"
+TARGET="Linux"
+tar -zxvf spams-Matlab-precompiled-v$VERSION-$DA-$TARGET.tar.gz
+```
+
+2. Run Matlab in the extracted directory with the command `start_spams` to
+load SPAMS precompiled functions and set a few environment variables:
+```
+cd spams-matlab-v$VERSION
+matlab -r "start_spams"
+```
+  Or directly run the command `start_spams` in Matlab. A few examples are
+  available in the subdirectory [test_release](./test_release).
+
+
+## MacOS users
+
+In a terminal
+1. Extract the toolbox:
+```
+VERSION="2.6"
+DA="2017-02-22"
+TARGET="MacOSX-10.9.5"
+tar -zxvf spams-matlab-precompiled-v$VERSION-$DA-$TARGET.tar.gz
+```
+
+2. Run Matlab in the extracted directory with the command `start_spams` to
+load SPAMS precompiled functions and set a few environment variables:
+```
+cd spams-matlab-v$VERSION
+matlab -r "start_spams"
+```
+  Or directly run the command `start_spams` in Matlab. A few examples are
+  available in the subdirectory [test_release](./test_release).

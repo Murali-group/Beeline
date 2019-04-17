@@ -8,6 +8,8 @@ import src.grnboost2Runner as GRNBOOST2
 import src.leapRunner as LEAP
 import src.jump3Runner as JUMP3
 import src.ppcorRunner as PPCOR
+import src.grisliRunner as GRISLI
+import src.scingeRunner as SCINGE
 
 from pathlib import Path
 
@@ -21,7 +23,9 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'GRNBOOST2':GRNBOOST2.generateInputs,
                'LEAP':LEAP.generateInputs,
                'JUMP3':JUMP3.generateInputs,
-               'PPCOR':PPCOR.generateInputs}
+               'PPCOR':PPCOR.generateInputs,
+               'GRISLI':GRISLI.generateInputs,
+               'SCINGE':SCINGE.generateInputs}
 
 
 
@@ -36,7 +40,9 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'GRNBOOST2':GRNBOOST2.run,
             'LEAP':LEAP.run,
             'JUMP3':JUMP3.run,
-            'PPCOR':PPCOR.run}
+            'PPCOR':PPCOR.run,
+            'GRISLI':GRISLI.run,
+            'SCINGE':SCINGE.run}
 
 
 
@@ -49,7 +55,9 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'GRNBOOST2':GRNBOOST2.parseOutput,
             'LEAP': LEAP.parseOutput,
             'JUMP3': JUMP3.parseOutput,
-            'PPCOR':PPCOR.parseOutput}
+            'PPCOR':PPCOR.parseOutput,
+            'GRISLI':GRISLI.parseOutput,
+             'SCINGE':SCINGE.parseOutput}
 
 
 

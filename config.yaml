@@ -17,7 +17,7 @@ input_settings:
     #   pt_filename: a file containing pseudotime ordering
     #
     datasets:
-        - name: "HSC"
+        - name: "dataset1"
           ex_filename: "ExpressionData.csv"
           pt_filename: "PseudoTime.csv"
           trueEdges: "refNetwork.tsv"
@@ -70,22 +70,45 @@ input_settings:
               should_run: [True]
               
               
+              
         - name: "GRNBOOST2"
           params: 
               should_run: [True]
               
+              
+              
         - name: "LEAP"
           params: 
               should_run: [True]
+              
+              
                             
-        - name: "JUMP3"
-          params: 
-              should_run: [True]
+        #- name: "JUMP3"
+        #  params: 
+        #      should_run: [True]
+              
+              
               
         - name: "PPCOR"
           params: 
               should_run: [True]
               pVal: [0.01]
+              
+              
+              
+        - name: "GRISLI"
+          params: 
+              should_run: [True]
+              L: [10]
+              R: [1000]
+              alphaMin: [0.3]
+
+
+        - name: "SCINGE"
+          params: 
+              should_run: [True]
+
+
 
 # Output Settings: initialize base output folder names
 output_settings:

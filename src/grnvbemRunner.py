@@ -5,7 +5,7 @@ import numpy as np
 
 def generateInputs(RunnerObj):
     '''
-    Function to generate desired inputs for SCODE.
+    Function to generate desired inputs for GRNVBEM.
     If the folder/files under RunnerObj.datadir exist, 
     this function will not do anything.
     '''

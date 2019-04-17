@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.23">
+
+<META name="Author" content="Julien Mairal">
+<link rel="stylesheet" href="doc_spams.css"><link rel="stylesheet" type="text/css" href="doc_spams.css">
+<title>A few Functions for manipulating images</title>
+</head>
+<body>
+<a href="doc_spams006.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams008.html"><img src="next_motif.gif" alt="Next"></a>
+<hr>
+<h2 class="section" id="sec44">6  A few Functions for manipulating images</h2>
+<ul>
+<li><a href="doc_spams007.html#sec45">Function mexExtractPatches</a>
+</li><li><a href="doc_spams007.html#sec46">Function mexCombinePatches</a>
+</li><li><a href="doc_spams007.html#sec47">Function mexConvFistaFlat</a>
+</li></ul>
+<p>
+This functions are not well documented yet
+</p>
+<h3 class="subsection" id="sec45">6.1  Function mexExtractPatches</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   X =mexExtractPatches(I,n,step);<br>
+%<br>
+% Name: mexExtractPatches<br>
+%<br>
+% Description: Extract n x n patches spaced every ``step'' pixels from <br>
+% an image I of size nx x ny x nchannels<br>
+%<br>
+% Inputs: I:  double nx x ny x nchannels   <br>
+%<br>
+% Output: X: double dense matrix<br>
+%<br>
+% Author: Julien Mairal, 2014</span></td></tr>
+</table>
+<h3 class="subsection" id="sec46">6.2  Function mexCombinePatches</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   I =mexCombinePatches(X,I0,n,lambda,step,normalize);<br>
+%<br>
+% Name: mexCombinePatches<br>
+%<br>
+% Description: Combine patches extracted with mexExtractPatches into a new image <br>
+%              I = lambda I0 + combined(X) if normalize, averaging is<br>
+%              performed; otherwise the patches are just summed.<br>
+%<br>
+% Inputs: I0:  double nx x ny x nchannels   <br>
+%<br>
+% Output: I: double nx x ny x nchannels <br>
+%<br>
+% Author: Julien Mairal, 2014</span></td></tr>
+</table>
+<h3 class="subsection" id="sec47">6.3  Function mexConvFistaFlat</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   alpha =mexConvFistaFlat(I,D,alpha0,param);<br>
+%<br>
+% Name: mexConvFistaFlat<br>
+%<br>
+% Description: performs convolutional sparse encoding of an<br>
+%              image I with a local dictionary D, using FISTA<br>
+%              and similar options as mexFistaFlat<br>
+%<br>
+% Inputs: I:  double nx x ny x nchannels   <br>
+%         D:  dictionary  <br>
+%         alpha0: initial weights  <br>
+%<br>
+% Output: alpha: output coefficients<br>
+%<br>
+% Author: Julien Mairal, 2014</span></td></tr>
+</table>
+<hr>
+<a href="doc_spams006.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams008.html"><img src="next_motif.gif" alt="Next"></a>
+</body>
+</html>

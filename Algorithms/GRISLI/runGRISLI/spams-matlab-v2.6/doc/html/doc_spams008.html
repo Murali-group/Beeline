@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.23">
+
+<META name="Author" content="Julien Mairal">
+<link rel="stylesheet" href="doc_spams.css"><link rel="stylesheet" type="text/css" href="doc_spams.css">
+<title>Miscellaneous Functions</title>
+</head>
+<body>
+<a href="doc_spams007.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams009.html"><img src="next_motif.gif" alt="Next"></a>
+<hr>
+<h2 class="section" id="sec48">7  Miscellaneous Functions</h2>
+<ul>
+<li><a href="doc_spams008.html#sec49">Function mexConjGrad</a>
+</li><li><a href="doc_spams008.html#sec50">Function mexBayer</a>
+</li><li><a href="doc_spams008.html#sec51">Function mexCalcAAt</a>
+</li><li><a href="doc_spams008.html#sec52">Function mexCalcXAt</a>
+</li><li><a href="doc_spams008.html#sec53">Function mexCalcXY</a>
+</li><li><a href="doc_spams008.html#sec54">Function mexCalcXYt</a>
+</li><li><a href="doc_spams008.html#sec55">Function mexCalcXtY</a>
+</li><li><a href="doc_spams008.html#sec56">Function mexInvSym</a>
+</li><li><a href="doc_spams008.html#sec57">Function mexNormalize</a>
+</li><li><a href="doc_spams008.html#sec58">Function mexSort</a>
+</li><li><a href="doc_spams008.html#sec59">Function displayPatches</a>
+</li><li><a href="doc_spams008.html#sec60">Function mexCountPathsDAG</a>
+</li><li><a href="doc_spams008.html#sec61">Function mexRemoveCyclesGraph</a>
+</li><li><a href="doc_spams008.html#sec62">Function mexCountConnexComponents</a>
+</li><li><a href="doc_spams008.html#sec63">Function mexGraphOfGroupStruct</a>
+</li><li><a href="doc_spams008.html#sec64">Function mexGroupStructOfString</a>
+</li><li><a href="doc_spams008.html#sec65">Function mexReadGroupStruct</a>
+</li><li><a href="doc_spams008.html#sec66">Function mexTreeOfGroupStruct</a>
+</li><li><a href="doc_spams008.html#sec67">Function mexSimpleGroupTree</a>
+</li></ul>
+<h3 class="subsection" id="sec49">7.1  Function mexConjGrad</h3>
+<p>Implementation of a conjugate gradient for solving a linear system <span class="c009">Ax</span>=<span class="c009">b</span>
+when <span class="c009">A</span> is positive definite. In some cases, it is faster than the Matlab
+function <code>pcg</code>, especially when the library uses the Intel Math Kernel Library.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   x =mexConjGrad(A,b,x0,tol,itermax)<br>
+%<br>
+% Name: mexConjGrad<br>
+%<br>
+% Description: Conjugate gradient algorithm, sometimes faster than the <br>
+%    equivalent Matlab function pcg. In order to solve Ax=b;<br>
+%<br>
+% Inputs: A:  double square n x n matrix. HAS TO BE POSITIVE DEFINITE<br>
+%         b:  double vector of length n.<br>
+%         x0: double vector of length n. (optional) initial guess.<br>
+%         tol: (optional) tolerance.<br>
+%         itermax: (optional) maximum number of iterations.<br>
+%<br>
+% Output: x: double vector of length n.<br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">A=<span class="c002">randn</span>(5000,500);<br>
+A=A<span class="c003">'*A;<br>
+b=ones(500,1);<br>
+x0=b;<br>
+tol=1e-4;<br>
+itermax=0.5*length(b);<br>
+<br>
+tic<br>
+for ii = 1:20<br>
+x1 = mexConjGrad(A,b,x0,tol,itermax);<br>
+end<br>
+t=toc;<br>
+fprintf('</span>mex-file time: <span class="c001">%fs\n',t);</span><br>
+<br>
+<span class="c002">tic<br>
+for</span> ii = 1:20<br>
+x2 = pcg(A,b);<br>
+<span class="c002">end</span><br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'Matlab time: %fs\n'</span>,t);<br>
+<span class="c002">sum</span>((x1(:)-x2(:)).^2)</td></tr>
+</table>
+<h3 class="subsection" id="sec50">7.2  Function mexBayer</h3>
+<p>Apply a Bayer pattern to an input image
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   x =mexConjGrad(A,b,x0,tol,itermax)<br>
+%<br>
+% Name: mexConjGrad<br>
+%<br>
+% Description: Conjugate gradient algorithm, sometimes faster than the <br>
+%    equivalent Matlab function pcg. In order to solve Ax=b;<br>
+%<br>
+% Inputs: A:  double square n x n matrix. HAS TO BE POSITIVE DEFINITE<br>
+%         b:  double vector of length n.<br>
+%         x0: double vector of length n. (optional) initial guess.<br>
+%         tol: (optional) tolerance.<br>
+%         itermax: (optional) maximum number of iterations.<br>
+%<br>
+% Output: x: double vector of length n.<br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">A=<span class="c002">randn</span>(5000,500);<br>
+A=A<span class="c003">'*A;<br>
+b=ones(500,1);<br>
+x0=b;<br>
+tol=1e-4;<br>
+itermax=0.5*length(b);<br>
+<br>
+tic<br>
+for ii = 1:20<br>
+x1 = mexConjGrad(A,b,x0,tol,itermax);<br>
+end<br>
+t=toc;<br>
+fprintf('</span>mex-file time: <span class="c001">%fs\n',t);</span><br>
+<br>
+<span class="c002">tic<br>
+for</span> ii = 1:20<br>
+x2 = pcg(A,b);<br>
+<span class="c002">end</span><br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'Matlab time: %fs\n'</span>,t);<br>
+<span class="c002">sum</span>((x1(:)-x2(:)).^2)</td></tr>
+</table>
+<h3 class="subsection" id="sec51">7.3  Function mexCalcAAt</h3>
+<p>For an input sparse matrix <span class="c009">A</span>, this function returns <span class="c009">AA</span><sup><span class="c007">T</span></sup>. For some reasons, when <span class="c009">A</span> has a lot more columns than rows, this function can be much faster than the equivalent Matlab command <code>X*A'</code>.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   AAt =mexCalcAAt(A);<br>
+%<br>
+% Name: mexCalcAAt<br>
+%<br>
+% Description: Compute efficiently AAt = A*A', when A is sparse <br>
+%   and has a lot more columns than rows. In some cases, it is<br>
+%   up to 20 times faster than the equivalent Matlab expression<br>
+%   AAt=A*A';<br>
+%<br>
+% Inputs: A:  double sparse m x n matrix   <br>
+%<br>
+% Output: AAt: double m x m matrix <br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">A=sprand(200,200000,0.05);<br>
+<br>
+<span class="c002">tic</span><br>
+AAt=mexCalcAAt(A);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'mex-file time: %fs\n'</span>,t);<br>
+<br>
+<span class="c002">tic</span><br>
+AAt2=A*A<span class="c003">';<br>
+t=toc;<br>
+fprintf('</span>matlab time: <span class="c001">%fs\n',t);</span><br>
+<br>
+<span class="c002">sum</span>((AAt(:)-AAt2(:)).^2)</td></tr>
+</table>
+<h3 class="subsection" id="sec52">7.4  Function mexCalcXAt</h3>
+<p>
+For an input sparse matrix <span class="c009">A</span> and a matrix <span class="c009">X</span>, this function returns <span class="c009">XA</span><sup><span class="c007">T</span></sup>. For some reasons, when <span class="c009">A</span> has a lot more columns than rows, this function can be much faster than the equivalent Matlab command <code>X*A'</code>.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   XAt =mexCalcXAt(X,A);<br>
+%<br>
+% Name: mexCalcXAt<br>
+%<br>
+% Description: Compute efficiently XAt = X*A', when A is sparse and has a <br>
+%   lot more columns than rows. In some cases, it is up to 20 times <br>
+%   faster than the equivalent Matlab expression XAt=X*A';<br>
+%<br>
+% Inputs: X:  double m x n matrix<br>
+%         A:  double sparse p x n matrix   <br>
+%<br>
+% Output: XAt: double m x p matrix <br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">X=<span class="c002">randn</span>(64,200000);<br>
+A=sprand(200,200000,0.05);<br>
+<br>
+<span class="c002">tic</span><br>
+XAt=mexCalcXAt(X,A);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'mex-file time: %fs\n'</span>,t);<br>
+<br>
+<span class="c002">tic</span><br>
+XAt2=X*A<span class="c003">';<br>
+t=toc;<br>
+fprintf('</span>mex-file time: <span class="c001">%fs\n',t);</span><br>
+<br>
+<span class="c002">sum</span>((XAt(:)-XAt2(:)).^2)</td></tr>
+</table>
+<h3 class="subsection" id="sec53">7.5  Function mexCalcXY</h3>
+<p>
+For two input matrices <span class="c009">X</span> and <span class="c009">Y</span>, this function returns <span class="c009">XY</span>.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   Z =mexCalcXY(X,Y);<br>
+%<br>
+% Name: mexCalcXY<br>
+%<br>
+% Description: Compute Z=XY using the BLAS library used by SPAMS.<br>
+%<br>
+% Inputs: X:  double m x n matrix<br>
+%         Y:  double n x p matrix   <br>
+%<br>
+% Output: Z: double m x p matrix <br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">X=<span class="c002">randn</span>(64,200);<br>
+Y=<span class="c002">randn</span>(200,20000);<br>
+<br>
+<span class="c002">tic</span><br>
+XY=mexCalcXY(X,Y);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'mex-file time: %fs\n'</span>,t);<br>
+<br>
+<span class="c002">tic</span><br>
+XY2=X*Y;<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'mex-file time: %fs\n'</span>,t);<br>
+<br>
+<span class="c002">sum</span>((XY(:)-XY2(:)).^2)</td></tr>
+</table>
+<h3 class="subsection" id="sec54">7.6  Function mexCalcXYt</h3>
+<p>
+For two input matrices <span class="c009">X</span> and <span class="c009">Y</span>, this function returns <span class="c009">XY</span><sup><span class="c007">T</span></sup>.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   Z =mexCalcXYt(X,Y);<br>
+%<br>
+% Name: mexCalcXYt<br>
+%<br>
+% Description: Compute Z=XY' using the BLAS library used by SPAMS.<br>
+%<br>
+% Inputs: X:  double m x n matrix<br>
+%         Y:  double p x n matrix   <br>
+%<br>
+% Output: Z: double m x p matrix <br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">X=<span class="c002">randn</span>(64,200);<br>
+Y=<span class="c002">randn</span>(200,20000)<span class="c003">';<br>
+<br>
+tic<br>
+XYt=mexCalcXYt(X,Y);<br>
+t=toc;<br>
+fprintf('</span>mex-file time: <span class="c001">%fs\n',t);</span><br>
+<br>
+<br>
+<span class="c002">tic</span><br>
+XYt2=X*Y<span class="c003">';<br>
+t=toc;<br>
+fprintf('</span>matlab-file time: <span class="c001">%fs\n',t);</span><br>
+<br>
+<span class="c002">sum</span>((XYt(:)-XYt2(:)).^2)</td></tr>
+</table>
+<h3 class="subsection" id="sec55">7.7  Function mexCalcXtY</h3>
+<p>
+For two input matrices <span class="c009">X</span> and <span class="c009">Y</span>, this function returns <span class="c009">X</span><sup><span class="c007">T</span></sup><span class="c009">Y</span>.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   Z =mexCalcXtY(X,Y);<br>
+%<br>
+% Name: mexCalcXtY<br>
+%<br>
+% Description: Compute Z=X'Y using the BLAS library used by SPAMS.<br>
+%<br>
+% Inputs: X:  double n x m matrix<br>
+%         Y:  double n x p matrix   <br>
+%<br>
+% Output: Z: double m x p matrix <br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">X=<span class="c002">randn</span>(64,200)<span class="c003">';<br>
+Y=randn(200,20000);<br>
+<br>
+tic<br>
+XtY=mexCalcXtY(X,Y);<br>
+t=toc;<br>
+fprintf('</span>mex-file time: <span class="c001">%fs\n',t);</span><br>
+<br>
+<span class="c002">tic</span><br>
+XtY2=X<span class="c003">'*Y;<br>
+t=toc;<br>
+fprintf('</span>matlab-file time: <span class="c001">%fs\n',t);</span><br>
+<br>
+<span class="c002">sum</span>((XtY(:)-XtY2(:)).^2)</td></tr>
+</table>
+<h3 class="subsection" id="sec56">7.8  Function mexInvSym</h3>
+<p>
+For an input symmetric matrices <span class="c009">A</span> in ℝ<sup><span class="c007">n</span> × <span class="c007">n</span></sup>, this function returns <span class="c009">A</span><sup>−1</sup>.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   B =mexInvSym(A);<br>
+%<br>
+% Name: mexInvSym<br>
+%<br>
+% Description: returns the inverse of a symmetric matrix A<br>
+%<br>
+% Inputs: A:  double n x n matrix   <br>
+%<br>
+% Output: B: double n x n matrix <br>
+%<br>
+% Author: Julien Mairal, 2009</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">A=<span class="c002">rand</span>(1000,1000);<br>
+A=A<span class="c003">'*A;<br>
+<br>
+tic<br>
+B=mexInvSym(A);<br>
+t=toc;<br>
+fprintf('</span>mex-file time: <span class="c001">%fs\n',t);</span><br>
+<br>
+<span class="c002">tic</span><br>
+B2=<span class="c002">inv</span>(A);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">fprintf</span>(<span class="c003">'matlab-file time: %fs\n'</span>,t);<br>
+<br>
+<span class="c002">sum</span>((B(:)-B2(:)).^2)</td></tr>
+</table>
+<h3 class="subsection" id="sec57">7.9  Function mexNormalize</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   Y =mexNormalize(X);<br>
+%<br>
+% Name: mexNormalize<br>
+%<br>
+% Description: rescale the columns of X so that they have<br>
+%        unit l2-norm.<br>
+%<br>
+% Inputs: X:  double m x n matrix   <br>
+%<br>
+% Output: Y: double m x n matrix <br>
+%<br>
+% Author: Julien Mairal, 2010</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">X=<span class="c002">rand</span>(100,1000);<br>
+<br>
+<span class="c002">tic</span><br>
+Y=mexNormalize(X);<br>
+t=<span class="c002">toc</span>;</td></tr>
+</table>
+<h3 class="subsection" id="sec58">7.10  Function mexSort</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   Y =mexSort(X);<br>
+%<br>
+% Name: mexSort<br>
+%<br>
+% Description: sort the elements of X using quicksort<br>
+%<br>
+% Inputs: X:  double vector of size n<br>
+%<br>
+% Output: Y: double  vector of size n<br>
+%<br>
+% Author: Julien Mairal, 2010</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting">X=<span class="c002">rand</span>(1,300000);<br>
+<br>
+<span class="c002">tic</span><br>
+Y=mexSort(X);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+<br>
+tic</span><br>
+Y2=<span class="c002">sort</span>(X,<span class="c003">'ascend'</span>);<br>
+t=<span class="c002">toc</span>;<br>
+<span class="c002">toc<br>
+<br>
+sum</span>((Y2(:)-Y(:)).^2)</td></tr>
+</table>
+<h3 class="subsection" id="sec59">7.11  Function displayPatches</h3>
+<p>
+Print to the screen a matrix containing as columns image patches.</p>
+<h3 class="subsection" id="sec60">7.12  Function mexCountPathsDAG</h3>
+<p>
+This function counts the number of paths in a DAG using dynamic programming.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   num=mexCountPathsDAG(G);<br>
+%<br>
+% Name: mexCountPathsDAG<br>
+%<br>
+% Description: mexCountPathsDAG counts the number of paths <br>
+%       in a DAG.<br>
+%<br>
+%       for a graph G with |V| nodes and |E| arcs,<br>
+%       G is a double sparse adjacency matrix of size |V|x|V|,<br>
+%       with |E| non-zero entries.<br>
+%       (see example in test_CountPathsDAG.m<br>
+%<br>
+%<br>
+% Inputs: G:  double sparse |V| x |V| matrix (full graph)<br>
+%<br>
+% Output: num: number of paths<br>
+%<br>
+% Author: Julien Mairal, 2012</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% graph corresponding to figure 1 in arXiv:1204.4539v1</span><br>
+<span class="c002">fprintf</span>(<span class="c003">'test mexCountPathsDAG\n'</span>);<br>
+<span class="c001">% this graph is a DAG</span><br>
+G=[0 0 0 0 0 0 0 0 0 0 0 0 0;<br>
+   1 0 0 0 0 0 0 0 0 0 0 0 0;<br>
+   1 1 0 0 0 0 0 0 0 0 0 0 0;<br>
+   1 1 0 0 0 0 0 0 0 0 0 0 0;<br>
+   0 0 0 1 0 0 0 0 0 0 0 0 0;<br>
+   0 1 1 0 1 0 0 0 0 0 0 0 0;<br>
+   0 1 0 0 1 0 0 0 0 0 0 0 0;<br>
+   0 0 0 0 0 1 1 0 0 0 0 0 0;<br>
+   1 0 0 1 0 0 0 0 0 0 0 0 0;<br>
+   1 0 0 0 0 0 0 0 1 0 0 0 0;<br>
+   0 0 0 0 0 0 0 0 1 1 0 0 0;<br>
+   0 0 0 0 0 0 0 0 1 0 1 0 0;<br>
+   0 0 0 0 1 0 0 0 1 0 0 1 0];<br>
+G=<span class="c002">sparse</span>(G);<br>
+num=mexCountPathsDAG(G);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Num of paths: %d\n'</span>,num);</td></tr>
+</table>
+<h3 class="subsection" id="sec61">7.13  Function mexRemoveCyclesGraph</h3>
+<p>
+One heuristic to remove cycles from a graph.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   DAG=mexRemoveCycleGraph(G);<br>
+%<br>
+% Name: mexRemoveCycleGraph<br>
+%<br>
+% Description: mexRemoveCycleGraph heuristically removes<br>
+%       arcs along cycles in the graph G to obtain a DAG.<br>
+%       the arcs of G can have weights. The heuristic will<br>
+%       remove in priority arcs with the smallest weights.<br>
+%<br>
+%       for a graph G with |V| nodes and |E| arcs,<br>
+%       G is a double sparse adjacency matrix of size |V|x|V|,<br>
+%       with |E| non-zero entries. The non-zero entries correspond<br>
+%       to the weights of the arcs.<br>
+%<br>
+%       DAG is a also double sparse adjacency matrix of size |V|x|V|,<br>
+%       but the graph is acyclic.<br>
+%<br>
+%       Note that another heuristic to obtain a DAG from a general <br>
+%       graph consists of ordering the vertices.<br>
+%<br>
+% Inputs: G:  double sparse |V| x |V| matrix<br>
+%<br>
+% Output: DAG:  double sparse |V| x |V| matrix<br>
+%<br>
+% Author: Julien Mairal, 2012</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c002">fprintf</span>(<span class="c003">'test mexRemoveCyclesGraph\n'</span>);<br>
+<span class="c001">% this graph is not a DAG</span><br>
+G=[0   0   0   0   0   0   0   0   0   0   0   0   0;<br>
+   1   0   0   0.1 0   0   0   0.1 0   0   0   0   0;<br>
+   1   1   0   0   0   0.1 0   0   0   0   0   0   0;<br>
+   1   1   0   0   0   0   0   0   0   0   0   0.1 0;<br>
+   0   0   0   1   0   0   0   0   0   0   0   0   0;<br>
+   0   1   1   0   1   0   0   0   0   0   0   0   0;<br>
+   0   1   0   0   1   0   0   0   0   0   0   0   0;<br>
+   0   0   0   0   0   1   1   0   0   0   0   0   0;<br>
+   1   0   0   1   0   0   0   0   0   0   0   0   0;<br>
+   1   0   0   0   0   0   0   0   1   0   0   0   0;<br>
+   0   0   0   0   0   0   0   0   1   1   0   0   0;<br>
+   0   0   0   0   0   0   0   0   1   0   1   0   0;<br>
+   0   0   0   0   1   0   0   0   1   0   0   1   0];<br>
+G=<span class="c002">sparse</span>(G);<br>
+DAG=mexRemoveCyclesGraph(G);<br>
+<span class="c002">format</span> compact;<br>
+<span class="c002">fprintf</span>(<span class="c003">'Original graph:\n'</span>);<br>
+<span class="c002">full</span>(G)<br>
+<span class="c002">fprintf</span>(<span class="c003">'New graph:\n'</span>);<br>
+<span class="c002">full</span>(DAG)</td></tr>
+</table>
+<h3 class="subsection" id="sec62">7.14  Function mexCountConnexComponents</h3>
+<p>
+Count the number of connected components of a subgraph from a graph.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   num=mexCountConnexComponents(G,N);<br>
+%<br>
+% Name: mexCountConnexComponents<br>
+%<br>
+% Description: mexCountConnexComponents counts the number of connected<br>
+%       components of the subgraph of G corresponding to set of nodes<br>
+%       in N. In other words, the subgraph of G by removing from G all<br>
+%       the nodes which are not in N.<br>
+%<br>
+%       for a graph G with |V| nodes and |E| arcs,<br>
+%       G is a double sparse adjacency matrix of size |V|x|V|,<br>
+%       with |E| non-zero entries.<br>
+%       (see example in test_CountConnexComponents.m)<br>
+%       N is a dense vector of size |V|. if  N[i] is non-zero,<br>
+%       it means that the node i is selected.<br>
+%<br>
+%<br>
+% Inputs: G:  double sparse |V| x |V| matrix (full graph)<br>
+%         N:  double full |V| vector.<br>
+%<br>
+% Output: num: number of connected components.<br>
+%<br>
+% Author: Julien Mairal, 2012</span></td></tr>
+</table><p>
+The following piece of code illustrates how to use this function.
+</p><table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% graph corresponding to figure 1 in arXiv:1204.4539v1</span><br>
+<span class="c002">fprintf</span>(<span class="c003">'test mexCountConnexComponents\n'</span>);<br>
+<span class="c001">% this graph is a DAG</span><br>
+G=[0 0 0 0 0 0 0 0 0 0 0 0 0;<br>
+   1 0 0 0 0 0 0 0 0 0 0 0 0;<br>
+   1 1 0 0 0 0 0 0 0 0 0 0 0;<br>
+   1 1 0 0 0 0 0 0 0 0 0 0 0;<br>
+   0 0 0 1 0 0 0 0 0 0 0 0 0;<br>
+   0 1 1 0 1 0 0 0 0 0 0 0 0;<br>
+   0 1 0 0 1 0 0 0 0 0 0 0 0;<br>
+   0 0 0 0 0 1 1 0 0 0 0 0 0;<br>
+   1 0 0 1 0 0 0 0 0 0 0 0 0;<br>
+   1 0 0 0 0 0 0 0 1 0 0 0 0;<br>
+   0 0 0 0 0 0 0 0 1 1 0 0 0;<br>
+   0 0 0 0 0 0 0 0 1 0 1 0 0;<br>
+   0 0 0 0 1 0 0 0 1 0 0 1 0];<br>
+G=<span class="c002">sparse</span>(G);<br>
+nodes=[0 1 1 0 0 1 0 0 1 0 1 1 0];<br>
+num=mexCountConnexComponents(G,nodes);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Num of connected components: %d\n'</span>,num);<br>
+<br>
+<span class="c001">% this graph is a not a DAG anymore. This function works<br>
+% with general graphs.</span><br>
+G=[0 0 0 0 0 0 0 0 0 0 0 0 0;<br>
+   1 0 0 0 0 0 0 0 0 0 0 0 0;<br>
+   1 1 0 1 0 0 0 0 0 0 0 0 0;<br>
+   1 1 0 0 0 0 0 0 0 0 0 0 0;<br>
+   0 0 0 1 0 0 0 0 0 0 0 0 0;<br>
+   0 1 1 0 1 0 0 0 0 0 0 0 0;<br>
+   0 1 0 0 1 0 0 0 0 0 0 0 0;<br>
+   0 0 0 0 0 1 1 0 0 0 0 0 0;<br>
+   1 0 0 1 0 0 0 0 0 0 0 0 0;<br>
+   1 0 0 0 0 0 0 0 1 0 0 0 0;<br>
+   0 0 0 0 0 0 0 0 1 1 0 0 0;<br>
+   0 0 0 0 0 0 0 0 1 0 1 0 0;<br>
+   0 0 0 0 1 0 0 0 1 0 0 1 0];<br>
+nodes=[0 1 1 0 0 1 0 0 1 0 1 1 0];<br>
+G=<span class="c002">sparse</span>(G);<br>
+num=mexCountConnexComponents(G,nodes);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Num of connected components: %d\n'</span>,num);<br>
+<br>
+nodes=[0 1 1 1 0 1 0 0 1 0 1 1 0];<br>
+num=mexCountConnexComponents(G,nodes);<br>
+<span class="c002">fprintf</span>(<span class="c003">'Num of connected components: %d\n'</span>,num);</td></tr>
+</table>
+<h3 class="subsection" id="sec63">7.15  Function mexGraphOfGroupStruct</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   groups =mexGraphOfGroupStruct(gstruct)<br>
+%<br>
+% Name: mexGraphOfGroupStruct<br>
+%<br>
+% Description: converts a group structure into the graph structure<br>
+%    used by mexProximalGraph, mexFistaGraph or mexStructTrainDL<br>
+%<br>
+% Inputs: gstruct: the structure of groups as a cell array, one element per node<br>
+%     an element is itself a 4 elements cell array:<br>
+%       nodeid (&gt;= 0), weight (double), array of vars associated to the node,<br>
+%       array of children (nodeis's)<br>
+% Output: graph: struct (see documentation of mexProximalGraph)<br>
+%<br>
+% Author: Jean-Paul CHIEZE, 2012</span></td></tr>
+</table>
+<h3 class="subsection" id="sec64">7.16  Function mexGroupStructOfString</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   gstruct =mexGroupStructOfString(s)<br>
+%<br>
+% Name: mexGroupStructOfString<br>
+%<br>
+% Description: decode a multi-line string describing "simply" the structure of groups<br>
+%    of variables needed by mexProximalGraph, mexProximalTree, mexFistaGraph,<br>
+%    mexFistaTree and mexStructTrainDL and builds the corresponding group structure.<br>
+%    Each line describes a group of variables as a node of a tree.<br>
+%    It has up to 4 fields separated by spaces:<br>
+%        node-id node-weight [variables-list] -&gt; children-list<br>
+%    Let's define Ng = number of groups, and Nv = number of variables.<br>
+%    node-id must be in the range (0 - Ng-1), and there must be Ng nodes<br>
+%    weight is a float<br>
+%    variables-list : a space separated list of integers, maybe empty,<br>
+%         but '[' and '] must be present. Numbers in the range (0 - Nv-1)<br>
+%    children-list : a space separated list of node-id's<br>
+%        If the list is empty, '-&gt;' may be omitted.<br>
+%    The data must obey some rules : <br>
+%        - A group contains the variables of the corresponding node and of the whole subtree.<br>
+%        - Variables attached to a node are those that are not int the subtree.<br>
+%        - If the data destination is a Graph, there may be several independant trees,<br>
+%          and a varibale may appear in several trees.<br>
+%    If the destination is a Tree, there must be only one tree, the root node<br>
+%    must have id == 0 and each variable must appear only once.<br>
+%<br>
+% Inputs: s:  the multi-lines string<br>
+%<br>
+% Output: groups: cell array, one element for each node<br>
+%                an element is itsel a 4 elements cell array:<br>
+%                 nodeid (int &gt;= 0), weight (double), array of vars of the node,<br>
+%                array of children (nodeid's)<br>
+%<br>
+% Author: Jean-Paul CHIEZE, 2012</span></td></tr>
+</table>
+<h3 class="subsection" id="sec65">7.17  Function mexReadGroupStruct</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   gstruct =mexReadGroupStruct(file)<br>
+%<br>
+% Name: mexReadGroupStruct<br>
+%<br>
+% Description: reads a text file describing "simply" the structure of groups<br>
+%    of variables needed by mexProximalGraph, mexProximalTree, mexFistaGraph,<br>
+%    mexFistaTree and mexStructTrainDL and builds the corresponding group structure.<br>
+%    weight is a float<br>
+%    variables-list : a space separated list of integers, maybe empty,<br>
+%        but '[' and '] must be present. Numbers in the range (0 - Nv-1)<br>
+%    children-list : a space separated list of node-id's<br>
+%        If the list is empty, '-&gt;' may be omitted.<br>
+%    The data must obey some rules : <br>
+%        - A group contains the variables of the corresponding node and of the whole subtree.<br>
+%        - Variables attached to a node are those that are not int the subtree.<br>
+%        - If the data destination is a Graph, there may be several independant trees,<br>
+%           and a varibale may appear in several trees.<br>
+%    If the destination is a Tree, there must be only one tree, the root node<br>
+%        must have id == 0 and each variable must appear only once.<br>
+%<br>
+% Inputs: file:  the file name<br>
+%<br>
+% Output: groups: cell array, one element for each node<br>
+%                an element is itsel a 4 elements cell array:<br>
+%                nodeid (int &gt;= 0), weight (double), array of vars of the node,<br>
+%                array of children (nodeid's)<br>
+%<br>
+% Author: Jean-Paul CHIEZE, 2012</span></td></tr>
+</table>
+<h3 class="subsection" id="sec66">7.18  Function mexTreeOfGroupStruct</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   [permutations groups nbvars] =mexTreeOfGroupStruct(gstruct)<br>
+%<br>
+% Name: mexTreeOfGroupStruct<br>
+%<br>
+% Description: converts a group structure into the tree structure<br>
+%    used by mexProximalTree, mexFistaTree or mexStructTrainDL<br>
+%<br>
+% Inputs: gstruct: the structure of groups as a cell array, one element per node<br>
+%     an element is itself a 4 lements cell array:<br>
+%       nodeid (&gt;= 0), weight (double), array of vars associated to the node,<br>
+%       array of children (nodeis's)<br>
+% Output: permutations: permutation vector that must be applied to the result of the<br>
+%               programm using the tree. Empty if no permutation is needed.<br>
+%      tree: struct (see documentation of mexProximalTree)<br>
+%      nbvars : number of variables in the tree<br>
+%<br>
+% Author: Jean-Paul CHIEZE, 2012</span></td></tr>
+</table>
+<h3 class="subsection" id="sec67">7.19  Function mexSimpleGroupTree</h3>
+<table class="lstframe c011"><tr><td class="mouselstlisting"><span class="c001">% <br>
+% Usage:   gstruct =mexSimpleGroupTree(degrees)<br>
+%<br>
+% Name: mexSimpleGroupTree<br>
+%<br>
+% Description: makes a structure representing a tree given the<br>
+%   degree of each level.<br>
+%<br>
+% Inputs: degrees:  int vector; degrees(i) is the number of children of each node at level i<br>
+%<br>
+% Output: group_struct: cell array, one element for each node<br>
+%                an element is itsel a 4 elements cell array :<br>
+%                 nodeid (int &gt;= 0), weight (double), array of vars attached to the node<br>
+%                  (here equal to [nodeid]), array of children (nodeid's)<br>
+%<br>
+% Author: Jean-Paul CHIEZE, 2012</span></td></tr>
+</table>
+<hr>
+<a href="doc_spams007.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams009.html"><img src="next_motif.gif" alt="Next"></a>
+</body>
+</html>

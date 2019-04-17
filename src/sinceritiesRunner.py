@@ -5,7 +5,7 @@ import numpy as np
 
 def generateInputs(RunnerObj):
     '''
-    Function to generate desired inputs for SCODE.
+    Function to generate desired inputs for SINCERITIES.
     If the folder/files under RunnerObj.datadir exist, 
     this function will not do anything.
     '''
@@ -44,7 +44,7 @@ def run(RunnerObj):
 
 def parseOutput(RunnerObj):
     '''
-    Function to parse outputs from SCODE.
+    Function to parse outputs from SINCERITIES.
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINCERITIES/"

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="generator" content="hevea 2.23">
+
+<META name="Author" content="Julien Mairal">
+<link rel="stylesheet" href="doc_spams.css"><link rel="stylesheet" type="text/css" href="doc_spams.css">
+<title>Duality Gaps with Fenchel Duality</title>
+</head>
+<body>
+<a href="doc_spams008.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams010.html"><img src="next_motif.gif" alt="Next"></a>
+<hr>
+<h2 class="section" id="sec68">A  Duality Gaps with Fenchel Duality</h2>
+<p><a id="appendix"></a>
+This section is taken from the appendix D of Julien Mairal’s PhD thesis [<a href="doc_spams010.html#mairal11">19</a>].
+We are going to use intensively Fenchel Duality (see [<a href="doc_spams010.html#borwein">2</a>]).
+Let us consider the problem
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012">min</td></tr>
+<tr><td class="dcell c012"><span class="c009">w</span> ∈ ℝ<sup><span class="c007">p</span></sup></td></tr>
+</table></td><td class="dcell"> [<span class="c007">g</span>(<span class="c009">w</span>) </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c005">▵</span></td></tr>
+<tr><td class="dcell c012">=</td></tr>
+<tr><td class="dcell c012">&nbsp;</td></tr>
+</table></td><td class="dcell"> <span class="c007">f</span>(<span class="c009">w</span>) + λψ(<span class="c009">w</span>)],<a id="software:eq:prb"></a>
+    (47)</td></tr>
+</table><p>
+We first notice that for all the formulations we have been
+interested in, <span class="c007">g</span>(<span class="c009">w</span>) can be rewritten
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+<span class="c007">g</span>(<span class="c009">w</span>) = f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>) + λψ(<span class="c009">w</span>), <a id="software:eq:prb2"></a>
+    (48)</td></tr>
+</table><p>
+where <span class="c009">X</span>=[<span class="c009">x</span><sup>1</sup>,…,<span class="c009">x</span><sup><span class="c007">n</span></sup>] are training vectors, and f is an
+appropriated smooth real-valued function of ℝ<sup><span class="c007">n</span></sup>,
+and ψ one of the regularization functions we have introduced.</p><p>Given a primal variable <span class="c009">w</span> in ℝ<sup><span class="c007">p</span></sup> and a dual variable κ in
+ℝ<sup><span class="c007">n</span></sup>, we obtain using classical Fenchel duality rules [<a href="doc_spams010.html#borwein">2</a>],
+that the following quantity is a duality gap for problem (<a href="#software%3Aeq%3Aprb">47</a>):
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">                δ(<span class="c009">w</span>,κ) </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c005">▵</span></td></tr>
+<tr><td class="dcell c012">=</td></tr>
+<tr><td class="dcell c012">&nbsp;</td></tr>
+</table></td><td class="dcell"> <span class="c007">g</span>(<span class="c009">w</span>) + f<sup>∗</sup>(κ) + λψ<sup>∗</sup>(−<span class="c009">X</span>κ / λ),
+</td></tr>
+</table><p>
+where f<sup>∗</sup> and ψ<sup>∗</sup> are respectively the Fenchel conjugates
+of f and ψ. Denoting by <span class="c009">w</span><sup>⋆</sup> the solution of
+Eq. (<a href="#software%3Aeq%3Aprb">47</a>), the duality gap is interesting in the sense that
+it upperbounds the difference with the optimal value of the function:
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">                δ(<span class="c009">w</span>,κ) ≥  <span class="c007">g</span>(<span class="c009">w</span>)−<span class="c007">g</span>(<span class="c009">w</span><sup>⋆</sup>) ≥ 0.
+</td></tr>
+</table><p>
+Similarly, we will consider pairs of primal-dual variables (<span class="c009">W</span>,<span class="c009">K</span>) when
+dealing with matrices.</p><p>During the optimization, sequences of primal variables <span class="c009">w</span> are available,
+and one wishes to exploit duality gaps for estimating the difference
+<span class="c007">g</span>(<span class="c009">w</span>)−<span class="c007">g</span>(<span class="c009">w</span><sup>⋆</sup>). This requires the following components:
+</p><ul class="itemize"><li class="li-itemize">
+being able to efficiently compute f<sup>∗</sup> and ψ<sup>∗</sup>.
+</li><li class="li-itemize">being able to obtain a “good” dual variable κ given a primal
+variable <span class="c009">w</span>, such that δ(<span class="c009">w</span>,κ) is close to
+<span class="c007">g</span>(<span class="c009">w</span>)−<span class="c007">g</span>(<span class="c009">w</span><sup>⋆</sup>).
+</li></ul><p>We suppose that the first point is satisfied (we will detail these computations
+for every loss and regularization functions in the sequel), and explain how to
+choose κ in general (details will also be given in the sequel).</p><p>Let us first consider the choice that associates with a primal variable <span class="c009">w</span>, the
+dual variable
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+κ(<span class="c009">w</span>) </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c005">▵</span></td></tr>
+<tr><td class="dcell c012">=</td></tr>
+<tr><td class="dcell c012">&nbsp;</td></tr>
+</table></td><td class="dcell"> ∇ f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>), <a id="software:eq:kappab"></a>
+    (49)</td></tr>
+</table><p>
+and let us compute δ(<span class="c009">w</span>,κ(<span class="c009">w</span>)).
+First, easy computations show that for all vectors <span class="c009">z</span> in ℝ<sup><span class="c007">n</span></sup>,
+f<sup>∗</sup>(∇f(<span class="c009">z</span>)) = <span class="c009">z</span><sup>⊤</sup>∇f(<span class="c009">z</span>)−f(<span class="c009">z</span>),
+which gives
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">
+
+
+     
+
+</td><td class="dcell"><table class="c000 cellpading0"><tr><td class="c015">                δ(<span class="c009">w</span>,κ(<span class="c009">w</span>))</td><td class="c013">=</td><td class="c014"> f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>) + λ ψ(<span class="c009">w</span>) + f<sup>∗</sup>(∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>)) + λψ<sup>∗</sup>(−<span class="c009">X</span>∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>)/ λ), </td><td class="c015">    (50)</td></tr>
+<tr><td class="c015">&nbsp;</td><td class="c013">=</td><td class="c014"> λ ψ(<span class="c009">w</span>) + <span class="c009">w</span><sup>⊤</sup><span class="c009">X</span>∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>) + λψ<sup>∗</sup>(−<span class="c009">X</span>∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>)/ λ).
+</td><td class="c015">    (51)</td></tr>
+</table></td></tr>
+</table><p>
+We now use the classical Fenchel-Young inequality (see, Proposition
+3.3.4 of [<a href="doc_spams010.html#borwein">2</a>]) on the function ψ, which gives
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">                                         </td><td class="dcell"><table class="c000 cellpading0"><tr><td class="c015">                                         δ(<span class="c009">w</span>,κ(<span class="c009">w</span>))  ≥  <span class="c009">w</span><sup>⊤</sup><span class="c009">X</span>∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>) − <span class="c009">w</span><sup>⊤</sup><span class="c009">X</span>∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>) = 0,
+</td></tr>
+</table></td></tr>
+</table><p>
+with equality if and only if −<span class="c009">X</span>∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>) belongs to
+∂ ψ(<span class="c009">w</span>). Interestingly, we now that first-order optimality
+conditions for Eq. (<a href="#software%3Aeq%3Aprb2">48</a>) gives that
+−<span class="c009">X</span>∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span><sup>⋆</sup>) ∈ ∂ ψ(<span class="c009">w</span><sup>⋆</sup>).
+We have now in hand a non-negative function <span class="c009">w</span> ↦ δ(<span class="c009">w</span>,κ(<span class="c009">w</span>)) of <span class="c009">w</span>, that
+upperbounds <span class="c007">g</span>(<span class="c009">w</span>)−<span class="c007">g</span>(<span class="c009">w</span><sup>⋆</sup>) and satisfying δ(<span class="c009">w</span><sup>⋆</sup>,κ(<span class="c009">w</span><sup>⋆</sup>))=0.</p><p>This is however not a sufficient property to make it a good measure
+of the quality of the optimization, and further work is required,
+that will be dependent on f and ψ.
+We have indeed proven that δ(<span class="c009">w</span><sup>⋆</sup>,κ(<span class="c009">w</span><sup>⋆</sup>)) is always 0. However,
+for <span class="c009">w</span> different than <span class="c009">w</span><sup>⋆</sup>, δ(<span class="c009">w</span><sup>⋆</sup>,κ(<span class="c009">w</span><sup>⋆</sup>)) can be infinite,
+making it a non-informative duality-gap. The reasons for this can be one of the following:
+</p><ul class="itemize"><li class="li-itemize">
+The term ψ<sup>∗</sup>(−<span class="c009">X</span>∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>)/ λ) might have an infinite value.
+</li><li class="li-itemize">Intercepts make the problem more complicated. One can write the formulation with an intercept by
+adding a row to <span class="c009">X</span> filled with the value 1, add one dimension to the vector <span class="c009">w</span>, and consider
+a regularization function ψ that does regularize the last entry of
+<span class="c009">w</span>. This further complexifies the computation of ψ<sup>∗</sup> and its
+definition, as shown in the next section.
+</li></ul><p>Let us now detail how we proceed to solve these problems, but first without considering the intercept.
+The analysis is similar when working with matrices <span class="c009">W</span> instead of vectors <span class="c009">w</span>.
+</p>
+<h4 class="subsubsection" id="sec69">A.0.1  Duality Gaps without Intercepts</h4>
+<p>
+Let us show how to compute the Fenchel conjugate of the functions we have introduced.
+We now present the Fenchel conjugate of the loss functions f.
+</p><ul class="itemize"><li class="li-itemize">
+<span class="c010">The square loss</span>
+<table class="display dcenter"><tr class="c016"><td class="dcell"><table class="c000 cellpading0"><tr><td class="c014"><table class="display"><tr class="c016"><td class="dcell">                                         f(<span class="c009">z</span>)=</td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2<span class="c007">n</span></td></tr>
+</table></td><td class="dcell">||<span class="c009">y</span>−<span class="c009">z</span>||<sub>2</sub><sup>2</sup>, </td></tr>
+</table></td></tr>
+<tr><td class="c014"><table class="display"><tr class="c016"><td class="dcell">                                            f<sup>∗</sup>(κ)=</td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">2</td></tr>
+</table></td><td class="dcell">||κ||<sub>2</sub><sup>2</sup> + κ<sup>⊤</sup><span class="c009">y</span>.
+</td></tr>
+</table></td></tr>
+</table></td></tr>
+</table>
+</li><li class="li-itemize"><span class="c010">The logistic loss</span>
+<table class="display dcenter"><tr class="c016"><td class="dcell"><table class="c000 cellpading0"><tr><td class="c014"><table class="display"><tr class="c016"><td class="dcell">                                            f(<span class="c009">z</span>)=</td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+</table></td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">i</span>=1</td></tr>
+</table></td><td class="dcell"> log(1+<span class="c007">e</span><sup>−<span class="c007">y</span><sub><span class="c007">i</span></sub><span class="c009">z</span><sub><span class="c007">i</span></sub></sup>) </td></tr>
+</table></td></tr>
+<tr><td class="c014"><table class="display"><tr class="c016"><td class="dcell">                                               f<sup>∗</sup>(κ)=</td><td class="dcell"><table class="display"><tr class="c016"><td class="dcell">⎧<br>
+⎪<br>
+⎪<br>
+⎨<br>
+⎪<br>
+⎪<br>
+⎩</td><td class="dcell"><table class="c000 cellpading0"><tr><td class="c014">                                               +∞  if  ∃ <span class="c007">i</span>∈ [ 1;<span class="c007">n</span> ]   s.t.   <span class="c007">y</span><sub><span class="c007">i</span></sub>κ<sub><span class="c007">i</span></sub> ∉ [−1,0],</td></tr>
+<tr><td class="c014"><table class="display"><tr class="c016"><td class="dcell">                                                  </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">i</span>=1</td></tr>
+</table></td><td class="dcell">(1+<span class="c007">y</span><sub><span class="c007">i</span></sub>κ<sub><span class="c007">i</span></sub>)log(1+<span class="c007">y</span><sub><span class="c007">i</span></sub>κ<sub><span class="c007">i</span></sub>)−<span class="c007">y</span><sub><span class="c007">i</span></sub>κ<sub><span class="c007">i</span></sub>log(−<span class="c007">y</span><sub><span class="c007">i</span></sub>κ<sub><span class="c007">i</span></sub>)  otherwise.
+</td></tr>
+</table></td></tr>
+</table></td></tr>
+</table></td></tr>
+</table></td></tr>
+</table></td></tr>
+</table>
+</li><li class="li-itemize"><span class="c010">The multiclass logistic loss (or softmax)</span>. The primal variable is now a matrix <span class="c009">Z</span>, in ℝ<sup><span class="c007">n</span> × <span class="c007">r</span></sup>, which represents the product <span class="c009">X</span><sup>⊤</sup><span class="c009">W</span>. We denote by <span class="c009">K</span> the dual variable in ℝ<sup><span class="c007">n</span> × <span class="c007">r</span></sup>.
+<table class="display dcenter"><tr class="c016"><td class="dcell"><table class="c000 cellpading0"><tr><td class="c014"><table class="display"><tr class="c016"><td class="dcell">                                                  f(<span class="c009">Z</span>)=</td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+</table></td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">i</span>=1</td></tr>
+</table></td><td class="dcell"> log</td><td class="dcell">⎛<br>
+⎜<br>
+⎝</td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">r</span></td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">j</span>=1</td></tr>
+</table></td><td class="dcell"> <span class="c007">e</span><sup> <span class="c009">Z</span><sub><span class="c007">ij</span></sub> − <span class="c009">Z</span><sub><span class="c007">i<span class="c010">y</span></span><sub><span class="c007">i</span></sub></sub></sup></td><td class="dcell">⎞<br>
+⎟<br>
+⎠</td></tr>
+</table></td></tr>
+<tr><td class="c014"><table class="display"><tr class="c016"><td class="dcell">                                                     f<sup>∗</sup>(<span class="c009">K</span>)=</td><td class="dcell"><table class="display"><tr class="c016"><td class="dcell">⎧<br>
+⎪<br>
+⎪<br>
+⎨<br>
+⎪<br>
+⎪<br>
+⎩</td><td class="dcell"><table class="c000 cellpading0"><tr><td class="c014">                                                     +∞  if  ∃ <span class="c007">i</span> ∈[ 1;<span class="c007">n</span> ]   s.t.   { <span class="c009">K</span><sub><span class="c007">ij</span></sub> &lt; 0  and  <span class="c007">j</span> ≠ <span class="c009">y</span><sub><span class="c007">i</span></sub> }  or  <span class="c009">K</span><sub><span class="c007">i<span class="c010">y</span></span><sub><span class="c007">i</span></sub></sub> &lt; −1,</td></tr>
+<tr><td class="c014"><table class="display"><tr class="c016"><td class="dcell">                                                        </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">i</span>=1</td></tr>
+</table></td><td class="dcell"> </td><td class="dcell">⎡<br>
+⎢<br>
+⎣</td><td class="dcell"><table class="display"><tr><td class="dcell c012">&nbsp;</td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">j</span> ≠ <span class="c009">y</span><sub><span class="c007">i</span></sub></td></tr>
+</table></td><td class="dcell"><span class="c009">K</span><sub><span class="c007">ij</span></sub>log(<span class="c009">K</span><sub><span class="c007">ij</span></sub>) + (1+<span class="c009">K</span><sub><span class="c007">i</span> <span class="c009">y</span><sub><span class="c007">i</span></sub></sub>)log(1+<span class="c009">K</span><sub><span class="c007">i</span> <span class="c009">y</span><sub><span class="c007">i</span></sub></sub>)</td><td class="dcell">⎤<br>
+⎥<br>
+⎦</td><td class="dcell">.
+</td></tr>
+</table></td></tr>
+</table></td></tr>
+</table></td></tr>
+</table></td></tr>
+</table></td></tr>
+</table>
+</li></ul><p>Our first remark is that the choice Eq. (<a href="#software%3Aeq%3Akappab">49</a>) ensures
+that f(κ) is not infinite.</p><p>As for the regularization function, except for the Tikhonov regularization
+which is self-conjugate (it is equal to its Fenchel conjugate), we have
+considered functions that are norms. There exists therefore a norm ||.|| such
+that ψ(<span class="c009">w</span>)=||<span class="c009">w</span>||, and we denote by ||.||<sub>∗</sub> its dual-norm. In such a
+case, the Fenchel conjugate of ψ for a vector γ in ℝ<sup><span class="c007">p</span></sup> takes the
+form
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">                                                        ψ<sup>∗</sup>(γ) = </td><td class="dcell"><table class="display"><tr class="c016"><td class="dcell">⎧<br>
+⎨<br>
+⎩</td><td class="dcell"><table class="c000 cellpading0"><tr><td class="c014">                                                        0</td><td class="c014"> if  ||γ||<sub>∗</sub>≤ 1, </td></tr>
+<tr><td class="c014">                                                           +∞</td><td class="c014"> otherwise.
+</td></tr>
+</table></td></tr>
+</table></td></tr>
+</table><p>
+It turns out that for almost all the norms we have presented, there exists (i)
+either a closed form for the dual-norm or (ii) there exists an
+efficient algorithm evaluating it. The only one which does not conform to this
+statement is the tree-structured sum of ℓ<sub>2</sub>-norms, for which we do not know
+how to evaluate it efficiently.</p><p>One can now slightly modify the definition of κ
+to ensure that ψ<sup>∗</sup>(−<span class="c009">X</span>κ/λ) ≠
++∞. A natural choice is
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">   κ(<span class="c009">w</span>) </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c005">▵</span></td></tr>
+<tr><td class="dcell c012">=</td></tr>
+<tr><td class="dcell c012">&nbsp;</td></tr>
+</table></td><td class="dcell">
+min</td><td class="dcell">⎛<br>
+⎜<br>
+⎝</td><td class="dcell">1,</td><td class="dcell"><table class="display"><tr><td class="dcell c012">λ</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">||<span class="c009">X</span>∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>)||<sub>∗</sub></td></tr>
+</table></td><td class="dcell">⎞<br>
+⎟<br>
+⎠</td><td class="dcell">∇
+f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>),
+</td></tr>
+</table><p>
+which is the one we have implemented. With this new choice, it is easy to see
+that for all vectors <span class="c009">w</span> in ℝ<sup><span class="c007">p</span></sup>, we still have f<sup>∗</sup>(κ) ≠ + ∞, and
+finally, we also have δ(<span class="c009">w</span>,κ(<span class="c009">w</span>)) &lt; + ∞ and
+δ(<span class="c009">w</span><sup>⋆</sup>,κ(<span class="c009">w</span><sup>⋆</sup>))=0, making it potentially a good
+duality gap.</p>
+<h4 class="subsubsection" id="sec70">A.0.2  Duality Gaps with Intercepts</h4>
+<p>
+Even though adding an intercept does seem a simple modification to the original
+problem, it induces difficulties for finding good dual variables.</p><p>We recall that having an intercept is equivalent to having a problem of the
+type (<a href="#software%3Aeq%3Aprb2">48</a>), by adding a row to <span class="c009">X</span> filled with the value
+1, adding one dimension to the vector <span class="c009">w</span> (or one row for matrices <span class="c009">W</span>),
+and by using a regularization function that does not depend on the last entry
+of <span class="c009">w</span> (or the last row of <span class="c009">W</span>).</p><p>Suppose that we are considering a problem of
+type (<a href="#software%3Aeq%3Aprb2">48</a>) of dimension <span class="c007">p</span>+1, but we are using a
+regularization function ψ: ℝ<sup><span class="c007">p</span>+1</sup> → ℝ, such that for a
+vector <span class="c009">w</span> in ℝ<sup><span class="c007">p</span>+1</sup>, ψ(<span class="c009">w</span>) =<sup><span class="c005">▵</span></sup> ψ(<span class="c009">w</span><sub>[ 1;<span class="c007">p</span> ]</sub>),
+where ψ: ℝ<sup><span class="c007">p</span></sup> → ℝ is one of the regularization function we have
+introduced. Then, considering a primal variable <span class="c009">w</span>, a dual variable κ,
+and writing γ=<sup><span class="c005">▵</span></sup>−<span class="c009">X</span>κ/λ, we are interested in computing
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">   ψ<sup>∗</sup>(γ) = </td><td class="dcell"><table class="display"><tr class="c016"><td class="dcell">⎧<br>
+⎨<br>
+⎩</td><td class="dcell"><table class="c000 cellpading0"><tr><td class="c014">   +∞  if  γ<sub><span class="c007">p</span>+1</sub> ≠ 0 </td></tr>
+<tr><td class="c014">      ψ<sup>∗</sup>(γ<sub>[ 1;<span class="c007">p</span> ]</sub>)  otherwise,
+</td></tr>
+</table></td></tr>
+</table></td></tr>
+</table><p>
+which means that in order the duality gap not to be infinite, one needs in addition to ensure
+that γ<sub><span class="c007">p</span>+1</sub> be zero. Since the last row of <span class="c009">X</span> is filled with ones, this writes
+down ∑<sub><span class="c007">i</span>=1</sub><sup><span class="c007">p</span>+1</sup> κ<sub><span class="c007">i</span></sub>=0.
+For the formulation with matrices <span class="c009">W</span> and <span class="c009">K</span>, the constraint is similar but for every
+column of <span class="c009">K</span>.</p><p>Let us now detail how we proceed for every loss function to find a “good”
+dual variable κ satisfying this additional constraint, given a primal
+variable <span class="c009">w</span> in ℝ<sup><span class="c007">p</span>+1</sup>, we first define the auxiliary function
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">   κ′(<span class="c009">w</span>) </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c005">▵</span></td></tr>
+<tr><td class="dcell c012">=</td></tr>
+<tr><td class="dcell c012">&nbsp;</td></tr>
+</table></td><td class="dcell"> ∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">w</span>),
+</td></tr>
+</table><p>
+(which becomes <span class="c009">K</span>′(<span class="c009">W</span>)=<sup><span class="c005">▵</span></sup> ∇f(<span class="c009">X</span><sup>⊤</sup><span class="c009">W</span>) for matrices),
+and then define another auxiliary function κ″(<span class="c009">w</span>) as follows,
+to take into account the additional constraint ∑<sub><span class="c007">i</span>=1</sub><sup><span class="c007">p</span>+1</sup> κ<sub><span class="c007">i</span></sub>=0.
+</p><ul class="itemize"><li class="li-itemize">
+<span class="c010">For the square loss</span>, we define another auxiliary function:
+<table class="display dcenter"><tr class="c016"><td class="dcell">   κ″(<span class="c009">w</span>) </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c005">▵</span></td></tr>
+<tr><td class="dcell c012">=</td></tr>
+<tr><td class="dcell c012">&nbsp;</td></tr>
+</table></td><td class="dcell"> κ′(<span class="c009">w</span>) − </td><td class="dcell"><table class="display"><tr><td class="dcell c012">1</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+</table></td><td class="dcell"><span class="c010">1</span><sub><span class="c007">p</span>+1</sub><sup>⊤</sup>κ′(<span class="c009">w</span>)<span class="c010">1</span><sub><span class="c007">p</span>+1</sub>
+</td></tr>
+</table>
+where <span class="c010">1</span><sub><span class="c007">p</span>+1</sub> is a vector of size <span class="c007">p</span>+1 filled with ones. This step,
+ensures that ∑<sub><span class="c007">i</span>=1</sub><sup><span class="c007">p</span>+1</sup>κ″(<span class="c009">w</span>)<sub><span class="c007">i</span></sub>= 0.
+</li><li class="li-itemize"><span class="c010">For the logistic loss</span>, the situation is slightly more complicated since additional constraints are involved in the definition of f<sup>∗</sup>.
+<table class="display dcenter"><tr class="c016"><td class="dcell">   κ″(<span class="c009">w</span>) </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c005">▵</span></td></tr>
+<tr><td class="dcell c012">=</td></tr>
+<tr><td class="dcell c012">&nbsp;</td></tr>
+</table></td><td class="dcell"> <span class="c007">arg</span> <span class="c007">min</span><sub>κ ∈ ℝ<sup><span class="c007">n</span></sup></sub> ||κ−κ′(<span class="c009">w</span>)||<sub>2</sub><sup>2</sup>   s.t.   </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">i</span>=1</td></tr>
+</table></td><td class="dcell"> κ<sub><span class="c007">i</span></sub>=0  and  ∀ <span class="c007">i</span> ∈ [ 1;<span class="c007">n</span> ], κ<sub><span class="c007">i</span></sub> ∈ [−1,0].
+</td></tr>
+</table>
+This problem can be solved in linear-time [<a href="doc_spams010.html#brucker">3</a>]
+using a similar algorithm as for the projection onto the ℓ<sub>1</sub>-ball,
+since it is an instance of a <em>quadratic knapsack problem</em>.
+</li><li class="li-itemize"><span class="c010">For the multi-class logistic loss</span>, we proceed in a similar way, for every column <span class="c009">K</span><sup><span class="c007">j</span></sup> of <span class="c009">K</span>, <span class="c007">j</span> ∈ [ 1;<span class="c007">r</span> ]:
+<div class="flushleft"><table class="display"><tr><td class="dcell">
+<span class="c009">K</span><sup>′′ <span class="c007">j</span></sup>(<span class="c009">w</span>) </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c005">▵</span></td></tr>
+<tr><td class="dcell c012">=</td></tr>
+<tr><td class="dcell c012">&nbsp;</td></tr>
+</table></td><td class="dcell"> <span class="c007">arg</span> <span class="c007">min</span><sub>κ ∈ ℝ<sup><span class="c007">n</span></sup></sub> ||<span class="c009">K</span><sup>′ <span class="c007">j</span></sup>−κ′(<span class="c009">w</span>)||<sub>2</sub><sup>2</sup>   s.t.   </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c007">n</span></td></tr>
+<tr><td class="dcell c012"><span class="c006">∑</span></td></tr>
+<tr><td class="dcell c012"><span class="c007">i</span>=1</td></tr>
+</table></td><td class="dcell"> κ<sub><span class="c007">i</span></sub>=0  and  </td></tr>
+</table></div><div class="flushright"> ∀ <span class="c007">i</span> ∈ [ 1;<span class="c007">n</span> ], {κ<sub><span class="c007">i</span></sub> ≥ 0  if  <span class="c007">j</span> ≠ <span class="c009">y</span><sub><span class="c007">i</span></sub>}  and  {κ<sub><span class="c007">i</span></sub> ≥ −1  if  <span class="c009">y</span><sub><span class="c007">i</span></sub>=<span class="c007">j</span>}.
+</div>
+</li></ul><p>
+When the function ψ is the Tykhonov regularization function, we end the process by setting κ(<span class="c009">w</span>)=κ″(<span class="c009">w</span>).
+When it is a norm, we choose, as before for taking into account the constraint ||<span class="c009">X</span>κ||<sub>∗</sub>≤ λ,
+</p><table class="display dcenter"><tr class="c016"><td class="dcell">   κ(<span class="c009">w</span>) </td><td class="dcell"><table class="display"><tr><td class="dcell c012"><span class="c005">▵</span></td></tr>
+<tr><td class="dcell c012">=</td></tr>
+<tr><td class="dcell c012">&nbsp;</td></tr>
+</table></td><td class="dcell">  min</td><td class="dcell">⎛<br>
+⎜<br>
+⎝</td><td class="dcell">1,</td><td class="dcell"><table class="display"><tr><td class="dcell c012">λ</td></tr>
+<tr><td class="hbar"></td></tr>
+<tr><td class="dcell c012">||<span class="c009">X</span>κ″(<span class="c009">w</span>)||<sub>∗</sub></td></tr>
+</table></td><td class="dcell">⎞<br>
+⎟<br>
+⎠</td><td class="dcell">κ″(<span class="c009">w</span>),
+</td></tr>
+</table><p>
+with a similar formulation for matrices <span class="c009">W</span> and <span class="c009">K</span>.</p><p>Even though finding dual variables while taking into account the intercept
+requires quite a lot of engineering, notably implementing a quadratic knapsack
+solver, it can be done efficiently.</p><hr>
+<a href="doc_spams008.html"><img src="previous_motif.gif" alt="Previous"></a>
+<a href="index.html"><img src="contents_motif.gif" alt="Up"></a>
+<a href="doc_spams010.html"><img src="next_motif.gif" alt="Next"></a>
+</body>
+</html>

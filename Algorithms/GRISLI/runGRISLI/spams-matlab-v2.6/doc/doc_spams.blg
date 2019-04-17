@@ -1,0 +1,54 @@
+This is BibTeX, Version 0.99d (TeX Live 2015/Debian)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: doc_spams.aux
+The style file: plain.bst
+Database file #1: main.bib
+Warning--string name "op_r_l" is undefined
+--line 1314 of file main.bib
+Warning--empty journal in brucker
+Warning--empty institution in meinshausen
+Warning--empty year in meinshausen
+Warning--empty year in obozinski
+Warning--empty institution in sprechmann
+You've used 39 entries,
+            2118 wiz_defined-function locations,
+            731 strings with 9761 characters,
+and the built_in function-call counts, 12617 in all, are:
+= -- 1212
+> -- 609
+< -- 3
++ -- 242
+- -- 200
+* -- 873
+:= -- 2136
+add.period$ -- 119
+call.type$ -- 39
+change.case$ -- 217
+chr.to.int$ -- 0
+cite$ -- 44
+duplicate$ -- 475
+empty$ -- 1015
+format.name$ -- 200
+if$ -- 2607
+int.to.chr$ -- 0
+int.to.str$ -- 39
+missing$ -- 37
+newline$ -- 200
+num.names$ -- 78
+pop$ -- 228
+preamble$ -- 1
+purify$ -- 178
+quote$ -- 0
+skip$ -- 307
+stack$ -- 0
+substring$ -- 751
+swap$ -- 69
+text.length$ -- 3
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 152
+warning$ -- 5
+while$ -- 118
+width$ -- 41
+write$ -- 419
+(There were 6 warnings)
