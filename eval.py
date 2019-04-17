@@ -79,6 +79,11 @@ class Evaluation(object):
                 data['params'] = runner[1]
                 data['inputDir'] = Path.cwd().joinpath(self.input_settings.datadir.joinpath(dataset['name']))
                 print(data['inputDir'])
+                if 'should_run' in data['params'] and \
+                        data['params']['should_run'] is False:
+                    print("Skipping %s" % (data['name']))
+                    continue
+
                 runners[order] = Runner(data)
                 order += 1            
         return runners
@@ -199,12 +204,12 @@ def main():
     print('Evaluation started')
 
 
-    for idx in range(len(evaluation.runners)):
-        evaluation.runners[idx].generateInputs()
-
-    for idx in range(len(evaluation.runners)):
-        evaluation.runners[idx].run()
-
+    #for idx in range(len(evaluation.runners)):
+    #    evaluation.runners[idx].generateInputs()
+#
+#    for idx in range(len(evaluation.runners)):
+#        evaluation.runners[idx].run()
+#
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].parseOutput()
 
