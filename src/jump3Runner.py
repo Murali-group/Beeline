@@ -26,7 +26,7 @@ def generateInputs(RunnerObj):
         # Acc. to JUMP3:
         # In input argument Time, the first time point of each time series must be 0.
         # Also has to be an integer!
-        newExpressionData['Time'] = PTData['Time']-PTData['Time'].min()
+        newExpressionData['Time'] = PTData['PseudoTime']-PTData['PseudoTime'].min()
         if 'Experiment' in PTData:
             newExpressionData['Experiment'] = PTData['Experiment']
         else:
