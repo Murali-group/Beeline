@@ -204,12 +204,12 @@ def main():
     print('Evaluation started')
 
 
-    #for idx in range(len(evaluation.runners)):
-    #    evaluation.runners[idx].generateInputs()
-#
-#    for idx in range(len(evaluation.runners)):
-#        evaluation.runners[idx].run()
-#
+    for idx in range(len(evaluation.runners)):
+        evaluation.runners[idx].generateInputs()
+
+    for idx in range(len(evaluation.runners)):
+        evaluation.runners[idx].run()
+
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].parseOutput()
 
