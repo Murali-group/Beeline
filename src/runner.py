@@ -10,6 +10,7 @@ import src.jump3Runner as JUMP3
 import src.ppcorRunner as PPCOR
 import src.grisliRunner as GRISLI
 import src.scingeRunner as SCINGE
+import src.scribeRunner as SCRIBE
 
 from pathlib import Path
 
@@ -25,7 +26,8 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'JUMP3':JUMP3.generateInputs,
                'PPCOR':PPCOR.generateInputs,
                'GRISLI':GRISLI.generateInputs,
-               'SCINGE':SCINGE.generateInputs}
+               'SCINGE':SCINGE.generateInputs,
+               'SCRIBE':SCRIBE.generateInputs}
 
 
 
@@ -42,7 +44,9 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'JUMP3':JUMP3.run,
             'PPCOR':PPCOR.run,
             'GRISLI':GRISLI.run,
-            'SCINGE':SCINGE.run}
+            'SCINGE':SCINGE.run,
+            'SCRIBE':SCRIBE.run}
+
 
 
 
@@ -57,7 +61,8 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'JUMP3': JUMP3.parseOutput,
             'PPCOR':PPCOR.parseOutput,
             'GRISLI':GRISLI.parseOutput,
-             'SCINGE':SCINGE.parseOutput}
+            'SCINGE':SCINGE.parseOutput,
+            'SCRIBE':SCRIBE.parseOutput}
 
 
 
