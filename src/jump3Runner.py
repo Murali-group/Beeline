@@ -50,7 +50,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v ~/ModelEval:/JUMP3/data/ jump3:base /bin/sh -c \"./runJump3 ', 
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/JUMP3/data/ jump3:base /bin/sh -c \"./runJump3 ', 
                          inputPath, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)

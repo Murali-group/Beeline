@@ -33,7 +33,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v ~/ModelEval:/data/ --expose=41269', 
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
                          'arboreto:base /bin/sh -c \"python runArboreto.py --algo=GRNBoost2',
                          '--inFile='+inputPath, '--outFile='+outPath, '\"'])
     print(cmdToRun)

@@ -118,15 +118,23 @@ disp_table <- dispersionTable(CDS)
 CDS <- setOrderingFilter(CDS, ordering_genes)
 }
 
-#CDS <- reduceDimension(CDS, norm_method ="none", reduction_method = 'SGL-tree')
-#CDS <- orderCells(CDS)
-CDS@phenoData@data[,'Pseudotime'] <- CDS@phenoData@data$Time 
-CDS$Pseudotime <- CDS$Time
-CDS@phenoData@data[,'State'] <- 1
-CDS$State <- 1
+if (arguments$ignorePT == TRUE){
+  cat("Using experimental time instead of PseudoTime computed using
+      monocle.\n")
+  CDS$Pseudotime <- CDS$Time
+  CDS@phenoData@data$Pseudotime <- CDS@phenoData@data$Time
+  CDS@phenoData@data$State <- 1
+  CDS$State <- 1
+  
+}else{
+  
+cat("Computing pseudotime.\n")
+CDS <- reduceDimension(CDS, norm_method ="none")
+CDS <- orderCells(CDS)
+
 saveRDS(CDS, file= paste0(arguments$outPrefix,'dataset.RDS'))
 write.csv(CDS@phenoData@data, file= paste0(arguments$outPrefix,'PseudoTime.csv'), quote = FALSE)
-
+}
 }
 
 # If newcelldataset RDS is available already
@@ -136,15 +144,8 @@ if (length(arguments$newCellDataSet) != 0){
 
 ### Run Scribe
 
-if (arguments$ignorePT){
-  cat("Using experimental time instead of PseudoTime computed using
-      monocle.\n")
-  CDS$Pseudotime <- CDS$Time
-  CDS@phenoData@data$Pseudotime <- CDS@phenoData@data$Time
-  CDS@phenoData@data$State <- 1
-  CDS$State <- 1
-  
-}
+cat("Computing",arguments$method,"\n")
+
 
 delay <- as.numeric(strsplit(arguments$delay, ",")[[1]])
 
@@ -166,10 +167,4 @@ if (arguments$method == 'uRDI'){
 }
 
 write.csv(netOut, paste0(arguments$outPrefix,'outFile.txt'), quote = FALSE)
-cat("Done.")
-
-
-
-
-
-
+cat("Done.\n")

@@ -28,8 +28,9 @@ RUN R -e "BiocManager::install(c('lattice','Matrix','irlba'),ref = 3.8, update =
 
 RUN R -e "BiocManager::install(c('cluster','dplyr'), ref = 3.8, update = FALSE)"
 
-RUN R -e "devtools::install_github('cole-trapnell-lab/monocle-release', ref = '7df105006756801a305ff43321b26d289cd6e890')"
+# Needs monocle 2.8
 
+RUN R -e "source('http://bioconductor.org/biocLite.R'); biocLite('monocle')" 
 
 RUN git clone https://github.com/cole-trapnell-lab/RANNinf
 

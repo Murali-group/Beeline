@@ -38,7 +38,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" + str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v ~/ModelEval:/SINCERITIES/data/ sincerities:base /bin/sh -c \"Rscript MAIN.R', 
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/SINCERITIES/data/ sincerities:base /bin/sh -c \"Rscript MAIN.R', 
                          inputPath, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)

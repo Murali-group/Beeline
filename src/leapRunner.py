@@ -41,7 +41,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v ~/ModelEval:/data/ leap:base /bin/sh -c \"Rscript runLeap.R', 
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ leap:base /bin/sh -c \"Rscript runLeap.R', 
                          inputPath, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)
