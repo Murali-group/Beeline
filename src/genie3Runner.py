@@ -25,7 +25,7 @@ def run(RunnerObj):
     '''
     Function to run GENIE3 algorithm
     '''
-    inputPath = "data/" + str(RunnerObj.inputDir).split("ModelEval/")[1] + \
+    inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1] + \
                     "/GENIE3/ExpressionData.csv"
     
     # make output dirs if they do not exist:
@@ -33,7 +33,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', 'str(Path.cwd())+':/data/ --expose=41269', 
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
                          'arboreto:base /bin/sh -c \"python runArboreto.py --algo=GENIE3',
                          '--inFile='+inputPath, '--outFile='+outPath, '\"'])
     print(cmdToRun)

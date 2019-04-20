@@ -30,7 +30,7 @@ def run(RunnerObj):
     '''
     Function to run SCODE algorithm
     '''
-    inputPath = "data/"+str(RunnerObj.inputDir).split("ModelEval/")[1]+"/SCODE/"
+    inputPath = "data/"+str(RunnerObj.inputDir).split("RNMethods/")[1]+"/SCODE/"
     
     nGenes = str(RunnerObj.params['nGenes'])
     z = str(RunnerObj.params['z'])

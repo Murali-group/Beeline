@@ -30,7 +30,7 @@ def run(RunnerObj):
     '''
     Function to run GRISLI algorithm
     '''
-    inputPath = "data/"+str(RunnerObj.inputDir).split("ModelEval/")[1]+"/GRISLI/"
+    inputPath = "data/"+str(RunnerObj.inputDir).split("RNMethods/")[1]+"/GRISLI/"
     
     L = str(RunnerObj.params['L'])
     R = str(RunnerObj.params['R'])

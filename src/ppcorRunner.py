@@ -27,7 +27,7 @@ def run(RunnerObj):
     '''
     Function to run PPCOR algorithm
     '''
-    inputPath = "data/" + str(RunnerObj.inputDir).split("ModelEval/")[1] + \
+    inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1] + \
                     "/PPCOR/ExpressionData.csv"
     
     # make output dirs if they do not exist:
