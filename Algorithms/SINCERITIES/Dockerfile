@@ -24,4 +24,4 @@ WORKDIR SINCERITIES/
 
 RUN mkdir data/
 
-RUN apt-get install time
+RUN apt-get update && apt-get install time
