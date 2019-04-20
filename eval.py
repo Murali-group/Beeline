@@ -80,8 +80,6 @@ class Evaluation(object):
                 data['inputDir'] = Path.cwd().joinpath(self.input_settings.datadir.joinpath(dataset['name']))
                 data['exprData'] = dataset['exprData']
                 data['cellData'] = dataset['cellData']
-
-                print(data['inputDir'])
                 if 'should_run' in data['params'] and \
                         data['params']['should_run'] is False:
                     print("Skipping %s" % (data['name']))
