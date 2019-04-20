@@ -14,10 +14,10 @@ def generateInputs(RunnerObj):
         RunnerObj.inputDir.joinpath("SCINGE").mkdir(exist_ok = False)
         
     if not RunnerObj.inputDir.joinpath("SCINGE/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
         newExpressionData = ExpressionData.T.copy()
-        PTData = pd.read_csv(RunnerObj.inputDir.joinpath('PseudoTime.csv'),
+        PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
         newExpressionData['PseudoTime'] = PTData['PseudoTime']
         newExpressionData.to_csv(RunnerObj.inputDir.joinpath("SCINGE/ExpressionData.csv"),
@@ -48,8 +48,9 @@ def parseOutput(RunnerObj):
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCINGE/"
-    if not Path(outDir).exists():
-        raise FileNotFoundError()
+    if not Path(outDir+'SCINGE_Ranked_Edge_List.txt').exists():
+        print(outDir+'outFile.txt'+'does not exist, skipping...')
+        return
         
     # Read output
     OutDF = pd.read_csv(outDir+'SCINGE_Ranked_Edge_List.txt', sep = '\t', header = 0)

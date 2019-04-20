@@ -14,13 +14,13 @@ def generateInputs(RunnerObj):
         RunnerObj.inputDir.joinpath("GRISLI").mkdir(exist_ok = False)
         
     if not RunnerObj.inputDir.joinpath("GRISLI/ExpressionData.tsv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
         ExpressionData.to_csv(RunnerObj.inputDir.joinpath("GRISLI/ExpressionData.tsv"),
                              sep = '\t', header  = False, index = False)
         
     if not RunnerObj.inputDir.joinpath("GRISLI/PseudoTime.tsv").exists():
-        PTData = pd.read_csv(RunnerObj.inputDir.joinpath('PseudoTime.csv'),
+        PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
         PTData['PseudoTime'].to_csv(RunnerObj.inputDir.joinpath("GRISLI/PseudoTime.tsv"),
                              sep = '\t', header  = False, index = False)
@@ -41,7 +41,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outFile = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runGRISLI/data/ grisli:test /bin/sh -c \"./GRISLI ', 
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runGRISLI/data/ grisli:base /bin/sh -c \"./GRISLI ', 
                          inputPath, outFile, L, R, alphaMin,'\"'])
     
     print(cmdToRun)
@@ -55,8 +55,10 @@ def parseOutput(RunnerObj):
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRISLI/"
-    if not Path(outDir).exists():
-        raise FileNotFoundError()
+    if not Path(outDir+'outFile.txt').exists():
+        print(outDir+'outFile.txt'+'does not exist, skipping...')
+        return
+    
         
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = ',', header = None)

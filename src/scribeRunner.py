@@ -14,9 +14,9 @@ def generateInputs(RunnerObj):
         RunnerObj.inputDir.joinpath("SCRIBE").mkdir(exist_ok = False)
     
     
-    ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+    ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath('PseudoTime.csv'),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
     
     if not RunnerObj.inputDir.joinpath("SCRIBE/ExpressionData.csv").exists(): 
@@ -87,8 +87,9 @@ def parseOutput(RunnerObj):
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCRIBE/"
-    if not Path(outDir).exists():
-        raise FileNotFoundError()
+    if not Path(outDir+'outFile.txt').exists():
+        print(outDir+'outFile.txt'+'does not exist, skipping...')
+        return
         
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = ',', header = 0, index_col = 0)

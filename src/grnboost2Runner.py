@@ -14,7 +14,7 @@ def generateInputs(RunnerObj):
         RunnerObj.inputDir.joinpath("GRNBOOST2").mkdir(exist_ok = False)
         
     if not RunnerObj.inputDir.joinpath("GRNBOOST2/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
 
         # Write .csv file
@@ -31,6 +31,9 @@ def run(RunnerObj):
     # make output dirs if they do not exist:
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNBOOST2/"
     os.makedirs(outDir, exist_ok = True)
+    if not Path(outDir+'outFile.txt').exists():
+        print(outDir+'outFile.txt'+'does not exist, skipping...')
+        return
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
@@ -46,9 +49,10 @@ def parseOutput(RunnerObj):
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNBOOST2/"
-    if not Path(outDir).exists():
-        raise FileNotFoundError()
-        
+    
+    if not Path(outDir+'outFile.txt').exists():
+        print(outDir+'outFile.txt'+'does not exist, skipping...')
+        return
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
     

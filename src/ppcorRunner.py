@@ -14,7 +14,7 @@ def generateInputs(RunnerObj):
         RunnerObj.inputDir.joinpath("PPCOR").mkdir(exist_ok = False)
         
     if not RunnerObj.inputDir.joinpath("PPCOR/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
         
         newExpressionData = ExpressionData.copy()
@@ -48,14 +48,15 @@ def parseOutput(RunnerObj):
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/PPCOR/"
-    if not Path(outDir).exists():
-        raise FileNotFoundError()
+    if not Path(outDir+'outFile.txt').exists():
+        print(outDir+'outFile.txt'+'does not exist, skipping...')
+        return
         
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
     # edges with significant p-value
     part1 = OutDF.loc[OutDF['pValue'] <= float(RunnerObj.params['pVal'])]
-    part1['absCorVal'] = part1['corVal'].abs()
+    part1 = part1.assign(absCorVal = part1['corVal'].abs())
     # edges without significant p-value
     part2 = OutDF.loc[OutDF['pValue'] > float(RunnerObj.params['pVal'])]
     
