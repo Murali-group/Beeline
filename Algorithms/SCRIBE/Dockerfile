@@ -63,3 +63,5 @@ RUN R -e "BiocManager::install(c('optparse'), ref = 3.8, update = FALSE)"
 RUN mkdir data/
 
 COPY runScribe.R /
+
+RUN apt-get install time

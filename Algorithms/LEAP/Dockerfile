@@ -11,3 +11,5 @@ RUN R -e "install.packages('https://cran.r-project.org/src/contrib/LEAP_0.2.tar.
 COPY runLeap.R /
 
 RUN mkdir data/
+
+RUN apt-get install time

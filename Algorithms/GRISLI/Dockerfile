@@ -30,3 +30,5 @@ RUN cp -r /runGRISLI/spams-matlab-v2.6/ /root/.mcrCache9.6/GRISLI0/GRISLI/
 RUN mkdir data/
 
 RUN apt-get install -y libgomp1
+
+RUN apt-get install time

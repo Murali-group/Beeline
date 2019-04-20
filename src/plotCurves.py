@@ -17,7 +17,6 @@ def EvalCurves(dataDict, inputSettings):
                                 '/' +dataDict['trueEdges'],
                                 sep = '\t' if '.tsv' in dataDict['trueEdges'] else ',', 
                                 header = 0, index_col = None)
-    print(trueEdgesFile.head())
 
 
     

@@ -11,3 +11,5 @@ RUN R -e "install.packages('https://cran.r-project.org/src/contrib/ppcor_1.1.tar
 COPY runPPCOR.R /
 
 RUN mkdir data/
+
+RUN apt-get install time

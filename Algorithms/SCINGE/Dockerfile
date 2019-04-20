@@ -24,3 +24,5 @@ WORKDIR runSCINGE/
 ENV LD_LIBRARY_PATH /opt/mcr/v96/runtime/glnxa64:/opt/mcr/v96/bin/glnxa64
 
 RUN mkdir data/
+
+RUN apt-get install time

@@ -23,3 +23,5 @@ RUN unzip SINCERITIES.zip -d SINCERITIES
 WORKDIR SINCERITIES/
 
 RUN mkdir data/
+
+RUN apt-get install time

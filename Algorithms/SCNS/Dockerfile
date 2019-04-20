@@ -36,5 +36,6 @@ RUN cp bin/Release/* .
 #RUN cat Cebpa.txt
 
 
+RUN apt-get install time
 
 

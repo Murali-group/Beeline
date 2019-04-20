@@ -21,3 +21,5 @@ RUN R -e "install.packages('https://cran.r-project.org/src/contrib/MASS_7.3-51.3
 # RUN ruby run_R.rb data/exp_train.txt data/time_train.txt out 100 4 356 100 2
 
 
+
+RUN apt-get install time

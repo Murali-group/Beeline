@@ -18,3 +18,5 @@ RUN git checkout b900655
 
 #RUN cat Bptf_boolean_rules_5.txt
 
+
+RUN apt-get install time

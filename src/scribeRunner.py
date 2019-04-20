@@ -76,7 +76,7 @@ def run(RunnerObj):
     cmdToRun += '\"'
     
     print(cmdToRun)
-    sys.exit()
+    
     os.system(cmdToRun)
 
 
@@ -97,11 +97,9 @@ def parseOutput(RunnerObj):
     # https://stackoverflow.com/questions/21922806/sort-values-of-matrix-in-python
     
     OutDF = OutDF.clip(lower=0) # if less than 0, set it to zero
-    print(OutDF.head())
     idx = np.argsort(OutDF.values, axis = None)[::-1]
-    print(idx)
     rows, cols = np.unravel_index(idx, OutDF.shape)    
-    DFSorted = OutDF[rows, cols]
+    DFSorted = OutDF.iloc[rows, cols]
     
     # read input file for list of gene names
     GeneList = list(OutDF.index)
@@ -112,4 +110,3 @@ def parseOutput(RunnerObj):
     for row, col, val in zip(rows, cols, DFSorted):
         outFile.write('\t'.join([GeneList[row],GeneList[col],str(val)])+'\n')
     outFile.close()
-    
