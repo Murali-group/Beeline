@@ -1,4 +1,4 @@
-# Input Settings: initialize base input folder names, 
+# Input Settings: initialize base input folder names,
 # dataset collections, and algorithms to run over
 input_settings:
 
@@ -17,10 +17,10 @@ input_settings:
     #   pt_filename: a file containing pseudotime ordering
     #
     datasets:
-        - name: "dataset1"
+        - name: "HSC"
           ex_filename: "ExpressionData.csv"
           pt_filename: "PseudoTime.csv"
-          trueEdges: "refNetwork.tsv"
+          trueEdges: "refNetwork.csv"
 
 
 
@@ -37,7 +37,7 @@ input_settings:
     algorithms:
         - name: "SCODE"
           params:
-              should_run: [True]
+              should_run: [False]
               nGenes: [11]
               z: [4]
               nCells: [570]         
@@ -51,17 +51,17 @@ input_settings:
               
         - name: "SINCERITIES"
           params: 
-              should_run: [True]
+              should_run: [False]
                             
               
         - name: "PIDC"
           params: 
-              should_run: [True]
+              should_run: [False]
 
 
         - name: "GRNVBEM"
           params: 
-              should_run: [True]
+              should_run: [False]
 
               
 
@@ -73,32 +73,32 @@ input_settings:
               
         - name: "GRNBOOST2"
           params: 
-              should_run: [True]
+              should_run: [False]
               
               
               
         - name: "LEAP"
           params: 
-              should_run: [True]
+              should_run: [False]
               
               
                             
         #- name: "JUMP3"
         #  params: 
-        #      should_run: [True]
+        #      should_run: [False]
               
               
               
         - name: "PPCOR"
           params: 
-              should_run: [True]
+              should_run: [False]
               pVal: [0.01]
               
               
               
         - name: "GRISLI"
           params: 
-              should_run: [True]
+              should_run: [False]
               L: [10]
               R: [1000]
               alphaMin: [0.3]
@@ -106,7 +106,7 @@ input_settings:
 
         - name: "SCINGE"
           params: 
-              should_run: [True]
+              should_run: [False]
 
 
 
