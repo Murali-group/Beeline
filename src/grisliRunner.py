@@ -41,7 +41,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outFile = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runGRISLI/data/ grisli:test /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', './GRISLI ',
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runGRISLI/data/ grisli:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', './GRISLI ',
                          inputPath, outFile, L, R, alphaMin,'\"'])
     
     print(cmdToRun)

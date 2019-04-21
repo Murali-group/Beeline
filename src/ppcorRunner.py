@@ -35,7 +35,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ ppcor:base /bin/sh -c \"Rscript runPPCOR.R', 
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ ppcor:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'Rscript runPPCOR.R',
                          inputPath, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)

@@ -41,7 +41,7 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/VBEM/data/ grnvbem:base /bin/sh -c \"./GRNVBEM ', 
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/VBEM/data/ grnvbem:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', './GRNVBEM',
                          inputPath, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)
