@@ -14,14 +14,18 @@ def generateInputs(RunnerObj):
         RunnerObj.inputDir.joinpath("SCODE").mkdir(exist_ok = False)
         
     if not RunnerObj.inputDir.joinpath("SCODE/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+        # input file
+        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
+        # output file
         ExpressionData.to_csv(RunnerObj.inputDir.joinpath("SCODE/ExpressionData.csv"),
                              sep = '\t', header  = False, index = False)
         
     if not RunnerObj.inputDir.joinpath("SCODE/PseudoTime.csv").exists():
-        PTData = pd.read_csv(RunnerObj.inputDir.joinpath('PseudoTime.csv'),
+        # input file
+        PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
+        # output file
         PTData.to_csv(RunnerObj.inputDir.joinpath("SCODE/PseudoTime.csv"),
                              sep = '\t', header  = False)
         
@@ -57,8 +61,9 @@ def parseOutput(RunnerObj):
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCODE/"
-    if not Path(outDir).exists():
-        raise FileNotFoundError()
+    if not Path(outDir+'meanA.txt').exists():
+        print(outDir+'outFile.txt'+'does not exist, skipping...')
+        return
         
     # Read output
     OutDF = pd.read_csv(outDir+'meanA.txt', sep = '\t', header = None)

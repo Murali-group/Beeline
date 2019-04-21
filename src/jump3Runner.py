@@ -15,10 +15,10 @@ def generateInputs(RunnerObj):
         RunnerObj.inputDir.joinpath("JUMP3").mkdir(exist_ok = False)
         
     if not RunnerObj.inputDir.joinpath("JUMP3/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
         newExpressionData = ExpressionData.T.copy()
-        PTData = pd.read_csv(RunnerObj.inputDir.joinpath('PseudoTime.csv'),
+        PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
         # make sure the indices are strings for both dataframes
         newExpressionData.index = newExpressionData.index.map(str) 
@@ -63,8 +63,9 @@ def parseOutput(RunnerObj):
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/JUMP3/"
-    if not Path(outDir).exists():
-        raise FileNotFoundError()
+    if not Path(outDir+'outFile.txt').exists():
+        print(outDir+'outFile.txt'+'does not exist, skipping...')
+        return
         
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = ',')

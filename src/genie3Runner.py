@@ -14,7 +14,8 @@ def generateInputs(RunnerObj):
         RunnerObj.inputDir.joinpath("GENIE3").mkdir(exist_ok = False)
         
     if not RunnerObj.inputDir.joinpath("GENIE3/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+        # input data
+        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
 
         # Write .csv file
@@ -47,11 +48,14 @@ def parseOutput(RunnerObj):
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GENIE3/"
-    if not Path(outDir).exists():
-        raise FileNotFoundError()
+
         
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
+    
+    if not Path(outDir+'outFile.txt').exists():
+        print(outDir+'outFile.txt'+'does not exist, skipping...')
+        return
     
     outFile = open(outDir + 'rankedEdges.csv','w')
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')

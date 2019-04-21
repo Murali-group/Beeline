@@ -75,6 +75,8 @@ class Runner(object):
         self.name = params['name']
         self.inputDir = params['inputDir']
         self.params = params['params']
+        self.exprData = params['exprData']
+        self.cellData = params['cellData']
         
     def generateInputs(self):
         InputMapper[self.name](self)
