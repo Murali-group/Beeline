@@ -31,13 +31,12 @@ def run(RunnerObj):
     # make output dirs if they do not exist:
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNBOOST2/"
     os.makedirs(outDir, exist_ok = True)
-    if not Path(outDir+'outFile.txt').exists():
-        print(outDir+'outFile.txt'+'does not exist, skipping...')
-        return
+
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
-                         'arboreto:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'python runArboreto.py --algo=GRNBoost2',
+                         'arboreto:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 
+                         'python runArboreto.py --algo=GRNBoost2',
                          '--inFile='+inputPath, '--outFile='+outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)

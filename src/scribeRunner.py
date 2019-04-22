@@ -68,10 +68,10 @@ def run(RunnerObj):
                    '-g',inputPath + 'GeneData.csv', '-o data/'+outDir, '-d',delay, '-l', low,
                    '-m', method, '-x',fam])
     
-    if RunnerObj.params['log'] == 'True':
+    if str(RunnerObj.params['log']) == 'True':
         cmdToRun += ' --log'
-    if RunnerObj.params['ignorePT'] == 'True':
-        cmdToRun += ' --i'
+    if str(RunnerObj.params['ignorePT']) == 'True':
+        cmdToRun += ' -i'
         
     cmdToRun += '\"'
     
