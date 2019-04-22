@@ -99,9 +99,11 @@ def parseOutput(RunnerObj):
     
     OutDF = OutDF.clip(lower=0) # if less than 0, set it to zero
     idx = np.argsort(OutDF.values, axis = None)[::-1]
-    rows, cols = np.unravel_index(idx, OutDF.shape)    
-    DFSorted = OutDF.iloc[rows, cols]
-    
+    rows, cols = np.unravel_index(idx, OutDF.shape)
+    DFSorted = []
+    for idx in range(len(rows)):
+        DFSorted.append(OutDF.iloc[rows[idx], cols[idx]])
+
     # read input file for list of gene names
     GeneList = list(OutDF.index)
     

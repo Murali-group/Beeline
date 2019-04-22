@@ -5,6 +5,9 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(rc={"lines.linewidth": 2}, palette  = "deep", style = "ticks")
+from sklearn.metrics import precision_recall_curve, roc_curve, auc
+from itertools import product
+
 
 def EvalCurves(dataDict, inputSettings):
     '''
@@ -13,17 +16,21 @@ def EvalCurves(dataDict, inputSettings):
     '''
     
     # Read file for trueEdges
-    trueEdgesFile = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
+    trueEdgesDF = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
                                 '/' +dataDict['trueEdges'],
-                                sep = '\t' if '.tsv' in dataDict['trueEdges'] else ',', 
+                                sep = ',', 
                                 header = 0, index_col = None)
-
-
-    
+    TrueEdgeDict = {'|'.join(p):0 for p in list(product(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),repeat =2))}
+    for key in TrueEdgeDict.keys():
+        if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
+                           (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
+            TrueEdgeDict[key] = 1
+            
     # Initialize data dictionaries
     precisionDict = {}
     recallDict = {}
     FPRDict = {}
+    TPRDict = {}
     AUPRC = {}
     AUROC = {}
     outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
@@ -31,51 +38,32 @@ def EvalCurves(dataDict, inputSettings):
 
         # check if the output rankedEdges file exists
         if Path(outDir + '/' +algo[0]+'/rankedEdges.csv').exists():
-            precisionDict[algo[0]] = [] # Initialize Precsion
-            recallDict[algo[0]] = [] # Initialize Recall
-            FPRDict[algo[0]] = [] # Initialize FPR
-            predEdgesFile = pd.read_csv(outDir + '/' +algo[0]+'/rankedEdges.csv', \
+             # Initialize Precsion
+
+            
+            predDF = pd.read_csv(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                                         sep = '\t', header =  0, index_col = None)
+
+            PredEdgeDict = {'|'.join(p):0 for p in list(product(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),repeat =2))}
+            for key in PredEdgeDict.keys():
+                subDF = predDF.loc[(predDF['Gene1'] == key.split('|')[0]) &
+                                   (predDF['Gene2'] == key.split('|')[1])]
+                if len(subDF)>0:
+                    PredEdgeDict[key] = np.abs(subDF.EdgeWeight.values[0])
             
+            outDF = pd.DataFrame([TrueEdgeDict,PredEdgeDict]).T
+            outDF.columns = ['TrueEdges','PredEdges']
+            fpr, tpr, thresholds = roc_curve(y_true=outDF['TrueEdges'],
+                                             y_score=outDF['PredEdges'], pos_label=1)
             
-            tp = 0
-            fp = 0
-            total = 0 # total predictions made
-            totalTrue = trueEdgesFile.shape[0] # Condition Positives
-            pOld = 0
-            rOld = 0
-            AUPRC[algo[0]] = 0 # Initialize AUPRC
-            AUROC[algo[0]] = 0 # Initialize AUROC
-            
-            for idx, row in predEdgesFile.iterrows():
-                if trueEdgesFile.loc[(trueEdgesFile['Gene1'] == row['Gene1']) & \
-                                     (trueEdgesFile['Gene2'] == row['Gene2'])].shape[0] > 0:
-                    tp += 1
-                else:
-                    fp += 1
-                total += 1
-                
-                pNew = float(tp)/float(total)
-                rNew = float(tp)/float(totalTrue)
-                
-                precisionDict[algo[0]].append(pNew)
-                recallDict[algo[0]].append(rNew)
-                
-                AUPRC[algo[0]] += ((rNew - rOld)*(pOld + pNew)/2) # compute AUPRC
-                
-                pOld = pNew
-                rOld = rNew
-                FPRDict[algo[0]].append(float(fp)) # List of FP values
-                
-            FPRDict[algo[0]] = [val/float(total - totalTrue) for val in FPRDict[algo[0]]] # update FPR
-            tprOld = 0
-            fprOld = 0
-            for idx in range(len(FPRDict[algo[0]])):
-                tprNew = recallDict[algo[0]][idx]
-                fprNew = FPRDict[algo[0]][idx]
-                AUROC[algo[0]] += ((fprNew - fprOld)*(tprOld + tprNew)/2)
-                tprOld = tprNew
-                fprOld = fprNew
+            prec, recall, thresholds = precision_recall_curve(y_true=outDF['TrueEdges'],
+                                                              probas_pred=outDF['PredEdges'], pos_label=1)
+            precisionDict[algo[0]] = prec
+            recallDict[algo[0]] = recall 
+            FPRDict[algo[0]] = fpr 
+            TPRDict[algo[0]] = tpr
+            AUPRC[algo[0]] = auc(recall, prec)
+            AUROC[algo[0]] = auc(fpr, tpr)
         else:
             print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                   ' does not exist. Skipping...')
@@ -99,7 +87,7 @@ def EvalCurves(dataDict, inputSettings):
     ## Make ROC curves
     legendList = []
     for key in recallDict.keys():
-        sns.lineplot(FPRDict[key],recallDict[key], ci=None)
+        sns.lineplot(FPRDict[key],TPRDict[key], ci=None)
         legendList.append(key + ' (AUROC = ' + str("%.2f" % (AUROC[key]))+')')
         
     plt.plot([0, 1], [0, 1], linewidth = 1.5, color = 'k', linestyle = '--')
