@@ -18,8 +18,8 @@ input_settings:
     #
     datasets:
         - name: "THP1"
-          ex_filename: "ExpressionData.csv"
-          pt_filename: "PseudoTime.csv"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
 
 

@@ -18,8 +18,8 @@ input_settings:
     #
     datasets:
         - name: "HSC"
-          ex_filename: "ExpressionData.csv"
-          pt_filename: "PseudoTime.csv"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
 
 
@@ -120,7 +120,7 @@ input_settings:
 
         - name: "SCRIBE"
           params: 
-              should_run: [False]
+              should_run: [True]
               ### required parameters
               # a list of delay values
               delay: ["5,10,20,25,50,75"]
