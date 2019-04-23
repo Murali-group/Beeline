@@ -101,7 +101,9 @@ def EvalCurves(dataDict, inputSettings):
     plt.savefig(outDir+'/ROCplot.png')
     plt.clf()
 
-    # part 2 - treat edges as undirected
+    # part 2 - Compute PR and ROC curves
+    # by treating edges in the reference network
+    # as undirected
 
     
     TrueEdgeDict = {'|'.join(p):0 for p in list(combinations_with_replacement(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),r = 2))}
