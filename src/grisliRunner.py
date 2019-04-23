@@ -71,7 +71,7 @@ def parseOutput(RunnerObj):
     DFSorted = OutMatrix[rows, cols]
     
     # read input file for list of gene names
-    ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+    ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
     GeneList = list(ExpressionData.index)
     

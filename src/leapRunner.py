@@ -35,6 +35,7 @@ def run(RunnerObj):
     '''
     inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1] + \
                     "/LEAP/ExpressionData.csv"
+    maxLag = str(RunnerObj.params['maxLag'])
     
     # make output dirs if they do not exist:
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/LEAP/"
@@ -42,7 +43,7 @@ def run(RunnerObj):
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ leap:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'Rscript runLeap.R',
-                         inputPath, outPath, '\"'])
+                         inputPath, maxLag, outPath, '\"'])
     print(cmdToRun)
     os.system(cmdToRun)
 
