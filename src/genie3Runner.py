@@ -37,6 +37,7 @@ def run(RunnerObj):
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
                          'arboreto:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'python runArboreto.py --algo=GENIE3',
                          '--inFile='+inputPath, '--outFile='+outPath, '\"'])
+
     print(cmdToRun)
     os.system(cmdToRun)
 
