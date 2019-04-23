@@ -80,12 +80,46 @@ input_settings:
                             
         - name: "JUMP3"
           params: 
-              should_run: [True]
+              should_run: [False]
               
         - name: "PPCOR"
           params: 
               should_run: [True]
               pVal: [0.01]
+              
+        - name: "GRISLI"
+          params: 
+              should_run: [True]
+              L: [10]
+              R: [1000]
+              alphaMin: [0.3]
+
+        - name: "SCINGE"
+          params: 
+              should_run: [True]
+
+        - name: "SCRIBE"
+          params: 
+              should_run: [True]
+              ### required parameters
+              # a list of delay values
+              delay: ["5,10,20,25,50,75,100"]
+              # any of 'RDI', 'uRDI', 'cRDI', or 'ucRDI'
+              method: ['ucRDI']
+              # lower detection limit (expression below this 
+              # will be treated as zero.
+              lowerDetectionLimit: [0]
+              # expressionFamily: for synthetic data use uninormal
+              #  for mRNA count data use negbinomial.size()
+              expressionFamily: ['uninormal']
+              ### optional but recommended parameters
+              # log transform expression values or not
+              log: [False]
+              # ignore pseudotime values (and use experimental
+              # time points instead), recommended True for synthetic data
+              # False for real mRNA data
+              ignorePT: [True]
+
 
 # Output Settings: initialize base output folder names
 output_settings:
