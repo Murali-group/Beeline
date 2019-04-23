@@ -43,8 +43,9 @@ class OutputSettings(object):
     be written to
     '''
 
-    def __init__(self, base_dir: Path) -> None:
+    def __init__(self, base_dir, output_prefix: Path) -> None:
         self.base_dir = base_dir
+        self.output_prefix = output_prefix
 
         
 class Evaluation(object):
@@ -179,9 +180,12 @@ class ConfigParser(object):
         return algorithms
 
     @staticmethod
-    def __parse_output_settings(output_settings_map):
+    def __parse_output_settings(output_settings_map) -> OutputSettings:
         output_dir = Path(output_settings_map['output_dir'])
-        return OutputSettings(output_dir)
+        output_prefix = Path(output_settings_map['output_prefix'])
+
+        return OutputSettings(output_dir,
+                             output_prefix)
 
 def get_parser() -> argparse.ArgumentParser:
     '''
@@ -227,13 +231,15 @@ def main():
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].parseOutput()
         
-    outDir = str(evaluation.output_settings.base_dir)+str(evaluation.input_settings.datadir).split("inputs")[1]
+    outDir = str(evaluation.output_settings.base_dir) + \
+            str(evaluation.input_settings.datadir).split("inputs")[1] + "/"+\
+            str(evaluation.output_settings.output_prefix) + "-"
     AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = evaluation.evaluate_runners()
     
-    pd.DataFrame(AUPRCDict).to_csv(outDir+'/AUPRCscores.csv')
-    pd.DataFrame(AUROCDict).to_csv(outDir+'/AUROCscores.csv')
-    pd.DataFrame(uAUPRCDict).to_csv(outDir+'/uAUPRCscores.csv')
-    pd.DataFrame(uAUROCDict).to_csv(outDir+'/uAUROCscores.csv')
+    pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
+    pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
+    pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
+    pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
 
 
 
