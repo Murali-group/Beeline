@@ -26,6 +26,7 @@ from typing import Dict, List
 from src.runner import Runner
 import os
 from src.plotCurves import EvalCurves
+import pandas as pd
 
 class InputSettings(object):
     def __init__(self,
@@ -120,9 +121,21 @@ class Evaluation(object):
         Plot PR and ROC curves for each dataset
         for all the algorithms
         '''
-        for dataset in self.input_settings.datasets:              
-            EvalCurves(dataset, self.input_settings)
-                
+        AUPRCDict = {}
+        AUROCDict = {}
+        uAUPRCDict = {}
+        uAUROCDict = {}
+        
+        
+        for dataset in self.input_settings.datasets:
+            AUPRC, AUROC, uAUPRC, uAUROC = EvalCurves(dataset, self.input_settings)
+            
+            AUPRCDict[dataset['name']] = AUPRC
+            AUROCDict[dataset['name']] = AUROC
+            uAUPRCDict[dataset['name']] = uAUPRC
+            uAUROCDict[dataset['name']] = uAUROC
+            
+        return AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict
                 
 class ConfigParser(object):
     '''
@@ -208,14 +221,19 @@ def main():
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].generateInputs()
 
-    for idx in range(len(evaluation.runners)):
-       evaluation.runners[idx].run()
+    #for idx in range(len(evaluation.runners)):
+    #    evaluation.runners[idx].run()
 
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].parseOutput()
-
-
-    evaluation.evaluate_runners()
+        
+    outDir = str(evaluation.output_settings.base_dir)+str(evaluation.input_settings.datadir).split("inputs")[1]
+    AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = evaluation.evaluate_runners()
+    
+    pd.DataFrame(AUPRCDict).to_csv(outDir+'/AUPRCscores.csv')
+    pd.DataFrame(AUROCDict).to_csv(outDir+'/AUROCscores.csv')
+    pd.DataFrame(uAUPRCDict).to_csv(outDir+'/uAUPRCscores.csv')
+    pd.DataFrame(uAUROCDict).to_csv(outDir+'/uAUROCscores.csv')
 
 
 
