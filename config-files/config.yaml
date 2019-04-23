@@ -122,7 +122,15 @@ input_settings:
 
         - name: "SCINGE"
           params: 
-              should_run: [False]
+              should_run: [True]
+              lambda: [0.01]
+              dT: [10]
+              num_lags: [5]
+              kernel_width: [4]
+              prob_zero_removal: [0]
+              prob_remove_samples: [0.2]
+              family: ["gaussian"]
+              num_replicates: [2]
 
 
         - name: "SCRIBE"
