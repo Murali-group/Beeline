@@ -2,7 +2,8 @@ library(LEAP)
 
 args <- commandArgs(trailingOnly = T)
 inFile <- args[1]
-outFile <-  args[2]
+maxLag <- as.numeric(args[2])
+outFile <-  args[3]
 
 # input expression data
 inputExpr <- read.table(inFile, sep=",", header = 1, row.names = 1)
@@ -13,7 +14,7 @@ rownames(inputExpr) <- c()
 # max_lag_prop is set to the max. recommended value from the paper's supplementary file
 # Link to paper: https://academic.oup.com/bioinformatics/article/33/5/764/2557687
 
-MAC_results = MAC_counter(data = inputExpr, max_lag_prop=0.3333, MAC_cutoff = 0, 
+MAC_results = MAC_counter(data = inputExpr, max_lag_prop=maxLag, MAC_cutoff = 0, 
                           file_name = "temp", lag_matrix = FALSE, symmetric = FALSE)
 
 # Write output to a file

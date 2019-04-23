@@ -35,10 +35,11 @@ def run(RunnerObj):
     Function to run SCODE algorithm
     '''
     inputPath = "data/"+str(RunnerObj.inputDir).split("RNMethods/")[1]+"/SCODE/"
-    
-    nGenes = str(RunnerObj.params['nGenes'])
+    ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
+                                     header = 0, index_col = 0)
+    nGenes = str(ExpressionData.shape[0])
     z = str(RunnerObj.params['z'])
-    nCells = str(RunnerObj.params['nCells'])
+    nCells = str(ExpressionData.shape[1])
     nIter = str(RunnerObj.params['nIter'])
     nRep = str(RunnerObj.params['nRep'])
     
@@ -46,7 +47,7 @@ def run(RunnerObj):
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCODE/"
     os.makedirs(outDir, exist_ok = True)
     
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/SCODE/data/  scode:base /bin/sh -c \"ruby run_R.rb',
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/SCODE/data/  scode:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'ruby run_R.rb',
                     inputPath +'ExpressionData.csv', inputPath + 'PseudoTime.csv', 
                          ' data/'+outDir,
                          nGenes, z, nCells, nIter, nRep, '\"'])
@@ -76,7 +77,7 @@ def parseOutput(RunnerObj):
     DFSorted = OutMatrix[rows, cols]
     
     # read input file for list of gene names
-    ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath('ExpressionData.csv'),
+    ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
     GeneList = list(ExpressionData.index)
     

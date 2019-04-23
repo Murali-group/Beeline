@@ -60,8 +60,8 @@ def run(RunnerObj):
             params[param] = val
     params_str = ' '.join(str(params[p]) for p in params_order) 
 
-    outPath = "data/" + str(outDir) 
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runSCINGE/data/ scinge:base /bin/sh -c \"./runSCINGE ', 
+    outPath = "data/" +  str(outDir) 
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runSCINGE/data/ scinge:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', './runSCINGE ',
                          inputPath, outPath, params_str, '\"'])
     print(cmdToRun)
     # also print the parameters

@@ -63,7 +63,7 @@ def run(RunnerObj):
 
     # Build the command to run Scribe
     
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ scribe:base /bin/sh -c \"Rscript runScribe.R',
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ scribe:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'Rscript runScribe.R',
                    '-e',inputPath +'ExpressionData.csv', '-c',inputPath + 'CellData.csv', 
                    '-g',inputPath + 'GeneData.csv', '-o data/'+outDir, '-d',delay, '-l', low,
                    '-m', method, '-x',fam])

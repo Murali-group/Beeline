@@ -26,6 +26,7 @@ from typing import Dict, List
 from src.runner import Runner
 import os
 from src.plotCurves import EvalCurves
+import pandas as pd
 
 class InputSettings(object):
     def __init__(self,
@@ -42,8 +43,9 @@ class OutputSettings(object):
     be written to
     '''
 
-    def __init__(self, base_dir: Path) -> None:
+    def __init__(self, base_dir, output_prefix: Path) -> None:
         self.base_dir = base_dir
+        self.output_prefix = output_prefix
 
         
 class Evaluation(object):
@@ -120,10 +122,79 @@ class Evaluation(object):
         Plot PR and ROC curves for each dataset
         for all the algorithms
         '''
-        for dataset in self.input_settings.datasets:              
-            EvalCurves(dataset, self.input_settings)
-                
-                
+        AUPRCDict = {}
+        AUROCDict = {}
+        uAUPRCDict = {}
+        uAUROCDict = {}
+        
+        
+        for dataset in self.input_settings.datasets:
+            AUPRC, AUROC, uAUPRC, uAUROC = EvalCurves(dataset, self.input_settings)
+            
+            AUPRCDict[dataset['name']] = AUPRC
+            AUROCDict[dataset['name']] = AUROC
+            uAUPRCDict[dataset['name']] = uAUPRC
+            uAUROCDict[dataset['name']] = uAUROC
+            
+        return AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict
+
+    def time_runners(self):
+        '''
+        :return:
+        dict of times for all dataset, for all algos
+        '''
+        TimeDict = dict()
+
+        for dataset in self.input_settings.datasets:
+            timevals  = self.get_time(dataset)
+            TimeDict[dataset["name"]] = timevals
+
+        return TimeDict
+
+    def get_time(self, dataset):
+        '''
+        :param dataset:
+        :return: dict of algorithms, along with the corresponding time for the dataset
+        '''
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/" + dataset["name"] + "/"
+        algo_dict = dict()
+        algos = self.input_settings.algorithms
+        for algo in algos:
+            path = outDir+algo[0]+"/time.txt"
+            time = self.parse_time(path)
+            if time == -1:
+                print("skipping time computation for ", algo[0], "on dataset", dataset["name"])
+                continue
+
+            algo_dict[algo[0]] = time
+
+        return algo_dict
+
+
+    def parse_time(self, path):
+        """
+       gets the user time given by the time command, which is stored along with the output when the algorithm runs,
+       in a file called time.txt
+       :return:
+       float containing the time this object took to run on the dataset
+        """
+        try:
+            with open(path, "r+") as f:
+                lines = f.readlines()
+                line = lines[1]
+                time_val = float(line.split()[-1])
+
+        except FileNotFoundError:
+            print("time output (time.txt) file not found, setting time value to -1")
+            time_val = -1
+        except ValueError:
+            print("Algorithm running failed, setting time value to -1")
+            time_val = -1
+
+        return time_val
+
+
 class ConfigParser(object):
     '''
     Define static methods for parsing a config file that sets a large number
@@ -166,9 +237,12 @@ class ConfigParser(object):
         return algorithms
 
     @staticmethod
-    def __parse_output_settings(output_settings_map):
+    def __parse_output_settings(output_settings_map) -> OutputSettings:
         output_dir = Path(output_settings_map['output_dir'])
-        return OutputSettings(output_dir)
+        output_prefix = Path(output_settings_map['output_prefix'])
+
+        return OutputSettings(output_dir,
+                             output_prefix)
 
 def get_parser() -> argparse.ArgumentParser:
     '''
@@ -208,14 +282,24 @@ def main():
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].generateInputs()
 
-    for idx in range(len(evaluation.runners)):
-       evaluation.runners[idx].run()
+    # for idx in range(len(evaluation.runners)):
+    #    evaluation.runners[idx].run()
 
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].parseOutput()
+        
+    outDir = str(evaluation.output_settings.base_dir) + \
+            str(evaluation.input_settings.datadir).split("inputs")[1] + "/"+\
+            str(evaluation.output_settings.output_prefix) + "-"
+    AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = evaluation.evaluate_runners()
 
-
-    evaluation.evaluate_runners()
+    TimeDict = evaluation.time_runners()
+    
+    pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
+    pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
+    pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
+    pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
+    pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
 
 
 
