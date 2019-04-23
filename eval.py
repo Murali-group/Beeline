@@ -13,7 +13,6 @@ import multiprocessing
 from multiprocessing import Pool, cpu_count
 import concurrent.futures
 from typing import Dict, List
-from src.runner import Runner
 import yaml
 import argparse
 import itertools
@@ -25,13 +24,12 @@ import concurrent.futures
 from typing import Dict, List
 from src.runner import Runner
 import os
-from src.plotCurves import EvalCurves
 import pandas as pd
 
 class InputSettings(object):
     def __init__(self,
             datadir, datasets, algorithms) -> None:
-        
+
         self.datadir = datadir
         self.datasets = datasets
         self.algorithms = algorithms
@@ -116,85 +114,6 @@ class Evaluation(object):
                 for runner in self.runners[batch]:
                     runner.run(output_dir=base_output_dir)
                     
-            
-    def evaluate_runners(self):
-        '''
-        Plot PR and ROC curves for each dataset
-        for all the algorithms
-        '''
-        AUPRCDict = {}
-        AUROCDict = {}
-        uAUPRCDict = {}
-        uAUROCDict = {}
-        
-        
-        for dataset in self.input_settings.datasets:
-            AUPRC, AUROC, uAUPRC, uAUROC = EvalCurves(dataset, self.input_settings)
-            
-            AUPRCDict[dataset['name']] = AUPRC
-            AUROCDict[dataset['name']] = AUROC
-            uAUPRCDict[dataset['name']] = uAUPRC
-            uAUROCDict[dataset['name']] = uAUROC
-            
-        return AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict
-
-    def time_runners(self):
-        '''
-        :return:
-        dict of times for all dataset, for all algos
-        '''
-        TimeDict = dict()
-
-        for dataset in self.input_settings.datasets:
-            timevals  = self.get_time(dataset)
-            TimeDict[dataset["name"]] = timevals
-
-        return TimeDict
-
-    def get_time(self, dataset):
-        '''
-        :param dataset:
-        :return: dict of algorithms, along with the corresponding time for the dataset
-        '''
-        outDir = str(self.output_settings.base_dir) + \
-                 str(self.input_settings.datadir).split("inputs")[1] + "/" + dataset["name"] + "/"
-        algo_dict = dict()
-        algos = self.input_settings.algorithms
-        for algo in algos:
-            path = outDir+algo[0]+"/time.txt"
-            time = self.parse_time(path)
-            if time == -1:
-                print("skipping time computation for ", algo[0], "on dataset", dataset["name"])
-                continue
-
-            algo_dict[algo[0]] = time
-
-        return algo_dict
-
-
-    def parse_time(self, path):
-        """
-       gets the user time given by the time command, which is stored along with the output when the algorithm runs,
-       in a file called time.txt
-       :return:
-       float containing the time this object took to run on the dataset
-        """
-        try:
-            with open(path, "r+") as f:
-                lines = f.readlines()
-                line = lines[1]
-                time_val = float(line.split()[-1])
-
-        except FileNotFoundError:
-            print("time output (time.txt) file not found, setting time value to -1")
-            time_val = -1
-        except ValueError:
-            print("Algorithm running failed, setting time value to -1")
-            time_val = -1
-
-        return time_val
-
-
 class ConfigParser(object):
     '''
     Define static methods for parsing a config file that sets a large number
@@ -271,7 +190,6 @@ def main():
     opts = parse_arguments()
     config_file = opts.config
 
-    evaluation = None
 
     with open(config_file, 'r') as conf:
         evaluation = ConfigParser.parse(conf)
@@ -282,26 +200,11 @@ def main():
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].generateInputs()
 
-    # for idx in range(len(evaluation.runners)):
-    #    evaluation.runners[idx].run()
+    for idx in range(len(evaluation.runners)):
+        evaluation.runners[idx].run()
 
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].parseOutput()
-        
-    outDir = str(evaluation.output_settings.base_dir) + \
-            str(evaluation.input_settings.datadir).split("inputs")[1] + "/"+\
-            str(evaluation.output_settings.output_prefix) + "-"
-    AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = evaluation.evaluate_runners()
-
-    TimeDict = evaluation.time_runners()
-    
-    pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
-    pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
-    pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
-    pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
-    pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
-
-
 
     print('Evaluation complete')
 
