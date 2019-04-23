@@ -35,10 +35,11 @@ def run(RunnerObj):
     Function to run SCODE algorithm
     '''
     inputPath = "data/"+str(RunnerObj.inputDir).split("RNMethods/")[1]+"/SCODE/"
-    
-    nGenes = str(RunnerObj.params['nGenes'])
+    ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
+                                     header = 0, index_col = 0)
+    nGenes = str(ExpressionData.shape[0])
     z = str(RunnerObj.params['z'])
-    nCells = str(RunnerObj.params['nCells'])
+    nCells = str(ExpressionData.shape[1])
     nIter = str(RunnerObj.params['nIter'])
     nRep = str(RunnerObj.params['nRep'])
     
