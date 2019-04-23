@@ -2,7 +2,7 @@ library(LEAP)
 
 args <- commandArgs(trailingOnly = T)
 inFile <- args[1]
-maxLag <- args[2]
+maxLag <- as.numeric(args[2])
 outFile <-  args[3]
 
 # input expression data

@@ -119,8 +119,8 @@ def EvalCurves(dataDict, inputSettings):
     recallDict = {}
     FPRDict = {}
     TPRDict = {}
-    AUPRC = {}
-    AUROC = {}
+    uAUPRC = {}
+    uAUROC = {}
     outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
     for algo in inputSettings.algorithms:
 
@@ -152,8 +152,8 @@ def EvalCurves(dataDict, inputSettings):
             recallDict[algo[0]] = recall 
             FPRDict[algo[0]] = fpr 
             TPRDict[algo[0]] = tpr
-            AUPRC[algo[0]] = auc(recall, prec)
-            AUROC[algo[0]] = auc(fpr, tpr)
+            uAUPRC[algo[0]] = auc(recall, prec)
+            uAUROC[algo[0]] = auc(fpr, tpr)
         else:
             print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                   ' does not exist. Skipping...')
@@ -163,7 +163,7 @@ def EvalCurves(dataDict, inputSettings):
     for key in precisionDict.keys():
         print(key)
         sns.lineplot(recallDict[key],precisionDict[key], ci=None)
-        legendList.append(str(key) + ' (AUPRC = ' + str("%.2f" % (AUPRC[key]))+')')
+        legendList.append(str(key) + ' (AUPRC = ' + str("%.2f" % (uAUPRC[key]))+')')
 
     plt.xlim(0,1)    
     plt.ylim(0,1)
@@ -178,7 +178,7 @@ def EvalCurves(dataDict, inputSettings):
     legendList = []
     for key in recallDict.keys():
         sns.lineplot(FPRDict[key],TPRDict[key], ci=None)
-        legendList.append(key + ' (AUROC = ' + str("%.2f" % (AUROC[key]))+')')
+        legendList.append(key + ' (AUROC = ' + str("%.2f" % (uAUROC[key]))+')')
         
     plt.plot([0, 1], [0, 1], linewidth = 1.5, color = 'k', linestyle = '--')
 
@@ -190,3 +190,4 @@ def EvalCurves(dataDict, inputSettings):
     plt.savefig(outDir+'/uROCplot.pdf')
     plt.savefig(outDir+'/uROCplot.png')
     plt.clf()
+    return AUPRC, AUROC, uAUPRC, uAUROC
