@@ -50,8 +50,8 @@ def PRROC(dataDict, inputSettings, directed = True):
             else:
                 print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                       ' does not exist. Skipping...')
-            PRName = '/PRplot.pdf'
-            ROCName = '/ROCplot.pdf'
+            PRName = '/PRplot'
+            ROCName = '/ROCplot'
     else:
         for algo in tqdm(inputSettings.algorithms, 
                          total = len(inputSettings.algorithms), unit = " Algorithms"):
@@ -69,8 +69,8 @@ def PRROC(dataDict, inputSettings, directed = True):
                 print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                   ' does not exist. Skipping...')
             
-            PRName = '/uPRplot.pdf'
-            ROCName = '/uROCplot.pdf'
+            PRName = '/uPRplot'
+            ROCName = '/uROCplot'
 
      ## Make PR curves
     legendList = []
