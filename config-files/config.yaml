@@ -17,15 +17,15 @@ input_settings:
     #   pt_filename: a file containing pseudotime ordering
     #
     datasets:
-        - name: "HSC_ics1"
+        - name: "HSC"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
 
-        - name: "HSC_ics1_dropped"
-          exprData: "ExpressionData-dropped.csv"
-          cellData: "PseudoTime-dropped.csv"
-          trueEdges: "refNetwork.csv"
+#        - name: "HSC_ics1_dropped"
+#          exprData: "ExpressionData-dropped.csv"
+#          cellData: "PseudoTime-dropped.csv"
+#          trueEdges: "refNetwork.csv"
 
 
 
@@ -50,7 +50,7 @@ input_settings:
     algorithms:
         - name: "SCODE"
           params:
-              should_run: [True]
+              should_run: [False]
               z: [10]
               nIter: [100]
               nRep: [5]
@@ -62,7 +62,7 @@ input_settings:
               
         - name: "SINCERITIES"
           params: 
-              should_run: [True]
+              should_run: [False]
                             
               
         - name: "PIDC"
@@ -72,25 +72,25 @@ input_settings:
 
         - name: "GRNVBEM"
           params: 
-              should_run: [True]
+              should_run: [False]
 
               
 
         - name: "GENIE3"
           params: 
-              should_run: [True]
+              should_run: [False]
               
               
               
         - name: "GRNBOOST2"
           params: 
-              should_run: [True]
+              should_run: [False]
               
               
               
         - name: "LEAP"
           params: 
-              should_run: [True]
+              should_run: [False]
               # Recommended maxLag value is 0.3
               # but it is very slow with 0.3
               # when we have more than 1000 cells.
@@ -106,7 +106,7 @@ input_settings:
               
         - name: "PPCOR"
           params: 
-              should_run: [True]
+              should_run: [False]
               # Used in parsing output
               pVal: [0.01]
               
@@ -114,7 +114,7 @@ input_settings:
               
         - name: "GRISLI"
           params: 
-              should_run: [True]
+              should_run: [False]
               L: [10]
               R: [1000]
               alphaMin: [0.3]
@@ -123,11 +123,19 @@ input_settings:
         - name: "SCINGE"
           params: 
               should_run: [True]
+              lambda: [0.01]
+              dT: [10]
+              num_lags: [5]
+              kernel_width: [4]
+              prob_zero_removal: [0]
+              prob_remove_samples: [0.2]
+              family: ["gaussian"]
+              num_replicates: [2]
 
 
         - name: "SCRIBE"
           params: 
-              should_run: [True]
+              should_run: [False]
               ### required parameters
               # a list of delay values
               delay: ["20,25,50,75,100"]
