@@ -25,16 +25,21 @@ def generateInputs(RunnerObj):
                              sep = ',', header  = True, index = False)
 
 
+def build_params_dir_str(params):
+    params_dir_str = "l%s-dT%s-nl%s-kw%s-pz%s-pr%s-nr%s" % (
+            params['lambda'], params['dT'], params['num_lags'], 
+            params['kernel_width'], params['prob_zero_removal'], 
+            params['prob_remove_samples'], params['num_replicates'],
+            )
+    return params_dir_str
+
+
 def run(RunnerObj):
     '''
     Function to run SCINGE algorithm
     '''
     inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1] + \
                     "/SCINGE/ExpressionData.csv"
-
-    # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCINGE/"
-    os.makedirs(outDir, exist_ok = True)
 
     # if the parameters aren't specified, then use default parameters
     # TODO allow passing in multiple sets of hyperparameters
@@ -59,6 +64,13 @@ def run(RunnerObj):
         if param not in params:
             params[param] = val
     params_str = ' '.join(str(params[p]) for p in params_order) 
+    params_dir_str = build_params_dir_str(params)
+
+    # make output dirs if they do not exist:
+    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCINGE/"
+    outDir += params_dir_str
+    # also add the parameters to the output dir
+    os.makedirs(outDir, exist_ok = True)
 
     outPath = "data/" +  str(outDir) 
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runSCINGE/data/ scinge:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', './runSCINGE ',
