@@ -3,3 +3,8 @@ __pycache__/
 outputs/
 src/.*
 *.ipynb_checkpoints*
+
+# vim files
+*.sw*
+# emacs files
+*.*~
