@@ -13,7 +13,6 @@ import multiprocessing
 from multiprocessing import Pool, cpu_count
 import concurrent.futures
 from typing import Dict, List
-from src.runner import Runner
 import yaml
 import argparse
 import itertools
@@ -25,12 +24,12 @@ import concurrent.futures
 from typing import Dict, List
 from src.runner import Runner
 import os
-from src.plotCurves import EvalCurves
+import pandas as pd
 
 class InputSettings(object):
     def __init__(self,
             datadir, datasets, algorithms) -> None:
-        
+
         self.datadir = datadir
         self.datasets = datasets
         self.algorithms = algorithms
@@ -42,8 +41,9 @@ class OutputSettings(object):
     be written to
     '''
 
-    def __init__(self, base_dir: Path) -> None:
+    def __init__(self, base_dir, output_prefix: Path) -> None:
         self.base_dir = base_dir
+        self.output_prefix = output_prefix
 
         
 class Evaluation(object):
@@ -114,16 +114,6 @@ class Evaluation(object):
                 for runner in self.runners[batch]:
                     runner.run(output_dir=base_output_dir)
                     
-            
-    def evaluate_runners(self):
-        '''
-        Plot PR and ROC curves for each dataset
-        for all the algorithms
-        '''
-        for dataset in self.input_settings.datasets:              
-            EvalCurves(dataset, self.input_settings)
-                
-                
 class ConfigParser(object):
     '''
     Define static methods for parsing a config file that sets a large number
@@ -166,9 +156,12 @@ class ConfigParser(object):
         return algorithms
 
     @staticmethod
-    def __parse_output_settings(output_settings_map):
+    def __parse_output_settings(output_settings_map) -> OutputSettings:
         output_dir = Path(output_settings_map['output_dir'])
-        return OutputSettings(output_dir)
+        output_prefix = Path(output_settings_map['output_prefix'])
+
+        return OutputSettings(output_dir,
+                             output_prefix)
 
 def get_parser() -> argparse.ArgumentParser:
     '''
@@ -197,7 +190,6 @@ def main():
     opts = parse_arguments()
     config_file = opts.config
 
-    evaluation = None
 
     with open(config_file, 'r') as conf:
         evaluation = ConfigParser.parse(conf)
@@ -209,15 +201,10 @@ def main():
         evaluation.runners[idx].generateInputs()
 
     for idx in range(len(evaluation.runners)):
-       evaluation.runners[idx].run()
+        evaluation.runners[idx].run()
 
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].parseOutput()
-
-
-    evaluation.evaluate_runners()
-
-
 
     print('Evaluation complete')
 

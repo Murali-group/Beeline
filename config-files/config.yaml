@@ -22,6 +22,10 @@ input_settings:
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
 
+#        - name: "HSC_ics1_dropped"
+#          exprData: "ExpressionData-dropped.csv"
+#          cellData: "PseudoTime-dropped.csv"
+#          trueEdges: "refNetwork.csv"
 
 
 
@@ -46,21 +50,19 @@ input_settings:
     algorithms:
         - name: "SCODE"
           params:
-              should_run: [True]
-              nGenes: [11]
-              z: [10]
-              nCells: [2500]         
-              nIter: [100]
-              nRep: [10]
-
-        - name: "SCNS"
-          params: 
               should_run: [False]
+              z: [10]
+              nIter: [100]
+              nRep: [5]
+
+        #- name: "SCNS"
+        #  params: 
+        #      should_run: [False]
               
               
         - name: "SINCERITIES"
           params: 
-              should_run: [True]
+              should_run: [False]
                             
               
         - name: "PIDC"
@@ -70,26 +72,30 @@ input_settings:
 
         - name: "GRNVBEM"
           params: 
-              should_run: [True]
+              should_run: [False]
 
               
 
         - name: "GENIE3"
           params: 
-              should_run: [True]
+              should_run: [False]
               
               
               
         - name: "GRNBOOST2"
           params: 
-              should_run: [True]
+              should_run: [False]
               
               
               
         - name: "LEAP"
           params: 
-              should_run: [True]
-              
+              should_run: [False]
+              # Recommended maxLag value is 0.3
+              # but it is very slow with 0.3
+              # when we have more than 1000 cells.
+              maxLag: [0.8]
+
               
                             
         - name: "JUMP3"
@@ -100,14 +106,15 @@ input_settings:
               
         - name: "PPCOR"
           params: 
-              should_run: [True]
+              should_run: [False]
+              # Used in parsing output
               pVal: [0.01]
               
               
               
         - name: "GRISLI"
           params: 
-              should_run: [True]
+              should_run: [False]
               L: [10]
               R: [1000]
               alphaMin: [0.3]
@@ -116,14 +123,22 @@ input_settings:
         - name: "SCINGE"
           params: 
               should_run: [True]
+              lambda: [0.01]
+              dT: [10]
+              num_lags: [5]
+              kernel_width: [4]
+              prob_zero_removal: [0]
+              prob_remove_samples: [0.2]
+              family: ["gaussian"]
+              num_replicates: [2]
 
 
         - name: "SCRIBE"
           params: 
-              should_run: [True]
+              should_run: [False]
               ### required parameters
               # a list of delay values
-              delay: ["5,10,20,25,50,75,100"]
+              delay: ["20,25,50,75,100"]
               # any of 'RDI', 'uRDI', 'cRDI', or 'ucRDI'
               method: ['ucRDI']
               # lower detection limit (expression below this 
@@ -146,3 +161,4 @@ output_settings:
 
     # Base output directory
     output_dir: "outputs"
+    output_prefix: "HSC"
