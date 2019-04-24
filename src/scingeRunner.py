@@ -72,6 +72,12 @@ def run(RunnerObj):
     # also add the parameters to the output dir
     os.makedirs(outDir, exist_ok = True)
 
+    out_file = "%s/SCINGE_Ranked_Edge_List.txt" % (outDir)
+    if 'forced' in params and params['forced'] is False and \
+            os.path.isfile(out_file):
+        print("%s already exists. skipping" % (out_file))
+        return
+
     outPath = "data/" +  str(outDir) 
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runSCINGE/data/ scinge:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', './runSCINGE ',
                          inputPath, outPath, params_str, '\"'])
@@ -80,6 +86,9 @@ def run(RunnerObj):
     print("\tParameters: %s" % (', '.join("%s: %s" % (p, str(params[p])) for p in params_order)))
     #os.system(cmdToRun)
     subprocess.check_call(cmdToRun, shell=True)
+
+    # delete the copy of the expression data
+    os.remove("%s/ExpressionData.mat" % (outDir))
 
 
 def parseOutput(RunnerObj):
