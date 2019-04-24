@@ -90,7 +90,7 @@ class EvalSummarizer(object):
        float containing the time this object took to run on the dataset
         """
         try:
-            with open(path, "r+") as f:
+            with open(path, "r") as f:
                 lines = f.readlines()
                 line = lines[1]
                 time_val = float(line.split()[-1])
