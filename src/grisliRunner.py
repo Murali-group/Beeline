@@ -79,6 +79,6 @@ def parseOutput(RunnerObj):
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 
     for row, col, val in zip(rows, cols, DFSorted):
-        outFile.write('\t'.join([GeneList[row],GeneList[col],str(val)])+'\n')
+        outFile.write('\t'.join([GeneList[row],GeneList[col],str((len(GeneList)*len(GeneList))-val)])+'\n')
     outFile.close()
     
