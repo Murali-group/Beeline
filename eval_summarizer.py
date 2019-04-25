@@ -5,7 +5,7 @@
 
 
 import argparse
-
+from tqdm import tqdm
 import src.plotCurves as pc
 import pandas as pd
 import eval as ev
@@ -38,8 +38,10 @@ class EvalSummarizer(object):
         uAUROCDict = {}
         
         
-        for dataset in self.input_settings.datasets:
-            AUPRC, AUROC, uAUPRC, uAUROC = pc.EvalCurves(dataset, self.input_settings)
+        for dataset in tqdm(self.input_settings.datasets, 
+                            total = len(self.input_settings.datasets), unit = " Dataset"):
+            AUPRC, AUROC = pc.PRROC(dataset, self.input_settings, directed = True)
+            uAUPRC, uAUROC = pc.PRROC(dataset, self.input_settings, directed = False)
             
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
@@ -90,7 +92,7 @@ class EvalSummarizer(object):
        float containing the time this object took to run on the dataset
         """
         try:
-            with open(path, "r+") as f:
+            with open(path, "r") as f:
                 lines = f.readlines()
                 line = lines[1]
                 time_val = float(line.split()[-1])
