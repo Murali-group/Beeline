@@ -75,7 +75,7 @@ def PRROC(dataDict, inputSettings, directed = True):
      ## Make PR curves
     legendList = []
     for key in recallDict.keys():
-        sns.lineplot(FPRDict[key],TPRDict[key], ci=None)
+        sns.lineplot(recallDict[key],precisionDict[key], ci=None)
         legendList.append(key + ' (AUPRC = ' + str("%.2f" % (AUPRC[key]))+')')
     plt.xlim(0,1)    
     plt.ylim(0,1)
