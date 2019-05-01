@@ -53,6 +53,9 @@ option_list <- list (
               make_option(c("-o","--outPrefix"), , type = 'character',
               help= "Path to write output files. Required."),
               
+              make_option(c("","--outFile"), , type = 'character',
+              help= "outFile name to write the output ranked edges. Required."),
+    
               make_option(c("-i","--ignorePT"), action = 'store_true', default = FALSE, 
               type = 'character',
               help= "Ignores pseudotime computed using monocle and uses experiment time.")
@@ -165,6 +168,6 @@ if (arguments$method == 'uRDI'){
   stop("Method must be one of RDI, cRDI, uRDI, or ucRDI. 
        Run Rscript runScribe.R -h for more details.")
 }
-
-write.csv(netOut, paste0(arguments$outPrefix,'outFile.txt'), quote = FALSE)
+outGraph <- graph_from_adjacency_matrix(netOut, mode = 'directed', weighted=T)
+write.graph(outGraph, paste0(arguments$outPrefix,arguments$outFile),"ncol")
 cat("Done.\n")

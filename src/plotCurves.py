@@ -6,15 +6,16 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 sns.set(rc={"lines.linewidth": 2}, palette  = "deep", style = "ticks")
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
-from itertools import product, combinations_with_replacement
+from itertools import product, permutations, combinations, combinations_with_replacement
 from tqdm import tqdm
 
-def PRROC(dataDict, inputSettings, directed = True):
+def PRROC(dataDict, inputSettings, directed = True, selfEdges = False):
     '''
     Computes PR and ROC curves
     for a given dataset and a set of algorithms.
     directed =  True, performs evalution
-    assuming edges are directed.
+    assuming edges are directed. selfEdges = True includes
+    self interactions in evaluation.
     '''
     
     # Read file for trueEdges
@@ -45,7 +46,7 @@ def PRROC(dataDict, inputSettings, directed = True):
                 predDF = pd.read_csv(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                                             sep = '\t', header =  0, index_col = None)
 
-                precisionDict[algo[0]], recallDict[algo[0]], FPRDict[algo[0]], TPRDict[algo[0]], AUPRC[algo[0]], AUROC[algo[0]] = computeScores(trueEdgesDF, predDF, directed = True)
+                precisionDict[algo[0]], recallDict[algo[0]], FPRDict[algo[0]], TPRDict[algo[0]], AUPRC[algo[0]], AUROC[algo[0]] = computeScores(trueEdgesDF, predDF, directed = True, selfEdges = selfEdges)
 
             else:
                 print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
@@ -63,7 +64,7 @@ def PRROC(dataDict, inputSettings, directed = True):
                 predDF = pd.read_csv(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                                             sep = '\t', header =  0, index_col = None)
 
-                precisionDict[algo[0]], recallDict[algo[0]], FPRDict[algo[0]], TPRDict[algo[0]], AUPRC[algo[0]], AUROC[algo[0]] = computeScores(trueEdgesDF, predDF, directed = False)
+                precisionDict[algo[0]], recallDict[algo[0]], FPRDict[algo[0]], TPRDict[algo[0]], AUPRC[algo[0]], AUROC[algo[0]] = computeScores(trueEdgesDF, predDF, directed = False, selfEdges = selfEdges)
 
             else:
                 print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
@@ -104,7 +105,8 @@ def PRROC(dataDict, inputSettings, directed = True):
     plt.clf()
     return AUPRC, AUROC
 
-def computeScores(trueEdgesDF, predEdgeDF, directed = True):
+def computeScores(trueEdgesDF, predEdgeDF, 
+                  directed = True, selfEdges = True):
     '''
     Function to compute Precision, Recall, FPR, AUPRC, AUROC
     scores using sklearn. directed =  True, performs evalution
@@ -115,8 +117,12 @@ def computeScores(trueEdgesDF, predEdgeDF, directed = True):
     if directed:        
         # Initialize dictionaries with all 
         # possible edges
-        possibleEdges = list(product(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
-                                     repeat = 2))
+        if selfEdges:
+            possibleEdges = list(product(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+                                         repeat = 2))
+        else:
+            possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+                                         r = 2))
         
         TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
         PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
@@ -140,9 +146,12 @@ def computeScores(trueEdgesDF, predEdgeDF, directed = True):
         
         # Initialize dictionaries with all 
         # possible edges
-        possibleEdges = list(combinations_with_replacement(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
-                                                           r = 2))
-        
+        if selfEdges:
+            possibleEdges = list(combinations_with_replacement(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+                                                               r = 2))
+        else:
+            possibleEdges = list(combinations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+                                                               r = 2))
         TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
         PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
 
@@ -154,7 +163,7 @@ def computeScores(trueEdgesDF, predEdgeDF, directed = True):
             if len(trueEdgesDF.loc[((trueEdgesDF['Gene1'] == key.split('|')[0]) &
                            (trueEdgesDF['Gene2'] == key.split('|')[1])) |
                               ((trueEdgesDF['Gene2'] == key.split('|')[0]) &
-                           (trueEdgesDF['Gene1'] == key.split('|')[1]))])>0:
+                           (trueEdgesDF['Gene1'] == key.split('|')[1]))]) > 0:
                 TrueEdgeDict[key] = 1  
 
         # Compute PredEdgeDict Dictionary

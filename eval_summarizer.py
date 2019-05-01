@@ -40,8 +40,8 @@ class EvalSummarizer(object):
         
         for dataset in tqdm(self.input_settings.datasets, 
                             total = len(self.input_settings.datasets), unit = " Dataset"):
-            AUPRC, AUROC = pc.PRROC(dataset, self.input_settings, directed = True)
-            uAUPRC, uAUROC = pc.PRROC(dataset, self.input_settings, directed = False)
+            AUPRC, AUROC = pc.PRROC(dataset, self.input_settings, directed = True, selfEdges = False)
+            uAUPRC, uAUROC = pc.PRROC(dataset, self.input_settings, directed = False, selfEdges = False)
             
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
