@@ -33,12 +33,17 @@ class EvalAggregator(object):
 
     def spearman_driver(self, simulations, outDir, algo_name):
         simdict = defaultdict(list)
+        avg_spearman = dict()
         for elem in os.listdir(outDir):
             s = elem[:elem.rfind("_")]
             simdict[s].append(elem)
 
         for key in simdict:
-            self.find_avg_spearman(simdict[key], outDir, algo_name)
+            avg_spearman[key] = self.find_avg_spearman(simdict[key], outDir, algo_name)
+
+        return avg_spearman
+
+
 
 
     def find_avg_spearman(self, simulations, outDir, algo_name):
@@ -122,7 +127,7 @@ class EvalAggregator(object):
                     continue
 
                 simulations = os.listdir(outDir+algo[0])
-                self.find_avg_spearman(simulations, outDir, algo[0])
+                self.spearman_driver(simulations, outDir, algo[0])
                 # self.create_rank_graph(simulations,outDir,algo[0])
 
 
