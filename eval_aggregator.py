@@ -9,7 +9,11 @@ from tqdm import tqdm
 import src.plotCurves as pc
 import pandas as pd
 import eval as ev
-
+import os
+from scipy.stats import spearmanr
+from collections import defaultdict
+import networkx as nx
+from networkx.convert_matrix import from_pandas_adjacency
 
 class EvalSummarizer(object):
     '''
@@ -25,9 +29,56 @@ class EvalSummarizer(object):
         self.input_settings = input_settings
         self.output_settings = output_settings
 
+    def create_rank_file(self, simulations, outDir, algo_name):
+        path = outDir+algo_name
+
+
+
+    def compute_rank_graph(self, simulations, outDir, algo_name):
+        path = outDir+algo_name
+        for simulation in simulations:
+            simpath = path+"/"+simulation
+
+            if not os.path.isdir(simpath):
+                continue
+            try:
+                rank_path = simpath+"/rankedEdges.csv"
+                g = nx.read_weighted_edgelist(rank_path, delimiter="\t", comments="Gene1", nodetype=str)
+
+            except FileNotFoundError:
+                print("skipping graph generation for ", algo_name, "on path", outDir)
+
+
+        return g
+
+    def find_correlations(self):
+
+        '''
+        Finds the Spearman's correlation coefficient between consecutive simulations of the same algorithm, with the same initial parameters
+        Saves the coefficients to a csv file, to be read into a Pandas dataframe
+        :return:
+        None
+        '''
+
+        for dataset in self.input_settings.datasets:
+            outDir = str(self.output_settings.base_dir) + \
+                     str(self.input_settings.datadir).split("inputs")[1] + "/" + dataset["name"] + "/"
+            algos = self.input_settings.algorithms
+            for algo in algos:
+                if not os.path.isdir(outDir+algo[0]):
+                    continue
+
+                simulations = os.listdir(outDir+algo[0])
+                # for testing purposes:
+                simulations = outDir+algo[0]
+
+               g = self.compute_rank_graph(simulations, outDir, algo[0])
+
+
 
 
     def find_curves(self):
+
         '''
         Plot PR and ROC curves for each dataset
         for all the algorithms
@@ -74,7 +125,7 @@ class EvalSummarizer(object):
         algos = self.input_settings.algorithms
         for algo in algos:
             path = outDir+algo[0]+"/time.txt"
-            time = self.parse_time(path)
+            time = self.parse_time_files(path)
             if time == -1:
                 print("skipping time computation for ", algo[0], "on dataset", dataset["name"])
                 continue
@@ -83,8 +134,7 @@ class EvalSummarizer(object):
 
         return algo_dict
 
-
-    def parse_time(self, path):
+    def parse_time_files(self, path):
         """
        gets the user time given by the time command, which is stored along with the output when the algorithm runs,
        in a file called time.txt
@@ -146,19 +196,21 @@ def main():
             str(eval_summ.input_settings.datadir).split("inputs")[1] + "/"+\
             str(eval_summ.output_settings.output_prefix) + "-"
 
-    AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
-
-    TimeDict = eval_summ.time_runners()
-    
-    pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
-    pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
-    pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
-    pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
-    pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
-
-
-
-    print('Evaluation complete')
+    eval_summ.find_correlations()
+    # AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
+    #
+    # TimeDict = eval_summ.time_runners()
+    #
+    #
+    # pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
+    # pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
+    # pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
+    # pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
+    # pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
+    #
+    #
+    #
+    # print('Evaluation complete')
 
 
 if __name__ == '__main__':
