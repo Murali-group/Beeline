@@ -6,6 +6,7 @@
 
 import argparse
 from tqdm import tqdm
+import numpy as np
 import src.plotCurves as pc
 import pandas as pd
 import eval as ev
@@ -15,7 +16,7 @@ from collections import defaultdict
 import networkx as nx
 from networkx.convert_matrix import from_pandas_adjacency
 
-class EvalSummarizer(object):
+class EvalAggregator(object):
     '''
     The Evaluation object is created by parsing a user-provided configuration
     file. Its methods provide for further processing its inputs into
@@ -29,20 +30,72 @@ class EvalSummarizer(object):
         self.input_settings = input_settings
         self.output_settings = output_settings
 
-    def create_rank_file(self, simulations, outDir, algo_name):
-        path = outDir+algo_name
+
+    def spearman_driver(self, simulations, outDir, algo_name):
+        simdict = defaultdict(list)
+        for elem in os.listdir(outDir):
+            s = elem[:elem.rfind("_")]
+            simdict[s].append(elem)
+
+        for key in simdict:
+            self.find_avg_spearman(simdict[key], outDir, algo_name)
 
 
+    def find_avg_spearman(self, simulations, outDir, algo_name):
+        sim_rank_dict = defaultdict(list)
+        sim_names = []
+        #TODO: CHANGE- setting this as outDir path and simulations for testing
+        outDir = "../sim_data/"
+        simulations = os.listdir(outDir)
 
-    def compute_rank_graph(self, simulations, outDir, algo_name):
-        path = outDir+algo_name
         for simulation in simulations:
-            simpath = path+"/"+simulation
+            simpath = outDir+simulation+"/"+algo_name
+            rank_path = simpath+"/rankedEdges.csv"
+            if not os.path.isdir(simpath):
+                continue
+            try:
+                df = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
+
+            except:
+                print("skipping spearman computation for ", algo_name, "on path", outDir)
+                continue
+
+            df["absEdgeWeight"] = abs(df["EdgeWeight"])
+            df["rank"] = df["absEdgeWeight"].rank(ascending=False)
+            for index, row in df.iterrows():
+                sim_rank_dict[row["Gene1"]+"|"+row["Gene2"]].append(row["rank"])
+
+            sim_names.append(simulation)
+        # print(sim_names)
+        df2 = pd.DataFrame.from_dict(sim_rank_dict, orient="index",columns=sim_names)
+        print(algo_name+":"+"\n\n")
+        spearman_mat = df2.corr(method='spearman')
+        avg_spearman = (spearman_mat.sum().sum() - spearman_mat.shape[1]) / (spearman_mat.shape[1]*(spearman_mat.shape[1] - 1))
+        print(avg_spearman)
+        return avg_spearman
+
+
+
+
+        # df = pd.DataFrame.from_dict(algo_rank_dict)
+        # print(df.shape)
+        # print(df)
+        return
+
+
+
+
+
+
+
+    def create_rank_graph(self, simulations, outDir, algo_name):
+        for simulation in simulations:
+            simpath = outDir+"/"+simulation+"/"+algo_name
+            rank_path = simpath+"/rankedEdges.csv"
 
             if not os.path.isdir(simpath):
                 continue
             try:
-                rank_path = simpath+"/rankedEdges.csv"
                 g = nx.read_weighted_edgelist(rank_path, delimiter="\t", comments="Gene1", nodetype=str)
 
             except FileNotFoundError:
@@ -69,10 +122,9 @@ class EvalSummarizer(object):
                     continue
 
                 simulations = os.listdir(outDir+algo[0])
-                # for testing purposes:
-                simulations = outDir+algo[0]
+                self.find_avg_spearman(simulations, outDir, algo[0])
+                # self.create_rank_graph(simulations,outDir,algo[0])
 
-               g = self.compute_rank_graph(simulations, outDir, algo[0])
 
 
 
@@ -119,6 +171,7 @@ class EvalSummarizer(object):
         :param dataset:
         :return: dict of algorithms, along with the corresponding time for the dataset
         '''
+        #TODO:modify this to incorporate multiple simulations
         outDir = str(self.output_settings.base_dir) + \
                  str(self.input_settings.datadir).split("inputs")[1] + "/" + dataset["name"] + "/"
         algo_dict = dict()
@@ -181,6 +234,7 @@ def parse_arguments():
     return opts
 
 def main():
+    #TODO:make pretty, add comments
     opts = parse_arguments()
     config_file = opts.config
 
@@ -191,26 +245,26 @@ def main():
     print(evaluation)
     print('Post-Run Evaluation Summary started')
 
-    eval_summ = EvalSummarizer(evaluation.input_settings,evaluation.output_settings)
+    eval_summ = EvalAggregator(evaluation.input_settings, evaluation.output_settings)
     outDir = str(eval_summ.output_settings.base_dir) + \
             str(eval_summ.input_settings.datadir).split("inputs")[1] + "/"+\
             str(eval_summ.output_settings.output_prefix) + "-"
 
     eval_summ.find_correlations()
-    # AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
-    #
-    # TimeDict = eval_summ.time_runners()
-    #
-    #
-    # pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
-    # pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
-    # pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
-    # pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
-    # pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
-    #
-    #
-    #
-    # print('Evaluation complete')
+    AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
+
+    TimeDict = eval_summ.time_runners()
+
+
+    pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
+    pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
+    pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
+    pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
+    pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
+
+
+
+    print('Evaluation complete')
 
 
 if __name__ == '__main__':
