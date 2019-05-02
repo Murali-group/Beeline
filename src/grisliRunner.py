@@ -18,27 +18,17 @@ def generateInputs(RunnerObj):
         print("Input folder for GRISLI does not exist, creating input folder...")
         RunnerObj.inputDir.joinpath("GRISLI").mkdir(exist_ok = False)
         
+    if not RunnerObj.inputDir.joinpath("GRISLI/ExpressionData.tsv").exists():
         ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
-                                         header = 0, index_col = 0)
+                                     header = 0, index_col = 0)
+        ExpressionData.to_csv(RunnerObj.inputDir.joinpath("GRISLI/ExpressionData.tsv"),
+                             sep = '\t', header  = False, index = False)
+        
+    if not RunnerObj.inputDir.joinpath("GRISLI/PseudoTime.tsv").exists():
         PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
-                                 header = 0, index_col = 0)
-
-        colNames = PTData.columns
-        for idx in range(len(colNames)):
-            RunnerObj.inputDir.joinpath("GRISLI/"+str(idx)).mkdir(exist_ok = True)
-            
-            # Select cells belonging to each pseudotime trajectory
-            colName = colNames[idx]
-            index = PTData[colName].index[PTData[colName].notnull()]
-            
-            exprName = "GRISLI/"+str(idx)+"/ExpressionData.tsv"
-            ExpressionData.loc[:,index].to_csv(RunnerObj.inputDir.joinpath(exprName),
-                                     sep = '\t', header  = False, index = False)
-            
-            cellName = "GRISLI/"+str(idx)+"/PseudoTime.tsv"
-            ptDF = PTData.loc[index,[colName]]                
-            ptDF.to_csv(RunnerObj.inputDir.joinpath(cellName),
-                                     sep = '\t', header  = False, index = False)
+                             header = 0, index_col = 0)
+        PTData['PseudoTime'].to_csv(RunnerObj.inputDir.joinpath("GRISLI/PseudoTime.tsv"),
+                             sep = '\t', header  = False, index = False)
 
     setupParams(RunnerObj)
         
