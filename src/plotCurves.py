@@ -139,7 +139,7 @@ def computeScores(trueEdgesDF, predEdgeDF,
             subDF = predEdgeDF.loc[(predEdgeDF['Gene1'] == key.split('|')[0]) &
                                (predEdgeDF['Gene2'] == key.split('|')[1])]
             if len(subDF)>0:
-                PredEdgeDict[key] = np.abs(subDF.EdgeWeight.values[0])
+                PredEdgeDict[key] = round(np.abs(subDF.EdgeWeight.values[0]),2)
 
     # if undirected
     else:
@@ -175,7 +175,7 @@ def computeScores(trueEdgesDF, predEdgeDF,
                               ((predEdgeDF['Gene2'] == key.split('|')[0]) &
                                (predEdgeDF['Gene1'] == key.split('|')[1]))]
             if len(subDF)>0:
-                PredEdgeDict[key] = max(np.abs(subDF.EdgeWeight.values))
+                PredEdgeDict[key] = round(max(np.abs(subDF.EdgeWeight.values)),2)
 
                 
                 

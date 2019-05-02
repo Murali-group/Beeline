@@ -30,7 +30,7 @@ def generateInputs(RunnerObj):
         # Perform quantile binning as recommeded in the paper
         # http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.qcut.html#pandas.qcut
         nBins = 10
-        tQuantiles = pd.qcut(PTData.loc[index,colName], q = nBins)
+        tQuantiles = pd.qcut(PTData.loc[index,colName], q = nBins, duplicates ='drop')
         mid = [(a.left + a.right)/2 for a in tQuantiles]
 
         newExpressionData['Time'] = mid
