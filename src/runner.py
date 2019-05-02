@@ -83,7 +83,7 @@ class Runner(object):
         
         
     def run(self):
-        AlgorithmMapper[self.name](self)
+        return AlgorithmMapper[self.name](self)
 
 
     def parseOutput(self):

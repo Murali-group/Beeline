@@ -3,7 +3,6 @@
 
 # In[ ]:
 
-
 import yaml
 import argparse
 import itertools
@@ -14,18 +13,11 @@ from multiprocessing import Pool, cpu_count
 import concurrent.futures
 from typing import Dict, List
 from src.runner import Runner
-import yaml
-import argparse
-import itertools
-from collections import defaultdict
-from pathlib import Path
-import multiprocessing
-from multiprocessing import Pool, cpu_count
-import concurrent.futures
-from typing import Dict, List
-from src.runner import Runner
-import os
-from src.plotCurves import EvalCurves
+import os, sys
+#from src.plotCurves import EvalCurves
+from src.eval import Eval
+import pandas as pd
+import fcntl
 
 class InputSettings(object):
     def __init__(self,
@@ -80,11 +72,12 @@ class Evaluation(object):
                 data['inputDir'] = Path.cwd().joinpath(self.input_settings.datadir.joinpath(dataset['name']))
                 data['exprData'] = dataset['exprData']
                 data['cellData'] = dataset['cellData']
-                print(data['inputDir'])
                 if 'should_run' in data['params'] and \
                         data['params']['should_run'] is False:
                     print("Skipping %s" % (data['name']))
                     continue
+                #else:
+                #    print("Running %s" % (data['name']))
 
                 runners[order] = Runner(data)
                 order += 1            
@@ -114,17 +107,37 @@ class Evaluation(object):
             else:
                 for runner in self.runners[batch]:
                     runner.run(output_dir=base_output_dir)
-                    
-            
+
+
     def evaluate_runners(self):
         '''
-        Plot PR and ROC curves for each dataset
-        for all the algorithms
+        Write AUPRC and AUROC summary statistics for all algorithms
         '''
         for dataset in self.input_settings.datasets:              
-            EvalCurves(dataset, self.input_settings)
-                
-                
+            #EvalCurves(dataset, self.input_settings)
+            results = Eval(dataset, self.input_settings, evaluation.runners)
+            evalDF = pd.DataFrame(results)
+            #print(evalDF.head())
+
+            outDir = str(self.input_settings.datadir.joinpath(dataset['name'])).replace("inputs/","outputs/")
+            out_file = "%s/eval.csv" % (outDir)
+            header = True
+            if os.path.isfile(out_file):
+                print("appending to %s" % (out_file))
+                header = False
+                # make sure we don't duplicate any rows
+                df = pd.read_csv(out_file, header = 0, index_col = 'params')
+                evalDF = evalDF[~evalDF.isin(df)].dropna()
+            else:
+                print("writing to %s" % (out_file))
+
+            with open(out_file, 'a') as out:
+                # lock it to avoid scripts trying to write at the same time
+                fcntl.flock(out, fcntl.LOCK_EX)
+                evalDF.to_csv(out, header=header, index_label='params')
+                fcntl.flock(out, fcntl.LOCK_UN)
+
+
 class ConfigParser(object):
     '''
     Define static methods for parsing a config file that sets a large number
@@ -156,13 +169,14 @@ class ConfigParser(object):
     def __parse_algorithms(algorithms_list):
         algorithms = []
         for algorithm in algorithms_list:
-                combos = [dict(zip(algorithm['params'], val))
-                    for val in itertools.product(
-                        *(algorithm['params'][param]
-                            for param in algorithm['params']))]
-                for combo in combos:
-                    algorithms.append([algorithm['name'],combo])
-            
+            print(algorithm)
+            combos = [dict(zip(algorithm['params'], val))
+                for val in itertools.product(
+                    *(algorithm['params'][param]
+                        for param in algorithm['params']))]
+            for combo in combos:
+                algorithms.append([algorithm['name'],combo])
+
 
         return algorithms
 
@@ -181,8 +195,11 @@ def get_parser() -> argparse.ArgumentParser:
 
     parser.add_argument('--config', default='config.yaml',
         help='Configuration file')
+    parser.add_argument('--eval-only', action='store_true', default=False,
+        help='Skip running the methods and only evaluate')
 
     return parser
+
 
 def parse_arguments():
     '''
@@ -196,28 +213,27 @@ def parse_arguments():
 
 # In[ ]:
 
+
 if __name__ == "__main__":
     opts = parse_arguments()
     with open(opts.config, 'r') as conf:
         evaluation = ConfigParser.parse(conf)
-    print(evaluation)
-    print('Evaluation started')
+    print("%d total runners" % (len(evaluation.runners)))
+    #if len(evaluation.runners) > 500 and opts.eval_only is False:
+    #    sys.exit("Too many runners. quitting")
+    print('Started running methods')
 
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].generateInputs()
-        
-    for idx in range(len(evaluation.runners)):
-        evaluation.runners[idx].run()
 
-    for idx in range(len(evaluation.runners)):
-        evaluation.runners[idx].parseOutputs()
+    if opts.eval_only is False:
+        for idx in range(len(evaluation.runners)):
+            status = evaluation.runners[idx].run()
+            if status != 'already_exists':
+                evaluation.runners[idx].parseOutput()
+    print("Finished running")
 
-
-        evaluation.evaluate_runners()
+    evaluation.evaluate_runners()
 
     print('Evaluation complete')
-
-
-
-
 
