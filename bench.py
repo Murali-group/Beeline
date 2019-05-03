@@ -114,8 +114,10 @@ class Evaluation(object):
         Write AUPRC and AUROC summary statistics for all algorithms
         '''
         for dataset in self.input_settings.datasets:              
+            # need to limit the runners to those that share the input dataset
+            curr_runners = {i: r for i, r in evaluation.runners.items() if dataset['name'] in str(r.inputDir)}
             #EvalCurves(dataset, self.input_settings)
-            results = Eval(dataset, self.input_settings, evaluation.runners)
+            results = Eval(dataset, self.input_settings, curr_runners)
             evalDF = pd.DataFrame(results)
             #print(evalDF.head())
 
