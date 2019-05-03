@@ -123,7 +123,7 @@ def run(RunnerObj):
             # input path
             input_path = "%s/SCINGE/ExpressionData%s.csv " % (str(RunnerObj.inputDir), idx) 
             scinge_command = "time %s %s" % (
-                ' '.join(os.path.abspath(p) for p in [scinge_path, input_path, outPath]), RunnerObj.params_str)
+                ' '.join(os.path.abspath(p) for p in [scinge_path, input_path, outPath]), params_str_to_run)
             ml_lib_command = create_ml_lib_command()
             # if this is on a cluser (e.g., baobab), write a qsub file and submit the job
             if 'qsub' in params and params['qsub'] is True:
