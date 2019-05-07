@@ -91,6 +91,8 @@ def parseOutput(RunnerObj):
     # Sort values in the dataframe   
     finalDF = res.sort_values('Interaction',ascending=False)
     finalDF.drop(labels = 'Edges',axis = 'columns', inplace = True)
-    finalDF.columns = ['Gene1','Gene2','EdgeWeight']
-    finalDF.to_csv(outDir+'rankedEdges.csv',sep='\t', index = False)
+    # SINCERITIES output is incorrectly orderd
+    finalDF.columns = ['Gene2','Gene1','EdgeWeight']
+    finalDF.to_csv(outDir+'rankedEdges.csv',sep='\t', 
+                   columns = ['Gene1','Gene2','EdgeWeight'],index = False)
     
