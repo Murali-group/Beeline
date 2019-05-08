@@ -4,16 +4,18 @@
 # In[ ]:
 
 
-import argparse
-from tqdm import tqdm
-import numpy as np
-import src.plotCurves as pc
-import pandas as pd
-import eval as ev
 import os
-from scipy.stats import spearmanr
-from collections import defaultdict
+import argparse
+import eval as ev
+import numpy as np
+import pandas as pd
+from tqdm import tqdm
 import networkx as nx
+from pathlib import Path
+import src.plotCurves as pc
+from scipy.stats import spearmanr
+from itertools import permutations
+from collections import defaultdict
 from networkx.convert_matrix import from_pandas_adjacency
 
 class EvalAggregator(object):
@@ -31,63 +33,48 @@ class EvalAggregator(object):
         self.output_settings = output_settings
 
 
-    def spearman_driver(self, simulations, outDir, algo_name):
-        simdict = defaultdict(list)
-        avg_spearman = dict()
-        for elem in os.listdir(outDir):
-            s = elem[:elem.rfind("_")]
-            simdict[s].append(elem)
 
-        for key in simdict:
-            avg_spearman[key] = self.find_avg_spearman(simdict[key], outDir, algo_name)
-
-        return avg_spearman
-
-
-
-
-    def find_avg_spearman(self, simulations, outDir, algo_name):
-        sim_rank_dict = defaultdict(list)
+    def findSpearman(self, algo_name):
+        rankDict = {}
         sim_names = []
-        #TODO: CHANGE- setting this as outDir path and simulations for testing
-        outDir = "../sim_data/"
-        simulations = os.listdir(outDir)
+        for dataset in tqdm(self.input_settings.datasets):
+            trueEdgesDF = pd.read_csv(str(self.input_settings.datadir)+'/'+ \
+                                      dataset['trueEdges'],
+                                sep = ',', header = 0, index_col = None)
+            possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+                                         r = 2))
+            PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
 
-        for simulation in simulations:
-            simpath = outDir+simulation+"/"+algo_name
-            rank_path = simpath+"/rankedEdges.csv"
-            if not os.path.isdir(simpath):
+            outDir = str(self.output_settings.base_dir) + \
+                     str(self.input_settings.datadir).split("inputs")[1] + \
+                     "/" + dataset["name"] + "/" + algo_name
+            #algos = self.input_settings.algorithms
+            rank_path = outDir+"/rankedEdges.csv"
+            if not os.path.isdir(outDir):
                 continue
             try:
-                df = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
-
+                predEdgeDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
             except:
-                print("skipping spearman computation for ", algo_name, "on path", outDir)
+                print("Skipping spearman computation for ", algo_name, "on path", outDir)
                 continue
 
-            df["absEdgeWeight"] = abs(df["EdgeWeight"])
-            df["rank"] = df["absEdgeWeight"].rank(ascending=False)
-            for index, row in df.iterrows():
-                sim_rank_dict[row["Gene1"]+"|"+row["Gene2"]].append(row["rank"])
-
-            sim_names.append(simulation)
-        # print(sim_names)
-        df2 = pd.DataFrame.from_dict(sim_rank_dict, orient="index",columns=sim_names)
-        print(algo_name+":"+"\n\n")
-        spearman_mat = df2.corr(method='spearman')
-        avg_spearman = (spearman_mat.sum().sum() - spearman_mat.shape[1]) / (spearman_mat.shape[1]*(spearman_mat.shape[1] - 1))
-        print(avg_spearman)
-        return avg_spearman
-
-
-
-
-        # df = pd.DataFrame.from_dict(algo_rank_dict)
-        # print(df.shape)
-        # print(df)
-        return
-
-
+            for key in PredEdgeDict.keys():
+                subDF = predEdgeDF.loc[(predEdgeDF['Gene1'] == key.split('|')[0]) &
+                               (predEdgeDF['Gene2'] == key.split('|')[1])]
+                if len(subDF)>0:
+                    PredEdgeDict[key] = np.abs(subDF.EdgeWeight.values[0])
+            rankDict[dataset["name"]] = PredEdgeDict
+            sim_names.append(dataset["name"])
+        df2 = pd.DataFrame.from_dict(rankDict)
+        # print(algo_name+":"+"\n\n")
+        spearmanDF = df2.corr(method='spearman')
+        
+        
+        df = spearmanDF.where(np.triu(np.ones(spearmanDF.shape),  k = 1).astype(np.bool))
+    
+        df = df.stack().reset_index()
+        df.columns = ['Row','Column','Value']
+        return(df.Value.median(),df.Value.mad())
 
 
 
@@ -112,25 +99,22 @@ class EvalAggregator(object):
     def find_correlations(self):
 
         '''
-        Finds the Spearman's correlation coefficient between consecutive simulations of the same algorithm, with the same initial parameters
+        Finds the Spearman's correlation coefficient between consecutive simulations
+        of the same algorithm, with the same initial parameters
         Saves the coefficients to a csv file, to be read into a Pandas dataframe
         :return:
         None
         '''
-
-        for dataset in self.input_settings.datasets:
-            outDir = str(self.output_settings.base_dir) + \
-                     str(self.input_settings.datadir).split("inputs")[1] + "/" + dataset["name"] + "/"
-            algos = self.input_settings.algorithms
-            for algo in algos:
-                if not os.path.isdir(outDir+algo[0]):
-                    continue
-
-                simulations = os.listdir(outDir+algo[0])
-                self.spearman_driver(simulations, outDir, algo[0])
-                # self.create_rank_graph(simulations,outDir,algo[0])
-
-
+        corrDF = {}
+        corrDF['Median'] = {}
+        corrDF['MAD'] = {}
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/"
+        print(outDir)
+        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
+            corrDF['Median'][algo[0]],corrDF['MAD'][algo[0]] = self.findSpearman(algo[0])
+            
+        return pd.DataFrame(corrDF)
 
 
 
@@ -183,7 +167,17 @@ class EvalAggregator(object):
         algos = self.input_settings.algorithms
         for algo in algos:
             path = outDir+algo[0]+"/time.txt"
-            time = self.parse_time_files(path)
+            if Path(path).exists():
+                time = self.parse_time_files(path)
+            else:
+                PTFile = str(self.input_settings.datadir.joinpath(dataset['name']+'/'+dataset['cellData']))
+                PTData = pd.read_csv(PTFile,
+                             header = 0, index_col = 0)
+                colNames = PTData.columns
+                for idx in range(len(colNames)):
+                    path = outDir+algo[0]+"/time"+str(idx)+".txt"
+                    time = self.parse_time_files(path)
+
             if time == -1:
                 print("skipping time computation for ", algo[0], "on dataset", dataset["name"])
                 continue
@@ -206,7 +200,7 @@ class EvalAggregator(object):
                 time_val = float(line.split()[-1])
 
         except FileNotFoundError:
-            print("time output (time.txt) file not found, setting time value to -1")
+            print("time output " +path+" file not found, setting time value to -1")
             time_val = -1
         except ValueError:
             print("Algorithm running failed, setting time value to -1")
@@ -255,17 +249,21 @@ def main():
             str(eval_summ.input_settings.datadir).split("inputs")[1] + "/"+\
             str(eval_summ.output_settings.output_prefix) + "-"
 
-    eval_summ.find_correlations()
-    AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
+    # Compute correlations
+    #corrDict = eval_summ.find_correlations()
+    #corrDict.to_csv(outDir + "corrData.csv")
+    # Compute performance
+    #AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
 
     TimeDict = eval_summ.time_runners()
+    pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
 
+    sys.exit()
 
     pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
     pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
     pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
     pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
-    pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
 
 
 
