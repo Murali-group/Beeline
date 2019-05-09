@@ -26,7 +26,12 @@ def main(config_map, **kwargs):
     #    if alg['name'] == 'GRISLI':
     #        print(alg['params']['L'][1])
     algs = config_map['input_settings']['algorithms']
-    if len(algs) == 1 and algs[0]['name'] == 'SCINGE':
+    print(algs)
+    print("algs: %s" % (', '.join(a['name'] for a in algs)))
+    #if len(algs) == 1 and algs[0]['name'] == 'SCINGE':
+    if len(algs) != 1 or algs[0]['name'] != 'SCINGE':
+        print("Currently only setup to run SCINGE. Quitting")
+    else:
         # split the SCINGE options into multiple yaml files to combine them for baobab
         params = algs[0]['params']
         params2 = params.copy()

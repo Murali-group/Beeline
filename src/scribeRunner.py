@@ -18,15 +18,22 @@ def generateInputs(RunnerObj):
                                      header = 0, index_col = 0)
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
-    
-    if not RunnerObj.inputDir.joinpath("SCRIBE/ExpressionData.csv").exists(): 
-        ExpressionData.to_csv(RunnerObj.inputDir.joinpath("SCRIBE/ExpressionData.csv"),
-                             sep = ',', header  = True, index = True)
+
+    colNames = PTData.columns
+    for idx in range(len(colNames)):
+        # Select cells belonging to each pseudotime trajectory
+        colName = colNames[idx]
+        index = PTData[colName].index[PTData[colName].notnull()]
+        exprName = "SCRIBE/ExpressionData"+str(idx)+".csv"
+        ExpressionData.loc[:,index].to_csv(RunnerObj.inputDir.joinpath(exprName),
+                                 sep = ',', header  = True, index = True)
+        cellName = "SCRIBE/CellData"+str(idx)+".csv"
+        ptDF = PTData.loc[index,[colName]]        
+        # Scribe expects a column labeled Time.
+        ptDF.rename(columns = {colName:'Time'}, inplace = True)
         
-    if not RunnerObj.inputDir.joinpath("SCRIBE/CellData.csv").exists():
-        del PTData.index.name
-        PTData.to_csv(RunnerObj.inputDir.joinpath("SCRIBE/CellData.csv"),
-                             sep = ',', header  = True, index = True)
+        ptDF.to_csv(RunnerObj.inputDir.joinpath(cellName),
+                                 sep = ',', header  = True, index = True)
         
     if not RunnerObj.inputDir.joinpath("SCRIBE/GeneData.csv").exists():
         # required column!!
@@ -37,6 +44,26 @@ def generateInputs(RunnerObj):
         geneDF.to_csv(RunnerObj.inputDir.joinpath("SCRIBE/GeneData.csv"), 
                       sep = ',', header = True)
     
+    setupParams(RunnerObj)
+
+
+def setupParams(RunnerObj):
+    # if the parameters aren't specified, then use default parameters
+    # TODO allow passing in multiple sets of hyperparameters
+    RunnerObj.params_str = build_params_str(RunnerObj.params)
+
+    # the final file is written here:
+    outDir = "outputs/" + str(RunnerObj.inputDir).split("inputs/")[1]+"/SCRIBE/"
+    #print(outDir)
+    RunnerObj.outDir = outDir
+    RunnerObj.final_ranked_edges = "%s/%s-rankedEdges.tsv" % (outDir, RunnerObj.params_str)
+
+
+def build_params_str(params):
+    params_str = "delay%s" % ('-'.join(params['delay'].split(',')))
+    return params_str
+
+
 def run(RunnerObj):
     '''
     Function to run SCRIBE algorithm.
@@ -58,26 +85,36 @@ def run(RunnerObj):
     ignorePT = str(RunnerObj.params['ignorePT'])
     
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCRIBE/"
+    outDir = "%s/%s/" % (RunnerObj.outDir, RunnerObj.params_str)
     os.makedirs(outDir, exist_ok = True)
 
     # Build the command to run Scribe
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+                             header = 0, index_col = 0)
+    colNames = PTData.columns
     
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ scribe:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'Rscript runScribe.R',
-                   '-e',inputPath +'ExpressionData.csv', '-c',inputPath + 'CellData.csv', 
-                   '-g',inputPath + 'GeneData.csv', '-o data/'+outDir, '-d',delay, '-l', low,
-                   '-m', method, '-x',fam])
-    
-    if str(RunnerObj.params['log']) == 'True':
-        cmdToRun += ' --log'
-    if str(RunnerObj.params['ignorePT']) == 'True':
-        cmdToRun += ' -i'
+    for idx in range(len(colNames)):
+        # Specify file names for inputs and outputs
+        exprName = "ExpressionData"+str(idx)+".csv"
+        cellName = "CellData"+str(idx)+".csv"
+        outFile = "outFile"+str(idx)+".csv"
+        timeFile = 'time'+str(idx)+".csv"
         
-    cmdToRun += '\"'
-    
-    print(cmdToRun)
-    
-    os.system(cmdToRun)
+        cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ scribe:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + timeFile, 'Rscript runScribe.R',
+                       '-e',inputPath +exprName, '-c',inputPath + cellName, 
+                       '-g',inputPath + 'GeneData.csv', '-o data/'+outDir, '-d',delay, '-l', low,
+                       '-m', method, '-x',fam, '--outFile '+outFile])
+
+        if str(RunnerObj.params['log']) == 'True':
+            cmdToRun += ' --log'
+        if str(RunnerObj.params['ignorePT']) == 'True':
+            cmdToRun += ' -i'
+
+        cmdToRun += '\"'
+
+        print(cmdToRun)
+
+        os.system(cmdToRun)
 
 
 
@@ -85,31 +122,31 @@ def parseOutput(RunnerObj):
     '''
     Function to parse outputs from SCRIBE.
     '''
-    # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCRIBE/"
-    if not Path(outDir+'outFile.txt').exists():
-        print(outDir+'outFile.txt'+'does not exist, skipping...')
-        return
-        
-    # Read output
-    OutDF = pd.read_csv(outDir+'outFile.txt', sep = ',', header = 0, index_col = 0)
-    
-    # Sort values in a matrix using code from:
-    # https://stackoverflow.com/questions/21922806/sort-values-of-matrix-in-python
-    
-    OutDF = OutDF.clip(lower=0) # if less than 0, set it to zero
-    idx = np.argsort(OutDF.values, axis = None)[::-1]
-    rows, cols = np.unravel_index(idx, OutDF.shape)
-    DFSorted = []
-    for idx in range(len(rows)):
-        DFSorted.append(OutDF.iloc[rows[idx], cols[idx]])
+    outDir = "%s/%s/" % (RunnerObj.outDir, RunnerObj.params_str)
 
-    # read input file for list of gene names
-    GeneList = list(OutDF.index)
-    
-    outFile = open(outDir + 'rankedEdges.csv','w')
-    outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+                             header = 0, index_col = 0)
+    colNames = PTData.columns
+    OutSubDF = [0]*len(colNames)
+    for idx in range(len(colNames)):
+        # Read output
+        outFile = 'outFile'+str(idx)+'.csv'
+        if not Path(outDir+outFile).exists():
+            # Quit if output file does not exist
 
-    for row, col, val in zip(rows, cols, DFSorted):
-        outFile.write('\t'.join([GeneList[row],GeneList[col],str(val)])+'\n')
-    outFile.close()
+            print(outDir+outFile+' does not exist, skipping...')
+            return
+        OutSubDF[idx] = pd.read_csv(outDir+outFile, sep = ' ', header = None)
+
+    # megre the dataframe by taking the maximum value from each DF
+    # From here: https://stackoverflow.com/questions/20383647/pandas-selecting-by-label-sometimes-return-series-sometimes-returns-dataframe
+    outDF = pd.concat(OutSubDF)
+    outDF.columns= ['Gene1','Gene2','EdgeWeight']
+    # Group by rows code is from here:
+    # https://stackoverflow.com/questions/53114609/pandas-how-to-remove-duplicate-rows-but-keep-all-rows-with-max-value
+    res = outDF[outDF['EdgeWeight'] == outDF.groupby(['Gene1','Gene2'])['EdgeWeight'].transform('max')]
+    # Sort values in the dataframe   
+    finalDF = res.sort_values('EdgeWeight',ascending=False)  
+    
+    print("\twriting processed rankedEdges to %s" % (RunnerObj.final_ranked_edges))
+    finalDF.to_csv(RunnerObj.final_ranked_edges, sep='\t', index=False)

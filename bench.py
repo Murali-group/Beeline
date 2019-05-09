@@ -74,7 +74,7 @@ class Evaluation(object):
                 data['cellData'] = dataset['cellData']
                 if 'should_run' in data['params'] and \
                         data['params']['should_run'] is False:
-                    print("Skipping %s" % (data['name']))
+                    #print("Skipping %s" % (data['name']))
                     continue
                 #else:
                 #    print("Running %s" % (data['name']))
@@ -109,7 +109,7 @@ class Evaluation(object):
                     runner.run(output_dir=base_output_dir)
 
 
-    def evaluate_runners(self):
+    def evaluate_runners(self, postfix='', forced=False):
         '''
         Write AUPRC and AUROC summary statistics for all algorithms
         '''
@@ -122,18 +122,23 @@ class Evaluation(object):
             #print(evalDF.head())
 
             outDir = str(self.input_settings.datadir.joinpath(dataset['name'])).replace("inputs/","outputs/")
-            out_file = "%s/eval.csv" % (outDir)
+            out_file = "%s/eval%s.csv" % (outDir, postfix)
             header = True
+            append = True
             if os.path.isfile(out_file):
-                print("appending to %s" % (out_file))
-                header = False
-                # make sure we don't duplicate any rows
-                df = pd.read_csv(out_file, header = 0, index_col = 'params')
-                evalDF = evalDF[~evalDF.isin(df)].dropna()
+                if forced:
+                    append = False
+                    print("writing to %s" % (out_file))
+                else:
+                    print("appending to %s" % (out_file))
+                    header = False
+                    # make sure we don't duplicate any rows
+                    df = pd.read_csv(out_file, header = 0, index_col = 'params')
+                    evalDF = evalDF[~evalDF.isin(df)].dropna()
             else:
                 print("writing to %s" % (out_file))
 
-            with open(out_file, 'a') as out:
+            with open(out_file, 'a' if append else 'w') as out:
                 # lock it to avoid scripts trying to write at the same time
                 fcntl.flock(out, fcntl.LOCK_EX)
                 evalDF.to_csv(out, header=header, index_label='params')
@@ -199,6 +204,10 @@ def get_parser() -> argparse.ArgumentParser:
         help='Configuration file')
     parser.add_argument('--eval-only', action='store_true', default=False,
         help='Skip running the methods and only evaluate')
+    parser.add_argument('--force-eval', action='store_true', default=False,
+        help='If the eval.csv file exists, overwite it instead of adding to it')
+    parser.add_argument('--postfix', default='',
+        help='Postfix to add to the eval<postfix>.csv file')
 
     return parser
 
@@ -235,7 +244,7 @@ if __name__ == "__main__":
                 evaluation.runners[idx].parseOutput()
     print("Finished running")
 
-    evaluation.evaluate_runners()
+    evaluation.evaluate_runners(postfix=opts.postfix, forced=opts.force_eval)
 
     print('Evaluation complete')
 
