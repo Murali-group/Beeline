@@ -13,10 +13,13 @@ from tqdm import tqdm
 import networkx as nx
 from pathlib import Path
 import src.plotCurves as pc
+import src.computeMotifs as cm
+import src.analyzeTopk as tk
 from scipy.stats import spearmanr
 from itertools import permutations
 from collections import defaultdict
 from networkx.convert_matrix import from_pandas_adjacency
+
 
 class EvalAggregator(object):
     '''
@@ -141,7 +144,27 @@ class EvalAggregator(object):
             uAUROCDict[dataset['name']] = uAUROC
             
         return AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict
+    
+    def find_motifs(self):
 
+        '''
+        compute motifs
+        '''
+        
+        for dataset in tqdm(self.input_settings.datasets, 
+                            total = len(self.input_settings.datasets), unit = " Dataset"):
+            cm.motifAnalysis(dataset, self.input_settings)
+    
+    def analyzeTopK(self):
+
+        '''
+        compute motifs
+        '''
+        
+        for dataset in tqdm(self.input_settings.datasets, 
+                            total = len(self.input_settings.datasets), unit = " Dataset"):
+            tk.outputAnalysis(dataset, self.input_settings)
+    
     def time_runners(self):
         '''
         :return:
@@ -254,11 +277,13 @@ def main():
     #corrDict.to_csv(outDir + "corrData.csv")
     # Compute performance
     #AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
+    eval_summ.analyzeTopK()
+    
+    sys.exit()
 
     TimeDict = eval_summ.time_runners()
+    
     pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
-
-    sys.exit()
 
     pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
     pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
