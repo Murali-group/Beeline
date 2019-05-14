@@ -1,3 +1,17 @@
 Tetsutaro Hayashi et al, "Single-cell full-length total RNA sequencing uncovers dynamics of recursive splicing and enhancer RNAs" Nature Communications, 2018
 
 Processed from: https://github.com/hmatsu1226/SCODE/tree/master/data
+
+
+2019/05/14 Jeff Law:
+Downloaded STRING edges (v11) using the TFs. Commands used:
+
+# Uploaded the following file to STRING
+cut -f 1 -d ',' ExpressionData.csv  | tail -n +2 > tfs.txt
+
+# exported the string_interactions.tsv file from STRING 
+# reformatted to match our refNetwork.csv files
+f=refNetwork-string-400.csv; echo "Gene1,Gene2,combined_score" > $f; cut -f 1,2,15 string_interactions.tsv  | tail -n +2 | sed "s/\t/,/g" >> $f; head $f
+
+# also used a higher score cutoff
+awk -F ,  '{if($3 >= 0.7) {print $0}}' refNetwork-string-400.csv > refNetwork-string-700.csv
