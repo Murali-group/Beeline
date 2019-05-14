@@ -113,7 +113,7 @@ def parseOutput(RunnerObj):
     outDF = pd.concat(OutSubDF)
 
     res = outDF.groupby(['Gene1','Gene2'],as_index=False).mean()
-    print(res.head())
+    #print(res.head())
     # Sort values in the dataframe   
     finalDF = res.sort_values('EdgeWeight',ascending=False)  
     

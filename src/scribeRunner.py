@@ -78,7 +78,7 @@ def run(RunnerObj):
         exprName = "ExpressionData"+str(idx)+".csv"
         cellName = "CellData"+str(idx)+".csv"
         outFile = "outFile"+str(idx)+".csv"
-        timeFile = 'time'+str(idx)+".csv"
+        timeFile = 'time'+str(idx)+".txt"
         
         cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ scribe:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + timeFile, 'Rscript runScribe.R',
                        '-e',inputPath +exprName, '-c',inputPath + cellName, 
