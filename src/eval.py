@@ -69,10 +69,10 @@ def Eval(dataDict, inputSettings, runners, plot_curves=False):
                 FPRDict[key] = fpr
                 TPRDict[key] = tpr
 
-            #auprc, auroc, fmax = compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=False)
-            #AUPRC[key] = auprc
-            #AUROC[key] = auroc
-            #FMAX[key] = fmax
+            auprc, auroc, fmax = compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=False)
+            AUPRC[key] = auprc
+            AUROC[key] = auroc
+            FMAX[key] = fmax
             #eauprc = compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True)
             #eAUPRC[runner.params_str] = eauprc
 
@@ -83,10 +83,10 @@ def Eval(dataDict, inputSettings, runners, plot_curves=False):
             #    trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True, recall_to_test=[0.1, 0.15, 0.2])
             #ePrec[key], r0_1Prec[key], r0_15Prec[key], r0_2Prec[key] = eprec, r0_1prec, r0_15prec, r0_2prec
 
-            #auprc, auroc, fmax = compute_eval_measures(trueEdgesDF, uTrueEdgeDict, predDF, directed=False)
-            #uAUPRC[key] = auprc
-            #uAUROC[key] = auroc
-            #uFMAX[key] = fmax
+            auprc, auroc, fmax = compute_eval_measures(trueEdgesDF, uTrueEdgeDict, predDF, directed=False)
+            uAUPRC[key] = auprc
+            uAUROC[key] = auroc
+            uFMAX[key] = fmax
         else:
             print(runner.final_ranked_edges, ' does not exist. Skipping...')
 
@@ -94,11 +94,13 @@ def Eval(dataDict, inputSettings, runners, plot_curves=False):
         plot_alg_curves(outDir, recallDict, precisionDict, FPRDict, TPRDict, AUPRC, AUROC)
 
     #results = {'alg': alg_name, 'num_edges': num_edges, 'AUPRC': AUPRC, 'eAUPRC': eAUPRC, 'AUROC': AUROC, 'FMAX': FMAX,
-    #results = {'alg': alg_name, 'num_edges': num_edges, 'AUPRC': AUPRC, 'AUROC': AUROC, 'FMAX': FMAX,
-    results = {'alg': alg_name, 'num_edges': num_edges, 'uePrec': uePrec, 'ueRec': ueRec}
+    results = {'alg': alg_name, 'num_edges': num_edges, 'AUPRC': AUPRC, 'AUROC': AUROC, 'FMAX': FMAX,
+    #results = {'alg': alg_name, 'num_edges': num_edges, 
+    'uePrec': uePrec, 'ueRec': ueRec,
                 #'ePrec': ePrec, 'r0.1Prec': r0_1Prec, 'r0.15Prec': r0_15Prec, 'r0.2Prec': r0_2Prec}
     #results = {'alg': alg_name, 'num_edges': num_edges, 'AUPRC': AUPRC, 'AUROC': AUROC, 'FMAX': FMAX,
-    #            'uAUPRC': uAUPRC, 'uAUROC': uAUROC, 'uFMAX': uFMAX}
+                'uAUPRC': uAUPRC, 'uAUROC': uAUROC, 'uFMAX': uFMAX
+                }
     return results
 
 
