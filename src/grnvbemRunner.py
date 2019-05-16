@@ -1,4 +1,5 @@
 import os
+import subprocess
 import pandas as pd
 from pathlib import Path
 import numpy as np
@@ -13,38 +14,56 @@ def generateInputs(RunnerObj):
         print("Input folder for GRNVBEM does not exist, creating input folder...")
         RunnerObj.inputDir.joinpath("GRNVBEM").mkdir(exist_ok = False)
         
-    if not RunnerObj.inputDir.joinpath("GRNVBEM/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
+    ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
-        PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
+
+    colNames = PTData.columns
+    for idx in range(len(colNames)):
+        # Select cells belonging to each pseudotime trajectory
+        colName = colNames[idx]
+        index = PTData[colName].index[PTData[colName].notnull()]
+        exprName = "GRNVBEM/ExpressionData"+str(idx)+".csv"
         
+        subPT = PTData.loc[index,:]
+        subExpr = ExpressionData[index]
         # Order columns by PseudoTime
-        newExpressionData = ExpressionData[PTData.sort_values(['PseudoTime']).index.astype(str)]
+        newExpressionData = subExpr[subPT.sort_values([colName]).index.astype(str)]
         
         newExpressionData.insert(loc = 0, column = 'GENES', \
                                                      value = newExpressionData.index)
 
+
         # Write .csv file
-        newExpressionData.to_csv(RunnerObj.inputDir.joinpath("GRNVBEM/ExpressionData.csv"),
+        newExpressionData.to_csv(RunnerObj.inputDir.joinpath(exprName),
                              sep = ',', header  = True, index = False)
     
 def run(RunnerObj):
     '''
     Function to run GRN-VBEM algorithm
     '''
-    inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1] + \
-                    "/GRNVBEM/ExpressionData.csv"
     
+    inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1]
     # make output dirs if they do not exist:
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNVBEM/"
     os.makedirs(outDir, exist_ok = True)
     
-    outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/VBEM/data/ grnvbem:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', './GRNVBEM',
-                         inputPath, outPath, '\"'])
-    print(cmdToRun)
-    os.system(cmdToRun)
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+                             header = 0, index_col = 0)
+
+    colNames = PTData.columns
+    for idx in range(len(colNames)):
+        exprName = "/GRNVBEM/ExpressionData"+str(idx)+".csv"
+        outPath = 'data/' +  str(outDir) + 'outFile'+str(idx)+'.txt'
+
+        cmdToRun = ' '.join(['docker run --rm -v', 
+                             str(Path.cwd())+':/VBEM/data/ grnvbem:base /bin/sh -c \"time -v -o', 
+                             "data/" + str(outDir) + 'time'+str(idx)+'.txt', 
+                             './GRNVBEM', inputPath+exprName, outPath, '\"'])
+        print(cmdToRun)
+        #os.system(cmdToRun)
+        subprocess.check_call(cmdToRun, shell=True)
 
 
 
@@ -52,19 +71,34 @@ def parseOutput(RunnerObj):
     '''
     Function to parse outputs from GRNVBEM.
     '''
-    # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNVBEM/"
-    if not Path(outDir+'outFile.txt').exists():
-        print(outDir+'outFile.txt'+'does not exist, skipping...')
-        return
+
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+                             header = 0, index_col = 0)
+
+    colNames = PTData.columns
+    OutSubDF = [0]*len(colNames)
+
+    for indx in range(len(colNames)):
+        outFileName = 'outFile'+str(indx)+'.txt'
+        # Quit if output file does not exist
+        if not Path(outDir+outFileName).exists():
+            print(outDir+outFileName+' does not exist, skipping...')
+            return
         
-    # Read output
-    OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
-    
+        # Read output
+        OutSubDF[indx] = pd.read_csv(outDir+outFileName, sep = '\t', header = 0)
+        
+    outDF = pd.concat(OutSubDF)
+    FinalDF = outDF[outDF['Probability'] == outDF.groupby(['Parent','Child'])['Probability'].transform('max')]
+
+    # finally, output to the specified output folder
+    outDir = "%s/%s/GRNVBEM/" % (RunnerObj.outputDir, str(RunnerObj.inputDir).split("inputs/")[1])
+    os.makedirs(outDir, exist_ok = True)
     outFile = open(outDir + 'rankedEdges.csv','w')
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 
-    for idx, row in OutDF.sort_values(['Probability'], ascending = False).iterrows():
+    for idx, row in FinalDF.sort_values(['Probability'], ascending = False).iterrows():
         outFile.write('\t'.join([row['Parent'],row['Child'],str(row['Probability'])])+'\n')
     outFile.close()
     

@@ -1,4 +1,5 @@
 import os
+import subprocess
 import pandas as pd
 from pathlib import Path
 import numpy as np
@@ -34,7 +35,8 @@ def run(RunnerObj):
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data pidc:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'julia runPIDC.jl',
                          inputPath, outPath, '\"'])
     print(cmdToRun)
-    os.system(cmdToRun)
+    #os.system(cmdToRun)
+    subprocess.check_call(cmdToRun, shell=True)
 
 
 
@@ -50,6 +52,10 @@ def parseOutput(RunnerObj):
         
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = None)
+
+    # finally, output to the specified output folder
+    outDir = "%s/%s/PIDC/" % (RunnerObj.outputDir, str(RunnerObj.inputDir).split("inputs/")[1])
+    os.makedirs(outDir, exist_ok = True)
     outFile = open(outDir + 'rankedEdges.csv','w')
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 

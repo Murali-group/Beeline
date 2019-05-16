@@ -113,8 +113,8 @@ def run(RunnerObj):
             cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runSCINGE/data/ scinge:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time%s.txt'%idx, './runSCINGE ',
                                 inputFile, outPath, params_str_to_run, '\"'])
         else:
-            outDir = "%s/%s/" % (outDir, idx)
-            outPath = os.path.abspath(outDir) 
+            outPath = "%s/%s/" % (outDir, idx)
+            outPath = os.path.abspath(outPath) 
             if 'baobab' in socket.gethostname():
                 # write the localdisk to speed up file IO
                 outPath = outPath.replace("/data/","/localdisk/")
@@ -133,7 +133,6 @@ def run(RunnerObj):
                 # TODO make the nodes, ppn and walltime parameters(?)
                 baobab_utils.writeQsubFile(
                     jobs, qsub_file, name=name, nodes=1, ppn=1, walltime='10:00:00')
-                print(scinge_command)
                 cmdToRun = "qsub %s" % (qsub_file)
             else:
                 # move to the output dir because each run makes some temporary files that will be copied if we stay in the base dir
@@ -142,18 +141,18 @@ def run(RunnerObj):
                 # otherwise just run like normal
                 cmdToRun = "%s\n%s" % (ml_lib_command, scinge_command)
 
-    print(cmdToRun)
-    # also print the parameters
-    print("\tParameters: %s" % (', '.join("%s: %s" % (p, str(params[p])) for p in params_order)))
+        print(cmdToRun)
+        # also print the parameters
+        print("\tParameters: %s" % (', '.join("%s: %s" % (p, str(params[p])) for p in params_order)))
 
-    #os.system(cmdToRun)
-    subprocess.check_call(cmdToRun, shell=True)
+        #os.system(cmdToRun)
+        subprocess.check_call(cmdToRun, shell=True)
 
-    # move back to the base dir
-    os.chdir(curr_dir)
-    # delete the copy of the expression data
-    if os.path.isfile("%s/ExpressionData.mat" % (outPath)):
-        os.remove("%s/ExpressionData.mat" % (outPath))
+        # move back to the base dir
+        os.chdir(curr_dir)
+        # delete the copy of the expression data
+        if os.path.isfile("%s/ExpressionData.mat" % (outPath)):
+            os.remove("%s/ExpressionData.mat" % (outPath))
 
 
 def create_ml_lib_command():

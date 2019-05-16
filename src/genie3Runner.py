@@ -1,4 +1,5 @@
 import os
+import subprocess
 import pandas as pd
 from pathlib import Path
 import numpy as np
@@ -39,7 +40,8 @@ def run(RunnerObj):
                          '--inFile='+inputPath, '--outFile='+outPath, '\"'])
 
     print(cmdToRun)
-    os.system(cmdToRun)
+    #os.system(cmdToRun)
+    subprocess.check_call(cmdToRun, shell=True)
 
 
 
@@ -58,6 +60,9 @@ def parseOutput(RunnerObj):
         print(outDir+'outFile.txt'+'does not exist, skipping...')
         return
     
+    # finally, output to the specified output folder
+    outDir = "%s/%s/GENIE3/" % (RunnerObj.outputDir, str(RunnerObj.inputDir).split("inputs/")[1])
+    os.makedirs(outDir, exist_ok = True)
     outFile = open(outDir + 'rankedEdges.csv','w')
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 

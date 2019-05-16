@@ -48,6 +48,8 @@ def setupParams(RunnerObj):
 
     # the final file is written here:
     outDir = "outputs/" + str(RunnerObj.inputDir).split("inputs/")[1]+"/LEAP/"
+    # TODO use the specified output dir
+    #outDir = "%s/%s/LEAP/" % (RunnerObj.outputDir, str(RunnerObj.inputDir).split("inputs/")[1])
     #print(outDir)
     RunnerObj.outDir = outDir
     RunnerObj.final_ranked_edges = "%s/%s-rankedEdges.tsv" % (outDir, RunnerObj.params_str)

@@ -70,6 +70,7 @@ class Evaluation(object):
                 data['name'] = runner[0]
                 data['params'] = runner[1]
                 data['inputDir'] = Path.cwd().joinpath(self.input_settings.datadir.joinpath(dataset['name']))
+                data['outputDir'] = self.output_settings.base_dir
                 data['exprData'] = dataset['exprData']
                 data['cellData'] = dataset['cellData']
                 if 'should_run' in data['params'] and \
@@ -189,7 +190,7 @@ class ConfigParser(object):
 
     @staticmethod
     def __parse_output_settings(output_settings_map):
-        output_dir = Path(output_settings_map['output_dir'])
+        output_dir = Path(output_settings_map['output_dir'] if 'output_dir' in output_settings_map else output_settings_map['outputDir'])
         return OutputSettings(output_dir)
 
 def get_parser() -> argparse.ArgumentParser:

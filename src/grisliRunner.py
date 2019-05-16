@@ -75,6 +75,12 @@ def run(RunnerObj):
     R = str(RunnerObj.params['R'])
     alphaMin = str(RunnerObj.params['alphaMin'])
 
+    # if this has already been run, and forced is set to false, then skip it
+    if RunnerObj.params.get('forced') is False and \
+            os.path.isfile(RunnerObj.final_ranked_edges):
+        print("%s already exists. Set forced=True to overwrite" % (RunnerObj.final_ranked_edges))
+        return 'already_exists'
+
     for idx in range(len(RunnerObj.colNames)):
         inputPath = "data/"+str(RunnerObj.inputDir).split("RNMethods/")[1]+"/GRISLI/"+str(idx)+"/"
         outDir = RunnerObj.outDir+str(idx)
