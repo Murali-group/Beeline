@@ -112,7 +112,7 @@ def parseOutput(RunnerObj):
         # From here: https://stackoverflow.com/questions/20383647/pandas-selecting-by-label-sometimes-return-series-sometimes-returns-dataframe
     outDF = pd.concat(OutSubDF)
 
-    res = outDF.groupby(['Gene1','Gene2'],as_index=False).mean()
+    res = outDF.groupby(['Gene1','Gene2'],as_index=False).max()
     #print(res.head())
     # Sort values in the dataframe   
     finalDF = res.sort_values('EdgeWeight',ascending=False)  
