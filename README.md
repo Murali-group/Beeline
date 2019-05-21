@@ -8,3 +8,8 @@ Instructions
 - To create the docker containers for each of the algorithms run `. initialize.sh`
 - To compute ranked list of edges, run `python eval.py --config config-files/config.yaml`
 - To run the evaluation pipeline, run `python eval_summarizer.py --config config-files/config.yaml`
+
+
+If you use BEELINE in your research, please cite:
+
+Aditya Pratapa, Amogh Jalihal, Jeffrey Law, Aditya Bharadwaj, and T M Murali. [Benchmarking algorithms for gene regulatory network inference from single-cell transcriptomic data](https://doi.org/10.1101/642926), _bioRxiv_ (2019). doi.org/10.1101/642926
