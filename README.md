@@ -1,4 +1,4 @@
-# ModelEval
+# BEELINE: Benchmarking gEnE reguLatory network Inference from siNgle-cEll transcriptomic data
 
 This is the main repository for GRN model evaluation
 
