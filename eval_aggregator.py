@@ -617,37 +617,37 @@ def main():
     outDir = str(eval_summ.output_settings.base_dir) + \
             str(eval_summ.input_settings.datadir).split("inputs")[1] + "/"+\
             str(eval_summ.output_settings.output_prefix) + "-"
-    #TimeDict = eval_summ.time_runners()
-    #pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
-    #AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
-
-    #pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
-    #pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
-    #pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
-    #pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
-    #sys.exit()
-    #sPrDF = eval_summ.find_SignedPrec()
-    #sPrDF.to_csv(outDir + "SingedPr.csv")
     
-     # Compute correlations
+    # Compute time taken
+    TimeDict = eval_summ.time_runners()
+    pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
+    
+    # Compute and plot ROC, PRC and report AUROC, AUPRC
+    AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
+
+    pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
+    pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
+    pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
+    pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
+    
+    # Compute early recision for signed edges
+    sPrDF = eval_summ.find_SignedPrec()
+    sPrDF.to_csv(outDir + "SingedPr.csv")
+    
+     # Compute early precision
     ePRDF = eval_summ.find_EarlyPrecRec()
     ePRDF.to_csv(outDir + "EarlyPR.csv")
-    sys.exit()
-    # Compute correlations
+
+    # Compute Jaccard index
     jaccDict = eval_summ.find_jaccard()
     jaccDict.to_csv(outDir + "jaccData.csv")
 
-    #corrDict = eval_summ.find_correlations()
-    #corrDict.to_csv(outDir + "corrData.csv")
-    #sys.exit()
-    # Compute performance
-    #eval_summ.analyzeTopK()
+    # Compute correlations
+    corrDict = eval_summ.find_correlations()
+    corrDict.to_csv(outDir + "corrData.csv")
 
 
-
-
-
-    print('Evaluation complete')
+    print('Evaluation complete...')
 
 
 if __name__ == '__main__':
