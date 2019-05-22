@@ -5,7 +5,7 @@ LABEL maintainer="Aditya Pratapa <adyprat@vt.edu>"
 USER root
 ENV TZ=America/New_York
 ENV DEBIAN_FRONTEND=noninteractive 
-
+RUN apt-get update
 RUN apt-get install -y build-essential patch
 RUN apt-get install -y fsharp \
 	mono-xbuild
