@@ -58,8 +58,9 @@ class EvalAggregator(object):
         sim_names = []
         for dataset in tqdm(self.input_settings.datasets):
             trueEdgesDF = pd.read_csv(str(self.input_settings.datadir)+'/'+ \
-                                      dataset['trueEdges'],
-                                sep = ',', header = 0, index_col = None)
+                          dataset['name'] + '/' +\
+                          dataset['trueEdges'], sep = ',',
+                          header = 0, index_col = None)
             possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
                                          r = 2))
             PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
@@ -104,8 +105,9 @@ class EvalAggregator(object):
         sim_names = []
         for dataset in tqdm(self.input_settings.datasets):
             trueEdgesDF = pd.read_csv(str(self.input_settings.datadir)+'/'+ \
-                                      dataset['trueEdges'], sep = ',',
-                                      header = 0, index_col = None)
+                          dataset['name'] + '/' +\
+                          dataset['trueEdges'], sep = ',',
+                          header = 0, index_col = None)
             
             possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
                                          r = 2))
@@ -177,8 +179,9 @@ class EvalAggregator(object):
         sim_names = []
         for dataset in tqdm(self.input_settings.datasets):
             trueEdgesDF = pd.read_csv(str(self.input_settings.datadir)+'/'+ \
-                                      dataset['trueEdges'], sep = ',',
-                                      header = 0, index_col = None)
+                          dataset['name'] + '/' +\
+                          dataset['trueEdges'], sep = ',',
+                          header = 0, index_col = None)
             
             possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
                                          r = 2))
@@ -205,11 +208,13 @@ class EvalAggregator(object):
             #algos = self.input_settings.algorithms
             rank_path = outDir + "/rankedEdges.csv"
             if not os.path.isdir(outDir):
+                rankDict[dataset["name"]] = set([])
                 continue
             try:
                 predDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
             except:
-                print("Skipping Jaccard computation for ", algo_name, "on path", outDir)
+                print("Skipping early precision computation for ", algo_name, "on path", outDir)
+                rankDict[dataset["name"]] = set([])
                 continue
 
             predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
@@ -261,6 +266,7 @@ class EvalAggregator(object):
         for sgn in ['+','-']:
             for dataset in tqdm(self.input_settings.datasets):
                 trueEdgesDF = pd.read_csv(str(self.input_settings.datadir)+'/'+ \
+                                          dataset['name'] + '/' +\
                                           dataset['trueEdges'], sep = ',',
                                           header = 0, index_col = None)
 
@@ -300,11 +306,13 @@ class EvalAggregator(object):
                 rank_path = outDir + "/rankedEdges.csv"
                 if not os.path.isdir(outDir):
                     print(outDir," not found")
+                    rankDict[sgn][dataset["name"]] = set([])
                     continue
                 try:
                     predDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
                 except:
                     print("Skipping signed precision computation for ", algo_name, "on path", outDir)
+                    rankDict[sgn][dataset["name"]] = set([])
                     continue
 
                 predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
@@ -340,10 +348,9 @@ class EvalAggregator(object):
                     newDF = predDF.loc[(predDF['EdgeWeight'] >= bestVal)]
                     rankDict[sgn][dataset["name"]] = set(newDF['Gene1'] + "|" + newDF['Gene2'])
                 else:
-                    print(rank_path,dataset["name"])
                     rankDict[sgn][dataset["name"]] = set([])
+                
         Pprec = {'+':{},'-':{}}
-        
         for sgn in ['+','-']:
 
             TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
@@ -360,14 +367,13 @@ class EvalAggregator(object):
                     if  subDF['Type'].values[0] == sgn:
                         TrueEdgeDict[key] = 1
                         trueEdges.add(key)
-            print(trueEdges,sgn)
+                        
             for dataset in tqdm(self.input_settings.datasets):
                 if len(rankDict[sgn][dataset["name"]]) != 0 and len(trueEdges) != 0:
                     intersectionSet = rankDict[sgn][dataset["name"]].intersection(trueEdges)
                     Pprec[sgn][dataset["name"]] = len(intersectionSet)/len(rankDict[sgn][dataset["name"]])
                 else:
                     Pprec[sgn][dataset["name"]] = 0
-        print(algo_name, pd.DataFrame(Pprec).median(axis='index').values[0],pd.DataFrame(Pprec).median(axis='index').values[1])
         return(pd.DataFrame(Pprec).median(axis='index').values[0],pd.DataFrame(Pprec).median(axis='index').values[1])
 
 
@@ -404,7 +410,8 @@ class EvalAggregator(object):
                  str(self.input_settings.datadir).split("inputs")[1] + "/"
         print(outDir)
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-            corrDF['Median'][algo[0]],corrDF['MAD'][algo[0]] = self.findSpearman(algo[0])
+            if algo[1]['should_run'] == True:
+                corrDF['Median'][algo[0]],corrDF['MAD'][algo[0]] = self.findSpearman(algo[0])
             
         return pd.DataFrame(corrDF)
 
@@ -423,7 +430,8 @@ class EvalAggregator(object):
                  str(self.input_settings.datadir).split("inputs")[1] + "/"
         print(outDir)
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-            JaccDF['Median'][algo[0]], JaccDF['MAD'][algo[0]] = self.computeJaccard(algo[0])
+            if algo[1]['should_run'] == True:
+                JaccDF['Median'][algo[0]], JaccDF['MAD'][algo[0]] = self.computeJaccard(algo[0])
             
         return pd.DataFrame(JaccDF)
                  
@@ -442,7 +450,8 @@ class EvalAggregator(object):
                  str(self.input_settings.datadir).split("inputs")[1] + "/"
         print(outDir)
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-            ePR['Early Precision'][algo[0]], Eprec[algo[0]] = self.computeEarlyPrecRec(algo[0])
+            if algo[1]['should_run'] == True:
+                ePR['Early Precision'][algo[0]], Eprec[algo[0]] = self.computeEarlyPrecRec(algo[0])
         pd.DataFrame(Eprec).to_csv(outDir+'EarlyPRFull.csv')
         return pd.DataFrame(ePR)
     
@@ -460,8 +469,8 @@ class EvalAggregator(object):
         outDir = str(self.output_settings.base_dir) + \
                  str(self.input_settings.datadir).split("inputs")[1] + "/"
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-
-            ePR['Activation Precision'][algo[0]], ePR['Inhibition Precision'][algo[0]] = self.computeSignedEarlyPrec(algo[0])
+            if algo[1]['should_run'] == True:
+                ePR['Activation Precision'][algo[0]], ePR['Inhibition Precision'][algo[0]] = self.computeSignedEarlyPrec(algo[0])
             
         return pd.DataFrame(ePR)
     
@@ -610,9 +619,8 @@ def main():
 
     with open(config_file, 'r') as conf:
         evaluation = ev.ConfigParser.parse(conf)
-    print(evaluation)
+        
     print('Post-Run Evaluation Summary started')
-
     eval_summ = EvalAggregator(evaluation.input_settings, evaluation.output_settings)
     outDir = str(eval_summ.output_settings.base_dir) + \
             str(eval_summ.input_settings.datadir).split("inputs")[1] + "/"+\
