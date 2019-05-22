@@ -21,6 +21,22 @@ from collections import defaultdict
 from networkx.convert_matrix import from_pandas_adjacency
 
 
+import multiprocessing
+from multiprocessing import Pool, cpu_count
+import concurrent.futures
+
+def computePairwiseJacc(inDict):
+    jaccDF = {key:{key1:{} for key1 in inDict.keys()} for key in inDict.keys()}
+    for key_i in inDict.keys():
+        for key_j in inDict.keys():
+            num = len(inDict[key_i].intersection(inDict[key_j]))
+            den = len(inDict[key_i].union(inDict[key_j]))
+            if den != 0:
+                jaccDF[key_i][key_j] = num/den
+            else:
+                jaccDF[key_i][key_j] = 0
+    return pd.DataFrame(jaccDF)
+
 class EvalAggregator(object):
     '''
     The Evaluation object is created by parsing a user-provided configuration
@@ -77,9 +93,282 @@ class EvalAggregator(object):
     
         df = df.stack().reset_index()
         df.columns = ['Row','Column','Value']
+        
         return(df.Value.median(),df.Value.mad())
 
 
+    
+    
+    def computeJaccard(self, algo_name):
+        rankDict = {}
+        sim_names = []
+        for dataset in tqdm(self.input_settings.datasets):
+            trueEdgesDF = pd.read_csv(str(self.input_settings.datadir)+'/'+ \
+                                      dataset['trueEdges'], sep = ',',
+                                      header = 0, index_col = None)
+            
+            possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+                                         r = 2))
+            
+            TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
+            PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
+
+            # Compute TrueEdgeDict Dictionary
+            # 1 if edge is present in the ground-truth
+            # 0 if edge is not present in the ground-truth
+            numEdges = 0
+            for key in TrueEdgeDict.keys():
+                if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
+                       (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
+                        TrueEdgeDict[key] = 1
+                        numEdges += 1
+                        
+            outDir = str(self.output_settings.base_dir) + \
+                     str(self.input_settings.datadir).split("inputs")[1] + \
+                     "/" + dataset["name"] + "/" + algo_name
+            
+            #algos = self.input_settings.algorithms
+            rank_path = outDir + "/rankedEdges.csv"
+            if not os.path.isdir(outDir):
+                continue
+            try:
+                predDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
+            except:
+                print("Skipping Jaccard computation for ", algo_name, "on path", outDir)
+                continue
+
+            predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
+            predDF.drop_duplicates(keep = 'first', inplace=True)
+            predDF.reset_index(drop = True,  inplace= True)
+            # check if ranked edges list is empty
+            # if so, it is just set to an empty set
+            
+            if not predDF.shape[0] == 0:
+
+                # we want to ensure that we do not include
+                # edges without any edge weight
+                # so check if the non-zero minimum is
+                # greater than the edge weight of the top-kth
+                # node, else use the non-zero minimum value.
+                predDF.EdgeWeight = predDF.EdgeWeight.round(6)
+                predDF.EdgeWeight = predDF.EdgeWeight.abs()
+
+                # Use num True edges or the number of
+                # edges in the dataframe, which ever is lower
+                maxk = min(predDF.shape[0], numEdges)
+                edgeWeightTopk = predDF.iloc[maxk-1].EdgeWeight
+                
+                nonZeroMin = np.nanmin(predDF.EdgeWeight.replace(0, np.nan).values)
+                bestVal = max(nonZeroMin, edgeWeightTopk)
+                
+                newDF = predDF.loc[(predDF['EdgeWeight'] >= bestVal)]
+                rankDict[dataset["name"]] = set(newDF['Gene1'] + "|" + newDF['Gene2'])
+            else:
+                rankDict[dataset["name"]] = set([])
+            
+        Jdf = computePairwiseJacc(rankDict)
+        df = Jdf.where(np.triu(np.ones(Jdf.shape),  k = 1).astype(np.bool))
+        df = df.stack().reset_index()
+        df.columns = ['Row','Column','Value']
+        return(df.Value.median(),df.Value.mad())
+
+    def computeEarlyPrecRec(self, algo_name):
+        rankDict = {}
+        sim_names = []
+        for dataset in tqdm(self.input_settings.datasets):
+            trueEdgesDF = pd.read_csv(str(self.input_settings.datadir)+'/'+ \
+                                      dataset['trueEdges'], sep = ',',
+                                      header = 0, index_col = None)
+            
+            possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+                                         r = 2))
+            
+            TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
+            PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
+
+            # Compute TrueEdgeDict Dictionary
+            # 1 if edge is present in the ground-truth
+            # 0 if edge is not present in the ground-truth
+            numEdges = 0
+            trueEdges = set()
+            for key in TrueEdgeDict.keys():
+                if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
+                       (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
+                        TrueEdgeDict[key] = 1
+                        trueEdges.add(key)
+                        numEdges += 1
+                        
+            outDir = str(self.output_settings.base_dir) + \
+                     str(self.input_settings.datadir).split("inputs")[1] + \
+                     "/" + dataset["name"] + "/" + algo_name
+            
+            #algos = self.input_settings.algorithms
+            rank_path = outDir + "/rankedEdges.csv"
+            if not os.path.isdir(outDir):
+                continue
+            try:
+                predDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
+            except:
+                print("Skipping Jaccard computation for ", algo_name, "on path", outDir)
+                continue
+
+            predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
+            predDF.drop_duplicates(keep = 'first', inplace=True)
+            predDF.reset_index(drop = True,  inplace= True)
+            # check if ranked edges list is empty
+            # if so, it is just set to an empty set
+            
+            if not predDF.shape[0] == 0:
+
+                # we want to ensure that we do not include
+                # edges without any edge weight
+                # so check if the non-zero minimum is
+                # greater than the edge weight of the top-kth
+                # node, else use the non-zero minimum value.
+                predDF.EdgeWeight = predDF.EdgeWeight.round(6)
+                predDF.EdgeWeight = predDF.EdgeWeight.abs()
+
+                # Use num True edges or the number of
+                # edges in the dataframe, which ever is lower
+                maxk = min(predDF.shape[0], numEdges)
+                edgeWeightTopk = predDF.iloc[maxk-1].EdgeWeight
+                
+                nonZeroMin = np.nanmin(predDF.EdgeWeight.replace(0, np.nan).values)
+                bestVal = max(nonZeroMin, edgeWeightTopk)
+                
+                newDF = predDF.loc[(predDF['EdgeWeight'] >= bestVal)]
+                rankDict[dataset["name"]] = set(newDF['Gene1'] + "|" + newDF['Gene2'])
+            else:
+                print(rank_path,dataset["name"])
+                rankDict[dataset["name"]] = set([])
+        Eprec = {}
+        Erec = {}
+        for dataset in tqdm(self.input_settings.datasets):
+            if len(rankDict[dataset["name"]]) != 0:
+                intersectionSet = rankDict[dataset["name"]].intersection(trueEdges)
+                Eprec[dataset["name"]] = len(intersectionSet)/len(rankDict[dataset["name"]])
+                Erec[dataset["name"]] = len(intersectionSet)/len(trueEdges)
+            else:
+                Eprec[dataset["name"]] = 0
+                Erec[dataset["name"]] = 0
+        
+        return(np.median(list(Eprec.values())),Eprec)
+
+    
+    def computeSignedEarlyPrec(self, algo_name):
+        rankDict = {'+':{},'-':{}}
+        sim_names = []
+        for sgn in ['+','-']:
+            for dataset in tqdm(self.input_settings.datasets):
+                trueEdgesDF = pd.read_csv(str(self.input_settings.datadir)+'/'+ \
+                                          dataset['trueEdges'], sep = ',',
+                                          header = 0, index_col = None)
+
+                possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+                                             r = 2))
+
+
+                TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
+                PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
+
+                # Compute TrueEdgeDict Dictionary
+                # 1 if edge is present in the ground-truth
+                # 0 if edge is not present in the ground-truth
+                numEdges = 0
+                trueEdges = set()
+                toRemove = []
+                for key in TrueEdgeDict.keys():
+                    subDF = trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
+                           (trueEdgesDF['Gene2'] == key.split('|')[1])]
+
+                    if subDF.shape[0] > 0:
+                        if  subDF['Type'].values[0] == sgn:
+                            TrueEdgeDict[key] = 1
+                            trueEdges.add(key)
+                            numEdges += 1
+                        else:
+                            toRemove.append(key)
+                for key in toRemove:
+                    TrueEdgeDict.pop(key, None)
+
+
+                outDir = str(self.output_settings.base_dir) + \
+                         str(self.input_settings.datadir).split("inputs")[1] + \
+                         "/" + dataset["name"] + "/" + algo_name
+
+                #algos = self.input_settings.algorithms
+                rank_path = outDir + "/rankedEdges.csv"
+                if not os.path.isdir(outDir):
+                    print(outDir," not found")
+                    continue
+                try:
+                    predDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
+                except:
+                    print("Skipping signed precision computation for ", algo_name, "on path", outDir)
+                    continue
+
+                predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
+                predDF.drop_duplicates(keep = 'first', inplace=True)
+                predDF.reset_index(drop = True,  inplace= True)
+
+                # Remove incorrect sign from consideration
+                for idx, row in predDF.iterrows():
+                    if str(row['Gene1']) + '|' + str(row['Gene2']) not in TrueEdgeDict.keys():
+                        predDF.drop(idx, axis = 'index', inplace= True)
+                predDF.reset_index(drop = True,  inplace= True)
+                # check if ranked edges list is empty
+                # if so, it is just set to an empty set
+
+                if not predDF.shape[0] == 0:
+
+                    # we want to ensure that we do not include
+                    # edges without any edge weight
+                    # so check if the non-zero minimum is
+                    # greater than the edge weight of the top-kth
+                    # node, else use the non-zero minimum value.
+                    predDF.EdgeWeight = predDF.EdgeWeight.round(6)
+                    predDF.EdgeWeight = predDF.EdgeWeight.abs()
+
+                    # Use num True edges or the number of
+                    # edges in the dataframe, which ever is lower
+                    maxk = min(predDF.shape[0], numEdges)
+                    edgeWeightTopk = predDF.iloc[maxk-1].EdgeWeight
+
+                    nonZeroMin = np.nanmin(predDF.EdgeWeight.replace(0, np.nan).values)
+                    bestVal = max(nonZeroMin, edgeWeightTopk)
+
+                    newDF = predDF.loc[(predDF['EdgeWeight'] >= bestVal)]
+                    rankDict[sgn][dataset["name"]] = set(newDF['Gene1'] + "|" + newDF['Gene2'])
+                else:
+                    print(rank_path,dataset["name"])
+                    rankDict[sgn][dataset["name"]] = set([])
+        Pprec = {'+':{},'-':{}}
+        
+        for sgn in ['+','-']:
+
+            TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
+
+            # Compute TrueEdgeDict Dictionary
+            # 1 if edge is present in the ground-truth
+            # 0 if edge is not present in the ground-truth
+            trueEdges = set()
+            for key in TrueEdgeDict.keys():
+                subDF = trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
+                       (trueEdgesDF['Gene2'] == key.split('|')[1])]
+
+                if subDF.shape[0] > 0:
+                    if  subDF['Type'].values[0] == sgn:
+                        TrueEdgeDict[key] = 1
+                        trueEdges.add(key)
+            print(trueEdges,sgn)
+            for dataset in tqdm(self.input_settings.datasets):
+                if len(rankDict[sgn][dataset["name"]]) != 0 and len(trueEdges) != 0:
+                    intersectionSet = rankDict[sgn][dataset["name"]].intersection(trueEdges)
+                    Pprec[sgn][dataset["name"]] = len(intersectionSet)/len(rankDict[sgn][dataset["name"]])
+                else:
+                    Pprec[sgn][dataset["name"]] = 0
+        print(algo_name, pd.DataFrame(Pprec).median(axis='index').values[0],pd.DataFrame(Pprec).median(axis='index').values[1])
+        return(pd.DataFrame(Pprec).median(axis='index').values[0],pd.DataFrame(Pprec).median(axis='index').values[1])
 
 
 
@@ -119,7 +408,64 @@ class EvalAggregator(object):
             
         return pd.DataFrame(corrDF)
 
+    def find_jaccard(self):
 
+        '''
+        Computes the Jaccard Index.
+        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
+        :return:
+        None
+        '''
+        JaccDF = {}
+        JaccDF['Median'] = {}
+        JaccDF['MAD'] = {}
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/"
+        print(outDir)
+        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
+            JaccDF['Median'][algo[0]], JaccDF['MAD'][algo[0]] = self.computeJaccard(algo[0])
+            
+        return pd.DataFrame(JaccDF)
+                 
+    def find_EarlyPrecRec(self):
+
+        '''
+        Computes the Jaccard Index.
+        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
+        :return:
+        None
+        '''
+        ePR = {}
+        ePR['Early Precision'] = {}
+        Eprec = {}
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/"
+        print(outDir)
+        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
+            ePR['Early Precision'][algo[0]], Eprec[algo[0]] = self.computeEarlyPrecRec(algo[0])
+        pd.DataFrame(Eprec).to_csv(outDir+'EarlyPRFull.csv')
+        return pd.DataFrame(ePR)
+    
+    def find_SignedPrec(self):
+
+        '''
+        Computes the Jaccard Index.
+        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
+        :return:
+        None
+        '''
+        ePR = {}
+        ePR['Activation Precision'] = {}
+        ePR['Inhibition Precision'] = {}
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/"
+        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
+
+            ePR['Activation Precision'][algo[0]], ePR['Inhibition Precision'][algo[0]] = self.computeSignedEarlyPrec(algo[0])
+            
+        return pd.DataFrame(ePR)
+    
+         
 
     def find_curves(self):
 
@@ -132,9 +478,9 @@ class EvalAggregator(object):
         uAUPRCDict = {}
         uAUROCDict = {}
         
-        
         for dataset in tqdm(self.input_settings.datasets, 
                             total = len(self.input_settings.datasets), unit = " Dataset"):
+            
             AUPRC, AUROC = pc.PRROC(dataset, self.input_settings, directed = True, selfEdges = False)
             uAUPRC, uAUROC = pc.PRROC(dataset, self.input_settings, directed = False, selfEdges = False)
             
@@ -271,24 +617,33 @@ def main():
     outDir = str(eval_summ.output_settings.base_dir) + \
             str(eval_summ.input_settings.datadir).split("inputs")[1] + "/"+\
             str(eval_summ.output_settings.output_prefix) + "-"
+    #TimeDict = eval_summ.time_runners()
+    #pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
+    #AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
 
+    #pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
+    #pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
+    #pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
+    #pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
+    #sys.exit()
+    #sPrDF = eval_summ.find_SignedPrec()
+    #sPrDF.to_csv(outDir + "SingedPr.csv")
+    
+     # Compute correlations
+    ePRDF = eval_summ.find_EarlyPrecRec()
+    ePRDF.to_csv(outDir + "EarlyPR.csv")
+    sys.exit()
     # Compute correlations
+    jaccDict = eval_summ.find_jaccard()
+    jaccDict.to_csv(outDir + "jaccData.csv")
+
     #corrDict = eval_summ.find_correlations()
     #corrDict.to_csv(outDir + "corrData.csv")
+    #sys.exit()
     # Compute performance
-    #AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = eval_summ.find_curves()
-    eval_summ.analyzeTopK()
-    
-    sys.exit()
+    #eval_summ.analyzeTopK()
 
-    TimeDict = eval_summ.time_runners()
-    
-    pd.DataFrame(TimeDict).to_csv(outDir+'Timescores.csv')
 
-    pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
-    pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
-    pd.DataFrame(uAUPRCDict).to_csv(outDir+'uAUPRCscores.csv')
-    pd.DataFrame(uAUROCDict).to_csv(outDir+'uAUROCscores.csv')
 
 
 

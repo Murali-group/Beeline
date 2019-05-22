@@ -55,7 +55,7 @@ def outputAnalysis(dataDict, inputSettings):
 
             predDF = pd.read_csv(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                                         sep = '\t', header =  0, index_col = None)
-            
+            predDF.drop_duplicates(keep = 'first', inplace =  True)
             predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
             edgeWeightTopk = predDF.iloc[len(refGraph.edges())-1].EdgeWeight
             newDF = predDF.loc[(predDF['EdgeWeight'] >= edgeWeightTopk)]
@@ -97,7 +97,8 @@ def outputAnalysis(dataDict, inputSettings):
     plt.savefig(outDir+hMap+'.pdf')
     plt.savefig(outDir+hMap+'.png')
     plt.clf()
-    sys.exit()
+
+    
 def getNetProp(inGraph):
     '''
     Function to compute properties
