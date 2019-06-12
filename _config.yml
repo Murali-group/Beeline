@@ -23,7 +23,7 @@
 # url: "" # the base hostname & protocol for your site, e.g. http://example.com
 
   
-remote_theme: pmarsceill/just-the-docs
+remote_theme: adyprat/just-the-docs
 # Enable or disable the site search
 
 title: BEELINE
@@ -38,7 +38,7 @@ github_username:  adyprat
 
 # Build settings
 markdown: kramdown
-theme: just-the-docs
+# theme: just-the-docs
 plugins:
   - jekyll-feed
 
