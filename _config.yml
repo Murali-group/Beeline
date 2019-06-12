@@ -1,5 +1,9 @@
 remote_theme: pmarsceill/just-the-docs
 # Enable or disable the site search
+
+title: BEELINE
+description: Documentation for using BEELINE
+
 search_enabled: true
 # Color scheme currently only supports "dark" or nil (default)
-color_scheme: "dark"
+# color_scheme: "dark"
