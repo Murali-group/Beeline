@@ -38,7 +38,7 @@ github_username:  adyprat
 
 # Build settings
 markdown: kramdown
-theme: just-the-docs
+# theme: just-the-docs
 plugins:
   - jekyll-feed
 
