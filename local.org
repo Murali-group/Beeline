@@ -1,0 +1,3 @@
+* Theme properties
+** Folder where the theme is located: /var/lib/gems/2.5.0/gems/just-the-docs-0.2.5/
+
