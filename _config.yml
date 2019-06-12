@@ -6,4 +6,4 @@ description: Documentation for using BEELINE
 
 search_enabled: true
 # Color scheme currently only supports "dark" or nil (default)
-# color_scheme: "dark"
+color_scheme:
