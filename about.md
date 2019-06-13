@@ -11,10 +11,3 @@ You can find the source code for BEELINE on GitHub at: [BEELINE](https://github.
 
 You can find the source code for BoolODE on GitHub at: [BoolODE](https://github.com/murali-group/BoolODE)
 
-
-
-
-`abcd`
-```scss
-abs
-```
