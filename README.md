@@ -1,2 +1,2 @@
 # BEELINE
-Documentation for BEELINE is available at: https://www.github.com/Murali-group/Beeline/
+Documentation for BEELINE is available at: https://murali-group.github.io/Beeline/
