@@ -5,7 +5,7 @@ permalink: /about/
 nav_order: 2
 ---
 
-This is the documentation for BEELINE. For any questions or concerns email me at: [adyprat@vt.edu](mailto:adyprat@vt.edu)
+For any questions or concerns email me at: [adyprat@vt.edu](mailto:adyprat@vt.edu)
 
 You can find the source code for BEELINE on GitHub at: [BEELINE](https://github.com/murali-group/BEELINE)
 
