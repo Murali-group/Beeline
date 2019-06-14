@@ -1,0 +1,23 @@
+	Command being timed: "./GRNVBEM data/inputs/Simulated/GSD/GSD_2000_3_20/GRNVBEM/ExpressionData0.csv data/outputs/Simulated/GSD/GSD_2000_3_20/GRNVBEM/outFile0.txt"
+	User time (seconds): 2284.81
+	System time (seconds): 5794.75
+	Percent of CPU this job got: 92%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:25:43
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 469564
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 79157
+	Voluntary context switches: 12141373
+	Involuntary context switches: 420425564
+	Swaps: 0
+	File system inputs: 928
+	File system outputs: 31792
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

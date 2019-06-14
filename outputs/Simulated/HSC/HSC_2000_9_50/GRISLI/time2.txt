@@ -1,0 +1,23 @@
+	Command being timed: "./GRISLI data/inputs/Simulated/HSC/HSC_2000_9_50/GRISLI/2/ data/outputs/Simulated/HSC/HSC_2000_9_50/GRISLI/2/outFile.txt 5 3000 0.0"
+	User time (seconds): 80.13
+	System time (seconds): 286.09
+	Percent of CPU this job got: 1284%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:28.50
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 531148
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 108270
+	Voluntary context switches: 98230
+	Involuntary context switches: 5072796
+	Swaps: 0
+	File system inputs: 280
+	File system outputs: 102320
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,23 @@
+	Command being timed: "julia runPIDC.jl data/inputs/dyn-BF/dyn-BF_500_6/PIDC/ExpressionData.csv data/outputs/dyn-BF/dyn-BF_500_6/PIDC/outFile.txt"
+	User time (seconds): 26.04
+	System time (seconds): 1.36
+	Percent of CPU this job got: 102%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:26.74
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 287360
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 81558
+	Voluntary context switches: 31
+	Involuntary context switches: 90
+	Swaps: 0
+	File system inputs: 144
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

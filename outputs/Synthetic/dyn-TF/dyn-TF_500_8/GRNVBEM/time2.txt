@@ -1,0 +1,23 @@
+	Command being timed: "./GRNVBEM data/inputs/dyn-TF/dyn-TF_500_8/GRNVBEM/ExpressionData2.csv data/outputs/dyn-TF/dyn-TF_500_8/GRNVBEM/outFile2.txt"
+	User time (seconds): 17.40
+	System time (seconds): 3.15
+	Percent of CPU this job got: 118%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:17.27
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 445088
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 62512
+	Voluntary context switches: 13127
+	Involuntary context switches: 8808
+	Swaps: 0
+	File system inputs: 56
+	File system outputs: 952
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

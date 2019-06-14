@@ -1,0 +1,23 @@
+	Command being timed: "./GRISLI data/inputs/dyn-CY/dyn-CY_500_1/GRISLI/0/ data/outputs/dyn-CY/dyn-CY_500_1/GRISLI/0/outFile.txt 5 3000 0.5"
+	User time (seconds): 49.30
+	System time (seconds): 145.87
+	Percent of CPU this job got: 602%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:32.39
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 464092
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 75069
+	Voluntary context switches: 88002
+	Involuntary context switches: 4492629
+	Swaps: 0
+	File system inputs: 136
+	File system outputs: 102096
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

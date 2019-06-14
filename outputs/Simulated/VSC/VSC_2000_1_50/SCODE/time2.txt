@@ -1,0 +1,23 @@
+	Command being timed: "ruby run_R.rb data/inputs/Simulated/VSC/VSC_2000_1_50/SCODE/ExpressionData2.csv data/inputs/Simulated/VSC/VSC_2000_1_50/SCODE/PseudoTime2.csv data/outputs/Simulated/VSC/VSC_2000_1_50/SCODE/2 8 10 364 1000 10"
+	User time (seconds): 366.41
+	System time (seconds): 2.12
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:11.15
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 108520
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 363747
+	Voluntary context switches: 759
+	Involuntary context switches: 954
+	Swaps: 0
+	File system inputs: 112
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

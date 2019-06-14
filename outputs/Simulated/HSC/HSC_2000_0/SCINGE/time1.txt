@@ -1,0 +1,23 @@
+	Command being timed: "./runSCINGE data/inputs/Simulated/HSC/HSC_2000_0/SCINGE/ExpressionData1.csv data/outputs/Simulated/HSC/HSC_2000_0/SCINGE/1/ 0.01 15 5 2 0 0.0 gaussian 2"
+	User time (seconds): 174.26
+	System time (seconds): 163.44
+	Percent of CPU this job got: 546%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:01.76
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 547032
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 127977
+	Voluntary context switches: 419598
+	Involuntary context switches: 6224776
+	Swaps: 0
+	File system inputs: 528
+	File system outputs: 17872
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

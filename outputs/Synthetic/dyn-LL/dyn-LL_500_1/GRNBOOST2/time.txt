@@ -1,0 +1,23 @@
+	Command being timed: "python runArboreto.py --algo=GRNBoost2 --inFile=data/inputs/dyn-LL/dyn-LL_500_1/GRNBOOST2/ExpressionData.csv --outFile=data/outputs/dyn-LL/dyn-LL_500_1/GRNBOOST2/outFile.txt"
+	User time (seconds): 15.53
+	System time (seconds): 15.26
+	Percent of CPU this job got: 126%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.36
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 164204
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 56662
+	Voluntary context switches: 580675
+	Involuntary context switches: 1369
+	Swaps: 0
+	File system inputs: 360
+	File system outputs: 32
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

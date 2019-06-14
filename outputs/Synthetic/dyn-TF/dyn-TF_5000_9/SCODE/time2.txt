@@ -1,0 +1,23 @@
+	Command being timed: "ruby run_R.rb data/inputs/dyn-TF/dyn-TF_5000_9/SCODE/ExpressionData2.csv data/inputs/dyn-TF/dyn-TF_5000_9/SCODE/PseudoTime2.csv data/outputs/dyn-TF/dyn-TF_5000_9/SCODE/2 8 4 1656 1000 10"
+	User time (seconds): 728.85
+	System time (seconds): 3.44
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 12:15.46
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 124084
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 441078
+	Voluntary context switches: 740
+	Involuntary context switches: 2565
+	Swaps: 0
+	File system inputs: 160
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

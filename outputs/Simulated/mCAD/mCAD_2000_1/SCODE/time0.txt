@@ -1,0 +1,23 @@
+	Command being timed: "ruby run_R.rb data/inputs/Simulated/mCAD/mCAD_2000_1/SCODE/ExpressionData0.csv data/inputs/Simulated/mCAD/mCAD_2000_1/SCODE/PseudoTime0.csv data/outputs/Simulated/mCAD/mCAD_2000_1/SCODE/0 5 6 1614 1000 10"
+	User time (seconds): 918.43
+	System time (seconds): 6.16
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 15:28.15
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 124252
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 479119
+	Voluntary context switches: 747
+	Involuntary context switches: 1004
+	Swaps: 0
+	File system inputs: 176
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

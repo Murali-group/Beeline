@@ -1,0 +1,23 @@
+	Command being timed: "./GRISLI data/inputs/Simulated/GSD/GSD_2000_0_50/GRISLI/0/ data/outputs/Simulated/GSD/GSD_2000_0_50/GRISLI/0/outFile.txt 10 3000 0.0"
+	User time (seconds): 487.30
+	System time (seconds): 1114.36
+	Percent of CPU this job got: 89%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 29:51.23
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 1051052
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 304868
+	Voluntary context switches: 2293892
+	Involuntary context switches: 77460502
+	Swaps: 0
+	File system inputs: 816
+	File system outputs: 53760
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

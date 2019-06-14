@@ -1,0 +1,23 @@
+	Command being timed: "mono SynthesisEngine.exe data/inputs/Simulated/VSC/VSC_2000_4/SCNS/ExpressionData.csv data/inputs/Simulated/VSC/VSC_2000_4/SCNS/Edges.csv data/inputs/Simulated/VSC/VSC_2000_4/SCNS/Parameters.csv data/inputs/Simulated/VSC/VSC_2000_4/SCNS/initial.txt data/inputs/Simulated/VSC/VSC_2000_4/SCNS/target.txt data/outputs/Simulated/VSC/VSC_2000_4/SCNS/"
+	User time (seconds): 94.23
+	System time (seconds): 4.51
+	Percent of CPU this job got: 69%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:22.35
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 94736
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 51094
+	Voluntary context switches: 9197
+	Involuntary context switches: 3141
+	Swaps: 0
+	File system inputs: 72
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,23 @@
+	Command being timed: "ruby run_R.rb data/inputs/dyn-LI/dyn-LI_2000_2/SCODE/ExpressionData0.csv data/inputs/dyn-LI/dyn-LI_2000_2/SCODE/PseudoTime0.csv data/outputs/dyn-LI/dyn-LI_2000_2/SCODE/0 7 4 2000 1000 10"
+	User time (seconds): 665.21
+	System time (seconds): 2.46
+	Percent of CPU this job got: 99%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 11:10.70
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 124372
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 466962
+	Voluntary context switches: 744
+	Involuntary context switches: 2195
+	Swaps: 0
+	File system inputs: 160
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

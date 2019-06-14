@@ -1,0 +1,23 @@
+	Command being timed: "mono SynthesisEngine.exe data/inputs/Simulated/mCAD/mCAD_2000_9_20/SCNS/ExpressionData.csv data/inputs/Simulated/mCAD/mCAD_2000_9_20/SCNS/Edges.csv data/inputs/Simulated/mCAD/mCAD_2000_9_20/SCNS/Parameters.csv data/inputs/Simulated/mCAD/mCAD_2000_9_20/SCNS/initial.txt data/inputs/Simulated/mCAD/mCAD_2000_9_20/SCNS/target.txt data/outputs/Simulated/mCAD/mCAD_2000_9_20/SCNS/"
+	User time (seconds): 2.49
+	System time (seconds): 0.63
+	Percent of CPU this job got: 40%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:07.70
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 60260
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 9128
+	Voluntary context switches: 1454
+	Involuntary context switches: 107
+	Swaps: 0
+	File system inputs: 40
+	File system outputs: 0
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

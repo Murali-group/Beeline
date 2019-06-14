@@ -1,0 +1,23 @@
+	Command being timed: "./runSCINGE data/inputs/Simulated/mCAD/mCAD_2000_0_50/SCINGE/ExpressionData0.csv data/outputs/Simulated/mCAD/mCAD_2000_0_50/SCINGE/0/ 0.0 9 5 0.5 0 0 gaussian 2"
+	User time (seconds): 140.21
+	System time (seconds): 116.31
+	Percent of CPU this job got: 354%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:12.45
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 549432
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 127595
+	Voluntary context switches: 290140
+	Involuntary context switches: 6690901
+	Swaps: 0
+	File system inputs: 504
+	File system outputs: 20376
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

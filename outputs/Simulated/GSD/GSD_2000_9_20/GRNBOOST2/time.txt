@@ -1,0 +1,23 @@
+	Command being timed: "python runArboreto.py --algo=GRNBoost2 --inFile=data/inputs/Simulated/GSD/GSD_2000_9_20/GRNBOOST2/ExpressionData.csv --outFile=data/outputs/Simulated/GSD/GSD_2000_9_20/GRNBOOST2/outFile.txt"
+	User time (seconds): 127.67
+	System time (seconds): 270.72
+	Percent of CPU this job got: 74%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 8:57.72
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 227236
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 72579
+	Voluntary context switches: 1163707
+	Involuntary context switches: 38071
+	Swaps: 0
+	File system inputs: 1376
+	File system outputs: 32
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

@@ -1,0 +1,23 @@
+	Command being timed: "./runSCINGE data/inputs/dyn-BFC/dyn-BFC_5000_7/SCINGE/ExpressionData1.csv data/outputs/dyn-BFC/dyn-BFC_5000_7/SCINGE/1/ 0.0 15 5 1 0 0.0 gaussian 2"
+	User time (seconds): 700.13
+	System time (seconds): 564.36
+	Percent of CPU this job got: 1031%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:02.58
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 553912
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 131034
+	Voluntary context switches: 1545053
+	Involuntary context switches: 47379178
+	Swaps: 0
+	File system inputs: 1528
+	File system outputs: 18168
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0

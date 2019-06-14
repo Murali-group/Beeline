@@ -1,0 +1,23 @@
+	Command being timed: "./GRISLI data/inputs/dyn-BFC/dyn-BFC_500_5/GRISLI/1/ data/outputs/dyn-BFC/dyn-BFC_500_5/GRISLI/1/outFile.txt 5 3000 0.5"
+	User time (seconds): 237.86
+	System time (seconds): 634.25
+	Percent of CPU this job got: 783%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 1:51.26
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 448184
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 66811
+	Voluntary context switches: 936565
+	Involuntary context switches: 31138469
+	Swaps: 0
+	File system inputs: 112
+	File system outputs: 47792
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
