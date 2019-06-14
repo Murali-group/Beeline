@@ -193,4 +193,4 @@ output_settings:
 
     # Base output directory
     output_dir: "outputs"
-    output_prefix: "mCAD"
+    output_prefix: "mCAD-noDropout"
