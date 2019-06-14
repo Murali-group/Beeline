@@ -1,4 +1,5 @@
 # :honeybee: BEELINE: Benchmarking gEnE reguLatory network Inference from siNgle-cEll transcriptomic data :honeybee:
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/Murali-group/Beeline/binder)
 
 This is the main repository for BEELINE.
 
