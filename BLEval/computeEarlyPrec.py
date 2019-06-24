@@ -12,7 +12,7 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
-def EarlyPR(evalObject, algo_name):
+def EarlyPrec(evalObject, algo_name):
     rankDict = {}
     sim_names = []
     for dataset in tqdm(evalObject.input_settings.datasets):
@@ -51,7 +51,7 @@ def EarlyPR(evalObject, algo_name):
         try:
             predDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
         except:
-            print("Skipping early precision computation for ", algo_name, "on path", outDir)
+            print("\nSkipping early precision computation for ", algo_name, "on path", outDir)
             rankDict[dataset["name"]] = set([])
             continue
 
@@ -82,7 +82,7 @@ def EarlyPR(evalObject, algo_name):
             newDF = predDF.loc[(predDF['EdgeWeight'] >= bestVal)]
             rankDict[dataset["name"]] = set(newDF['Gene1'] + "|" + newDF['Gene2'])
         else:
-            print(rank_path,dataset["name"])
+            print("\nSkipping early precision computation for on path ", rank_path,"due to lack of predictions.")
             rankDict[dataset["name"]] = set([])
     Eprec = {}
     Erec = {}

@@ -1,3 +1,17 @@
+import os
+import argparse
+import numpy as np
+import pandas as pd
+import networkx as nx
+from tqdm import tqdm
+import multiprocessing
+from pathlib import Path
+import concurrent.futures
+from itertools import permutations
+from collections import defaultdict
+from multiprocessing import Pool, cpu_count
+from networkx.convert_matrix import from_pandas_adjacency
+
 def getTime(evalObject, dataset):
     """
     Return time taken for each of the algorithms
@@ -41,7 +55,7 @@ def getTime(evalObject, dataset):
             # If so, parse the time.txt file
             # to obtain CPU time taken to run the
             # GRN algorithm on the given dataset
-            time = evalObject.parse_time_files(path)
+            time = parse_time_files(path)
         else:
             # If the algorithm was run on each
             # trajectory in the dataset separately, there
@@ -73,7 +87,7 @@ def getTime(evalObject, dataset):
             timeTemp = 0
             for idx in range(len(colNames)):
                 path = outDir+algo[0]+"/time"+str(idx)+".txt"
-                timeTemp += evalObject.parse_time_files(path)
+                timeTemp += parse_time_files(path)
 
             # If for some reason a time file is missing,
             # the parse_time_files function returns a -1.
@@ -86,7 +100,7 @@ def getTime(evalObject, dataset):
                 
         # If time files do not exist, skip reporting that algorithm
         if time == -1:
-            print("Skipping time computation for ", algo[0], "on dataset", dataset["name"])
+            print("Skipping time computation for ", algo[0], "on dataset", dataset["name"], "\n")
             continue
 
         # If time files do exist, add it to the dictionary
@@ -94,7 +108,7 @@ def getTime(evalObject, dataset):
 
     return algo_dict
 
-def parse_time_files( path):
+def parse_time_files(path):
     """
     Return time taken for each of the algorithms
     in the evalObject on the dataset specified.
@@ -120,12 +134,12 @@ def parse_time_files( path):
             
     # If file is not found, return -1.
     except FileNotFoundError:
-        print("time output " +path+" file not found, setting time value to -1")
+        print("Time output " +path+" file not found, setting time value to -1\n")
         time_val = -1
         
     # If file is present but the file is empty, return -1.
     except ValueError:
-        print("Algorithm running failed, setting time value to -1")
+        print("Algorithm running failed, setting time value to -1\n")
         time_val = -1
 
     return time_val

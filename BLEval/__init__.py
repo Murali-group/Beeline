@@ -14,14 +14,16 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
+
 # local imports
-import src.plotCurves as pc
-import src.signedEPR as sEPR
-import src.analyzeTopk as tk
-import src.parseTime as pTime
-import src.computeMotifs as cm
-import src.computeEarlyPR as EPR
-import src.computeSpearman as cSpear
+from BLEval.computeAUC import PRROC
+from BLEval.parseTime import getTime
+from BLEval.computeJaccard import Jaccard
+from BLEval.computeSpearman import Spearman
+from BLEval.computeNetMotifs import Motifs
+from BLEval.computeEarlyPrec import EarlyPrec
+from BLEval.computeSignedEPrec import signedEPrec
+
 
 class InputSettings(object):
     '''
@@ -48,9 +50,10 @@ class OutputSettings(object):
 
 
 
-class Evaluation(object):
+
+class BLEval(object):
     '''
-    The Evaluation object is created by parsing a user-provided configuration
+    The BEELINE Evaluation object is created by parsing a user-provided configuration
     file. Its methods provide for further processing its inputs into
     a series of jobs to be run, as well as running these jobs.
     '''
@@ -62,133 +65,31 @@ class Evaluation(object):
         self.input_settings = input_settings
         self.output_settings = output_settings
 
-        
-    def findSpearman(self):
 
-        '''
-        Finds the Spearman's correlation coefficient between consecutive simulations
-        of the same algorithm, with the same initial parameters
-        Saves the coefficients to a csv file, to be read into a Pandas dataframe
-        :return:
-        None
-        '''
-        corrDF = {}
-        corrDF['Median'] = {}
-        corrDF['MAD'] = {}
-        outDir = str(self.output_settings.base_dir) + \
-                 str(self.input_settings.datadir).split("inputs")[1] + "/"
-        print(outDir)
-        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-            if algo[1]['should_run'] == True:
-                corrDF['Median'][algo[0]],corrDF['MAD'][algo[0]] = cSpear.Spearman(self, algo[0])
-            
-        return pd.DataFrame(corrDF)
-
-    def findJaccard(self):
-
-        '''
-        Computes the Jaccard Index.
-        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
-        :return:
-        None
-        '''
-        JaccDF = {}
-        JaccDF['Median'] = {}
-        JaccDF['MAD'] = {}
-        outDir = str(self.output_settings.base_dir) + \
-                 str(self.input_settings.datadir).split("inputs")[1] + "/"
-        print(outDir)
-        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-            if algo[1]['should_run'] == True:
-                JaccDF['Median'][algo[0]], JaccDF['MAD'][algo[0]] = self.computeJaccard(algo[0])
-            
-        return pd.DataFrame(JaccDF)
-                 
-    def findEarlyPr(self):
-
-        '''
-        Computes the Early Precision values.
-        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
-        :return:
-        None
-        '''
-        earlyPR = {}
-        earlyPR['Early Precision'] = {}
-        Eprec = {}
-        outDir = str(self.output_settings.base_dir) + \
-                 str(self.input_settings.datadir).split("inputs")[1] + "/"
-        print(outDir)
-        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-            if algo[1]['should_run'] == True:
-                earlyPR['Early Precision'][algo[0]], Eprec[algo[0]] = EPR.EarlyPR(self, algo[0])
-        pd.DataFrame(Eprec).to_csv(outDir+'EarlyPRFull.csv')
-        return pd.DataFrame(earlyPR)
-    
-    def findSignedPr(self):
-
-        '''
-        Computes the Early Precision values for activation and inhibitory edges.
-        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
-        :return:
-        None
-        '''
-        sEPRDict = {}
-        sEPRDict['Activation Precision'] = {}
-        sEPRDict['Inhibition Precision'] = {}
-        outDir = str(self.output_settings.base_dir) + \
-                 str(self.input_settings.datadir).split("inputs")[1] + "/"
-        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-            if algo[1]['should_run'] == True:
-                sEPRDict['Activation Precision'][algo[0]], sEPRDict['Inhibition Precision'][algo[0]] = sEPR.signedEPR(self, algo[0])
-            
-        return pd.DataFrame(sEPRDict)
-    
-         
-
-    def findAUC(self):
+    def computeAUC(self, directedFlag = True):
 
         '''
         Plot PR and ROC curves for each dataset
         for all the algorithms
+      
+        Returns:
+        -------
         '''
         AUPRCDict = {}
         AUROCDict = {}
-        uAUPRCDict = {}
-        uAUROCDict = {}
-        
+
         for dataset in tqdm(self.input_settings.datasets, 
-                            total = len(self.input_settings.datasets), unit = " Dataset"):
+                            total = len(self.input_settings.datasets), unit = " Datasets"):
             
-            AUPRC, AUROC = pc.PRROC(dataset, self.input_settings, directed = True, selfEdges = False)
-            uAUPRC, uAUROC = pc.PRROC(dataset, self.input_settings, directed = False, selfEdges = False)
-            
+            AUPRC, AUROC = PRROC(dataset, self.input_settings, 
+                                    directed = directedFlag, selfEdges = False, plotFlag = False)
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
-            uAUPRCDict[dataset['name']] = uAUPRC
-            uAUROCDict[dataset['name']] = uAUROC
             
-        return AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict
+        return AUPRCDict, AUROCDict
     
-    def findMotifs(self):
 
-        '''
-        compute motifs
-        '''
-        
-        for dataset in tqdm(self.input_settings.datasets, 
-                            total = len(self.input_settings.datasets), unit = " Dataset"):
-            cm.motifAnalysis(dataset, self.input_settings)
-    
-    def analyzeTopK(self):
-        '''
-        compute motifs
-        '''
-        
-        for dataset in tqdm(self.input_settings.datasets, 
-                            total = len(self.input_settings.datasets), unit = " Dataset"):
-            tk.outputAnalysis(dataset, self.input_settings)
-    
-    def parseTimes(self):
+    def parseTime(self):
         """
         Parse time output for each
         algorithm-dataset combination.
@@ -200,21 +101,128 @@ class Evaluation(object):
         """
         TimeDict = dict()
 
-        for dataset in self.input_settings.datasets:
-            timevals  = pTime.getTime(self, dataset)
+        for dataset in tqdm(self.input_settings.datasets, 
+                            total = len(self.input_settings.datasets), unit = " Datasets"):
+            timevals  = getTime(self, dataset)
             TimeDict[dataset["name"]] = timevals
 
         return TimeDict
+
+    def computeJaccard(self):
+
+        '''
+        Computes the Jaccard Index.
+        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
+      
+        Returns:
+        -------
+        '''
+        JaccDF = {}
+        JaccDF['Jaccard Median'] = {}
+        JaccDF['Jaccard MAD'] = {}
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/"
+        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
+            if algo[1]['should_run'] == True:
+                JaccDF['Jaccard Median'][algo[0]], JaccDF['Jaccard MAD'][algo[0]] = Jaccard(self, algo[0])
+            
+        return pd.DataFrame(JaccDF)     
+
     
+    def computeSpearman(self):
+
+        '''
+        Finds the Spearman's correlation coefficient between consecutive simulations
+        of the same algorithm, with the same initial parameters
+        Saves the coefficients to a csv file, to be read into a Pandas dataframe
+        
+        Returns:
+        -------
+        corrDF: A pandas dataframe containing the median and median absolute
+        deviation of the correlation values.
+        '''
+        corrDF = {}
+        corrDF['Spearman Median'] = {}
+        corrDF['Spearman MAD'] = {}
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/"
+        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
+            if algo[1]['should_run'] == True:
+                corrDF['Spearman Median'][algo[0]],corrDF['Spearman MAD'][algo[0]] = Spearman(self, algo[0])
+            
+        return pd.DataFrame(corrDF)
+
+
+
+    def computeNetMotifs(self):
+
+        '''
+        Finds network motifs such as FFL, FBL, and MI in the
+        predicted network.
+      
+        Returns:
+        -------
+        '''
+        FFLDict = {}
+        FBLDict = {}
+        MIDict = {}
+        for dataset in tqdm(self.input_settings.datasets, 
+                            total = len(self.input_settings.datasets), unit = " Datasets"):
+            FBLDict[dataset["name"]], FFLDict[dataset["name"]], MIDict[dataset["name"]] = Motifs(dataset, self.input_settings)
+        
+        return FBLDict, FFLDict, MIDict
+                 
+    def computeEarlyPrec(self):
+
+        '''
+        Computes the Early Precision values.
+        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
+      
+        Returns:
+        -------
+        '''
+        earlyPR = {}
+        earlyPR['Early Precision'] = {}
+        Eprec = {}
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/"
+        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
+            if algo[1]['should_run'] == True:
+                earlyPR['Early Precision'][algo[0]], Eprec[algo[0]] = EarlyPrec(self, algo[0])
+        return pd.DataFrame(Eprec).T
+
+
+    
+    def computeSignedEPrec(self):
+
+        '''
+        Computes the Early Precision values for activation and inhibitory edges.
+        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
+      
+        Returns:
+        -------
+        '''
+        sEPRDict = {}
+        sEPRDict['Median EPR Activation'] = {}
+        sEPRDict['Median EPR Inhibition'] = {}
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/"
+        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
+            if algo[1]['should_run'] == True:
+                sEPRDict['Median EPR Activation'][algo[0]], sEPRDict['Median EPR Inhibition'][algo[0]] = signedEPrec(self, algo[0])
+            
+        return pd.DataFrame(sEPRDict)
+    
+
 class ConfigParser(object):
     '''
     Define static methods for parsing a config file that sets a large number
     of parameters for the pipeline.
     '''
     @staticmethod
-    def parse(config_file_handle) -> Evaluation:
+    def parse(config_file_handle) -> BLEval:
         config_map = yaml.load(config_file_handle)
-        return Evaluation(
+        return BLEval(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),
             ConfigParser.__parse_output_settings(

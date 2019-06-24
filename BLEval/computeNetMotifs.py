@@ -10,7 +10,7 @@ from itertools import product, permutations, combinations, combinations_with_rep
 from tqdm import tqdm
 import networkx as nx
 
-def outputAnalysis(dataDict, inputSettings):
+def Motifs(dataDict, inputSettings):
     '''
     Computes "directed","feed-forward", 
     "cascade", and "mutual" motifs.
@@ -35,30 +35,68 @@ def outputAnalysis(dataDict, inputSettings):
                (trueEdgesDF['Gene2'] == v)])>0:
                 refGraph.add_edge(u,v)
 
-    refCC, refFB, refFF, refMI = getNetProp(refGraph)
+    numEdges = len(refGraph.edges())
 
+    refFB, refFF, refMI = getNetProp(refGraph)
+
+
+    # To avoid dividing by zero while computing the ratios
+    # set the motif counts in reference network to 1 if is 0
+    if refFB == 0:
+        refFB = 1
+
+    if refFF == 0:
+        refFF = 1
+
+    if refMI == 0:
+        refMI = 1
     
     # set-up outDir that stores output directory name
     outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
     dataDict = {}
-    dataDict['Conn. Comp'] = {}
+    # dataDict['Conn. Comp'] = {}
     dataDict['FFL'] = {}
     dataDict['FBL'] = {}
     dataDict['Mutual'] = {}
 
     for algo in tqdm(inputSettings.algorithms, 
                      total = len(inputSettings.algorithms), unit = " Algorithms"):
-        
+        if algo[0] == 'PPCOR' or algo[0] == 'PIDC':
+            continue
         # check if the output rankedEdges file exists
         if Path(outDir + '/' +algo[0]+'/rankedEdges.csv').exists():
              # Initialize Precsion
 
             predDF = pd.read_csv(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                                         sep = '\t', header =  0, index_col = None)
-            predDF.drop_duplicates(keep = 'first', inplace =  True)
+
+
             predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
-            edgeWeightTopk = predDF.iloc[len(refGraph.edges())-1].EdgeWeight
-            newDF = predDF.loc[(predDF['EdgeWeight'] >= edgeWeightTopk)]
+            predDF.drop_duplicates(keep = 'first', inplace=True)
+            predDF.reset_index(drop = True,  inplace= True)
+            # check if ranked edges list is empty
+            # if so, it is just set to an empty set
+
+            if not predDF.shape[0] == 0:
+
+                # we want to ensure that we do not include
+                # edges without any edge weight
+                # so check if the non-zero minimum is
+                # greater than the edge weight of the top-kth
+                # node, else use the non-zero minimum value.
+                predDF.EdgeWeight = predDF.EdgeWeight.round(6)
+                predDF.EdgeWeight = predDF.EdgeWeight.abs()
+
+                # Use num True edges or the number of
+                # edges in the dataframe, which ever is lower
+                maxk = min(predDF.shape[0], numEdges)
+                edgeWeightTopk = predDF.iloc[maxk-1].EdgeWeight
+
+                nonZeroMin = np.nanmin(predDF.EdgeWeight.replace(0, np.nan).values)
+                bestVal = max(nonZeroMin, edgeWeightTopk)
+
+                newDF = predDF.loc[(predDF['EdgeWeight'] >= bestVal)]
+
                 
             predGraph = nx.DiGraph()
             
@@ -70,33 +108,23 @@ def outputAnalysis(dataDict, inputSettings):
                        (newDF['Gene2'] == v)])>0:
                         predGraph.add_edge(u,v)
             
-            dataDict['Conn. Comp'][algo[0]], dataDict['FBL'][algo[0]], dataDict['FFL'][algo[0]], dataDict['Mutual'][algo[0]] = getNetProp(predGraph)
-            if algo[0] == 'PPCOR' or algo[0] == 'PIDC':
-                dataDict['FBL'][algo[0]] = refFB
-                dataDict['FFL'][algo[0]] = refFF
-                dataDict['Mutual'][algo[0]] = refMI
+            # dataDict['Conn. Comp'][algo[0]], dataDict['FBL'][algo[0]], dataDict['FFL'][algo[0]], dataDict['Mutual'][algo[0]] = getNetProp(predGraph)
+            dataDict['FBL'][algo[0]], dataDict['FFL'][algo[0]], dataDict['Mutual'][algo[0]] = getNetProp(predGraph)
+            
+
+            dataDict['FBL'][algo[0]] = dataDict['FBL'][algo[0]]/refFB
+            dataDict['FFL'][algo[0]] = dataDict['FFL'][algo[0]]/refFF
+            dataDict['Mutual'][algo[0]] = dataDict['Mutual'][algo[0]]/refMI
+
         else:
             print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                   ' does not exist. Skipping...')
-        hMap = '/topK'
-        
-     ## Make heatmap
-    palette = sns.diverging_palette(10, 220, sep=10, as_cmap = True)
 
     dataDF = pd.DataFrame(dataDict)
-    dataDF['Conn. Comp'] = dataDF['Conn. Comp'] - refCC
-    dataDF['FFL'] = dataDF['FFL'] - refFF
-    dataDF['FBL'] = dataDF['FBL'] - refFB
-    dataDF['Mutual'] = dataDF['Mutual'] - refMI
+    # dataDF['Conn. Comp'] = dataDF['Conn. Comp'] - refCC
 
-    #dataDF = (dataDF-dataDF.min())/(dataDF.max()-dataDF.min())
+    return dataDF['FBL'], dataDF['FFL'], dataDF['Mutual']
 
-    dataDF.to_csv(outDir+hMap+'.csv')
-    #maxVal = max(dataDF.max().max(),abs(dataDF.min().min()))
-    sns.heatmap(dataDF, cmap = palette, center=0)
-    plt.savefig(outDir+hMap+'.pdf')
-    plt.savefig(outDir+hMap+'.png')
-    plt.clf()
 
     
 def getNetProp(inGraph):
@@ -107,7 +135,7 @@ def getNetProp(inGraph):
 
     # number of weakly connected components in 
     # reference network
-    numCC = len(list(nx.weakly_connected_components(inGraph)))
+    # numCC = len(list(nx.weakly_connected_components(inGraph)))
     
     # number of feedback loop 
     # in reference network
@@ -138,4 +166,4 @@ def getNetProp(inGraph):
         if (v,u) in inGraph.edges():
             numMI += 0.5
 
-    return numCC, numFB, numFF, numMI
+    return numFB, numFF, numMI

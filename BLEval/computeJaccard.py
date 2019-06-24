@@ -1,8 +1,22 @@
-def Jaccard(self, algo_name):
+import os
+import argparse
+import numpy as np
+import pandas as pd
+import networkx as nx
+from tqdm import tqdm
+import multiprocessing
+from pathlib import Path
+import concurrent.futures
+from itertools import permutations
+from collections import defaultdict
+from multiprocessing import Pool, cpu_count
+from networkx.convert_matrix import from_pandas_adjacency
+
+def Jaccard(evalObject, algo_name):
     rankDict = {}
     sim_names = []
-    for dataset in tqdm(self.input_settings.datasets):
-        trueEdgesDF = pd.read_csv(str(self.input_settings.datadir)+'/'+ \
+    for dataset in tqdm(evalObject.input_settings.datasets):
+        trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
                       dataset['name'] + '/' +\
                       dataset['trueEdges'], sep = ',',
                       header = 0, index_col = None)
@@ -23,11 +37,11 @@ def Jaccard(self, algo_name):
                     TrueEdgeDict[key] = 1
                     numEdges += 1
 
-        outDir = str(self.output_settings.base_dir) + \
-                 str(self.input_settings.datadir).split("inputs")[1] + \
+        outDir = str(evalObject.output_settings.base_dir) + \
+                 str(evalObject.input_settings.datadir).split("inputs")[1] + \
                  "/" + dataset["name"] + "/" + algo_name
 
-        #algos = self.input_settings.algorithms
+        #algos = evalObject.input_settings.algorithms
         rank_path = outDir + "/rankedEdges.csv"
         if not os.path.isdir(outDir):
             continue

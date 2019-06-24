@@ -18,7 +18,7 @@ from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
 # local imports
-import src.evalClass as ev
+import BLEval as ev 
 
 def get_parser() -> argparse.ArgumentParser:
     '''
@@ -54,6 +54,10 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('-s','--sEPR', action="store_true", default=False,
       help="Analyze median (signed) early precision for activation and inhibitory edges.")
 
+    parser.add_argument('-m','--motifs', action="store_true", default=False,
+      help="Compute network motifs in the predicted top-k networks.")
+
+
     return parser
 
 def parse_arguments():
@@ -75,8 +79,8 @@ def main():
     with open(config_file, 'r') as conf:
         evalConfig = ev.ConfigParser.parse(conf)
         
-    print('Post-run evaluation started...\n')
-    evalSummarizer = ev.Evaluation(evalConfig.input_settings, evalConfig.output_settings)
+    print('\nPost-run evaluation started...')
+    evalSummarizer = ev.BLEval(evalConfig.input_settings, evalConfig.output_settings)
     
     outDir = str(evalSummarizer.output_settings.base_dir) + \
             str(evalSummarizer.input_settings.datadir).split("inputs")[1] + "/"+\
@@ -84,47 +88,57 @@ def main():
     
     # Compute and plot ROC, PRC and report median AUROC, AUPRC    
     if (opts.auc):
-        print('Computing areas under ROC and PR curves...\n')
+        print('\n\nComputing areas under ROC and PR curves...')
 
-        AUPRCDict, AUROCDict, uAUPRCDict, uAUROCDict = evalSummarizer.findAUC()
-        pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRCscores.csv')
-        pd.DataFrame(AUROCDict).to_csv(outDir+'AUROCscores.csv')
+        AUPRCDict, AUROCDict = evalSummarizer.computeAUC()
+        pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRC.csv')
+        pd.DataFrame(AUROCDict).to_csv(outDir+'AUROC.csv')
     
     # Compute Jaccard index    
     if (opts.jaccard):
-        print('Computing Jaccard index...\n')
+        print('\n\nComputing Jaccard index...')
 
-        jaccDict = evalSummarizer.findJaccard()
+        jaccDict = evalSummarizer.computeJaccard()
         jaccDict.to_csv(outDir + "Jaccard.csv")
         
     # Compute Spearman correlation scores
     if (opts.spearman):
-        print('Computing Spearman\'s correlation...\n')
+        print('\n\nComputing Spearman\'s correlation...')
 
-        corrDict = evalSummarizer.findSpearman()
+        corrDict = evalSummarizer.computeSpearman()
         corrDict.to_csv(outDir + "Spearman.csv")
         
     # Compute median time taken
     if (opts.time):
-        print('Computing time taken...\n')
+        print('\n\nComputing time taken...')
 
-        TimeDict = evalSummarizer.parseTimes()
+        TimeDict = evalSummarizer.parseTime()
         pd.DataFrame(TimeDict).to_csv(outDir+'Times.csv')
     
     # Compute early precision
     if (opts.EPR):
-        print('Computing early precision values...\n')
-        ePRDF = evalSummarizer.findEarlyPr()
+        print('\n\nComputing early precision values...')
+        ePRDF = evalSummarizer.computeEarlyPrec()
         ePRDF.to_csv(outDir + "EPr.csv")
                         
     # Compute early precision for activation and inhibitory edges
     if (opts.sEPR):
-        print('Computing early precision values for activation and inhibitory edges...\n')
+        print('\n\nComputing early precision values for activation and inhibitory edges...')
         
-        sPrDF = evalSummarizer.findSignedPr()
+        sPrDF = evalSummarizer.computeSignedEPrec()
         sPrDF.to_csv(outDir + "sEPr.csv")
 
-    print('Evaluation complete...\n')
+    # Compute median time taken
+    if (opts.motifs):
+        print('\n\nComputing network motifs...')
+
+        FBLDict, FFLDict, MIDict = evalSummarizer.computeNetMotifs()
+        pd.DataFrame(FBLDict).to_csv(outDir+'NetworkMotifs-FBL.csv')
+        pd.DataFrame(FFLDict).to_csv(outDir+'NetworkMotifs-FFL.csv')
+        pd.DataFrame(MIDict).to_csv(outDir+'NetworkMotifs-MI.csv')
+
+
+    print('\n\nEvaluation complete...\n')
 
 
 if __name__ == '__main__':
