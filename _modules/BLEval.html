@@ -1,0 +1,546 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BLEval &mdash; BEELINE 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> BEELINE
+          
+
+          
+            
+            <img src="../_static/beeline.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BEELINE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>BLEval</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for BLEval</h1><div class="highlight"><pre>
+<span></span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">BEELINE Evaluation (:mod:`BLEval`) module contains the following main class:</span>
+
+<span class="sd">- :class:`BLEval.BLEval`</span>
+<span class="sd">and three additional classes used in the definition </span>
+<span class="sd">of BLEval class</span>
+
+<span class="sd">- :class:`BLEval.ConfigParser`</span>
+<span class="sd">- :class:`BLEval.InputSettings`</span>
+<span class="sd">- :class:`BLEval.OutputSettings`</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">multiprocessing</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">concurrent.futures</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">permutations</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">cpu_count</span>
+<span class="kn">from</span> <span class="nn">networkx.convert_matrix</span> <span class="k">import</span> <span class="n">from_pandas_adjacency</span>
+
+
+<span class="c1"># local imports</span>
+<span class="kn">from</span> <span class="nn">BLEval.computeAUC</span> <span class="k">import</span> <span class="n">PRROC</span>
+<span class="kn">from</span> <span class="nn">BLEval.parseTime</span> <span class="k">import</span> <span class="n">getTime</span>
+<span class="kn">from</span> <span class="nn">BLEval.computeJaccard</span> <span class="k">import</span> <span class="n">Jaccard</span>
+<span class="kn">from</span> <span class="nn">BLEval.computeSpearman</span> <span class="k">import</span> <span class="n">Spearman</span>
+<span class="kn">from</span> <span class="nn">BLEval.computeNetMotifs</span> <span class="k">import</span> <span class="n">Motifs</span>
+<span class="kn">from</span> <span class="nn">BLEval.computeEarlyPrec</span> <span class="k">import</span> <span class="n">EarlyPrec</span>
+<span class="kn">from</span> <span class="nn">BLEval.computeSignedEPrec</span> <span class="k">import</span> <span class="n">signedEPrec</span>
+
+
+<div class="viewcode-block" id="InputSettings"><a class="viewcode-back" href="../BLEval.html#BLEval.InputSettings">[docs]</a><span class="k">class</span> <span class="nc">InputSettings</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The class for storing the names of input files.</span>
+<span class="sd">    This initilizes an InputSettings object based on the</span>
+<span class="sd">    following three parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    datadir: str</span>
+<span class="sd">        input dataset root directory, typically &#39;inputs/&#39;</span>
+
+<span class="sd">    datasets: list</span>
+<span class="sd">        List of dataset names</span>
+<span class="sd">        </span>
+<span class="sd">    algorithms: list</span>
+<span class="sd">        List of algorithm names</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">datadir</span><span class="p">,</span> <span class="n">datasets</span><span class="p">,</span> <span class="n">algorithms</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">datadir</span> <span class="o">=</span> <span class="n">datadir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datasets</span> <span class="o">=</span> <span class="n">datasets</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithms</span> <span class="o">=</span> <span class="n">algorithms</span></div>
+
+
+<div class="viewcode-block" id="OutputSettings"><a class="viewcode-back" href="../BLEval.html#BLEval.OutputSettings">[docs]</a><span class="k">class</span> <span class="nc">OutputSettings</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;    </span>
+<span class="sd">    The class for storing the names of directories that output should</span>
+<span class="sd">    be written to. This initilizes an OutputSettings object based on the</span>
+<span class="sd">    following two parameters.</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    base_dir: str</span>
+<span class="sd">        output root directory, typically &#39;ouputs/&#39;</span>
+
+<span class="sd">    output_prefix: str</span>
+<span class="sd">        A prefix added to the final output files.</span>
+<span class="sd">    </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_dir</span> <span class="o">=</span> <span class="n">base_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_prefix</span> <span class="o">=</span> <span class="n">output_prefix</span></div>
+
+
+
+
+<div class="viewcode-block" id="BLEval"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval">[docs]</a><span class="k">class</span> <span class="nc">BLEval</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The BEELINE Evaluation object is created by parsing a user-provided configuration</span>
+<span class="sd">    file. Its methods provide for further processing its inputs into</span>
+<span class="sd">    a series of jobs to be run, as well as running these jobs.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">input_settings</span><span class="p">:</span> <span class="n">InputSettings</span><span class="p">,</span>
+            <span class="n">output_settings</span><span class="p">:</span> <span class="n">OutputSettings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span> <span class="o">=</span> <span class="n">input_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_settings</span> <span class="o">=</span> <span class="n">output_settings</span>
+
+
+<div class="viewcode-block" id="BLEval.computeAUC"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computeAUC">[docs]</a>    <span class="k">def</span> <span class="nf">computeAUC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directed</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Computes areas under the precision-recall (PR) and</span>
+<span class="sd">        and ROC plots for each algorithm-dataset combination.</span>
+<span class="sd">      </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        directedFlag: bool</span>
+<span class="sd">            A flag to specifiy whether to treat predictions</span>
+<span class="sd">            as directed edges (directed = True) or </span>
+<span class="sd">            undirected edges (directed = False).</span>
+<span class="sd">        </span>
+<span class="sd">        :returns:</span>
+<span class="sd">            - AUPRC: A dataframe containing AUPRC values for each algorithm-dataset combination</span>
+<span class="sd">            - AUROC: A dataframe containing AUROC values for each algorithm-dataset combination</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">AUPRCDict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">AUROCDict</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> 
+                            <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datasets</span><span class="p">),</span> <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot; Datasets&quot;</span><span class="p">):</span>
+            
+            <span class="n">AUPRC</span><span class="p">,</span> <span class="n">AUROC</span> <span class="o">=</span> <span class="n">PRROC</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="p">,</span> 
+                                    <span class="n">directed</span> <span class="o">=</span> <span class="n">directed</span><span class="p">,</span> <span class="n">selfEdges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">plotFlag</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+            <span class="n">AUPRCDict</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">AUPRC</span>
+            <span class="n">AUROCDict</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">AUROC</span>
+        <span class="n">AUPRC</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">AUPRCDict</span><span class="p">)</span>
+        <span class="n">AUROC</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">AUROCDict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">AUPRC</span><span class="p">,</span> <span class="n">AUROC</span></div>
+    
+
+<div class="viewcode-block" id="BLEval.parseTime"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.parseTime">[docs]</a>    <span class="k">def</span> <span class="nf">parseTime</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parse time output for each</span>
+<span class="sd">        algorithm-dataset combination.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns:</span>
+<span class="sd">            A dictionary of times for all dataset-algorithm combinations</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">TimeDict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> 
+                            <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datasets</span><span class="p">),</span> <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot; Datasets&quot;</span><span class="p">):</span>
+            <span class="n">timevals</span>  <span class="o">=</span> <span class="n">getTime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">)</span>
+            <span class="n">TimeDict</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">timevals</span>
+
+        <span class="k">return</span> <span class="n">TimeDict</span></div>
+
+<div class="viewcode-block" id="BLEval.computeJaccard"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computeJaccard">[docs]</a>    <span class="k">def</span> <span class="nf">computeJaccard</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Computes Jaccard Index between top-k edge predictions</span>
+<span class="sd">        of the same algorithm.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns:</span>
+<span class="sd">            A dataframe containing the median and median absolute</span>
+<span class="sd">            deviation of the Jaccard Index values of each algorithm</span>
+<span class="sd">            on the given set of datasets.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">JaccDF</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">JaccDF</span><span class="p">[</span><span class="s1">&#39;Jaccard Median&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">JaccDF</span><span class="p">[</span><span class="s1">&#39;Jaccard MAD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">outDir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_settings</span><span class="o">.</span><span class="n">base_dir</span><span class="p">)</span> <span class="o">+</span> \
+                 <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datadir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+        <span class="k">for</span> <span class="n">algo</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">algorithms</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot; Algorithms&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">algo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;should_run&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">JaccDF</span><span class="p">[</span><span class="s1">&#39;Jaccard Median&#39;</span><span class="p">][</span><span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">JaccDF</span><span class="p">[</span><span class="s1">&#39;Jaccard MAD&#39;</span><span class="p">][</span><span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Jaccard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">JaccDF</span><span class="p">)</span>     </div>
+
+    
+<div class="viewcode-block" id="BLEval.computeSpearman"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computeSpearman">[docs]</a>    <span class="k">def</span> <span class="nf">computeSpearman</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Finds the Spearman&#39;s correlation coefficient between</span>
+<span class="sd">        the ranked edges of the same algorithm on the given</span>
+<span class="sd">        set of datasets.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns:</span>
+<span class="sd">            A dataframe containing the median and median absolute</span>
+<span class="sd">            deviation of the Separman&#39;s correlation values of each algorithm.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">corrDF</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">corrDF</span><span class="p">[</span><span class="s1">&#39;Spearman Median&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">corrDF</span><span class="p">[</span><span class="s1">&#39;Spearman MAD&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">outDir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_settings</span><span class="o">.</span><span class="n">base_dir</span><span class="p">)</span> <span class="o">+</span> \
+                 <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datadir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+        <span class="k">for</span> <span class="n">algo</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">algorithms</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot; Algorithms&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">algo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;should_run&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">corrDF</span><span class="p">[</span><span class="s1">&#39;Spearman Median&#39;</span><span class="p">][</span><span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span><span class="n">corrDF</span><span class="p">[</span><span class="s1">&#39;Spearman MAD&#39;</span><span class="p">][</span><span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Spearman</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">corrDF</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="BLEval.computeNetMotifs"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computeNetMotifs">[docs]</a>    <span class="k">def</span> <span class="nf">computeNetMotifs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        For each algorithm-dataset combination, this function computes the network motifs such as </span>
+<span class="sd">        Feedforward loops, Feedback loops and </span>
+<span class="sd">        Mutual interactions in the predicted top-k network. It returns the ratio of network motif counts</span>
+<span class="sd">        compared to their respective values in the reference network.</span>
+<span class="sd">      </span>
+<span class="sd">        :returns:</span>
+<span class="sd">            - FBL: A dataframe containing ratios of number of Feedback loops</span>
+<span class="sd">            </span>
+<span class="sd">            - FFL: A dataframe containing ratios of number of Feedforward loops</span>
+<span class="sd">            </span>
+<span class="sd">            - MI: A dataframe containing ratios of number of Mutual Interactions</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">FFLDict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">FBLDict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">MIDict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> 
+                            <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datasets</span><span class="p">),</span> <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot; Datasets&quot;</span><span class="p">):</span>
+            <span class="n">FBLDict</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]],</span> <span class="n">FFLDict</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]],</span> <span class="n">MIDict</span><span class="p">[</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Motifs</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="p">)</span>
+            
+        <span class="n">FBL</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">FBLDict</span><span class="p">)</span>
+        <span class="n">FFL</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">FFLDict</span><span class="p">)</span>
+        <span class="n">MI</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">MIDict</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">FBL</span><span class="p">,</span> <span class="n">FFL</span><span class="p">,</span> <span class="n">MI</span></div>
+                 
+<div class="viewcode-block" id="BLEval.computeEarlyPrec"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computeEarlyPrec">[docs]</a>    <span class="k">def</span> <span class="nf">computeEarlyPrec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        For each algorithm-dataset combination,</span>
+<span class="sd">        this function computes the Early Precision values of the </span>
+<span class="sd">        network formed using the predicted top-k edges.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: </span>
+<span class="sd">            A dataframe containing the early precision values </span>
+<span class="sd">            for each algorithm-dataset combination.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">Eprec</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">outDir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_settings</span><span class="o">.</span><span class="n">base_dir</span><span class="p">)</span> <span class="o">+</span> \
+                 <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datadir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+        <span class="k">for</span> <span class="n">algo</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">algorithms</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot; Algorithms&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">algo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;should_run&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">Eprec</span><span class="p">[</span><span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">EarlyPrec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Eprec</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
+
+
+    
+<div class="viewcode-block" id="BLEval.computeSignedEPrec"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computeSignedEPrec">[docs]</a>    <span class="k">def</span> <span class="nf">computeSignedEPrec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        For each algorithm-dataset combination,</span>
+<span class="sd">        this function computes the Early Precision values separately </span>
+<span class="sd">        for the activation and inhibitory edges.</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: </span>
+<span class="sd">            A dataframe containing the median signed early precision values for each algorithm.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">sEPRDict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;Median EPR Activation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;Median EPR Inhibition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">outDir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">output_settings</span><span class="o">.</span><span class="n">base_dir</span><span class="p">)</span> <span class="o">+</span> \
+                 <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datadir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span>
+        <span class="k">for</span> <span class="n">algo</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">algorithms</span><span class="p">,</span> <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot; Algorithms&quot;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">algo</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;should_run&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;Median EPR Activation&#39;</span><span class="p">][</span><span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;Median EPR Inhibition&#39;</span><span class="p">][</span><span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">signedEPrec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sEPRDict</span><span class="p">)</span></div></div>
+    
+
+<div class="viewcode-block" id="ConfigParser"><a class="viewcode-back" href="../BLEval.html#BLEval.ConfigParser">[docs]</a><span class="k">class</span> <span class="nc">ConfigParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The class define static methods for parsing and storing the contents </span>
+<span class="sd">    of the config file that sets a that sets a large number of parameters </span>
+<span class="sd">    used in the BLEval.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="ConfigParser.parse"><a class="viewcode-back" href="../BLEval.html#BLEval.ConfigParser.parse">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">config_file_handle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BLEval</span><span class="p">:</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A method for parsing the input .yaml file.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config_file_handle: str</span>
+<span class="sd">            Name of the .yaml file to be parsed</span>
+<span class="sd">        </span>
+<span class="sd">        :returns: </span>
+<span class="sd">            An object of class :class:`BLEval.BLEval`.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">config_map</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">config_file_handle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BLEval</span><span class="p">(</span>
+            <span class="n">ConfigParser</span><span class="o">.</span><span class="n">__parse_input_settings</span><span class="p">(</span>
+                <span class="n">config_map</span><span class="p">[</span><span class="s1">&#39;input_settings&#39;</span><span class="p">]),</span>
+            <span class="n">ConfigParser</span><span class="o">.</span><span class="n">__parse_output_settings</span><span class="p">(</span>
+                <span class="n">config_map</span><span class="p">[</span><span class="s1">&#39;output_settings&#39;</span><span class="p">]))</span></div>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__parse_input_settings</span><span class="p">(</span><span class="n">input_settings_map</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">InputSettings</span><span class="p">:</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A method for parsing and initializing </span>
+<span class="sd">        InputSettings object.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">input_dir</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="p">[</span><span class="s1">&#39;input_dir&#39;</span><span class="p">]</span>
+        <span class="n">dataset_dir</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="p">[</span><span class="s1">&#39;dataset_dir&#39;</span><span class="p">]</span>
+        <span class="n">datasets</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="p">[</span><span class="s1">&#39;datasets&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">InputSettings</span><span class="p">(</span>
+                <span class="n">Path</span><span class="p">(</span><span class="n">input_dir</span><span class="p">,</span> <span class="n">dataset_dir</span><span class="p">),</span>
+                <span class="n">datasets</span><span class="p">,</span>
+                <span class="n">ConfigParser</span><span class="o">.</span><span class="n">__parse_algorithms</span><span class="p">(</span>
+                <span class="n">input_settings_map</span><span class="p">[</span><span class="s1">&#39;algorithms&#39;</span><span class="p">]))</span>
+
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__parse_algorithms</span><span class="p">(</span><span class="n">algorithms_list</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A method for parsing the list of algorithms</span>
+<span class="sd">        that are being evaluated, along with</span>
+<span class="sd">        any parameters being passed.</span>
+<span class="sd">        </span>
+<span class="sd">        Note that these parameters may not be</span>
+<span class="sd">        used in the current evaluation, but can </span>
+<span class="sd">        be used at a later point.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        
+        <span class="c1"># Initilalize the list of algorithms</span>
+        <span class="n">algorithms</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># Parse contents of algorithms_list</span>
+        <span class="k">for</span> <span class="n">algorithm</span> <span class="ow">in</span> <span class="n">algorithms_list</span><span class="p">:</span>
+                <span class="n">combos</span> <span class="o">=</span> <span class="p">[</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">algorithm</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">],</span> <span class="n">val</span><span class="p">))</span>
+                    <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span>
+                        <span class="o">*</span><span class="p">(</span><span class="n">algorithm</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">][</span><span class="n">param</span><span class="p">]</span>
+                            <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">algorithm</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]))]</span>
+                <span class="k">for</span> <span class="n">combo</span> <span class="ow">in</span> <span class="n">combos</span><span class="p">:</span>
+                    <span class="n">algorithms</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">algorithm</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span><span class="n">combo</span><span class="p">])</span>
+            
+
+        <span class="k">return</span> <span class="n">algorithms</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__parse_output_settings</span><span class="p">(</span><span class="n">output_settings_map</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">OutputSettings</span><span class="p">:</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        A method for parsing and initializing </span>
+<span class="sd">        Output object.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_settings_map</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">])</span>
+        <span class="n">output_prefix</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_settings_map</span><span class="p">[</span><span class="s1">&#39;output_prefix&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">OutputSettings</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span>
+                             <span class="n">output_prefix</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Aditya Pratapa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

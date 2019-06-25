@@ -1,0 +1,25 @@
+.. BEELINE documentation master file, created by
+   sphinx-quickstart on Fri Jun 14 18:25:02 2019.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Welcome to BEELINE's documentation!
+===================================
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Contents:
+
+BEELINE provides a set of tools for evaluating methods that infer gene regulatory networks (GRN) from single-cell gene expression data. BEELINE framework is divided into the following modules:
+
+* :ref:`BLRun`: contains the BEELINE's Runner module, a python wrapper for 12 GRN inference algorithms with options to add new methods.
+* :ref:`BLEval`: contains the BEELINE's Evaluation module that provides easy-to-use tools for evaluating GRN reconstructions.
+* :ref:`BLPlot`: contains the BEELINE's plotting module for visualizing output from BLEval.
+
+
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
