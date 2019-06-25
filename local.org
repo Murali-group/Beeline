@@ -1,5 +1,0 @@
-* Theme properties
-** Folder where the theme is located: /var/lib/gems/2.5.0/gems/just-the-docs-0.2.5/
-
-** Bee emoji LICENSE: https://commons.wikimedia.org/wiki/File:Emoji_u1f41d.svg
-
