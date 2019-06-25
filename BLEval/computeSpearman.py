@@ -14,28 +14,25 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
-def Spearman(evalObject, algo_name):
+def Spearman(evalObject, algorithmName):
     """
-    Return Spearman correlation of predicted ranked edges,
-    i.e., the outputs of different datasets generated from the
-    same reference network, for a given algorithm.
+    A function to compute median pairwirse Spearman correlation
+    of predicted ranked edges, i.e., the outputs of different datasets
+    generated from the same reference network, for a given algorithm.
     
 
     Parameters
     ----------
-    evalObject : Evaluation Object
-      An Evaluation object containing list of algorithms, dataset location, etc.
+    evalObject: BLEval
+      An object of class :class:`BLEval.BLEval`.
       
-    algo_name : Algorithm name
+    algorithmName: str
       Name of the algorithm for which the Spearman correlation is computed.
       
       
-    Returns
-    -------
-    median: 
-      Median of Spearman correlation values
-    mad:
-      Median Absolute Deviation of  the Spearman correlation values
+    :returns:
+        - median: Median of Spearman correlation values
+        - mad: Median Absolute Deviation of  the Spearman correlation values
     """
 
     rankDict = {}
@@ -51,7 +48,7 @@ def Spearman(evalObject, algo_name):
 
         outDir = str(evalObject.output_settings.base_dir) + \
                  str(evalObject.input_settings.datadir).split("inputs")[1] + \
-                 "/" + dataset["name"] + "/" + algo_name
+                 "/" + dataset["name"] + "/" + algorithmName
         #algos = evalObject.input_settings.algorithms
         rank_path = outDir+"/rankedEdges.csv"
         if not os.path.isdir(outDir):
@@ -59,7 +56,7 @@ def Spearman(evalObject, algo_name):
         try:
             predEdgeDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
         except:
-            print("Skipping spearman computation for ", algo_name, "on path", outDir)
+            print("Skipping spearman computation for ", algorithmName, "on path", outDir)
             continue
 
         for key in PredEdgeDict.keys():

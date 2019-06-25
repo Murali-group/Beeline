@@ -90,9 +90,9 @@ def main():
     if (opts.auc):
         print('\n\nComputing areas under ROC and PR curves...')
 
-        AUPRCDict, AUROCDict = evalSummarizer.computeAUC()
-        pd.DataFrame(AUPRCDict).to_csv(outDir+'AUPRC.csv')
-        pd.DataFrame(AUROCDict).to_csv(outDir+'AUROC.csv')
+        AUPRC, AUROC = evalSummarizer.computeAUC()
+        AUPRC.to_csv(outDir+'AUPRC.csv')
+        AUROC.to_csv(outDir+'AUROC.csv')
     
     # Compute Jaccard index    
     if (opts.jaccard):
@@ -132,10 +132,10 @@ def main():
     if (opts.motifs):
         print('\n\nComputing network motifs...')
 
-        FBLDict, FFLDict, MIDict = evalSummarizer.computeNetMotifs()
-        pd.DataFrame(FBLDict).to_csv(outDir+'NetworkMotifs-FBL.csv')
-        pd.DataFrame(FFLDict).to_csv(outDir+'NetworkMotifs-FFL.csv')
-        pd.DataFrame(MIDict).to_csv(outDir+'NetworkMotifs-MI.csv')
+        FBL, FFL, MI = evalSummarizer.computeNetMotifs()
+        FBL.to_csv(outDir+'NetworkMotifs-FBL.csv')
+        FFL.to_csv(outDir+'NetworkMotifs-FFL.csv')
+        MI.to_csv(outDir+'NetworkMotifs-MI.csv')
 
 
     print('\n\nEvaluation complete...\n')

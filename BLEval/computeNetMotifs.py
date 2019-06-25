@@ -10,15 +10,32 @@ from itertools import product, permutations, combinations, combinations_with_rep
 from tqdm import tqdm
 import networkx as nx
 
-def Motifs(dataDict, inputSettings):
+def Motifs(datasetDict, inputSettings):
     '''
-    Computes "directed","feed-forward", 
-    "cascade", and "mutual" motifs.
+    Computes ratios of the counts of various network motifs
+    for each algorithm for a given dataset. The ratios are 
+    computed by dividing the counts of various network motifs
+    in the predicted top-k network, to their respective values 
+    in the reference network.
+    
+    Parameters
+    ----------
+    datasetDict: dict
+        A dictionary containing the dataset name, 
+        path to reference network.
+    inputSettings: InputSettings
+      An object of class :class:`BLEval.InputSettings`.
+
+    :returns:
+        - FBL: A dataframe containing ratios of three-node feedback loop motis
+        - FFL: A dataframe containing ratios of three-node feedforward loop motis
+        - MI: A dataframe containing ratios of two-node mutual interaction motis
+
     '''
     
     # Read file for trueEdges
-    trueEdgesDF = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
-                                '/' +dataDict['trueEdges'],
+    trueEdgesDF = pd.read_csv(str(inputSettings.datadir)+'/'+ datasetDict['name'] +
+                                '/' +datasetDict['trueEdges'],
                                 sep = ',', 
                                 header = 0, index_col = None)
             
@@ -52,7 +69,7 @@ def Motifs(dataDict, inputSettings):
         refMI = 1
     
     # set-up outDir that stores output directory name
-    outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
+    outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' + datasetDict['name']
     dataDict = {}
     # dataDict['Conn. Comp'] = {}
     dataDict['FFL'] = {}
@@ -121,7 +138,6 @@ def Motifs(dataDict, inputSettings):
                   ' does not exist. Skipping...')
 
     dataDF = pd.DataFrame(dataDict)
-    # dataDF['Conn. Comp'] = dataDF['Conn. Comp'] - refCC
 
     return dataDF['FBL'], dataDF['FFL'], dataDF['Mutual']
 
@@ -129,8 +145,20 @@ def Motifs(dataDict, inputSettings):
     
 def getNetProp(inGraph):
     '''
-    Function to compute properties
-    of a given network.
+    A helper function to compute
+    counts of various network motifs.
+    
+    Parameters
+    ----------
+    inGraph: networkx.DiGraph()
+      An graph object of class :class:`networkx.DiGraph`.
+
+    :returns:
+        - A value corresponding to the number of three-node feedback loops
+        - A value corresponding to the number of three-node feedforward loops
+        - A value corresponding to the number of two-node mutual interaction
+
+
     '''
 
     # number of weakly connected components in 

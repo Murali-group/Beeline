@@ -12,7 +12,26 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
-def EarlyPrec(evalObject, algo_name):
+def EarlyPrec(evalObject, algorithmName):
+    '''
+    Computes early precision for a given algorithm for each dataset.
+    We define early precision as the fraction of true 
+    positives in the top-k edges, where k is the number of
+    edges in the ground truth network (excluding self loops).
+    
+    Parameters
+    -----------
+    evalObject: BLEval
+      An object of class :class:`BLEval.BLEval`.
+      
+    algorithmName: str
+      Name of the algorithm for which the early precision is computed.
+      
+            
+    :returns:
+        A dataframe containing early precision values
+        for a given algorithm for each dataset.
+    '''
     rankDict = {}
     sim_names = []
     for dataset in tqdm(evalObject.input_settings.datasets):
@@ -41,7 +60,7 @@ def EarlyPrec(evalObject, algo_name):
 
         outDir = str(evalObject.output_settings.base_dir) + \
                  str(evalObject.input_settings.datadir).split("inputs")[1] + \
-                 "/" + dataset["name"] + "/" + algo_name
+                 "/" + dataset["name"] + "/" + algorithmName
 
         #algos = evalObject.input_settings.algorithms
         rank_path = outDir + "/rankedEdges.csv"
@@ -51,7 +70,7 @@ def EarlyPrec(evalObject, algo_name):
         try:
             predDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
         except:
-            print("\nSkipping early precision computation for ", algo_name, "on path", outDir)
+            print("\nSkipping early precision computation for ", algorithmName, "on path", outDir)
             rankDict[dataset["name"]] = set([])
             continue
 
@@ -95,4 +114,4 @@ def EarlyPrec(evalObject, algo_name):
             Eprec[dataset["name"]] = 0
             Erec[dataset["name"]] = 0
 
-    return(np.median(list(Eprec.values())),Eprec)
+    return(Eprec)

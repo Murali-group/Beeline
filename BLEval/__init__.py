@@ -1,3 +1,16 @@
+
+"""
+BEELINE Evaluation (:mod:`BLEval`) module contains the following main class:
+
+- :class:`BLEval.BLEval`
+and three additional classes used in the definition 
+of BLEval class
+
+- :class:`BLEval.ConfigParser`
+- :class:`BLEval.InputSettings`
+- :class:`BLEval.OutputSettings`
+
+"""
 import os
 import yaml
 import argparse
@@ -27,7 +40,20 @@ from BLEval.computeSignedEPrec import signedEPrec
 
 class InputSettings(object):
     '''
-    Structure for storing the names of input files.
+    The class for storing the names of input files.
+    This initilizes an InputSettings object based on the
+    following three parameters.
+    
+    Parameters
+    -----------
+    datadir: str
+        input dataset root directory, typically 'inputs/'
+
+    datasets: list
+        List of dataset names
+        
+    algorithms: list
+        List of algorithm names
     '''
 
     def __init__(self,
@@ -39,9 +65,19 @@ class InputSettings(object):
 
 
 class OutputSettings(object):
-    '''
-    Structure for storing the names of directories that output should
-    be written to.
+    '''    
+    The class for storing the names of directories that output should
+    be written to. This initilizes an OutputSettings object based on the
+    following two parameters.
+    
+    Parameters
+    ----------
+    base_dir: str
+        output root directory, typically 'ouputs/'
+
+    output_prefix: str
+        A prefix added to the final output files.
+    
     '''
 
     def __init__(self, base_dir, output_prefix: Path) -> None:
@@ -66,14 +102,22 @@ class BLEval(object):
         self.output_settings = output_settings
 
 
-    def computeAUC(self, directedFlag = True):
+    def computeAUC(self, directed = True):
 
         '''
-        Plot PR and ROC curves for each dataset
-        for all the algorithms
+        Computes areas under the precision-recall (PR) and
+        and ROC plots for each algorithm-dataset combination.
       
-        Returns:
-        -------
+        Parameters
+        ----------
+        directedFlag: bool
+            A flag to specifiy whether to treat predictions
+            as directed edges (directed = True) or 
+            undirected edges (directed = False).
+        
+        :returns:
+            - AUPRC: A dataframe containing AUPRC values for each algorithm-dataset combination
+            - AUROC: A dataframe containing AUROC values for each algorithm-dataset combination
         '''
         AUPRCDict = {}
         AUROCDict = {}
@@ -82,11 +126,12 @@ class BLEval(object):
                             total = len(self.input_settings.datasets), unit = " Datasets"):
             
             AUPRC, AUROC = PRROC(dataset, self.input_settings, 
-                                    directed = directedFlag, selfEdges = False, plotFlag = False)
+                                    directed = directed, selfEdges = False, plotFlag = False)
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
-            
-        return AUPRCDict, AUROCDict
+        AUPRC = pd.DataFrame(AUPRCDict)
+        AUROC = pd.DataFrame(AUROCDict)
+        return AUPRC, AUROC
     
 
     def parseTime(self):
@@ -94,9 +139,7 @@ class BLEval(object):
         Parse time output for each
         algorithm-dataset combination.
         
-        Returns:
-        -------
-        TimeDict: 
+        :returns:
             A dictionary of times for all dataset-algorithm combinations
         """
         TimeDict = dict()
@@ -111,11 +154,13 @@ class BLEval(object):
     def computeJaccard(self):
 
         '''
-        Computes the Jaccard Index.
-        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
-      
-        Returns:
-        -------
+        Computes Jaccard Index between top-k edge predictions
+        of the same algorithm.
+        
+        :returns:
+            A dataframe containing the median and median absolute
+            deviation of the Jaccard Index values of each algorithm
+            on the given set of datasets.
         '''
         JaccDF = {}
         JaccDF['Jaccard Median'] = {}
@@ -132,14 +177,13 @@ class BLEval(object):
     def computeSpearman(self):
 
         '''
-        Finds the Spearman's correlation coefficient between consecutive simulations
-        of the same algorithm, with the same initial parameters
-        Saves the coefficients to a csv file, to be read into a Pandas dataframe
+        Finds the Spearman's correlation coefficient between
+        the ranked edges of the same algorithm on the given
+        set of datasets.
         
-        Returns:
-        -------
-        corrDF: A pandas dataframe containing the median and median absolute
-        deviation of the correlation values.
+        :returns:
+            A dataframe containing the median and median absolute
+            deviation of the Separman's correlation values of each algorithm.
         '''
         corrDF = {}
         corrDF['Spearman Median'] = {}
@@ -157,11 +201,17 @@ class BLEval(object):
     def computeNetMotifs(self):
 
         '''
-        Finds network motifs such as FFL, FBL, and MI in the
-        predicted network.
+        For each algorithm-dataset combination, this function computes the network motifs such as 
+        Feedforward loops, Feedback loops and 
+        Mutual interactions in the predicted top-k network. It returns the ratio of network motif counts
+        compared to their respective values in the reference network.
       
-        Returns:
-        -------
+        :returns:
+            - FBL: A dataframe containing ratios of number of Feedback loops
+            
+            - FFL: A dataframe containing ratios of number of Feedforward loops
+            
+            - MI: A dataframe containing ratios of number of Mutual Interactions
         '''
         FFLDict = {}
         FBLDict = {}
@@ -169,26 +219,31 @@ class BLEval(object):
         for dataset in tqdm(self.input_settings.datasets, 
                             total = len(self.input_settings.datasets), unit = " Datasets"):
             FBLDict[dataset["name"]], FFLDict[dataset["name"]], MIDict[dataset["name"]] = Motifs(dataset, self.input_settings)
+            
+        FBL = pd.DataFrame(FBLDict)
+        FFL = pd.DataFrame(FFLDict)
+        MI = pd.DataFrame(MIDict)
         
-        return FBLDict, FFLDict, MIDict
+        return FBL, FFL, MI
                  
     def computeEarlyPrec(self):
 
         '''
-        Computes the Early Precision values.
-        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
-      
-        Returns:
-        -------
+        For each algorithm-dataset combination,
+        this function computes the Early Precision values of the 
+        network formed using the predicted top-k edges.
+        
+        :returns: 
+            A dataframe containing the early precision values 
+            for each algorithm-dataset combination.
+
         '''
-        earlyPR = {}
-        earlyPR['Early Precision'] = {}
         Eprec = {}
         outDir = str(self.output_settings.base_dir) + \
                  str(self.input_settings.datadir).split("inputs")[1] + "/"
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
-                earlyPR['Early Precision'][algo[0]], Eprec[algo[0]] = EarlyPrec(self, algo[0])
+                Eprec[algo[0]] = EarlyPrec(self, algo[0])
         return pd.DataFrame(Eprec).T
 
 
@@ -196,11 +251,12 @@ class BLEval(object):
     def computeSignedEPrec(self):
 
         '''
-        Computes the Early Precision values for activation and inhibitory edges.
-        Saves the coefficients to a csv file, to be read into a Pandas dataframe.
-      
-        Returns:
-        -------
+        For each algorithm-dataset combination,
+        this function computes the Early Precision values separately 
+        for the activation and inhibitory edges.
+        
+        :returns: 
+            A dataframe containing the median signed early precision values for each algorithm.
         '''
         sEPRDict = {}
         sEPRDict['Median EPR Activation'] = {}
@@ -216,20 +272,37 @@ class BLEval(object):
 
 class ConfigParser(object):
     '''
-    Define static methods for parsing a config file that sets a large number
-    of parameters for the pipeline.
+    The class define static methods for parsing and storing the contents 
+    of the config file that sets a that sets a large number of parameters 
+    used in the BLEval.
     '''
     @staticmethod
     def parse(config_file_handle) -> BLEval:
+        '''
+        A method for parsing the input .yaml file.
+        
+        Parameters
+        ----------
+        config_file_handle: str
+            Name of the .yaml file to be parsed
+        
+        :returns: 
+            An object of class :class:`BLEval.BLEval`.
+
+        '''
         config_map = yaml.load(config_file_handle)
         return BLEval(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),
             ConfigParser.__parse_output_settings(
                 config_map['output_settings']))
-
+    
     @staticmethod
     def __parse_input_settings(input_settings_map) -> InputSettings:
+        '''
+        A method for parsing and initializing 
+        InputSettings object.
+        '''
         input_dir = input_settings_map['input_dir']
         dataset_dir = input_settings_map['dataset_dir']
         datasets = input_settings_map['datasets']
@@ -243,7 +316,20 @@ class ConfigParser(object):
 
     @staticmethod
     def __parse_algorithms(algorithms_list):
+        '''
+        A method for parsing the list of algorithms
+        that are being evaluated, along with
+        any parameters being passed.
+        
+        Note that these parameters may not be
+        used in the current evaluation, but can 
+        be used at a later point.
+        '''
+        
+        # Initilalize the list of algorithms
         algorithms = []
+        
+        # Parse contents of algorithms_list
         for algorithm in algorithms_list:
                 combos = [dict(zip(algorithm['params'], val))
                     for val in itertools.product(
@@ -257,6 +343,10 @@ class ConfigParser(object):
 
     @staticmethod
     def __parse_output_settings(output_settings_map) -> OutputSettings:
+        '''
+        A method for parsing and initializing 
+        Output object.
+        '''
         output_dir = Path(output_settings_map['output_dir'])
         output_prefix = Path(output_settings_map['output_prefix'])
 

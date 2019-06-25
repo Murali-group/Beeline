@@ -12,7 +12,28 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
-def Jaccard(evalObject, algo_name):
+def Jaccard(evalObject, algorithmName):
+    """
+    A function to compute median pairwirse Jaccard similarity index
+    of predicted top-k edges for a given set of datasets (obtained from
+    the same reference network). Here k is the number of edges in the
+    reference network (excluding self loops). 
+    
+    
+    Parameters
+    ----------
+    evalObject: BLEval
+      An object of class :class:`BLEval.BLEval`.
+      
+    algorithmName: str
+      Name of the algorithm for which the Spearman correlation is computed.
+      
+      
+    :returns:
+        - median: Median of Jaccard correlation values
+        - mad: Median Absolute Deviation of  the Spearman correlation values
+    """
+
     rankDict = {}
     sim_names = []
     for dataset in tqdm(evalObject.input_settings.datasets):
@@ -39,7 +60,7 @@ def Jaccard(evalObject, algo_name):
 
         outDir = str(evalObject.output_settings.base_dir) + \
                  str(evalObject.input_settings.datadir).split("inputs")[1] + \
-                 "/" + dataset["name"] + "/" + algo_name
+                 "/" + dataset["name"] + "/" + algorithmName
 
         #algos = evalObject.input_settings.algorithms
         rank_path = outDir + "/rankedEdges.csv"
@@ -48,7 +69,7 @@ def Jaccard(evalObject, algo_name):
         try:
             predDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
         except:
-            print("Skipping Jaccard computation for ", algo_name, "on path", outDir)
+            print("Skipping Jaccard computation for ", algorithmName, "on path", outDir)
             continue
 
         predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
@@ -88,6 +109,24 @@ def Jaccard(evalObject, algo_name):
 
 
 def computePairwiseJacc(inDict):
+    """
+    A helper function to compute all pairwise Jaccard similarity indices
+    of predicted top-k edges for a given set of datasets (obtained from
+    the same reference network). Here k is the number of edges in the
+    reference network (excluding self loops). 
+    
+    
+    Parameters
+    ----------
+    inDict: dict
+        A dictionary contaninig top-k predicted edges 
+        for each dataset. Here, keys are the dataset name 
+        and the values are the set of top-k edges.
+
+      
+    :returns:
+        A dataframe containing pairwise Jaccard similarity index values
+    """
     jaccDF = {key:{key1:{} for key1 in inDict.keys()} for key in inDict.keys()}
     for key_i in inDict.keys():
         for key_j in inDict.keys():

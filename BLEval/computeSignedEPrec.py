@@ -14,7 +14,32 @@ from collections import defaultdict
 from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
-def signedEPrec(evalObject, algo_name):
+def signedEPrec(evalObject, algorithmName):
+    '''
+    Computes median signed early precision for a given algorithm across all datasets, 
+    i.e., the function computes early precision of activation edges and
+    early precision for inhibitory edges in the reference network.
+    We define early precision of activation edges as the fraction of true 
+    positives in the top-ka edges, where ka is the number of activation
+    edges in the reference network (excluding self loops). 
+    We define early precision of inhibitory edges as the fraction of true 
+    positives in the top-ki edges, where ki is the number of inhibitory
+    edges in the reference network (excluding self loops).
+    
+    Parameters
+    -----------
+    evalObject: BLEval
+      An object of class :class:`BLEval.BLEval`.
+      
+    algorithmName: str
+      Name of the algorithm for which the early precision is computed.
+      
+            
+    :returns: 
+        - A float value corresponding to the median early precision of activation edges
+        - A float value corresponding to the median early precision of inhibition edges
+    '''
+        
     rankDict = {'+':{},'-':{}}
     sim_names = []
     for sgn in ['+','-']:
@@ -54,7 +79,7 @@ def signedEPrec(evalObject, algo_name):
 
             outDir = str(evalObject.output_settings.base_dir) + \
                      str(evalObject.input_settings.datadir).split("inputs")[1] + \
-                     "/" + dataset["name"] + "/" + algo_name
+                     "/" + dataset["name"] + "/" + algorithmName
 
             #algos = evalObject.input_settings.algorithms
             rank_path = outDir + "/rankedEdges.csv"
@@ -65,7 +90,7 @@ def signedEPrec(evalObject, algo_name):
             try:
                 predDF = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
             except:
-                print("Skipping signed precision computation for ", algo_name, "on path", outDir)
+                print("Skipping signed precision computation for ", algorithmName, "on path", outDir)
                 rankDict[sgn][dataset["name"]] = set([])
                 continue
 
