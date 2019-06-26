@@ -6,7 +6,7 @@ input_settings:
     input_dir : "inputs"
 
     # Subdirectory of inputs that datasets are placed in
-    dataset_dir: "Simulated/HSC"
+    dataset_dir: "Synthetic/dyn-TF"
 
     # Denotes a list of datasets, each with the following parameters:
     #   name: Name of the dataset. May be used in logging or other
@@ -16,56 +16,157 @@ input_settings:
     #   cellData: a file containing pseudotime ordering
     #   trueEdges: a file contaning reference network for evaulation
     datasets:
-          
-        - name: "HSC_2000_0"
+        - name: "dyn-TF_500_0"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
           
-        - name: "HSC_2000_1"
+        - name: "dyn-TF_500_1"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
           
-        - name: "HSC_2000_2"
+        - name: "dyn-TF_500_2"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
           
-        - name: "HSC_2000_3"
+        - name: "dyn-TF_500_3"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
           
-        - name: "HSC_2000_4"
+        - name: "dyn-TF_500_4"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
           
-        - name: "HSC_2000_5"
+        - name: "dyn-TF_500_5"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
           
-        - name: "HSC_2000_6"
+        - name: "dyn-TF_500_6"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
           
-        - name: "HSC_2000_7"
+        - name: "dyn-TF_500_7"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
           
-        - name: "HSC_2000_8"
+        - name: "dyn-TF_500_8"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
           
-        - name: "HSC_2000_9"
+        - name: "dyn-TF_500_9"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_0"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_1"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_2"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_3"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_4"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_5"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_6"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_7"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_8"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_2000_9"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+
+        - name: "dyn-TF_5000_0"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_5000_1"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_5000_2"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_5000_3"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_5000_4"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_5000_5"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_5000_6"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_5000_7"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_5000_8"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "dyn-TF_5000_9"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+
+
 
     # Denotes a list of algorithms to run. Each has the following parameters:
     #   name: Name of the algorithm. Must be recognized by the pipeline, see
@@ -86,7 +187,23 @@ input_settings:
     #       should be specified in the params map for a given algorithm
     #
     algorithms:
+        - name: "SCODE"
+          params:
+              should_run: [True]
+              z: [10]
+              nIter: [100]
+              nRep: [5]
 
+
+        - name: "SCNS"
+          params: 
+              should_run: [True]
+              
+              
+        - name: "SINCERITIES"
+          params: 
+              should_run: [True]
+                            
               
         - name: "PIDC"
           params: 
@@ -110,57 +227,44 @@ input_settings:
               should_run: [True]
               
               
+              
+        - name: "LEAP"
+          params: 
+              should_run: [True]
+              # Default maxLag value is 0.3
+              # but it is very slow with 0.3
+              # when we have more than 1000 cells.
+              maxLag: [0.75]
+
+              
+
         - name: "PPCOR"
           params: 
               should_run: [True]
               # Used in parsing output
               pVal: [0.01]
               
-               
-        - name: "SCODE"
-          params:
-              should_run: [True]
-              z: [10]
-              nIter: [1000]
-              nRep: [2]
-
-        - name: "SCNS"
-          params: 
-              should_run: [True]
               
-              
-        - name: "SINCERITIES"
-          params: 
-              should_run: [True]
-              nBins: [9]
-              
-              
-        - name: "LEAP"
-          params: 
-              should_run: [True]
-              # Default maxLag value is 0.33
-              maxLag: [0.33]
-             
               
         - name: "GRISLI"
           params: 
               should_run: [True]
-              L: [5]
-              R: [3000]
-              alphaMin: [0.0]
+              L: [10]
+              R: [1000]
+              alphaMin: [0.3]
 
 
         - name: "SCINGE"
           params: 
               should_run: [True]
               lambda: [0.01]
-              dT: [15]
+              dT: [10]
               num_lags: [5]
-              kernel_width: [2]
+              kernel_width: [4]
               prob_zero_removal: [0]
-              prob_remove_samples: [0.0]
+              prob_remove_samples: [0.2]
               family: ["gaussian"]
-              num_replicates: [2]
+              num_replicates: [6]
 
 
         - name: "SCRIBE"
@@ -168,7 +272,7 @@ input_settings:
               should_run: [True]
               ### required parameters
               # a list of delay values
-              delay: ["5"]
+              delay: ["0,1,5,10,25"]
               # any of 'RDI', 'uRDI', 'cRDI', or 'ucRDI'
               method: ['ucRDI']
               # lower detection limit (expression below this 
@@ -191,4 +295,4 @@ output_settings:
 
     # Base output directory
     output_dir: "outputs"
-    output_prefix: "HSC-noDropout"
+    output_prefix: "dyn-TF"

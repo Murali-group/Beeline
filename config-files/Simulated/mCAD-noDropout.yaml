@@ -12,10 +12,9 @@ input_settings:
     #   name: Name of the dataset. May be used in logging or other
     #       messages written during execution
     #
-    #   ex_filename: scRNA-Seqexpression file name
-    #
-    #   pt_filename: a file containing pseudotime ordering
-    #
+    #   exprData: scRNA-Seqexpression file name
+    #   cellData: a file containing pseudotime ordering
+    #   trueEdges: a file contaning reference network for evaulation
     datasets:
           
         - name: "mCAD_2000_0"

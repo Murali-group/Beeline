@@ -125,8 +125,9 @@ def main():
     if (opts.sEPR):
         print('\n\nComputing early precision values for activation and inhibitory edges...')
         
-        sPrDF = evalSummarizer.computeSignedEPrec()
-        sPrDF.to_csv(outDir + "sEPr.csv")
+        actDF, inhDF = evalSummarizer.computeSignedEPrec()
+        actDF.to_csv(outDir + "EPr-Activation.csv")
+        inhDF.to_csv(outDir + "EPr-Inhibitory.csv")
 
     # Compute median time taken
     if (opts.motifs):

@@ -256,18 +256,20 @@ class BLEval(object):
         for the activation and inhibitory edges.
         
         :returns: 
-            A dataframe containing the median signed early precision values for each algorithm.
+            - A dataframe containing early precision for activation edges
+            - A dataframe containing early precision for inhibitory edges
         '''
         sEPRDict = {}
-        sEPRDict['Median EPR Activation'] = {}
-        sEPRDict['Median EPR Inhibition'] = {}
+        sEPRDict['EPrec Activation'] = {}
+        sEPRDict['EPrec Inhibition'] = {}
         outDir = str(self.output_settings.base_dir) + \
                  str(self.input_settings.datadir).split("inputs")[1] + "/"
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
-                sEPRDict['Median EPR Activation'][algo[0]], sEPRDict['Median EPR Inhibition'][algo[0]] = signedEPrec(self, algo[0])
-            
-        return pd.DataFrame(sEPRDict)
+                sEPrecDF = signedEPrec(self, algo[0])
+                sEPRDict['EPrec Activation'][algo[0]] = sEPrecDF['+']
+                sEPRDict['EPrec Inhibition'][algo[0]] = sEPrecDF['-']
+        return(pd.DataFrame(sEPRDict['EPrec Activation']).T, pd.DataFrame(sEPRDict['EPrec Inhibition']).T)
     
 
 class ConfigParser(object):

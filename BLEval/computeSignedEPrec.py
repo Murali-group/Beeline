@@ -36,8 +36,8 @@ def signedEPrec(evalObject, algorithmName):
       
             
     :returns: 
-        - A float value corresponding to the median early precision of activation edges
-        - A float value corresponding to the median early precision of inhibition edges
+        A dataframe with early precision of activation edges (+) and inhibitory edges (-)
+        for a given algorithm
     '''
         
     rankDict = {'+':{},'-':{}}
@@ -154,6 +154,11 @@ def signedEPrec(evalObject, algorithmName):
                 Pprec[sgn][dataset["name"]] = len(intersectionSet)/len(rankDict[sgn][dataset["name"]])
             else:
                 Pprec[sgn][dataset["name"]] = 0
-    return(pd.DataFrame(Pprec).median(axis='index').values[0],pd.DataFrame(Pprec).median(axis='index').values[1])
+                
+    # To return just the median values, uncomment the line below
+    #return(pd.DataFrame(Pprec).median(axis='index').\
+    #values[0],pd.DataFrame(Pprec).median(axis='index').values[1])
+
+    return(pd.DataFrame(Pprec))
 
 

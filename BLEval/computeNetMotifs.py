@@ -115,27 +115,36 @@ def Motifs(datasetDict, inputSettings):
                 newDF = predDF.loc[(predDF['EdgeWeight'] >= bestVal)]
 
                 
-            predGraph = nx.DiGraph()
-            
+                predGraph = nx.DiGraph()
 
-            for key in EdgeDict.keys():
-                u = key.split('|')[0]
-                v = key.split('|')[1]
-                if len(newDF.loc[(newDF['Gene1'] == u) &
-                       (newDF['Gene2'] == v)])>0:
-                        predGraph.add_edge(u,v)
-            
-            # dataDict['Conn. Comp'][algo[0]], dataDict['FBL'][algo[0]], dataDict['FFL'][algo[0]], dataDict['Mutual'][algo[0]] = getNetProp(predGraph)
-            dataDict['FBL'][algo[0]], dataDict['FFL'][algo[0]], dataDict['Mutual'][algo[0]] = getNetProp(predGraph)
-            
 
-            dataDict['FBL'][algo[0]] = dataDict['FBL'][algo[0]]/refFB
-            dataDict['FFL'][algo[0]] = dataDict['FFL'][algo[0]]/refFF
-            dataDict['Mutual'][algo[0]] = dataDict['Mutual'][algo[0]]/refMI
+                for key in EdgeDict.keys():
+                    u = key.split('|')[0]
+                    v = key.split('|')[1]
+                    if len(newDF.loc[(newDF['Gene1'] == u) &
+                           (newDF['Gene2'] == v)])>0:
+                            predGraph.add_edge(u,v)
 
+                # dataDict['Conn. Comp'][algo[0]], dataDict['FBL'][algo[0]], dataDict['FFL'][algo[0]], dataDict['Mutual'][algo[0]] = getNetProp(predGraph)
+                dataDict['FBL'][algo[0]], dataDict['FFL'][algo[0]], dataDict['Mutual'][algo[0]] = getNetProp(predGraph)
+
+
+                dataDict['FBL'][algo[0]] = dataDict['FBL'][algo[0]]/refFB
+                dataDict['FFL'][algo[0]] = dataDict['FFL'][algo[0]]/refFF
+                dataDict['Mutual'][algo[0]] = dataDict['Mutual'][algo[0]]/refMI
+
+            else:
+                # no edges are predicted, set to 0!
+                dataDict['FBL'][algo[0]] = 0
+                dataDict['FFL'][algo[0]] = 0
+                dataDict['Mutual'][algo[0]] = 0
         else:
             print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                   ' does not exist. Skipping...')
+
+            dataDict['FBL'][algo[0]] = 0
+            dataDict['FFL'][algo[0]] = 0
+            dataDict['Mutual'][algo[0]] = 0
 
     dataDF = pd.DataFrame(dataDict)
 

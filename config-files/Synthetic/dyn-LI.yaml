@@ -12,10 +12,9 @@ input_settings:
     #   name: Name of the dataset. May be used in logging or other
     #       messages written during execution
     #
-    #   ex_filename: scRNA-Seqexpression file name
-    #
-    #   pt_filename: a file containing pseudotime ordering
-    #
+    #   exprData: scRNA-Seqexpression file name
+    #   cellData: a file containing pseudotime ordering
+    #   trueEdges: a file contaning reference network for evaulation
     datasets:
         - name: "dyn-LI_500_0"
           exprData: "ExpressionData.csv"
@@ -167,6 +166,7 @@ input_settings:
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
 
+
     # Denotes a list of algorithms to run. Each has the following parameters:
     #   name: Name of the algorithm. Must be recognized by the pipeline, see
     #       code for acceptable values
@@ -189,9 +189,9 @@ input_settings:
         - name: "SCODE"
           params:
               should_run: [True]
-              z: [4]
-              nIter: [1000]
-              nRep: [10]
+              z: [10]
+              nIter: [100]
+              nRep: [5]
 
         - name: "SCNS"
           params: 
@@ -201,8 +201,7 @@ input_settings:
         - name: "SINCERITIES"
           params: 
               should_run: [True]
-              nBins: [8]
-
+                            
               
         - name: "PIDC"
           params: 
@@ -233,16 +232,10 @@ input_settings:
               # Default maxLag value is 0.3
               # but it is very slow with 0.3
               # when we have more than 1000 cells.
-              maxLag: [0.3]
+              maxLag: [0.75]
 
               
-                            
-        #- name: "JUMP3"
-        #  params: 
-        #      should_run: [True]
-
-              
-              
+                                         
         - name: "PPCOR"
           params: 
               should_run: [True]
@@ -254,22 +247,22 @@ input_settings:
         - name: "GRISLI"
           params: 
               should_run: [True]
-              L: [5]
-              R: [3000]
-              alphaMin: [0.5]
+              L: [10]
+              R: [1000]
+              alphaMin: [0.3]
 
 
         - name: "SCINGE"
           params: 
               should_run: [True]
               lambda: [0.01]
-              dT: [3]
+              dT: [10]
               num_lags: [5]
               kernel_width: [4]
               prob_zero_removal: [0]
-              prob_remove_samples: [0.0]
+              prob_remove_samples: [0.2]
               family: ["gaussian"]
-              num_replicates: [2]
+              num_replicates: [6]
 
 
         - name: "SCRIBE"
@@ -277,7 +270,7 @@ input_settings:
               should_run: [True]
               ### required parameters
               # a list of delay values
-              delay: ["5,10,20,25"]
+              delay: ["0,1,5,10,25"]
               # any of 'RDI', 'uRDI', 'cRDI', or 'ucRDI'
               method: ['ucRDI']
               # lower detection limit (expression below this 
