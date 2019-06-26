@@ -12,7 +12,7 @@ Welcome to BEELINE's documentation!
 
 BEELINE provides a set of tools for evaluating methods that infer gene regulatory networks (GRN) from single-cell gene expression data. BEELINE framework is divided into the following modules:
 
-* :ref:`BLRun`: contains the BEELINE's Runner module, a python wrapper for 12 GRN inference algorithms with options to add new methods.
+* :ref:`BLRun`: contains the BEELINE's Runner module, a Python wrapper for 12 GRN inference algorithms with options to add new methods.
 * :ref:`BLEval`: contains the BEELINE's Evaluation module that provides easy-to-use tools for evaluating GRN reconstructions.
 * :ref:`BLPlot`: contains the BEELINE's plotting module for visualizing output from BLEval.
 

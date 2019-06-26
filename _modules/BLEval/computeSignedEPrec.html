@@ -188,8 +188,8 @@
 <span class="sd">      </span>
 <span class="sd">            </span>
 <span class="sd">    :returns: </span>
-<span class="sd">        - A float value corresponding to the median early precision of activation edges</span>
-<span class="sd">        - A float value corresponding to the median early precision of inhibition edges</span>
+<span class="sd">        A dataframe with early precision of activation edges (+) and inhibitory edges (-)</span>
+<span class="sd">        for a given algorithm</span>
 <span class="sd">    &#39;&#39;&#39;</span>
         
     <span class="n">rankDict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;+&#39;</span><span class="p">:{},</span><span class="s1">&#39;-&#39;</span><span class="p">:{}}</span>
@@ -306,7 +306,12 @@
                 <span class="n">Pprec</span><span class="p">[</span><span class="n">sgn</span><span class="p">][</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersectionSet</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">rankDict</span><span class="p">[</span><span class="n">sgn</span><span class="p">][</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]])</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">Pprec</span><span class="p">[</span><span class="n">sgn</span><span class="p">][</span><span class="n">dataset</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">return</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Pprec</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Pprec</span><span class="p">)</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+                
+    <span class="c1"># To return just the median values, uncomment the line below</span>
+    <span class="c1">#return(pd.DataFrame(Pprec).median(axis=&#39;index&#39;).\</span>
+    <span class="c1">#values[0],pd.DataFrame(Pprec).median(axis=&#39;index&#39;).values[1])</span>
+
+    <span class="k">return</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">Pprec</span><span class="p">))</span></div>
 
 
 </pre></div>

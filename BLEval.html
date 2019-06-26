@@ -281,7 +281,11 @@ for the activation and inhibitory edges.</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataframe containing the median signed early precision values for each algorithm.</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li>A dataframe containing early precision for activation edges</li>
+<li>A dataframe containing early precision for inhibitory edges</li>
+</ul>
+</td>
 </tr>
 </tbody>
 </table>
@@ -630,11 +634,8 @@ edges in the reference network (excluding self loops).</p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>A float value corresponding to the median early precision of activation edges</li>
-<li>A float value corresponding to the median early precision of inhibition edges</li>
-</ul>
-</td>
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataframe with early precision of activation edges (+) and inhibitory edges (-)
+for a given algorithm</td>
 </tr>
 </tbody>
 </table>
