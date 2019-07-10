@@ -51,7 +51,7 @@ def run(RunnerObj):
     docker run scribe:base /bin/sh -c "Rscript runScribe.R -h"
     '''
     
-    inputPath = "data/"+str(RunnerObj.inputDir).split("RNMethods/")[1]+"/SCRIBE/"
+    inputPath = "data"+str(RunnerObj.inputDir).split(str(Path.cwd()))[1]+"/SCRIBE/"
 
     
     # required inputs

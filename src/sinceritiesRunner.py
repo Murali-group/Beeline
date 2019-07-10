@@ -41,7 +41,7 @@ def run(RunnerObj):
     '''
     Function to run SINCERITIES algorithm
     '''
-    inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1] + \
+    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
                         "/SINCERITIES/"
     # make output dirs if they do not exist:
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINCERITIES/"

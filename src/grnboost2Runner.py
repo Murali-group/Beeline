@@ -25,9 +25,8 @@ def run(RunnerObj):
     '''
     Function to run GRNBOOST2 algorithm
     '''
-    inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1] + \
+    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
                     "/GRNBOOST2/ExpressionData.csv"
-    
     # make output dirs if they do not exist:
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNBOOST2/"
     os.makedirs(outDir, exist_ok = True)

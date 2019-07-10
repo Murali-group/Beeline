@@ -46,7 +46,7 @@ def run(RunnerObj):
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCODE/"
     os.makedirs(outDir, exist_ok = True)
     
-    inputPath = "data/"+str(RunnerObj.inputDir).split("RNMethods/")[1]+"/SCODE/"
+    inputPath = "data"+str(RunnerObj.inputDir).split(str(Path.cwd()))[1]+"/SCODE/"
 
     z = str(RunnerObj.params['z'])
     nIter = str(RunnerObj.params['nIter'])
@@ -60,7 +60,8 @@ def run(RunnerObj):
     
 
     for idx in range(len(colNames)):
-        ExpressionData = pd.read_csv(str(RunnerObj.inputDir).split("RNMethods/")[1]+"/SCODE/"+\
+
+        ExpressionData = pd.read_csv(str(RunnerObj.inputDir).split(str(Path.cwd())+'/')[1]+"/SCODE/"+\
                                      "ExpressionData"+str(idx)+".csv",
                                      header = None, index_col = None, sep ='\t')
         nCells = str(ExpressionData.shape[1])

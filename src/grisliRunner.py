@@ -55,7 +55,7 @@ def run(RunnerObj):
 
     colNames = PTData.columns
     for idx in range(len(colNames)):
-        inputPath = "data/"+str(RunnerObj.inputDir).split("RNMethods/")[1]+"/GRISLI/"+str(idx)+"/"
+        inputPath = "data"+str(RunnerObj.inputDir).split(str(Path.cwd()))[1]+"/GRISLI/"+str(idx)+"/"
         os.makedirs(outDir+str(idx), exist_ok = True)
 
         outFile = "data/" +  str(outDir) +str(idx)+"/outFile.txt"

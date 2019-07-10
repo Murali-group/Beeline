@@ -66,7 +66,7 @@ def generateInputs(RunnerObj):
 
     parameters.write('Gene,MaxActivators,MaxRepressors,Threshold\n')
     for cols in BinExpression.columns:
-           parameters.write(cols+', '+str(countA[cols])+', '+str(countR[cols])+ ', 50\n')
+           parameters.write(cols+', '+str(min(2,countA[cols]))+', '+str(min(2,countA[cols]))+ ', 95\n')
     parameters.close()
 
     # generate Edges file
@@ -88,7 +88,7 @@ def run(RunnerObj):
     Function to run SCNS algorithm
     '''
 
-    inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1] + "/SCNS/"
+    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + "/SCNS/"
                     
     
     # make output dirs if they do not exist:

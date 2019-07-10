@@ -42,7 +42,7 @@ def run(RunnerObj):
     Function to run LEAP algorithm
     '''
     
-    inputPath = "data/" + str(RunnerObj.inputDir).split("RNMethods/")[1]
+    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1]
     
     maxLag = str(RunnerObj.params['maxLag'])
     
