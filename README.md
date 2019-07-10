@@ -7,7 +7,7 @@ Instructions
 - Setup docker to run docker without sudo using ` sudo usermod -aG docker $USER`, if you haven't already. See more details [here](https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo).
 - To create the docker containers for each of the algorithms run `. initialize.sh` (this step will take a while)
 - To compute ranked list of edges, run `python eval.py --config config-files/config.yaml`
-- To run the evaluation pipeline, run `python eval_summarizer.py --config config-files/config.yaml`
+- To compute areas under the ROC and PR curves using the BEELINE's evaluation pipeline, run `python BLEvalAggregator.py --config config-files/config.yaml --auc`. To display the complete list of evalutation options, run `python BLEvalAggregator.py --help`.
 
 
 If you use BEELINE in your research, please cite:
