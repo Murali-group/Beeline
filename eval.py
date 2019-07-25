@@ -23,6 +23,7 @@ from multiprocessing import Pool, cpu_count
 import concurrent.futures
 from typing import Dict, List
 from src.runner import Runner
+from src.monocleRunner import generatePseudoTime
 import os
 import pandas as pd
 
@@ -165,6 +166,7 @@ class ConfigParser(object):
         return OutputSettings(output_dir,
                              output_prefix)
 
+
 def get_parser() -> argparse.ArgumentParser:
     '''
     :return: an argparse ArgumentParser object for parsing command
@@ -178,6 +180,7 @@ def get_parser() -> argparse.ArgumentParser:
 
     return parser
 
+
 def parse_arguments():
     '''
     Initialize a parser and use it to parse the command line arguments
@@ -188,16 +191,26 @@ def parse_arguments():
 
     return opts
 
+
 def main():
     opts = parse_arguments()
     config_file = opts.config
 
-
     with open(config_file, 'r') as conf:
         evaluation = ConfigParser.parse(conf)
-    print(evaluation)
     print('Evaluation started')
 
+    # if the pseudotime file is not available, generate it
+    print(evaluation.input_settings.datadir)
+    print(evaluation.input_settings.datasets)
+    datadir = evaluation.input_settings.datadir
+    datasets = evaluation.input_settings.datasets
+    for dataset in datasets:
+        inputDir = datadir.joinpath(dataset['name'])
+        pseudotime_file = "%s/%s/%s" % (datadir, dataset['name'], dataset['cellData'])
+        if not os.path.isfile(pseudotime_file):
+            print("PseudoTime file %s missing. Generating using MONOCLE" % (pseudotime_file))
+            generatePseudoTime(inputDir, out_file=dataset['cellData'])
 
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].generateInputs()
@@ -212,4 +225,4 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+    main()
