@@ -31,6 +31,7 @@ from networkx.convert_matrix import from_pandas_adjacency
 # local imports
 from BLEval.computeAUC import PRROC
 from BLEval.parseTime import getTime
+from BLEval.computeCLR import CLR
 from BLEval.computeJaccard import Jaccard
 from BLEval.computeSpearman import Spearman
 from BLEval.computeNetMotifs import Motifs
@@ -195,7 +196,23 @@ class BLEval(object):
                 corrDF['Spearman Median'][algo[0]],corrDF['Spearman MAD'][algo[0]] = Spearman(self, algo[0])
             
         return pd.DataFrame(corrDF)
+    
+    
+    def computeCLR(self):
 
+        '''
+        Computes the infered ranked list using the 
+        CLR (Context Likelihood or Relatedness Network) algorithm 
+        for each algorithm-dataset combination.
+        
+        :returns:
+            None
+        '''
+        Eprec = {}
+        outDir = str(self.input_settings.datadir).replace("inputs", "outputs") + "/"
+        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
+            if algo[1]['should_run'] == True:
+                CLR(self, algo[0])
 
 
     def computeNetMotifs(self):

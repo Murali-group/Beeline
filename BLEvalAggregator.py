@@ -44,6 +44,11 @@ def get_parser() -> argparse.ArgumentParser:
       help="Compute median Spearman Corr. of predicted edges "
       "for each algorithm  for a given set of datasets generated "
       " from the same ground truth network.\n")
+    
+    parser.add_argument('-l', '--clr', action="store_true", default=False,
+      help="Compute the infered ranked list using the CLR network algorithm"
+      "for each algorithm for a given set of datasets generated "
+      " from the same ground truth network.\n")
 
     parser.add_argument('-t', '--time', action="store_true", default=False,
       help="Analyze time taken by each algorithm for a.\n")
@@ -107,6 +112,12 @@ def main():
 
         corrDict = evalSummarizer.computeSpearman()
         corrDict.to_csv(outDir + "Spearman.csv")
+        
+    # Compute inferred ranked edge list using CLR algorithm
+    if (opts.clr):
+        print('\n\nComputing inferred ranked edge list using CLR algorithm...')
+
+        evalSummarizer.computeCLR()
         
     # Compute median time taken
     if (opts.time):
