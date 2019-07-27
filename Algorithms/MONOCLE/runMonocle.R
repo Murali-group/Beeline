@@ -127,8 +127,9 @@ disp_table <- dispersionTable(CDS)
 #CDS <- setOrderingFilter(CDS, ordering_genes)
 }
 
+cat("Reducing to two dimensions using DDRTree\n")
+CDS <- reduceDimension(CDS, max_components = 2, reduction_method = "DDRTree", norm_method ="none")
 cat("Computing pseudotime.\n")
-CDS <- reduceDimension(CDS, norm_method ="none")
 CDS <- orderCells(CDS)
 
 saveRDS(CDS, file= paste0(arguments$outPrefix,'dataset.RDS'))
