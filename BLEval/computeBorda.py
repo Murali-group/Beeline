@@ -2,13 +2,15 @@ import os
 import math
 import numpy as np
 import pandas as pd
+import seaborn as sns
 from tqdm import tqdm
 from pathlib import Path
 import concurrent.futures
+import matplotlib.pyplot as plt
 from itertools import permutations
 from sklearn import preprocessing
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
-
+sns.set(rc={"lines.linewidth": 2}, palette  = "deep", style = "ticks")
 
 
 def Borda(evalObject, selectedAlgorithms=None, aggregationMethod="average"):
@@ -66,10 +68,10 @@ def Borda(evalObject, selectedAlgorithms=None, aggregationMethod="average"):
                 print("\nSkipping Borda computation for ", algorithmName, "on path", outDir)
                 continue
         rank_df = pd.pivot_table(pd.concat(edges), values='normEdgeWeight', index='edge', columns='algo')
-        rank_df['Borda'] = __normalize__(rank_df.rank(ascending=True, method=aggregationMethod).mean(axis=1).values)
-        rank_df['mBorda'] = __normalize__(rank_df.rank(ascending=False, method=aggregationMethod).apply(lambda x: 1.0/(x*x)).mean(axis=1).values)
-        rank_df['sBorda'] = __normalize__(rank_df[selectedAlgorithms].rank(ascending=True, method=aggregationMethod).mean(axis=1).values)
-        rank_df['smBorda'] = __normalize__(rank_df[selectedAlgorithms].rank(ascending=False, method=aggregationMethod).apply(lambda x: 1.0/(x*x)).mean(axis=1).values)
+        rank_df['BORDA'] = __normalize__(rank_df.rank(ascending=True, method=aggregationMethod).mean(axis=1).values)
+        rank_df['mBORDA'] = __normalize__(rank_df.rank(ascending=False, method=aggregationMethod).apply(lambda x: 1.0/(x*x)).mean(axis=1).values)
+        rank_df['sBORDA'] = __normalize__(rank_df[selectedAlgorithms].rank(ascending=True, method=aggregationMethod).mean(axis=1).values)
+        rank_df['smBORDA'] = __normalize__(rank_df[selectedAlgorithms].rank(ascending=False, method=aggregationMethod).apply(lambda x: 1.0/(x*x)).mean(axis=1).values)
         rank_df.to_csv("%s/%s-Borda.csv" % (outDir, dataset["name"]), index=False)
 
         refNetwork = refNetwork[["edge", "isReferenceEdge"]].set_index("edge")
@@ -87,14 +89,45 @@ def Borda(evalObject, selectedAlgorithms=None, aggregationMethod="average"):
 
         evaluationDFs.append(pd.DataFrame(evaluation_scores, columns=["dataset", "algorithm", "AUPRC", "AUROC"]))
 
+    evaluationDFs = pd.concat(evaluationDFs)
     outDir = str(evalObject.output_settings.base_dir) + \
              str(evalObject.input_settings.datadir).split("inputs")[1]
 
-    auprcDF = pd.pivot_table(pd.concat(evaluationDFs), values='AUPRC', index='algorithm', columns='dataset')
+    auprcDF = pd.pivot_table(evaluationDFs, values='AUPRC', index='algorithm', columns='dataset')
     auprcDF.to_csv("%s/%s-AUPRC-with-Borda.csv" % (outDir, dataset["name"].split("_")[0]), index=False)
 
-    aurocDF = pd.pivot_table(pd.concat(evaluationDFs), values='AUROC', index='algorithm', columns='dataset')
+    aurocDF = pd.pivot_table(evaluationDFs, values='AUROC', index='algorithm', columns='dataset')
     aurocDF.to_csv("%s/%s-AUROC-with-Borda.csv" % (outDir, dataset["name"].split("_")[0]), index=False)
+
+    plt.figure(figsize=(18,6))
+    sns.set_style("whitegrid")
+    sns.set_context("paper", font_scale=1.6, rc={"lines.linewidth": 1.5})
+    colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6',
+              '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3',
+              '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
+    g = sns.catplot(x="AUROC", y="algorithm", kind="box", orient="h", palette=sns.color_palette(colors),
+                    order=evaluationDFs.groupby('algorithm').AUROC.median().sort_values().index.tolist(),
+                    height=6, aspect=2.5, data=evaluationDFs)
+    g.set(xlabel='AUROCscore', ylabel='Algorithm', title=dataset["name"].split("_")[0], xlim=(0, 1))
+    sns.despine(top=False, right=False)
+    plt.savefig("%s/%s-AUROCplot-with-Borda.pdf" % (outDir, dataset["name"].split("_")[0]))
+    plt.savefig("%s/%s-AUROCplot-with-Borda.png" % (outDir, dataset["name"].split("_")[0]))
+    plt.clf()
+
+    plt.figure(figsize=(18,6))
+    sns.set_style("whitegrid")
+    sns.set_context("paper", font_scale=1.6, rc={"lines.linewidth": 1.5})
+    colors = ['#e6194b', '#3cb44b', '#ffe119', '#4363d8', '#f58231', '#911eb4', '#46f0f0', '#f032e6',
+              '#bcf60c', '#fabebe', '#008080', '#e6beff', '#9a6324', '#fffac8', '#800000', '#aaffc3',
+              '#808000', '#ffd8b1', '#000075', '#808080', '#ffffff', '#000000']
+    g = sns.catplot(x="AUPRC", y="algorithm", kind="box", orient="h", palette=sns.color_palette(colors),
+                    order=evaluationDFs.groupby('algorithm').AUROC.median().sort_values().index.tolist(),
+                    height=6, aspect=2.5, data=evaluationDFs)
+    g.set(xlabel='AUPRCscore', ylabel='Algorithm', title=dataset["name"], xlim=(0, 1))
+    sns.despine(top=False, right=False)
+    plt.savefig("%s/%s-AUPRCplot-with-Borda.pdf" % (outDir, dataset["name"].split("_")[0]))
+    plt.savefig("%s/%s-AUPRCplot-with-Borda.png" % (outDir, dataset["name"].split("_")[0]))
+    plt.clf()
 
 
 def __normalize__(arr):
