@@ -8,23 +8,23 @@ import concurrent.futures
 
 def CLR(evalObject, algorithmName):
     """
-    A function to compute the infered ranked list using the 
-    CLR (Context Likelihood or Relatedness Network) algorithm 
-    from the predicted ranked edges, i.e., the outputs of 
-    different datasets generated from the same reference 
-    network, for a given algorithm. 
+    A function to compute the infered ranked list using the
+    CLR (Context Likelihood or Relatedness Network) algorithm
+    from the predicted ranked edges, i.e., the outputs of
+    different datasets generated from the same reference
+    network, for a given algorithm.
 
     Parameters
     ----------
     evalObject: BLEval
       An object of class :class:`BLEval.BLEval`.
-      
+
     algorithmName: str
       Name of the algorithm.
-      
-      
+
+
     :returns:
-        - edgelist: Infered ranked list from CLR network
+        - None
     """
     for dataset in tqdm(evalObject.input_settings.datasets):
         outDir = str(evalObject.output_settings.base_dir) + \
@@ -39,38 +39,38 @@ def CLR(evalObject, algorithmName):
         except:
             print("\nSkipping CLR computation for ", algorithmName, "on path", outDir)
             continue
-            
+
         predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
         predDF.drop_duplicates(keep = 'first', inplace=True)
-        predDF.reset_index(drop = True,  inplace= True)        
+        predDF.reset_index(drop = True,  inplace= True)
         predDF.EdgeWeight = predDF.EdgeWeight.abs().round(6)
-        
+
         nodes = np.unique(predDF[['Gene1', 'Gene2']])
         mi_matrix = predDF.pivot(index='Gene1', columns='Gene2', values='EdgeWeight').reindex(columns=nodes, index=nodes, fill_value=0.0).values
         inferredDF = pd.DataFrame(__clr__(mi_matrix), columns=nodes, index=nodes)
-        
+
         inferredDF = inferredDF.rename_axis('Gene1').reset_index().melt('Gene1', value_name='EdgeWeight', var_name='Gene2')\
           .query('Gene1 != Gene2')\
           .reset_index(drop=True)
-        
+
         inferredDF.drop_duplicates(keep = 'first', inplace=True)
-        inferredDF.reset_index(drop = True,  inplace= True)        
+        inferredDF.reset_index(drop = True,  inplace= True)
         inferredDF.EdgeWeight = predDF.EdgeWeight.round(6)
         inferredDF.sort_values(by='EdgeWeight', ascending=False, inplace=False)
         inferredDF.to_csv(outDir + "/CLR-rankedEdges.csv", index=False)
-        
-        
+
+
 def __clr__(mi_matrix):
     """
-    A function to compute the infered network using the 
-    CLR (Context Likelihood or Relatedness Network) algorithm 
+    A function to compute the infered network using the
+    CLR (Context Likelihood or Relatedness Network) algorithm
     from a mutual information matrix.
 
     Parameters
     ----------
     mi_matrix: ndarray
       A 2D array storing mutual information between two nodes.
-      
+
     :returns:
         - res: Infered network (a weighted adjacency matrix)
     """
