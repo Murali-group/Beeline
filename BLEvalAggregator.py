@@ -65,6 +65,11 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('-b','--borda', action="store_true", default=False,
       help="Compute edge ranked list using the borda method.")
 
+    parser.add_argument('--borda-agg', action="store", default="average",
+      help="Method used to aggregate rank in borda method. Available options are {‘average’, ‘min’, ‘max’, ‘first’}, default ‘average’")
+
+    parser.add_argument('--borda-algo', action="append",
+      help="Algorithms used to compute rank in borda method. Default option runs Borda on all algorithm.")
 
     return parser
 
@@ -155,8 +160,7 @@ def main():
     # Compute edge ranked list using the borda method
     if (opts.borda):
         print('\n\nComputing edge ranked list using the borda method')
-
-        evalSummarizer.computeBorda()
+        evalSummarizer.computeBorda(selectedAlgorithms=opts.borda_algo, aggregationMethod=opts.borda_agg)
 
 
     print('\n\nEvaluation complete...\n')

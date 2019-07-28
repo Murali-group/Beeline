@@ -29,9 +29,10 @@ from networkx.convert_matrix import from_pandas_adjacency
 
 
 # local imports
+from BLEval.computeCLR import CLR
 from BLEval.computeAUC import PRROC
 from BLEval.parseTime import getTime
-from BLEval.computeCLR import CLR
+from BLEval.computeBorda import Borda
 from BLEval.computeJaccard import Jaccard
 from BLEval.computeSpearman import Spearman
 from BLEval.computeNetMotifs import Motifs
@@ -212,19 +213,40 @@ class BLEval(object):
             if algo[1]['should_run'] == True:
                 CLR(self, algo[0])
 
-    def computeBorda(self):
+    def computeBorda(self, selectedAlgorithms=None, aggregationMethod="average"):
 
         '''
         Computes edge ranked list using the Borda method for each dataset.
 
+        Parameters
+        ----------
+        selectedAlgorithms: [str]
+          List of algorithm names used to run borda method on selected
+          algorithms. If nothing is provided, the function runs borda on
+          all available algorithms.
+
+        aggregationMethod: str
+          Method used to aggregate rank in borda method. Available options are
+          {‘average’, ‘min’, ‘max’, ‘first’}, default ‘average’
+
         :returns:
             None
         '''
-        print("Borda")
-        # outDir = str(self.input_settings.datadir).replace("inputs", "outputs") + "/"
-        # for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-            # if algo[1]['should_run'] == True:
-                # CLR(self, algo[0])
+        feasibleAlgorithmOptions = [algorithmName for algorithmName, _ in self.input_settings.algorithms]
+        feasibleaggregationMethodOptions = ['average', 'min', 'max', 'first']
+
+        selectedAlgorithms = feasibleAlgorithmOptions if selectedAlgorithms is None else selectedAlgorithms
+
+        for a in selectedAlgorithms:
+            if a not in feasibleAlgorithmOptions:
+                print("\nERROR: No data available on algorithm %s. Please choose an algorithm from the following options: %s" % (a, feasibleAlgorithmOptions))
+                return
+
+        if aggregationMethod not in feasibleaggregationMethodOptions:
+                print("\nERROR: Please choose an aggregation method algorithm from following options: " % feasibleaggregationMethodOptions)
+                return
+
+        Borda(self, selectedAlgorithms, aggregationMethod)
 
     def computeNetMotifs(self):
 
