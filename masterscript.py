@@ -46,8 +46,11 @@ def main(config_map, **kwargs):
         # only write the current alg in this yaml file
         config_map['input_settings']['algorithms'] = [alg]
 
-        if alg['name'] == 'SCINGE':
-            run_scinge(alg, config_map, yaml_base, **kwargs)
+        if alg['name'] in ['SCINGE', 'GRISLI'] and kwargs['qsub'] is True:
+            if alg['name'] == 'SCINGE':
+                run_scinge(alg, config_map, yaml_base, **kwargs)
+            elif alg['name'] == 'GRISLI':
+                run_grisli(alg, config_map, yaml_base, **kwargs)
         else:
             yaml_file = "%s/%s.yaml" % (yaml_base, alg['name'])
             cmd_file = os.path.abspath("%s/%s.sh" % (yaml_base, alg['name']))
@@ -85,6 +88,40 @@ def write_yaml_file(yaml_file, config_map):
     print("\twriting to %s" % (yaml_file))
     with open(yaml_file, 'w') as out:
         yaml.dump(config_map, out, default_flow_style=False)
+
+
+def run_grisli(alg_settings, config_map, yaml_base, **kwargs):
+    alg = alg_settings
+    params = alg['params']
+    params2 = params.copy()
+    idx = 1
+    out_dir = "%s/grisli/" % (yaml_base)
+    os.makedirs(out_dir, exist_ok=True)
+    for a in params2['alphaMin']:
+        # this params variable is a pointer to the params inside of config_map
+        params['alphaMin'] = [a]
+
+        yaml_file = "%s/%d.yaml" % (out_dir, idx)
+        write_yaml_file(yaml_file, config_map)
+        # now make a qsub file and submit
+        qsub_file = os.path.abspath("%s/%d.qsub" % (out_dir, idx))
+        name = "grisli-%s-%d" % (config_map['input_settings']['datasets'][0]['name'], idx)
+        python = "/data/jeff-law/tools/anaconda3/bin/python"
+        command = "%s -u bench.py --config %s" % (python, os.path.abspath(yaml_file))
+        jobs = ["cd %s" % (os.getcwd()), command]
+        submit = not kwargs['test_run']
+        baobab_utils.writeQsubFile(
+            jobs, qsub_file, name=name, submit=submit,
+            nodes=1, ppn=1, walltime='100:00:00')
+        if kwargs['test_run']:
+            print(qsub_file)
+            sys.exit()
+
+        # wait for a bit after submitting the first job so it has time to submit the rest
+        if idx == 1:
+            print("waiting for 20 sec after submitting the first job to make sure inputs are setup")
+            time.sleep(20)
+        idx += 1
 
 
 def run_scinge(alg_settings, config_map, yaml_base, **kwargs):
@@ -146,6 +183,8 @@ def setup_opts():
                      help="Configuration file")
     group.add_option('','--alg', type='string', action="append", 
                      help="Name of algorithm to run. May specify multiple. TODO Default is whatever is set to true in the config file")
+    group.add_option('','--qsub', action='store_true', default=False,
+                     help="submit the jobs to a PBS queue with qsub. Currently only setup for GRISLI and SCINGE")
     group.add_option('','--test-run', action='store_true', default=False,
                      help="Just print out the first command generated")
     parser.add_option_group(group)

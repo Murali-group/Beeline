@@ -3,6 +3,8 @@ import subprocess
 import pandas as pd
 from pathlib import Path
 import numpy as np
+from src.utils import baobab_utils
+from src.scingeRunner import create_ml_lib_command
 
 
 params_order = ['L', 'R', 'alphaMin']
@@ -71,32 +73,55 @@ def run(RunnerObj):
     Function to run GRISLI algorithm
     '''
 
-    L = str(RunnerObj.params['L'])
-    R = str(RunnerObj.params['R'])
-    alphaMin = str(RunnerObj.params['alphaMin'])
+    params = RunnerObj.params
+    L = str(params['L'])
+    R = str(params['R'])
+    alphaMin = str(params['alphaMin'])
 
     # if this has already been run, and forced is set to false, then skip it
-    if RunnerObj.params.get('forced') is False and \
+    if params.get('forced') is False and \
             os.path.isfile(RunnerObj.final_ranked_edges):
         print("%s already exists. Set forced=True to overwrite" % (RunnerObj.final_ranked_edges))
         return 'already_exists'
 
     for idx in range(len(RunnerObj.colNames)):
-        inputPath = "data/"+str(RunnerObj.inputDir).split("RNMethods/")[1]+"/GRISLI/"+str(idx)+"/"
-        outDir = RunnerObj.outDir+str(idx)
+        inputPath = str(RunnerObj.inputDir).split("RNMethods/")[1]+"/GRISLI/"+str(idx)+"/"
+        outDir = RunnerObj.outDir+str(idx)+'/'
         # make output dirs if they do not exist:
         os.makedirs(outDir, exist_ok = True)
     
     #RunnerObj.outFile = "data/" + str(RunnerObj.outDir) + RunnerObj.params_str + '-outFile.txt'
-        outFile = "data/%s/%s-outFile.txt" % (outDir, RunnerObj.params_str)
+        outFile = "%s/%s-outFile.txt" % (outDir, RunnerObj.params_str)
         #print(outFile)
 
-        cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runGRISLI/data/ grisli:base /bin/sh -c \"time -v -o', "data/" + outDir + 'time.txt', './GRISLI ',inputPath, outFile, L, R, alphaMin,'\"'])
-    
+        if params.get('docker') is True:
+            inputPath = "data/"+inputPath
+            outFile = "data/"+outFile
+            cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runGRISLI/data/ grisli:base /bin/sh -c \"time -v -o', "data/" + outDir + 'time.txt', './GRISLI ',inputPath, outFile, L, R, alphaMin,'\"'])
+        else:
+            grisli_path = "Algorithms/GRISLI/runGRISLI/GRISLI"
+            # the time util doesn't have the -v or -o options on baobab
+            # so skip them for now
+            #grisli_command = "time -v -o %s %s" % (
+            #    ' '.join(os.path.abspath(p) for p in [outDir+'time.txt', grisli_path, inputPath, outFile]), ' '.join([L, R, alphaMin]))
+            grisli_command = "time %s %s %s %s " % (
+                    grisli_path, inputPath, outFile, 
+                    ' '.join([L, R, alphaMin]))
+            ml_lib_command = create_ml_lib_command()
+            # if this is on a cluser (e.g., baobab), write a qsub file and submit the job
+            if 'qsub' in params and params['qsub'] is True:
+                qsub_file = "%s/cmd.qsub" % (outDir)
+                name = "grisli-%s" % (RunnerObj.params_str)
+                jobs = [ml_lib_command, grisli_command]
+                # TODO make the nodes, ppn and walltime parameters(?)
+                baobab_utils.writeQsubFile(
+                    jobs, qsub_file, name=name, nodes=1, ppn=1, walltime='10:00:00')
+                cmdToRun = "qsub %s" % (qsub_file)
+            else:
+                cmdToRun = "%s\n%s" % (ml_lib_command, grisli_command)
         print(cmdToRun)
         #os.system(cmdToRun)
         subprocess.check_call(cmdToRun, shell=True)
-
 
 
 def parseOutput(RunnerObj):
