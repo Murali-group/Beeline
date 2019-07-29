@@ -207,11 +207,20 @@ class BLEval(object):
         for each algorithm-dataset combination.
 
         :returns:
-            None
+            - AUPRC: A dataframe containing AUPRC values for each algorithm-dataset combination
+            - AUROC: A dataframe containing AUROC values for each algorithm-dataset combination
         '''
+        scoresDFs = []
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
-                CLR(self, algo[0])
+                scoresDF = CLR(self, algo[0])
+                if len(scoresDF)>0:
+                    scoresDFs.append(scoresDF)
+
+        auprcDF = pd.pivot_table(pd.concat(scoresDFs), values='AUPRC', index='algorithm', columns='dataset')
+        aurocDF = pd.pivot_table(pd.concat(scoresDFs), values='AUROC', index='algorithm', columns='dataset')
+        return auprcDF, aurocDF
+
 
     def computeBorda(self, selectedAlgorithms=None, aggregationMethod="average"):
 

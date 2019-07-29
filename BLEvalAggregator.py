@@ -125,7 +125,9 @@ def main():
     if (opts.clr):
         print('\n\nComputing inferred ranked edge list using CLR algorithm...')
 
-        evalSummarizer.computeCLR()
+        AUPRC, AUROC = evalSummarizer.computeCLR()
+        AUPRC.to_csv(outDir + 'CLR-AUPRC.csv')
+        AUROC.to_csv(outDir + 'CLR-AUROC.csv')
 
     # Compute median time taken
     if (opts.time):
