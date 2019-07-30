@@ -71,6 +71,12 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('--borda-algo', action="append",
       help="Algorithms used to compute rank in borda method. Default option runs Borda on all algorithm.")
 
+    parser.add_argument('-i', '--indirect-auc', action="store_true", default=False,
+        help="Compute areas under k-Precision-Recall and k-ROC curves while accounting for indirect paths of length k as true edges.\n")
+
+    parser.add_argument('-k', '--indirect-auc-k', action="store", default=1,
+        help="A predicted edge (a,b) is considered a TP if there is a path of length less than equal to k between a and b. So a 1-PR curve is just the regular PR curve.\n")
+
     return parser
 
 def parse_arguments():
@@ -163,6 +169,13 @@ def main():
     if (opts.borda):
         print('\n\nComputing edge ranked list using the borda method')
         evalSummarizer.computeBorda(selectedAlgorithms=opts.borda_algo, aggregationMethod=opts.borda_agg)
+
+    # Computing areas under k-Precision-Recall and k-ROC curves while accounting for indirect paths of length k as TPs
+    if (opts.indirect_auc):
+        print('\n\nComputing areas under %s-Precision-Recall and %s-ROC curves' % (opts.indirect_auc_k, opts.indirect_auc_k))
+        AUPRC, AUROC = evalSummarizer.computekAUC(k=int(opts.indirect_auc_k))
+        AUPRC.to_csv(outDir + '%s-AUPRC.csv' % opts.indirect_auc_k)
+        AUROC.to_csv(outDir + '%s-AUROC.csv' % opts.indirect_auc_k)
 
 
     print('\n\nEvaluation complete...\n')

@@ -31,6 +31,7 @@ from networkx.convert_matrix import from_pandas_adjacency
 # local imports
 from BLEval.computeCLR import CLR
 from BLEval.computeAUC import PRROC
+from BLEval.computekAUC import kPRROC
 from BLEval.parseTime import getTime
 from BLEval.computeBorda import Borda
 from BLEval.computeJaccard import Jaccard
@@ -221,6 +222,26 @@ class BLEval(object):
         aurocDF = pd.pivot_table(pd.concat(scoresDFs), values='AUROC', index='algorithm', columns='dataset')
         return auprcDF, aurocDF
 
+    def computekAUC(self, k=1):
+        '''
+        Computes areas under the k-precision-recall (PR) and
+        and k-ROC plots for each algorithm-dataset combination.
+
+        Parameters
+        ----------
+        k: int
+            A predicted edge (a,b) is considered a TP if there is a
+            path of length less than equal to k between a and b.
+            So a 1-PR curve is just the regular PR curve.
+
+        :returns:
+            - AUPRC: A dataframe containing k-AUPRC values for each algorithm-dataset combination
+            - AUROC: A dataframe containing k-AUROC values for each algorithm-dataset combination
+        '''
+        kprrocDF = kPRROC(self, k=k)
+        auprcDF = pd.pivot_table(kprrocDF, values='AUPRC', index='algorithm', columns='dataset')
+        aurocDF = pd.pivot_table(kprrocDF, values='AUROC', index='algorithm', columns='dataset')
+        return auprcDF, aurocDF
 
     def computeBorda(self, selectedAlgorithms=None, aggregationMethod="average"):
 
