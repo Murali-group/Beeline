@@ -179,7 +179,7 @@ def main():
     # Computing areas under k-Precision-Recall and k-ROC curves while accounting for indirect paths of length k as TPs
     if (opts.indirect_auc):
         print('\n\nComputing areas under %s-Precision-Recall and %s-ROC curves' % (opts.indirect_auc_k, opts.indirect_auc_k))
-        AUPRC, AUROC = evalSummarizer.computekAUC(k=int(opts.indirect_auc_k), directed=not opts.undirected, userReferenceNetworkFile=str(opts.ref))
+        AUPRC, AUROC = evalSummarizer.computekAUC(k=int(opts.indirect_auc_k), directed=not opts.undirected, userReferenceNetworkFile=opts.ref)
         AUPRC.to_csv(outDir + '%s-AUPRC.csv' % opts.indirect_auc_k)
         AUROC.to_csv(outDir + '%s-AUROC.csv' % opts.indirect_auc_k)
 
