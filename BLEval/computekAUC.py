@@ -80,7 +80,7 @@ def kPRROC(evalObject, k = 1, directed = True, userReferenceNetworkFile = None):
     return pd.DataFrame(evaluation_scores, columns=["dataset", "algorithm", "AUPRC", "AUROC"])
 
 
-def computeScores(refNetwork, predEdgeDF, k=1):
+def computeScores(refNetwork, predEdgeDF, k=1, directed=True):
     '''
     Computes k-precision-recall and k-ROC curves
     using scikit-learn for a given set of predictions in the
