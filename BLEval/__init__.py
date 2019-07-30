@@ -105,7 +105,7 @@ class BLEval(object):
         self.output_settings = output_settings
 
 
-    def computeAUC(self, directed = True):
+    def computeAUC(self, directed = True, userReferenceNetworkFile=None):
 
         '''
         Computes areas under the precision-recall (PR) and
@@ -113,10 +113,17 @@ class BLEval(object):
 
         Parameters
         ----------
-        directedFlag: bool
+        directed: bool
             A flag to specifiy whether to treat predictions
             as directed edges (directed = True) or
             undirected edges (directed = False).
+
+        userReferenceNetworkFile: str
+            The path to a file that specifiy reference network to be used for
+            AUC calculations. Default is None. If the value is not None, the
+            function will overide the reference network with the given file.
+            The file should be comma separated and have following node column
+            names: `Gene1` and `Gene2`.
 
         :returns:
             - AUPRC: A dataframe containing AUPRC values for each algorithm-dataset combination
@@ -125,11 +132,19 @@ class BLEval(object):
         AUPRCDict = {}
         AUROCDict = {}
 
+        print("Predictions and connections in reference network will be treated as %s edges." % ('directed' if directed else 'undirected'))
+        if userReferenceNetworkFile is not None:
+            print("Using the file at path: %s as reference network.\n\n" % userReferenceNetworkFile)
+
+
+
         for dataset in tqdm(self.input_settings.datasets,
                             total = len(self.input_settings.datasets), unit = " Datasets"):
 
             AUPRC, AUROC = PRROC(dataset, self.input_settings,
-                                    directed = directed, selfEdges = False, plotFlag = False)
+                            directed = directed,
+                            userReferenceNetworkFile=userReferenceNetworkFile,
+                            selfEdges = False, plotFlag = False)
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
         AUPRC = pd.DataFrame(AUPRCDict)
@@ -222,7 +237,7 @@ class BLEval(object):
         aurocDF = pd.pivot_table(pd.concat(scoresDFs), values='AUROC', index='algorithm', columns='dataset')
         return auprcDF, aurocDF
 
-    def computekAUC(self, k=1):
+    def computekAUC(self, k=1, directed=True, userReferenceNetworkFile=None):
         '''
         Computes areas under the k-precision-recall (PR) and
         and k-ROC plots for each algorithm-dataset combination.
@@ -234,11 +249,28 @@ class BLEval(object):
             path of length less than equal to k between a and b.
             So a 1-PR curve is just the regular PR curve.
 
+        directed: bool
+            A flag to specifiy whether to treat predictions
+            as directed edges (directed = True) or
+            undirected edges (directed = False).
+
+        userReferenceNetworkFile: str
+            The path to a file that specifiy reference network to be used for
+            AUC calculations. Default is None. If the value is not None, the
+            function will overide the reference network with the given file.
+            The file should be comma separated and have following node column
+            names: `Gene1` and `Gene2`.
+
         :returns:
             - AUPRC: A dataframe containing k-AUPRC values for each algorithm-dataset combination
             - AUROC: A dataframe containing k-AUROC values for each algorithm-dataset combination
         '''
-        kprrocDF = kPRROC(self, k=k)
+
+        print("Predictions and connections in reference network will be treated as %s edges." % ('directed' if directed else 'undirected'))
+        if userReferenceNetworkFile is not None:
+            print("Using the file at path: %s as reference network.\n\n" % userReferenceNetworkFile)
+
+        kprrocDF = kPRROC(self, k=k, directed=directed, userReferenceNetworkFile=userReferenceNetworkFile)
         auprcDF = pd.pivot_table(kprrocDF, values='AUPRC', index='algorithm', columns='dataset')
         aurocDF = pd.pivot_table(kprrocDF, values='AUROC', index='algorithm', columns='dataset')
         return auprcDF, aurocDF

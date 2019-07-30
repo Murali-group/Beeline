@@ -77,6 +77,12 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('-k', '--indirect-auc-k', action="store", default=1,
         help="A predicted edge (a,b) is considered a TP if there is a path of length less than equal to k between a and b. So a 1-PR curve is just the regular PR curve.\n")
 
+    parser.add_argument('-R','--ref', default=None,
+        help="Reference network file containing list of true positive (TP) edges. This option can be used in conjuction with `--auc` or `--indirect-auc` option to compute AUPRC and AUROC scores with given network as reference. The file should be comma separated and have following node column names: `Gene1` and `Gene2`.\n")
+
+    parser.add_argument('-u','--undirected', action="store_true", default=False,
+      help="A flag to indicate whether to treat predictions as undirected edges (undirected = True) or directed edges (undirected = False) during AUC computations. This option can be used in conjuction with `--auc` or `--indirect-auc`. ")
+
     return parser
 
 def parse_arguments():
@@ -109,7 +115,7 @@ def main():
     if (opts.auc):
         print('\n\nComputing areas under ROC and PR curves...')
 
-        AUPRC, AUROC = evalSummarizer.computeAUC()
+        AUPRC, AUROC = evalSummarizer.computeAUC(userReferenceNetworkFile=opts.ref, directed=not opts.undirected)
         AUPRC.to_csv(outDir+'AUPRC.csv')
         AUROC.to_csv(outDir+'AUROC.csv')
 
@@ -173,7 +179,7 @@ def main():
     # Computing areas under k-Precision-Recall and k-ROC curves while accounting for indirect paths of length k as TPs
     if (opts.indirect_auc):
         print('\n\nComputing areas under %s-Precision-Recall and %s-ROC curves' % (opts.indirect_auc_k, opts.indirect_auc_k))
-        AUPRC, AUROC = evalSummarizer.computekAUC(k=int(opts.indirect_auc_k))
+        AUPRC, AUROC = evalSummarizer.computekAUC(k=int(opts.indirect_auc_k), directed=not opts.undirected, userReferenceNetworkFile=str(opts.ref))
         AUPRC.to_csv(outDir + '%s-AUPRC.csv' % opts.indirect_auc_k)
         AUROC.to_csv(outDir + '%s-AUROC.csv' % opts.indirect_auc_k)
 

@@ -9,37 +9,47 @@ from sklearn.metrics import precision_recall_curve, roc_curve, auc
 from itertools import product, permutations, combinations, combinations_with_replacement
 from tqdm import tqdm
 
-def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag = False):
+def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag = False, userReferenceNetworkFile=None):
     '''
     Computes areas under the precision-recall and ROC curves
     for a given dataset for each algorithm.
-    
+
     Parameters
     -----------
         directed: bool
             A flag to indicate whether to treat predictions
-            as directed edges (directed = True) or 
+            as directed edges (directed = True) or
             undirected edges (directed = False).
-            
+
         selfEdges: bool
             A flag to indicate whether to include
-            self-edges (selfEdges = True) or 
+            self-edges (selfEdges = True) or
             exclude self-edges (selfEdges = False) from evaluation.
-        
+
         plotFlag: bool
             A flag to indicate whether or not to save PR and ROC plots.
-            
+
+        userReferenceNetworkFile: str
+            The path to a file that specifiy reference network to be used for
+            AUC calculations. Default is None. If the value is not None, the
+            function will overide the reference network with the given file.
+            The file should be comma separated and have following node column
+            names: `Gene1` and `Gene2`.
+
     :returns:
             - AUPRC: A dictionary containing AUPRC values for each algorithm
             - AUROC: A dictionary containing AUROC values for each algorithm
     '''
-    
+
+    if userReferenceNetworkFile is None:
     # Read file for trueEdges
-    trueEdgesDF = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
-                                '/' +dataDict['trueEdges'],
-                                sep = ',', 
-                                header = 0, index_col = None)
-            
+        trueEdgesDF = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
+                                    '/' +dataDict['trueEdges'],
+                                    sep = ',',
+                                    header = 0, index_col = None)
+    else:
+        trueEdgesDF = pd.read_csv(str(userReferenceNetworkFile), sep = ',', header = 0, index_col = None)
+
     # Initialize data dictionaries
     precisionDict = {}
     recallDict = {}
@@ -47,12 +57,12 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
     TPRDict = {}
     AUPRC = {}
     AUROC = {}
-    
+
     # set-up outDir that stores output directory name
     outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
-    
+
     if directed:
-        for algo in tqdm(inputSettings.algorithms, 
+        for algo in tqdm(inputSettings.algorithms,
                          total = len(inputSettings.algorithms), unit = " Algorithms"):
 
             # check if the output rankedEdges file exists
@@ -70,7 +80,7 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
             PRName = '/PRplot'
             ROCName = '/ROCplot'
     else:
-        for algo in tqdm(inputSettings.algorithms, 
+        for algo in tqdm(inputSettings.algorithms,
                          total = len(inputSettings.algorithms), unit = " Algorithms"):
 
             # check if the output rankedEdges file exists
@@ -85,7 +95,7 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
             else:
                 print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                   ' does not exist. Skipping...')
-            
+
             PRName = '/uPRplot'
             ROCName = '/uROCplot'
     if (plotFlag):
@@ -94,11 +104,11 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
         for key in recallDict.keys():
             sns.lineplot(recallDict[key],precisionDict[key], ci=None)
             legendList.append(key + ' (AUPRC = ' + str("%.2f" % (AUPRC[key]))+')')
-        plt.xlim(0,1)    
+        plt.xlim(0,1)
         plt.ylim(0,1)
         plt.xlabel('Recall')
         plt.ylabel('Precision')
-        plt.legend(legendList) 
+        plt.legend(legendList)
         plt.savefig(outDir+PRName+'.pdf')
         plt.savefig(outDir+PRName+'.png')
         plt.clf()
@@ -111,50 +121,50 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
 
         plt.plot([0, 1], [0, 1], linewidth = 1.5, color = 'k', linestyle = '--')
 
-        plt.xlim(0,1)    
+        plt.xlim(0,1)
         plt.ylim(0,1)
         plt.xlabel('FPR')
         plt.ylabel('TPR')
-        plt.legend(legendList) 
+        plt.legend(legendList)
         plt.savefig(outDir+ROCName+'.pdf')
         plt.savefig(outDir+ROCName+'.png')
         plt.clf()
     return AUPRC, AUROC
 
-def computeScores(trueEdgesDF, predEdgeDF, 
+def computeScores(trueEdgesDF, predEdgeDF,
                   directed = True, selfEdges = True):
-    '''        
+    '''
     Computes precision-recall and ROC curves
-    using scikit-learn for a given set of predictions in the 
+    using scikit-learn for a given set of predictions in the
     form of a DataFrame.
-    
+
     Parameters
     -----------
         trueEdgesDF: DataFrame
             A pandas dataframe containing the true classes.
             The indices of this dataframe are all possible edges
-            in a graph formed using the genes in the given dataset. 
+            in a graph formed using the genes in the given dataset.
             This dataframe only has one column to indicate the class
             label of an edge. If an edge is present in the reference
             network, it gets a class label of 1, else 0.
-            
+
         predEdgeDF: DataFrame
-            A pandas dataframe containing the edge ranks from the prediced 
+            A pandas dataframe containing the edge ranks from the prediced
             network. The indices of this dataframe are all possible edges.
             This dataframe only has one column to indicate the edge weights
-            in the predicted network. Higher the weight, higher the 
+            in the predicted network. Higher the weight, higher the
             edge confidence.
-        
+
         directed: bool
             A flag to indicate whether to treat predictions
-            as directed edges (directed = True) or 
+            as directed edges (directed = True) or
             undirected edges (directed = False).
-            
+
         selfEdges: bool
             A flag to indicate whether to include
-            self-edges (selfEdges = True) or 
+            self-edges (selfEdges = True) or
             exclude self-edges (selfEdges = False) from evaluation.
-            
+
     :returns:
             - prec: A list of precision values (for PR plot)
             - recall: A list of precision values (for PR plot)
@@ -164,8 +174,8 @@ def computeScores(trueEdgesDF, predEdgeDF,
             - AUROC: Area under the ROC curve
     '''
 
-    if directed:        
-        # Initialize dictionaries with all 
+    if directed:
+        # Initialize dictionaries with all
         # possible edges
         if selfEdges:
             possibleEdges = list(product(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
@@ -173,10 +183,10 @@ def computeScores(trueEdgesDF, predEdgeDF,
         else:
             possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
                                          r = 2))
-        
+
         TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
         PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
-        
+
         # Compute TrueEdgeDict Dictionary
         # 1 if edge is present in the ground-truth
         # 0 if edge is not present in the ground-truth
@@ -184,7 +194,7 @@ def computeScores(trueEdgesDF, predEdgeDF,
             if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
                    (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
                     TrueEdgeDict[key] = 1
-                
+
         for key in PredEdgeDict.keys():
             subDF = predEdgeDF.loc[(predEdgeDF['Gene1'] == key.split('|')[0]) &
                                (predEdgeDF['Gene2'] == key.split('|')[1])]
@@ -193,8 +203,8 @@ def computeScores(trueEdgesDF, predEdgeDF,
 
     # if undirected
     else:
-        
-        # Initialize dictionaries with all 
+
+        # Initialize dictionaries with all
         # possible edges
         if selfEdges:
             possibleEdges = list(combinations_with_replacement(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
@@ -214,7 +224,7 @@ def computeScores(trueEdgesDF, predEdgeDF,
                            (trueEdgesDF['Gene2'] == key.split('|')[1])) |
                               ((trueEdgesDF['Gene2'] == key.split('|')[0]) &
                            (trueEdgesDF['Gene1'] == key.split('|')[1]))]) > 0:
-                TrueEdgeDict[key] = 1  
+                TrueEdgeDict[key] = 1
 
         # Compute PredEdgeDict Dictionary
         # from predEdgeDF
@@ -227,17 +237,17 @@ def computeScores(trueEdgesDF, predEdgeDF,
             if len(subDF)>0:
                 PredEdgeDict[key] = max(np.abs(subDF.EdgeWeight.values))
 
-                
-                
+
+
     # Combine into one dataframe
     # to pass it to sklearn
     outDF = pd.DataFrame([TrueEdgeDict,PredEdgeDict]).T
     outDF.columns = ['TrueEdges','PredEdges']
-    
+
     fpr, tpr, thresholds = roc_curve(y_true=outDF['TrueEdges'],
                                      y_score=outDF['PredEdges'], pos_label=1)
 
     prec, recall, thresholds = precision_recall_curve(y_true=outDF['TrueEdges'],
                                                       probas_pred=outDF['PredEdges'], pos_label=1)
-    
+
     return prec, recall, fpr, tpr, auc(recall, prec), auc(fpr, tpr)
