@@ -70,6 +70,7 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False,
             print('ERROR: Please specify the path to a file containing a list of transcription factors in order to ignore edges from the transcription factors.')
         else:
             tfsDF = pd.read_csv(str(tfsFile), index_col = None, names=['Gene1'])
+            # Only include edges in the reference network that start with a TF specified in `tfsFile` file
             trueEdgesDF = pd.merge(trueEdgesDF, tfsDF, on='Gene1', how='inner')
 
     # Initialize data dictionaries
