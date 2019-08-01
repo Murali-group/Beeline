@@ -81,7 +81,15 @@ def get_parser() -> argparse.ArgumentParser:
         help="Reference network file containing list of true positive (TP) edges. This option can be used in conjuction with `--auc` or `--indirect-auc` option to compute AUPRC and AUROC scores with given network as reference. The file should be comma separated and have following node column names: `Gene1` and `Gene2`.\n")
 
     parser.add_argument('-u','--undirected', action="store_true", default=False,
-      help="A flag to indicate whether to treat predictions as undirected edges (undirected = True) or directed edges (undirected = False) during AUC computations. This option can be used in conjuction with `--auc` or `--indirect-auc`. ")
+      help="A flag to indicate whether to treat predictions as undirected edges (undirected = True) or directed edges (undirected = False) during AUC computations. This option can be used in conjuction with `--auc` or `--indirect-auc`.\n")
+
+
+    parser.add_argument('--tfs', action="store", default=None,
+      help="Path to a file containing list of transcription factors.\n")
+
+    parser.add_argument('--ignore-edges-from-tfs', action="store_true", default=False,
+      help="A flag to indicate whether to ignore edges from transcription factors or not. If ignore_edges_from_tfs=True, edges from transcription factors in the reference network will be ignored and considered a negative. This option requires the user to provide a list of transcription factors using the `--tfs` option.\n")
+
 
     return parser
 
@@ -115,7 +123,11 @@ def main():
     if (opts.auc):
         print('\n\nComputing areas under ROC and PR curves...')
 
-        AUPRC, AUROC = evalSummarizer.computeAUC(userReferenceNetworkFile=opts.ref, directed=not opts.undirected)
+        AUPRC, AUROC = evalSummarizer.computeAUC(
+                            userReferenceNetworkFile=opts.ref,
+                            directed=not opts.undirected,
+                            tfsFile=opts.tfs,
+                            ignoreEdgesFromTFs=opts.ignore_edges_from_tfs)
         AUPRC.to_csv(outDir+'AUPRC.csv')
         AUROC.to_csv(outDir+'AUROC.csv')
 
