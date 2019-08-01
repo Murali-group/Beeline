@@ -105,7 +105,7 @@ class BLEval(object):
         self.output_settings = output_settings
 
 
-    def computeAUC(self, directed = True, userReferenceNetworkFile=None, tfsFile=None, ignoreEdgesFromTFs=False):
+    def computeAUC(self, directed = True, userReferenceNetworkFile=None, tfsFile=None, onlyEdgesFromTFs=False):
 
         '''
         Computes areas under the precision-recall (PR) and
@@ -129,13 +129,13 @@ class BLEval(object):
             The path to a file that specifiy a list of transcription factors in
             the reference network. Default is None.
 
-        ignoreEdgesFromTFs: bool
-            A flag to indicate whether to ignore edges from transcription
-            factors or not. If ignoreEdgesFromTFs=True, the function will try to
+        onlyEdgesFromTFs: bool
+            A flag to indicate whether to ignore edges from non-transcription
+            factors or not. If onlyEdgesFromTFs=True, the function will try to
             fetch list of transcription factors from the file specified by
-            `tfsFile` attribute and then edges from transcription factors in the
-            reference network will be ignored and considered a negative.
-            Default is False.
+            `tfsFile` attribute and then edges from nodes other than transcription
+            factors in the reference network will be ignored and considered a
+            negative. Default is False.
 
         :returns:
             - AUPRC: A dataframe containing AUPRC values for each algorithm-dataset combination
@@ -146,8 +146,8 @@ class BLEval(object):
 
         print("Predictions and connections in reference network will be treated as %s edges." % ('directed' if directed else 'undirected'))
 
-        if ignoreEdgesFromTFs and tfsFile is not None:
-            print("Ignoring the edges from transcription factors specified in the file at path: %s.\n" % tfsFile)
+        if onlyEdgesFromTFs and tfsFile is not None:
+            print("Ignoring the edges from nodes other than transcription factors specified in the file at path: %s.\n" % tfsFile)
 
         if userReferenceNetworkFile is not None:
             print("Using the file at path: %s as reference network.\n\n" % userReferenceNetworkFile)
@@ -160,7 +160,7 @@ class BLEval(object):
                             userReferenceNetworkFile=userReferenceNetworkFile,
                             selfEdges = False, plotFlag = False,
                             tfsFile=tfsFile,
-                            ignoreEdgesFromTFs=ignoreEdgesFromTFs)
+                            onlyEdgesFromTFs=onlyEdgesFromTFs)
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
         AUPRC = pd.DataFrame(AUPRCDict)

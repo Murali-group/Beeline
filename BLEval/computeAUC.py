@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 def PRROC(dataDict, inputSettings, directed = True, selfEdges = False,
             plotFlag = False, userReferenceNetworkFile=None,
-            tfsFile=None, ignoreEdgesFromTFs=False):
+            tfsFile=None, onlyEdgesFromTFs=False):
     '''
     Computes areas under the precision-recall and ROC curves
     for a given dataset for each algorithm.
@@ -42,13 +42,13 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False,
             The path to a file that specifiy a list of transcription factors in
             the reference network. Default is None.
 
-        ignoreEdgesFromTFs: bool
-            A flag to indicate whether to ignore edges from transcription
-            factors or not. If ignoreEdgesFromTFs=True, the function will try to
+        onlyEdgesFromTFs: bool
+            A flag to indicate whether to ignore edges from non-transcription
+            factors or not. If onlyEdgesFromTFs=True, the function will try to
             fetch list of transcription factors from the file specified by
-            `tfsFile` attribute and then edges from transcription factors in the
-            reference network will be ignored and considered a negative.
-            Default is False.
+            `tfsFile` attribute and then edges from nodes other than transcription
+            factors in the reference network will be ignored and considered a
+            negative. Default is False.
 
     :returns:
             - AUPRC: A dictionary containing AUPRC values for each algorithm
@@ -65,7 +65,7 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False,
         trueEdgesDF = pd.read_csv(str(userReferenceNetworkFile), sep = ',', header = 0, index_col = None)
 
 
-    if ignoreEdgesFromTFs:
+    if onlyEdgesFromTFs:
         if tfsFile is None:
             print('ERROR: Please specify the path to a file containing a list of transcription factors in order to ignore edges from the transcription factors.')
         else:

@@ -87,8 +87,8 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('--tfs', action="store", default=None,
       help="Path to a file containing list of transcription factors.\n")
 
-    parser.add_argument('--ignore-edges-from-tfs', action="store_true", default=False,
-      help="A flag to indicate whether to ignore edges from transcription factors or not. If ignore_edges_from_tfs=True, edges from transcription factors in the reference network will be ignored and considered a negative. This option requires the user to provide a list of transcription factors using the `--tfs` option.\n")
+    parser.add_argument('--only-edges-from-tfs', action="store_true", default=False,
+      help="A flag to indicate whether to ignore edges from non-transcription factors or not. If only_edges_from_tfs=True, edges from nodes other than transcription factors in the reference network will be ignored and considered a negative. This option requires the user to provide a list of transcription factors using the `--tfs` option.\n")
 
 
     return parser
@@ -127,7 +127,7 @@ def main():
                             userReferenceNetworkFile=opts.ref,
                             directed=not opts.undirected,
                             tfsFile=opts.tfs,
-                            ignoreEdgesFromTFs=opts.ignore_edges_from_tfs)
+                            onlyEdgesFromTFs=opts.only_edges_from_tfs)
         AUPRC.to_csv(outDir+'AUPRC.csv')
         AUROC.to_csv(outDir+'AUROC.csv')
 
