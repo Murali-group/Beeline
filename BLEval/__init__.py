@@ -279,7 +279,7 @@ class ConfigParser(object):
     used in the BLEval.
     '''
     @staticmethod
-    def parse(config_file_handle) -> BLEval:
+    def parse(config_map) -> BLEval:
         '''
         A method for parsing the input .yaml file.
         
@@ -292,7 +292,6 @@ class ConfigParser(object):
             An object of class :class:`BLEval.BLEval`.
 
         '''
-        config_map = yaml.load(config_file_handle)
         return BLEval(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),

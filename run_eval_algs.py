@@ -122,8 +122,7 @@ class ConfigParser(object):
     of parameters for the pipeline
     '''
     @staticmethod
-    def parse(config_file_handle) -> Evaluation:
-        config_map = yaml.load(config_file_handle)
+    def parse(config_map) -> Evaluation:
         return Evaluation(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),
@@ -165,6 +164,7 @@ class ConfigParser(object):
         return OutputSettings(output_dir,
                              output_prefix)
 
+
 def get_parser() -> argparse.ArgumentParser:
     '''
     :return: an argparse ArgumentParser object for parsing command
@@ -178,6 +178,7 @@ def get_parser() -> argparse.ArgumentParser:
 
     return parser
 
+
 def parse_arguments():
     '''
     Initialize a parser and use it to parse the command line arguments
@@ -188,28 +189,30 @@ def parse_arguments():
 
     return opts
 
-def main():
-    opts = parse_arguments()
-    config_file = opts.config
 
+def main(config_map):
 
-    with open(config_file, 'r') as conf:
-        evaluation = ConfigParser.parse(conf)
-    print(evaluation)
+    evaluation = ConfigParser.parse(config_map)
     print('Evaluation started')
-
 
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].generateInputs()
 
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].run()
-
-    for idx in range(len(evaluation.runners)):
+        # move parse outputs here since real datasets can take a long time
         evaluation.runners[idx].parseOutput()
+
+    #for idx in range(len(evaluation.runners)):
+        #evaluation.runners[idx].parseOutput()
 
     print('Evaluation complete')
 
 
 if __name__ == '__main__':
-  main()
+    opts = parse_arguments()
+    config_file = opts.config
+    with open(config_file, 'r') as conf:
+        config_map = yaml.load(conf)
+
+    main(config_map)

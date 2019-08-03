@@ -20,6 +20,7 @@ from networkx.convert_matrix import from_pandas_adjacency
 # local imports
 import BLEval as ev 
 
+
 def get_parser() -> argparse.ArgumentParser:
     '''
     :return: an argparse ArgumentParser object for parsing command
@@ -60,6 +61,7 @@ def get_parser() -> argparse.ArgumentParser:
 
     return parser
 
+
 def parse_arguments():
     '''
     Initialize a parser and use it to parse the command line arguments
@@ -70,14 +72,9 @@ def parse_arguments():
     
     return opts
 
-def main():
-    opts = parse_arguments()
-    config_file = opts.config
 
-    evalConfig = None
-
-    with open(config_file, 'r') as conf:
-        evalConfig = ev.ConfigParser.parse(conf)
+def main(config_map, opts):
+    evalConfig = ev.ConfigParser.parse(config_map)
         
     print('\nPost-run evaluation started...')
     evalSummarizer = ev.BLEval(evalConfig.input_settings, evalConfig.output_settings)
@@ -143,4 +140,9 @@ def main():
 
 
 if __name__ == '__main__':
-  main()
+    opts = parse_arguments()
+    config_file = opts.config
+    with open(config_file, 'r') as conf:
+        config_map = yaml.load(config_file_handle)
+
+    main(config_map, opts)
