@@ -173,23 +173,24 @@ def computeScores(trueEdgesDF, predEdgeDF,
         else:
             possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
                                          r = 2))
-        
+
         TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
         PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
-        
+
+        trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
+        trueEdges = trueEdges[trueEdges.isin(TrueEdgeDict)]
+        predEdgeDF['Edges'] = predEdgeDF['Gene1'] + "|" + predEdgeDF['Gene2']
+        # limit the predicted edges to the genes that are in the ground truth
+        predEdgeDF = predEdgeDF[predEdgeDF['Edges'].isin(TrueEdgeDict)]
+
         # Compute TrueEdgeDict Dictionary
         # 1 if edge is present in the ground-truth
         # 0 if edge is not present in the ground-truth
-        for key in TrueEdgeDict.keys():
-            if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                   (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
-                    TrueEdgeDict[key] = 1
-                
-        for key in PredEdgeDict.keys():
-            subDF = predEdgeDF.loc[(predEdgeDF['Gene1'] == key.split('|')[0]) &
-                               (predEdgeDF['Gene2'] == key.split('|')[1])]
-            if len(subDF)>0:
-                PredEdgeDict[key] = np.abs(subDF.EdgeWeight.values[0])
+        for edge in trueEdges:
+            TrueEdgeDict[edge] = 1
+
+        for edge, score in zip(predEdgeDF['Edges'], predEdgeDF['EdgeWeight']):
+            PredEdgeDict[edge] = np.abs(score)
 
     # if undirected
     else:
@@ -208,7 +209,6 @@ def computeScores(trueEdgesDF, predEdgeDF,
         # Compute TrueEdgeDict Dictionary
         # 1 if edge is present in the ground-truth
         # 0 if edge is not present in the ground-truth
-
         for key in TrueEdgeDict.keys():
             if len(trueEdgesDF.loc[((trueEdgesDF['Gene1'] == key.split('|')[0]) &
                            (trueEdgesDF['Gene2'] == key.split('|')[1])) |

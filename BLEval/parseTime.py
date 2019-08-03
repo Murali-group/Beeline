@@ -136,7 +136,7 @@ def parse_time_files(path):
         time_val = -1
         
     # If file is present but the file is empty, return -1.
-    except ValueError:
+    except (ValueError, IndexError):
         print("Algorithm running failed, setting time value to -1\n")
         time_val = -1
 

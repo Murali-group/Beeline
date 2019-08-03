@@ -35,28 +35,17 @@ def Jaccard(evalObject, algorithmName):
     """
 
     rankDict = {}
-    sim_names = []
     for dataset in tqdm(evalObject.input_settings.datasets):
         trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
                       dataset['name'] + '/' +\
                       dataset['trueEdges'], sep = ',',
                       header = 0, index_col = None)
-
-        possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
-                                     r = 2))
-
-        TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
-        PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
-
-        # Compute TrueEdgeDict Dictionary
-        # 1 if edge is present in the ground-truth
-        # 0 if edge is not present in the ground-truth
-        numEdges = 0
-        for key in TrueEdgeDict.keys():
-            if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                   (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
-                    TrueEdgeDict[key] = 1
-                    numEdges += 1
+        trueEdgesDF = trueEdgesDF.loc[(trueEdgesDF['Gene1'] != trueEdgesDF['Gene2'])]
+        trueEdgesDF.drop_duplicates(keep = 'first', inplace=True)
+        trueEdgesDF.reset_index(drop=True, inplace=True)
+        trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
+        trueEdges = set(trueEdges.values)
+        numEdges = len(trueEdges)
 
         outDir = str(evalObject.output_settings.base_dir) + \
                  str(evalObject.input_settings.datadir).split("inputs")[1] + \
@@ -73,8 +62,8 @@ def Jaccard(evalObject, algorithmName):
             continue
 
         predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
-        predDF.drop_duplicates(keep = 'first', inplace=True)
-        predDF.reset_index(drop = True,  inplace= True)
+        predDF.drop_duplicates(keep='first', inplace=True)
+        predDF.reset_index(drop=True, inplace=True)
         # check if ranked edges list is empty
         # if so, it is just set to an empty set
 
@@ -102,7 +91,7 @@ def Jaccard(evalObject, algorithmName):
             rankDict[dataset["name"]] = set([])
 
     Jdf = computePairwiseJacc(rankDict)
-    df = Jdf.where(np.triu(np.ones(Jdf.shape),  k = 1).astype(np.bool))
+    df = Jdf.where(np.triu(np.ones(Jdf.shape), k=1).astype(np.bool))
     df = df.stack().reset_index()
     df.columns = ['Row','Column','Value']
     return(df.Value.median(),df.Value.mad())
