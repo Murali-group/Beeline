@@ -5,3 +5,9 @@ src/.*
 *.ipynb_checkpoints*
 .DS_Store
 .idea/
+
+# emacs temporary file
+*~
+
+# vim temporary files
+.*.sw*
