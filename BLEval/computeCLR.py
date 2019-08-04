@@ -5,6 +5,8 @@ import pandas as pd
 from tqdm import tqdm
 from pathlib import Path
 import concurrent.futures
+from rpy2.robjects import FloatVector
+from rpy2.robjects.packages import importr
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
 
 def CLR(evalObject, algorithmName):
@@ -78,14 +80,18 @@ def CLR(evalObject, algorithmName):
             y_true = inferredDF['isReferenceEdge'].values
             y_scores = inferredDF.EdgeWeight.abs().values
 
+            prroc = importr('PRROC')
+            prCurve = prroc.pr_curve(scores_class0 = FloatVector(list(y_scores)),
+                      weights_class0 = FloatVector(list(y_true)))
+
             prec, recall, thresholds = precision_recall_curve(y_true=y_true, probas_pred=y_scores, pos_label=1)
             fpr, tpr, thresholds = roc_curve(y_true=y_true, y_score=y_scores, pos_label=1)
 
-            evaluation_scores.append([dataset["name"], algorithmName, auc(recall, prec), auc(fpr, tpr)])
+            evaluation_scores.append([dataset["name"], algorithmName, prCurve[2][0], auc(fpr, tpr)])
         except:
             print("\nSkipping CLR computation for ", algorithmName, "on path", outDir)
             continue
-            
+
     return pd.DataFrame(evaluation_scores, columns=["dataset", "algorithm", "AUPRC", "AUROC"])
 
 

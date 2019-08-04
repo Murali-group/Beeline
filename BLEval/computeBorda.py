@@ -9,6 +9,8 @@ import concurrent.futures
 import matplotlib.pyplot as plt
 from itertools import permutations
 from sklearn import preprocessing
+from rpy2.robjects import FloatVector
+from rpy2.robjects.packages import importr
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
 sns.set(rc={"lines.linewidth": 2}, palette  = "deep", style = "ticks")
 
@@ -85,7 +87,12 @@ def Borda(evalObject, selectedAlgorithms=None, aggregationMethod="average"):
 
             prec, recall, thresholds = precision_recall_curve(y_true=y_true, probas_pred=y_scores, pos_label=1)
             fpr, tpr, thresholds = roc_curve(y_true=y_true, y_score=y_scores, pos_label=1)
-            evaluation_scores.append([dataset["name"], algo, auc(recall, prec), auc(fpr, tpr)])
+
+            prroc = importr('PRROC')
+            prCurve = prroc.pr_curve(scores_class0 = FloatVector(list(y_scores)),
+                      weights_class0 = FloatVector(list(y_true)))
+
+            evaluation_scores.append([dataset["name"], algo, prCurve[2][0], auc(fpr, tpr)])
 
         evaluationDFs.append(pd.DataFrame(evaluation_scores, columns=["dataset", "algorithm", "AUPRC", "AUROC"]))
 
