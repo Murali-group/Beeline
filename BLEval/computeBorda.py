@@ -74,7 +74,7 @@ def Borda(evalObject, selectedAlgorithms=None, aggregationMethod="average"):
         rank_df['mBORDA'] = __normalize__(rank_df.rank(ascending=False, method=aggregationMethod).apply(lambda x: 1.0/(x*x)).mean(axis=1).values)
         rank_df['sBORDA'] = __normalize__(rank_df[selectedAlgorithms].rank(ascending=True, method=aggregationMethod).mean(axis=1).values)
         rank_df['smBORDA'] = __normalize__(rank_df[selectedAlgorithms].rank(ascending=False, method=aggregationMethod).apply(lambda x: 1.0/(x*x)).mean(axis=1).values)
-        rank_df.to_csv("%s/%s-Borda.csv" % (outDir, dataset["name"]), index=False)
+        rank_df.to_csv("%s/%s-Borda.csv" % (outDir, dataset["name"]), index=True)
 
         refNetwork = refNetwork[["edge", "isReferenceEdge"]].set_index("edge")
         rank_df = pd.merge(rank_df, refNetwork, how='left', on='edge').fillna(0)
@@ -101,10 +101,10 @@ def Borda(evalObject, selectedAlgorithms=None, aggregationMethod="average"):
              str(evalObject.input_settings.datadir).split("inputs")[1]
 
     auprcDF = pd.pivot_table(evaluationDFs, values='AUPRC', index='algorithm', columns='dataset')
-    auprcDF.to_csv("%s/%s-AUPRC-with-Borda.csv" % (outDir, dataset["name"].split("_")[0]), index=False)
+    auprcDF.to_csv("%s/%s-AUPRC-with-Borda.csv" % (outDir, dataset["name"].split("_")[0]), index=True)
 
     aurocDF = pd.pivot_table(evaluationDFs, values='AUROC', index='algorithm', columns='dataset')
-    aurocDF.to_csv("%s/%s-AUROC-with-Borda.csv" % (outDir, dataset["name"].split("_")[0]), index=False)
+    aurocDF.to_csv("%s/%s-AUROC-with-Borda.csv" % (outDir, dataset["name"].split("_")[0]), index=True)
 
     plt.figure(figsize=(18,6))
     sns.set_style("whitegrid")
