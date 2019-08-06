@@ -3,7 +3,7 @@
 # Quick script to select the most variable genes
 # and subset the ExpressionData.csv and refNetwork.csv
 
-import os
+import os, sys
 import yaml
 import argparse
 import pandas as pd
@@ -17,7 +17,7 @@ def main(config_map, **kwargs):
     algs = input_settings['algorithms']
     #print(algs)
     # first setup the algorithms to run
-    print(kwargs['alg'])
+    #print(kwargs['alg'])
     if kwargs['alg'] is not None:
         # make the alg names lower so capitalization won't make a difference
         kwargs['alg'] = [a.lower() for a in kwargs['alg']]
@@ -40,7 +40,7 @@ def main(config_map, **kwargs):
 
     if kwargs['most_variable_genes'] is True:
         for dataset in datasets:
-            new_config_file = subset_most_var_genes(input_dir, dataset, yaml_base) 
+            new_config_file = subset_most_var_genes(input_dir, dataset, yaml_base, **kwargs) 
             # only write the current dataset in this yaml file
             config_map['input_settings']['datasets'] = [dataset]
             write_yaml_file(new_config_file, config_map) 
@@ -63,7 +63,7 @@ def main(config_map, **kwargs):
             run_eval_algs.main(config_map)
 
 
-def subset_most_var_genes(input_dir, dataset, yaml_base):
+def subset_most_var_genes(input_dir, dataset, yaml_base, **kwargs):
     """
     Returns the path to a new yaml file with the subsetting expression matrix
     """
@@ -74,7 +74,15 @@ def subset_most_var_genes(input_dir, dataset, yaml_base):
     expr_file = "%s/%s" % (dataset_dir, dataset['exprData'])
     gene_ordering_file = "%s/%s" % (dataset_dir, kwargs['gene_order_file'])
 
-    postfix = kwargs['pval_cutoff'] if kwargs['pval_cutoff'] is not None else kwargs['num_genes']
+    #postfix = kwargs['pval_cutoff'] if kwargs['pval_cutoff'] is not None else kwargs['num_genes']
+    postfix = ""
+    postfix += '_'+str(kwargs['pval_cutoff']) if kwargs['pval_cutoff'] is not None else ""
+    postfix += "_BF" if kwargs['bf_corr'] else ""
+    postfix += '_'+str(kwargs['num_genes']) if kwargs['num_genes'] is not None else ""
+    postfix += "_varsort" if kwargs['sort_by_variance'] else ""
+    postfix += "_tfs" if kwargs['include_tfs'] else ""
+    # remove the leading underscore
+    postfix = postfix[1:]
     #new_expr_file = "%s/%s" % (dataset_dir, dataset['exprData'].replace('.csv', '-%s.csv' % (postfix)))
     # put it in a new directory so the outputs don't overwrite each other
     dataset['name'] += "/genecutoff-%s" % (postfix)
@@ -89,11 +97,20 @@ def subset_most_var_genes(input_dir, dataset, yaml_base):
         return new_config_file
 
     print("\treading %s" % (expr_file))
-    expr_df = pd.read_csv(expr_file, header= 0, index_col=0)
+    expr_df = pd.read_csv(expr_file, header=0, index_col=0)
     print("\treading %s" % (gene_ordering_file))
-    gene_df = pd.read_csv(gene_ordering_file, header= 0, index_col=0)
+    gene_df = pd.read_csv(gene_ordering_file, header=0, index_col=0)
     #print(expr_df.head())
     #print(gene_df.head())
+    if kwargs['include_tfs'] is not None:
+        print("\treading %s" % (kwargs['include_tfs']))
+        tfs_df = pd.read_csv(kwargs['include_tfs'], header=0)
+        tfs = tfs_df[tfs_df.columns[0]]
+        num_total_tfs = len(tfs)
+        # limit the tfs to those present in the expression file
+        tfs = tfs[tfs.isin(expr_df.index)]
+        print("\t\t%d/%d TFs present in ExpressionData" % (
+            len(tfs), num_total_tfs))
 
     # make sure the variable genes are in the Expression Data
     expr_variable_genes = set(gene_df.index.values) & set(expr_df.index.values)
@@ -103,28 +120,69 @@ def subset_most_var_genes(input_dir, dataset, yaml_base):
         print(extra_genes)
         gene_df = gene_df.loc[expr_variable_genes]
     # limit the Expression matrix to the variable genes
+    pval_col = gene_df.columns[0]
+    # make sure its sorted by the pvalue column
+    gene_df.sort_values(by=pval_col, inplace=True)
+    variable_genes = gene_df.index.values
+
+    # now figure out the genes to subset
     if kwargs['pval_cutoff']:
-        pval_col = gene_df.columns[0]
-        variable_genes = gene_df[gene_df[pval_col] < kwargs['pval_cutoff']].index.values
-    elif kwargs['num_genes']:
-        variable_genes = gene_df.iloc[:kwargs['num_genes']].index.values
+        pval_cutoff = kwargs['pval_cutoff']
+        if kwargs['bf_corr']:
+            # divide the pvalue by the # of genes to get the BF-corrected pvalue cutoff
+            pval_cutoff = kwargs['pval_cutoff'] / float(len(gene_df.index))
+            print("Using the BF-corrected p-value cutoff of %s (%s / %s genes)" % (
+                pval_cutoff, kwargs['pval_cutoff'], len(gene_df.index)))
+
+        variable_genes = gene_df[gene_df[pval_col] < pval_cutoff].index.values
+        print("\t%d genes pass pval_cutoff of %s" % (len(variable_genes), pval_cutoff))
+    if kwargs['num_genes'] is not None:
+        # if the pval_cutoff was used, limit the gene_df to those genes first
+        gene_df = gene_df[gene_df.index.isin(variable_genes)]
+        if kwargs['num_genes'] > len(gene_df):
+            pass
+        else:
+            # they should already be ordered by p-value, so just take them
+            if kwargs['sort_by_variance']:
+                print("\tsorting by variance")
+                if len(gene_df.columns) < 2:
+                    print("ERROR: no variance column found. Should be 3rd column. Quitting")
+                    sys.exit()
+                var_col = gene_df.columns[1]
+                print("\tusing the column '%s' as the variance columns" % (var_col))
+                # the third column is the variance. Sort by that
+                gene_df.sort_values(by=var_col, ascending=False, inplace=True)
+            variable_genes = gene_df.iloc[:kwargs['num_genes']].index.values
+
+    if kwargs['include_tfs'] is not None:
+        # include the TFs that pass the p-val cutoff
+        tfs = tfs[tfs.isin(gene_df.index)] 
+        if kwargs['pval_cutoff']:
+            print("\tincluding %d TFs that pass the pval cutoff" % (len(tfs)))
+        else:
+            print("\tincluding %d TFs" % (len(tfs)))
+        variable_genes = set(variable_genes) | set(tfs)
 
     print("\trestricting to %d genes" % (len(variable_genes)))
     expr_df = expr_df.loc[variable_genes]
     print("\twriting %s" % (new_expr_file))
     expr_df.to_csv(new_expr_file, header=True)
-    # also add a relative symlink to the pseudotime file so its not copied each time
-    cwd = os.getcwd()
-    os.chdir(new_dataset_dir)
-    os.symlink("../"+dataset['cellData'], dataset['cellData'])
-    os.chdir(cwd)
+    new_pt_file = "%s/%s" % (new_dataset_dir, dataset['cellData'])
+    if not os.path.isfile(new_pt_file):
+        # also add a relative symlink to the pseudotime file so its not copied each time
+        cwd = os.getcwd()
+        os.chdir(new_dataset_dir)
+        os.symlink("../"+dataset['cellData'], dataset['cellData'])
+        os.chdir(cwd)
 
-    # also subset the refNetwork.csv file if its there
-    trueEdges_file = "%s/%s" % (dataset_dir, dataset['trueEdges'])
-    if os.path.isfile(trueEdges_file):
-        print("reading %s" % (trueEdges_file))
-        trueEdges_df = pd.read_csv(trueEdges_file, header= 0, index_col=None)
-        print(trueEdges_df.head())
+    ##### I decided to do this in a separate script since that is 
+    ##### really a post-processing step and we want to evaluate multiple networks
+    # Also subset the refNetwork.csv file if its there
+    #trueEdges_file = "%s/%s" % (dataset_dir, dataset['trueEdges'])
+    #if os.path.isfile(trueEdges_file):
+    #    print("reading %s" % (trueEdges_file))
+    #    trueEdges_df = pd.read_csv(trueEdges_file, header= 0, index_col=None)
+    #    print(trueEdges_df.head())
 
     # now write the config file
     return new_config_file
@@ -156,9 +214,15 @@ def setup_parser():
     # TODO specify multiple?
     parser.add_argument('--pval-cutoff', type=float, 
         help='Cutoff of the pvalue to select genes')
+    parser.add_argument('--bf-corr', action="store_true", default=False,
+        help='Option to correct the p-value using BF correction')
     # TODO specify multiple?
-    parser.add_argument('--num-genes', type=int, default=100,
+    parser.add_argument('--num-genes', type=int, 
         help='Number of genes to subset. Default: 100')
+    parser.add_argument('--sort-by-variance', action="store_true", default=False,
+        help='After the p-value cutoff, take the top --num-genes, sorting by the variance. Should be 3rd column in the gene order file')
+    parser.add_argument('--include-tfs', type=str,
+        help='CSV containing the TFs in the first column. Will include all of them, regardless of the other options set here')
     parser.add_argument('--forced', action="store_true", default=False,
         help='Overwrite the ExpressionData.csv file if it already exists.')
 
