@@ -20,47 +20,47 @@ input_settings:
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_500_1"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_500_2"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_500_3"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_500_4"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_500_5"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_500_6"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_500_7"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_500_8"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_500_9"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
@@ -70,47 +70,47 @@ input_settings:
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_2000_1"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_2000_2"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_2000_3"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_2000_4"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_2000_5"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_2000_6"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_2000_7"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_2000_8"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_2000_9"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
@@ -120,47 +120,47 @@ input_settings:
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_5000_1"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_5000_2"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_5000_3"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_5000_4"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_5000_5"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_5000_6"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_5000_7"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_5000_8"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
           trueEdges: "refNetwork.csv"
-          
+
         - name: "dyn-LI_5000_9"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"
@@ -194,58 +194,58 @@ input_settings:
               nRep: [5]
 
         - name: "SCNS"
-          params: 
+          params:
               should_run: [True]
-              
-              
+
+
         - name: "SINCERITIES"
-          params: 
+          params:
               should_run: [True]
-                            
-              
+
+
         - name: "PIDC"
-          params: 
+          params:
               should_run: [True]
 
 
         - name: "GRNVBEM"
-          params: 
+          params:
               should_run: [True]
 
-              
+
 
         - name: "GENIE3"
-          params: 
+          params:
               should_run: [True]
-              
-              
-              
+
+
+
         - name: "GRNBOOST2"
-          params: 
+          params:
               should_run: [True]
-              
-              
-              
+
+
+
         - name: "LEAP"
-          params: 
+          params:
               should_run: [True]
               # Default maxLag value is 0.3
               # but it is very slow with 0.3
               # when we have more than 1000 cells.
               maxLag: [0.75]
 
-              
-                                         
+
+
         - name: "PPCOR"
-          params: 
+          params:
               should_run: [True]
               # Used in parsing output
               pVal: [0.01]
-              
-              
-              
+
+
+
         - name: "GRISLI"
-          params: 
+          params:
               should_run: [True]
               L: [10]
               R: [1000]
@@ -253,7 +253,7 @@ input_settings:
 
 
         - name: "SCINGE"
-          params: 
+          params:
               should_run: [True]
               lambda: [0.01]
               dT: [10]
@@ -266,14 +266,14 @@ input_settings:
 
 
         - name: "SCRIBE"
-          params: 
+          params:
               should_run: [True]
               ### required parameters
               # a list of delay values
               delay: ["0,1,5,10,25"]
               # any of 'RDI', 'uRDI', 'cRDI', or 'ucRDI'
               method: ['ucRDI']
-              # lower detection limit (expression below this 
+              # lower detection limit (expression below this
               # will be treated as zero.
               lowerDetectionLimit: [0]
               # expressionFamily: for synthetic data use uninormal
