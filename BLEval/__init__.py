@@ -3,7 +3,7 @@
 BEELINE Evaluation (:mod:`BLEval`) module contains the following main class:
 
 - :class:`BLEval.BLEval`
-and three additional classes used in the definition
+and three additional classes used in the definition 
 of BLEval class
 
 - :class:`BLEval.ConfigParser`
@@ -29,11 +29,8 @@ from networkx.convert_matrix import from_pandas_adjacency
 
 
 # local imports
-from BLEval.computeCLR import CLR
-from BLEval.computeAUC import PRROC
-from BLEval.computekAUC import kPRROC
+from BLEval.computeDGAUC import PRROC
 from BLEval.parseTime import getTime
-from BLEval.computeBorda import Borda
 from BLEval.computeJaccard import Jaccard
 from BLEval.computeSpearman import Spearman
 from BLEval.computeNetMotifs import Motifs
@@ -46,7 +43,7 @@ class InputSettings(object):
     The class for storing the names of input files.
     This initilizes an InputSettings object based on the
     following three parameters.
-
+    
     Parameters
     -----------
     datadir: str
@@ -54,7 +51,7 @@ class InputSettings(object):
 
     datasets: list
         List of dataset names
-
+        
     algorithms: list
         List of algorithm names
     '''
@@ -68,11 +65,11 @@ class InputSettings(object):
 
 
 class OutputSettings(object):
-    '''
+    '''    
     The class for storing the names of directories that output should
     be written to. This initilizes an OutputSettings object based on the
     following two parameters.
-
+    
     Parameters
     ----------
     base_dir: str
@@ -80,7 +77,7 @@ class OutputSettings(object):
 
     output_prefix: str
         A prefix added to the final output files.
-
+    
     '''
 
     def __init__(self, base_dir, output_prefix: Path) -> None:
@@ -105,80 +102,63 @@ class BLEval(object):
         self.output_settings = output_settings
 
 
-    def computeAUC(self, directed = True, userReferenceNetworkFile=None, tfsFile=None, onlyEdgesFromTFs=False):
+    def computeAUC(self, directed = True, TFEdges = True):
 
         '''
         Computes areas under the precision-recall (PR) and
         and ROC plots for each algorithm-dataset combination.
-
+      
         Parameters
         ----------
-        directed: bool
+        directedFlag: bool
             A flag to specifiy whether to treat predictions
-            as directed edges (directed = True) or
+            as directed edges (directed = True) or 
             undirected edges (directed = False).
-
-        userReferenceNetworkFile: str
-            The path to a file that specifiy reference network to be used for
-            AUC calculations. Default is None. If the value is not None, the
-            function will overide the reference network with the given file.
-            The file should be comma separated and have following node column
-            names: `Gene1` and `Gene2`.
-
-        tfsFile: str
-            The path to a file that specifiy a list of transcription factors in
-            the reference network. Default is None.
-
-        onlyEdgesFromTFs: bool
-            A flag to indicate whether to ignore edges from non-transcription
-            factors or not. If onlyEdgesFromTFs=True, the function will try to
-            fetch list of transcription factors from the file specified by
-            `tfsFile` attribute and then edges from nodes other than transcription
-            factors in the reference network will be ignored and considered a
-            negative. Default is False.
-
+        
         :returns:
             - AUPRC: A dataframe containing AUPRC values for each algorithm-dataset combination
             - AUROC: A dataframe containing AUROC values for each algorithm-dataset combination
         '''
         AUPRCDict = {}
         AUROCDict = {}
-
-        print("Predictions and connections in reference network will be treated as %s edges." % ('directed' if directed else 'undirected'))
-
-        if onlyEdgesFromTFs and tfsFile is not None:
-            print("Ignoring the edges from nodes other than transcription factors specified in the file at path: %s.\n" % tfsFile)
-
-        if userReferenceNetworkFile is not None:
-            print("Using the file at path: %s as reference network.\n\n" % userReferenceNetworkFile)
-
-        for dataset in tqdm(self.input_settings.datasets,
+        trueEdgeCntDict = {}
+        possEdgeCntDict = {}
+        TFCntDict = {}
+        nodeCntDict = {}        
+        for dataset in tqdm(self.input_settings.datasets, 
                             total = len(self.input_settings.datasets), unit = " Datasets"):
-
-            AUPRC, AUROC = PRROC(dataset, self.input_settings,
-                            directed = directed,
-                            userReferenceNetworkFile=userReferenceNetworkFile,
-                            selfEdges = False, plotFlag = False,
-                            tfsFile=tfsFile,
-                            onlyEdgesFromTFs=onlyEdgesFromTFs)
+            
+            AUPRC, AUROC, trueEdgeCnt, possEdgeCnt, TFCnt, nodeCnt = PRROC(dataset, self.input_settings, 
+                                    directed = directed, TFEdges = TFEdges, plotFlag = False)
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
+            trueEdgeCntDict[dataset['name']] = trueEdgeCnt
+            possEdgeCntDict[dataset['name']] = possEdgeCnt
+            TFCntDict[dataset['name']] = TFCnt
+            nodeCntDict[dataset['name']] = nodeCnt
+            
         AUPRC = pd.DataFrame(AUPRCDict)
         AUROC = pd.DataFrame(AUROCDict)
-        return AUPRC, AUROC
-
+        
+        trueEdgeCntDF = pd.DataFrame(trueEdgeCntDict)
+        possEdgeCntDF = pd.DataFrame(possEdgeCntDict)
+        
+        TFCntDF = pd.DataFrame(TFCntDict)
+        nodeCntDF = pd.DataFrame(nodeCntDict)
+        return AUPRC, AUROC, trueEdgeCntDF, possEdgeCntDF, TFCntDF, nodeCntDF
+    
 
     def parseTime(self):
         """
         Parse time output for each
         algorithm-dataset combination.
-
+        
         :returns:
             A dictionary of times for all dataset-algorithm combinations
         """
         TimeDict = dict()
 
-        for dataset in tqdm(self.input_settings.datasets,
+        for dataset in tqdm(self.input_settings.datasets, 
                             total = len(self.input_settings.datasets), unit = " Datasets"):
             timevals  = getTime(self, dataset)
             TimeDict[dataset["name"]] = timevals
@@ -190,7 +170,7 @@ class BLEval(object):
         '''
         Computes Jaccard Index between top-k edge predictions
         of the same algorithm.
-
+        
         :returns:
             A dataframe containing the median and median absolute
             deviation of the Jaccard Index values of each algorithm
@@ -204,17 +184,17 @@ class BLEval(object):
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
                 JaccDF['Jaccard Median'][algo[0]], JaccDF['Jaccard MAD'][algo[0]] = Jaccard(self, algo[0])
+            
+        return pd.DataFrame(JaccDF)     
 
-        return pd.DataFrame(JaccDF)
-
-
+    
     def computeSpearman(self):
 
         '''
         Finds the Spearman's correlation coefficient between
         the ranked edges of the same algorithm on the given
         set of datasets.
-
+        
         :returns:
             A dataframe containing the median and median absolute
             deviation of the Separman's correlation values of each algorithm.
@@ -227,142 +207,48 @@ class BLEval(object):
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
                 corrDF['Spearman Median'][algo[0]],corrDF['Spearman MAD'][algo[0]] = Spearman(self, algo[0])
-
+            
         return pd.DataFrame(corrDF)
 
 
-    def computeCLR(self):
-
-        '''
-        Computes the infered ranked list using the
-        CLR (Context Likelihood or Relatedness Network) algorithm
-        for each algorithm-dataset combination.
-
-        :returns:
-            - AUPRC: A dataframe containing AUPRC values for each algorithm-dataset combination
-            - AUROC: A dataframe containing AUROC values for each algorithm-dataset combination
-        '''
-        scoresDFs = []
-        for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
-            if algo[1]['should_run'] == True:
-                scoresDF = CLR(self, algo[0])
-                if len(scoresDF)>0:
-                    scoresDFs.append(scoresDF)
-
-        auprcDF = pd.pivot_table(pd.concat(scoresDFs), values='AUPRC', index='algorithm', columns='dataset')
-        aurocDF = pd.pivot_table(pd.concat(scoresDFs), values='AUROC', index='algorithm', columns='dataset')
-        return auprcDF, aurocDF
-
-    def computekAUC(self, k=1, directed=True, userReferenceNetworkFile=None):
-        '''
-        Computes areas under the k-precision-recall (PR) and
-        and k-ROC plots for each algorithm-dataset combination.
-
-        Parameters
-        ----------
-        k: int
-            A predicted edge (a,b) is considered a TP if there is a
-            path of length less than equal to k between a and b.
-            So a 1-PR curve is just the regular PR curve.
-
-        directed: bool
-            A flag to specifiy whether to treat predictions
-            as directed edges (directed = True) or
-            undirected edges (directed = False).
-
-        userReferenceNetworkFile: str
-            The path to a file that specifiy reference network to be used for
-            AUC calculations. Default is None. If the value is not None, the
-            function will overide the reference network with the given file.
-            The file should be comma separated and have following node column
-            names: `Gene1` and `Gene2`.
-
-        :returns:
-            - AUPRC: A dataframe containing k-AUPRC values for each algorithm-dataset combination
-            - AUROC: A dataframe containing k-AUROC values for each algorithm-dataset combination
-        '''
-
-        print("Predictions and connections in reference network will be treated as %s edges." % ('directed' if directed else 'undirected'))
-        if userReferenceNetworkFile is not None:
-            print("Using the file at path: %s as reference network.\n\n" % userReferenceNetworkFile)
-
-        kprrocDF = kPRROC(self, k=k, directed=directed, userReferenceNetworkFile=userReferenceNetworkFile)
-        auprcDF = pd.pivot_table(kprrocDF, values='AUPRC', index='algorithm', columns='dataset')
-        aurocDF = pd.pivot_table(kprrocDF, values='AUROC', index='algorithm', columns='dataset')
-        return auprcDF, aurocDF
-
-    def computeBorda(self, selectedAlgorithms=None, aggregationMethod="average"):
-
-        '''
-        Computes edge ranked list using the Borda method for each dataset.
-
-        Parameters
-        ----------
-        selectedAlgorithms: [str]
-          List of algorithm names used to run borda method on selected
-          algorithms. If nothing is provided, the function runs borda on
-          all available algorithms.
-
-        aggregationMethod: str
-          Method used to aggregate rank in borda method. Available options are
-          {‘average’, ‘min’, ‘max’, ‘first’}, default ‘average’
-
-        :returns:
-            None
-        '''
-        feasibleAlgorithmOptions = [algorithmName for algorithmName, _ in self.input_settings.algorithms]
-        feasibleaggregationMethodOptions = ['average', 'min', 'max', 'first']
-
-        selectedAlgorithms = feasibleAlgorithmOptions if selectedAlgorithms is None else selectedAlgorithms
-
-        for a in selectedAlgorithms:
-            if a not in feasibleAlgorithmOptions:
-                print("\nERROR: No data available on algorithm %s. Please choose an algorithm from the following options: %s" % (a, feasibleAlgorithmOptions))
-                return
-
-        if aggregationMethod not in feasibleaggregationMethodOptions:
-                print("\nERROR: Please choose an aggregation method algorithm from following options: " % feasibleaggregationMethodOptions)
-                return
-
-        Borda(self, selectedAlgorithms, aggregationMethod)
 
     def computeNetMotifs(self):
 
         '''
-        For each algorithm-dataset combination, this function computes the network motifs such as
-        Feedforward loops, Feedback loops and
+        For each algorithm-dataset combination, this function computes the network motifs such as 
+        Feedforward loops, Feedback loops and 
         Mutual interactions in the predicted top-k network. It returns the ratio of network motif counts
         compared to their respective values in the reference network.
-
+      
         :returns:
             - FBL: A dataframe containing ratios of number of Feedback loops
-
+            
             - FFL: A dataframe containing ratios of number of Feedforward loops
-
+            
             - MI: A dataframe containing ratios of number of Mutual Interactions
         '''
         FFLDict = {}
         FBLDict = {}
         MIDict = {}
-        for dataset in tqdm(self.input_settings.datasets,
+        for dataset in tqdm(self.input_settings.datasets, 
                             total = len(self.input_settings.datasets), unit = " Datasets"):
             FBLDict[dataset["name"]], FFLDict[dataset["name"]], MIDict[dataset["name"]] = Motifs(dataset, self.input_settings)
-
+            
         FBL = pd.DataFrame(FBLDict)
         FFL = pd.DataFrame(FFLDict)
         MI = pd.DataFrame(MIDict)
-
+        
         return FBL, FFL, MI
-
-    def computeEarlyPrec(self):
+                 
+    def computeEarlyPrec(self, TFEdges = True):
 
         '''
         For each algorithm-dataset combination,
-        this function computes the Early Precision values of the
+        this function computes the Early Precision values of the 
         network formed using the predicted top-k edges.
-
-        :returns:
-            A dataframe containing the early precision values
+        
+        :returns: 
+            A dataframe containing the early precision values 
             for each algorithm-dataset combination.
 
         '''
@@ -371,19 +257,19 @@ class BLEval(object):
                  str(self.input_settings.datadir).split("inputs")[1] + "/"
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
-                Eprec[algo[0]] = EarlyPrec(self, algo[0])
+                Eprec[algo[0]] = EarlyPrec(self, algo[0], TFEdges = TFEdges)
         return pd.DataFrame(Eprec).T
 
 
-
+    
     def computeSignedEPrec(self):
 
         '''
         For each algorithm-dataset combination,
-        this function computes the Early Precision values separately
+        this function computes the Early Precision values separately 
         for the activation and inhibitory edges.
-
-        :returns:
+        
+        :returns: 
             - A dataframe containing early precision for activation edges
             - A dataframe containing early precision for inhibitory edges
         '''
@@ -398,39 +284,38 @@ class BLEval(object):
                 sEPRDict['EPrec Activation'][algo[0]] = sEPrecDF['+']
                 sEPRDict['EPrec Inhibition'][algo[0]] = sEPrecDF['-']
         return(pd.DataFrame(sEPRDict['EPrec Activation']).T, pd.DataFrame(sEPRDict['EPrec Inhibition']).T)
-
+    
 
 class ConfigParser(object):
     '''
-    The class define static methods for parsing and storing the contents
-    of the config file that sets a that sets a large number of parameters
+    The class define static methods for parsing and storing the contents 
+    of the config file that sets a that sets a large number of parameters 
     used in the BLEval.
     '''
     @staticmethod
-    def parse(config_file_handle) -> BLEval:
+    def parse(config_map) -> BLEval:
         '''
         A method for parsing the input .yaml file.
-
+        
         Parameters
         ----------
         config_file_handle: str
             Name of the .yaml file to be parsed
-
-        :returns:
+        
+        :returns: 
             An object of class :class:`BLEval.BLEval`.
 
         '''
-        config_map = yaml.load(config_file_handle)
         return BLEval(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),
             ConfigParser.__parse_output_settings(
                 config_map['output_settings']))
-
+    
     @staticmethod
     def __parse_input_settings(input_settings_map) -> InputSettings:
         '''
-        A method for parsing and initializing
+        A method for parsing and initializing 
         InputSettings object.
         '''
         input_dir = input_settings_map['input_dir']
@@ -450,15 +335,15 @@ class ConfigParser(object):
         A method for parsing the list of algorithms
         that are being evaluated, along with
         any parameters being passed.
-
+        
         Note that these parameters may not be
-        used in the current evaluation, but can
+        used in the current evaluation, but can 
         be used at a later point.
         '''
-
+        
         # Initilalize the list of algorithms
         algorithms = []
-
+        
         # Parse contents of algorithms_list
         for algorithm in algorithms_list:
                 combos = [dict(zip(algorithm['params'], val))
@@ -467,14 +352,14 @@ class ConfigParser(object):
                             for param in algorithm['params']))]
                 for combo in combos:
                     algorithms.append([algorithm['name'],combo])
-
+            
 
         return algorithms
 
     @staticmethod
     def __parse_output_settings(output_settings_map) -> OutputSettings:
         '''
-        A method for parsing and initializing
+        A method for parsing and initializing 
         Output object.
         '''
         output_dir = Path(output_settings_map['output_dir'])
