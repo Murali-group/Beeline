@@ -90,7 +90,8 @@ if (length(arguments$cellFile) == 0){
   }
   
   # Read data
-  exprMatrix <- read.delim(arguments$expressionFile, row.names = 1, sep = ',')
+  # Set check.names to False to avoid R adding an 'X' to the beginning of columns that start with an integer
+  exprMatrix <- read.delim(arguments$expressionFile, row.names = 1, sep = ',', check.names=FALSE)
   cellData <- read.delim(arguments$cellFile, row.names = 1, sep = ',')
   geneData <- read.delim(arguments$geneFile, row.names = 1, sep = ',')
   cd <- new("AnnotatedDataFrame", data = cellData)
