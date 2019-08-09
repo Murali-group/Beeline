@@ -29,12 +29,13 @@ from networkx.convert_matrix import from_pandas_adjacency
 
 
 # local imports
-from BLEval.computeDGAUC import PRROC
 from BLEval.parseTime import getTime
+from BLEval.computeDGAUC import PRROC
 from BLEval.computeJaccard import Jaccard
 from BLEval.computeSpearman import Spearman
 from BLEval.computeNetMotifs import Motifs
 from BLEval.computeEarlyPrec import EarlyPrec
+from BLEval.computePathStats import pathAnalysis
 from BLEval.computeSignedEPrec import signedEPrec
 
 
@@ -102,7 +103,7 @@ class BLEval(object):
         self.output_settings = output_settings
 
 
-    def computeAUC(self, directed = True, TFEdges = True):
+    def computeAUC(self, directed = True):
 
         '''
         Computes areas under the precision-recall (PR) and
@@ -121,31 +122,17 @@ class BLEval(object):
         '''
         AUPRCDict = {}
         AUROCDict = {}
-        trueEdgeCntDict = {}
-        possEdgeCntDict = {}
-        TFCntDict = {}
-        nodeCntDict = {}        
+
         for dataset in tqdm(self.input_settings.datasets, 
                             total = len(self.input_settings.datasets), unit = " Datasets"):
             
-            AUPRC, AUROC, trueEdgeCnt, possEdgeCnt, TFCnt, nodeCnt = PRROC(dataset, self.input_settings, 
-                                    directed = directed, TFEdges = TFEdges, plotFlag = False)
+            AUPRC, AUROC = PRROC(dataset, self.input_settings, 
+                                    directed = directed, selfEdges = False, plotFlag = False)
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
-            trueEdgeCntDict[dataset['name']] = trueEdgeCnt
-            possEdgeCntDict[dataset['name']] = possEdgeCnt
-            TFCntDict[dataset['name']] = TFCnt
-            nodeCntDict[dataset['name']] = nodeCnt
-            
         AUPRC = pd.DataFrame(AUPRCDict)
         AUROC = pd.DataFrame(AUROCDict)
-        
-        trueEdgeCntDF = pd.DataFrame(trueEdgeCntDict)
-        possEdgeCntDF = pd.DataFrame(possEdgeCntDict)
-        
-        TFCntDF = pd.DataFrame(TFCntDict)
-        nodeCntDF = pd.DataFrame(nodeCntDict)
-        return AUPRC, AUROC, trueEdgeCntDF, possEdgeCntDF, TFCntDF, nodeCntDF
+        return AUPRC, AUROC
     
 
     def parseTime(self):
@@ -239,8 +226,22 @@ class BLEval(object):
         MI = pd.DataFrame(MIDict)
         
         return FBL, FFL, MI
+    
+    
+    def computePaths(self):
+        '''
+        For each algorithm-dataset combination, this function computes path lengths
+        through TP edges and FP edges, returns statistics on path lengths.
+
+        :returns:
+            - pathStats: A dataframe path lengths in predicted network
+        '''
+        for dataset in tqdm(self.input_settings.datasets, 
+                            total = len(self.input_settings.datasets), unit = " Datasets"):
+            pathAnalysis(dataset, self.input_settings)
+
                  
-    def computeEarlyPrec(self, TFEdges = True):
+    def computeEarlyPrec(self):
 
         '''
         For each algorithm-dataset combination,
@@ -257,7 +258,7 @@ class BLEval(object):
                  str(self.input_settings.datadir).split("inputs")[1] + "/"
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
-                Eprec[algo[0]] = EarlyPrec(self, algo[0], TFEdges = TFEdges)
+                Eprec[algo[0]] = EarlyPrec(self, algo[0])
         return pd.DataFrame(Eprec).T
 
 
@@ -293,7 +294,7 @@ class ConfigParser(object):
     used in the BLEval.
     '''
     @staticmethod
-    def parse(config_map) -> BLEval:
+    def parse(config_file_handle) -> BLEval:
         '''
         A method for parsing the input .yaml file.
         
@@ -306,6 +307,7 @@ class ConfigParser(object):
             An object of class :class:`BLEval.BLEval`.
 
         '''
+        config_map = yaml.load(config_file_handle)
         return BLEval(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),
