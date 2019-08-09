@@ -155,12 +155,18 @@ delay <- as.numeric(strsplit(arguments$delay, ",")[[1]])
 if (arguments$method == 'uRDI'){
   net <- calculate_rdi(CDS, delays = delay, method = 2, uniformalize = TRUE, log = arguments$log)
   netOut <- net$max_rdi_value
+  # computes CLR if we use uRDI
+  # TODO: Make this an optional
+  netOut <- clr(netOut)
 } else if (arguments$method == 'ucRDI'){
   net <- calculate_rdi(CDS, delays = delay, method = 2, uniformalize = TRUE, log = arguments$log)
   netOut <- calculate_conditioned_rdi(CDS, rdi_list = net, uniformalize = TRUE, log = arguments$log)
 } else if (arguments$method == 'RDI'){
   net <- calculate_rdi(CDS, delays = delay, method = 2, uniformalize = FALSE, log = arguments$log)
   netOut <- net$max_rdi_value
+  # computes CLR if we use RDI
+  # TODO: Make this optional
+  netOut <- clr(netOut)
 } else if (arguments$method == 'cRDI'){
   net <- calculate_rdi(CDS, delays = delay, method = 2, uniformalize = FALSE, log = arguments$log)
   netOut <- calculate_conditioned_rdi(CDS, rdi_list = net, uniformalize = FALSE, log = arguments$log)
