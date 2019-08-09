@@ -102,7 +102,7 @@ class BLEval(object):
         self.output_settings = output_settings
 
 
-    def computeAUC(self, directed = True):
+    def computeAUC(self, directed = True, TFEdges = True):
 
         '''
         Computes areas under the precision-recall (PR) and
@@ -121,17 +121,31 @@ class BLEval(object):
         '''
         AUPRCDict = {}
         AUROCDict = {}
-
+        trueEdgeCntDict = {}
+        possEdgeCntDict = {}
+        TFCntDict = {}
+        nodeCntDict = {}        
         for dataset in tqdm(self.input_settings.datasets, 
                             total = len(self.input_settings.datasets), unit = " Datasets"):
             
-            AUPRC, AUROC = PRROC(dataset, self.input_settings, 
-                                    directed = directed, selfEdges = False, plotFlag = False)
+            AUPRC, AUROC, trueEdgeCnt, possEdgeCnt, TFCnt, nodeCnt = PRROC(dataset, self.input_settings, 
+                                    directed = directed, TFEdges = TFEdges, plotFlag = False)
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
+            trueEdgeCntDict[dataset['name']] = trueEdgeCnt
+            possEdgeCntDict[dataset['name']] = possEdgeCnt
+            TFCntDict[dataset['name']] = TFCnt
+            nodeCntDict[dataset['name']] = nodeCnt
+            
         AUPRC = pd.DataFrame(AUPRCDict)
         AUROC = pd.DataFrame(AUROCDict)
-        return AUPRC, AUROC
+        
+        trueEdgeCntDF = pd.DataFrame(trueEdgeCntDict)
+        possEdgeCntDF = pd.DataFrame(possEdgeCntDict)
+        
+        TFCntDF = pd.DataFrame(TFCntDict)
+        nodeCntDF = pd.DataFrame(nodeCntDict)
+        return AUPRC, AUROC, trueEdgeCntDF, possEdgeCntDF, TFCntDF, nodeCntDF
     
 
     def parseTime(self):
@@ -226,7 +240,7 @@ class BLEval(object):
         
         return FBL, FFL, MI
                  
-    def computeEarlyPrec(self):
+    def computeEarlyPrec(self, TFEdges = True):
 
         '''
         For each algorithm-dataset combination,
@@ -243,7 +257,7 @@ class BLEval(object):
                  str(self.input_settings.datadir).split("inputs")[1] + "/"
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
-                Eprec[algo[0]] = EarlyPrec(self, algo[0])
+                Eprec[algo[0]] = EarlyPrec(self, algo[0], TFEdges = TFEdges)
         return pd.DataFrame(Eprec).T
 
 
@@ -279,7 +293,7 @@ class ConfigParser(object):
     used in the BLEval.
     '''
     @staticmethod
-    def parse(config_file_handle) -> BLEval:
+    def parse(config_map) -> BLEval:
         '''
         A method for parsing the input .yaml file.
         
@@ -292,7 +306,6 @@ class ConfigParser(object):
             An object of class :class:`BLEval.BLEval`.
 
         '''
-        config_map = yaml.load(config_file_handle)
         return BLEval(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),
