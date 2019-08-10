@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BLRun.sinceritiesRunner &mdash; BEELINE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> BEELINE
+          
+
+          
+            
+            <img src="../../_static/beeline.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../BLRun.html">BLRun</a> &raquo;</li>
+        
+      <li>BLRun.sinceritiesRunner</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for BLRun.sinceritiesRunner</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="generateInputs"><a class="viewcode-back" href="../../BLRun.html#BLRun.sinceritiesRunner.generateInputs">[docs]</a><span class="k">def</span> <span class="nf">generateInputs</span><span class="p">(</span><span class="n">RunnerObj</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to generate desired inputs for SINCERITIES.</span>
+<span class="sd">    If the folder/files under RunnerObj.datadir exist, </span>
+<span class="sd">    this function will not do anything.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;SINCERITIES&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input folder for SINCERITIES does not exist, creating input folder...&quot;</span><span class="p">)</span>
+        <span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;SINCERITIES&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
+    
+    
+    <span class="n">ExpressionData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">exprData</span><span class="p">),</span>
+                                     <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">PTData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">cellData</span><span class="p">),</span>
+                             <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">colNames</span> <span class="o">=</span> <span class="n">PTData</span><span class="o">.</span><span class="n">columns</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colNames</span><span class="p">)):</span>
+        <span class="c1"># Select cells belonging to each pseudotime trajectory</span>
+        <span class="n">colName</span> <span class="o">=</span> <span class="n">colNames</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="n">PTData</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">PTData</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span>
+        <span class="n">exprName</span> <span class="o">=</span> <span class="s2">&quot;SINCERITIES/ExpressionData&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span>
+        <span class="n">newExpressionData</span> <span class="o">=</span> <span class="n">ExpressionData</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+        <span class="c1"># Perform quantile binning as recommeded in the paper</span>
+        <span class="c1"># http://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.qcut.html#pandas.qcut</span>
+        <span class="n">nBins</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;nBins&#39;</span><span class="p">])</span>
+        <span class="n">tQuantiles</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">PTData</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span><span class="n">colName</span><span class="p">],</span> <span class="n">q</span> <span class="o">=</span> <span class="n">nBins</span><span class="p">,</span> <span class="n">duplicates</span> <span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span>
+        <span class="n">mid</span> <span class="o">=</span> <span class="p">[(</span><span class="n">a</span><span class="o">.</span><span class="n">left</span> <span class="o">+</span> <span class="n">a</span><span class="o">.</span><span class="n">right</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">tQuantiles</span><span class="p">]</span>
+
+        <span class="n">newExpressionData</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">mid</span>
+        <span class="n">newExpressionData</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">exprName</span><span class="p">),</span>
+                             <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">header</span>  <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="run"><a class="viewcode-back" href="../../BLRun.html#BLRun.sinceritiesRunner.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">RunnerObj</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to run SINCERITIES algorithm</span>
+
+<span class="sd">    :param RunnerObj: A BLRun object</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">inputPath</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> \
+                        <span class="s2">&quot;/SINCERITIES/&quot;</span>
+    <span class="c1"># make output dirs if they do not exist:</span>
+    <span class="n">outDir</span> <span class="o">=</span> <span class="s2">&quot;outputs/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;inputs/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;/SINCERITIES/&quot;</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outDir</span><span class="p">,</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    
+    <span class="n">PTData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">cellData</span><span class="p">),</span>
+                             <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">colNames</span> <span class="o">=</span> <span class="n">PTData</span><span class="o">.</span><span class="n">columns</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colNames</span><span class="p">)):</span>
+        <span class="n">inFile</span> <span class="o">=</span> <span class="s2">&quot;ExpressionData&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;.csv&quot;</span>
+        <span class="n">outPath</span> <span class="o">=</span> <span class="s1">&#39;data/&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">outDir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;outFile&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.txt&#39;</span>
+        <span class="n">cmdToRun</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;docker run --rm -v&#39;</span><span class="p">,</span> 
+                             <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span><span class="o">+</span><span class="s1">&#39;:/SINCERITIES/data/ sincerities:base /bin/sh -c </span><span class="se">\&quot;</span><span class="s1">time -v -o&#39;</span><span class="p">,</span> 
+                             <span class="s2">&quot;data/&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">outDir</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;time&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.txt&#39;</span><span class="p">,</span> <span class="s1">&#39;Rscript MAIN.R&#39;</span><span class="p">,</span>
+                             <span class="n">inputPath</span><span class="o">+</span><span class="n">inFile</span><span class="p">,</span> <span class="n">outPath</span><span class="p">,</span> <span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cmdToRun</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmdToRun</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="parseOutput"><a class="viewcode-back" href="../../BLRun.html#BLRun.sinceritiesRunner.parseOutput">[docs]</a><span class="k">def</span> <span class="nf">parseOutput</span><span class="p">(</span><span class="n">RunnerObj</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Function to parse outputs from SINCERITIES.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">outDir</span> <span class="o">=</span> <span class="s2">&quot;outputs/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;inputs/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;/SINCERITIES/&quot;</span>
+
+    <span class="n">PTData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">cellData</span><span class="p">),</span>
+                             <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">colNames</span> <span class="o">=</span> <span class="n">PTData</span><span class="o">.</span><span class="n">columns</span>
+    <span class="n">OutSubDF</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">colNames</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colNames</span><span class="p">)):</span>
+        <span class="c1"># Read output</span>
+        <span class="n">outFile</span> <span class="o">=</span> <span class="s1">&#39;outFile&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.txt&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">outDir</span><span class="o">+</span><span class="n">outFile</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="c1"># Quit if output file does not exist</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="n">outDir</span><span class="o">+</span><span class="n">outFile</span><span class="o">+</span><span class="s1">&#39; does not exist, skipping...&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="n">OutSubDF</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outDir</span><span class="o">+</span><span class="n">outFile</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1"># megre the dataframe by taking the maximum value from each DF</span>
+    <span class="c1"># From here: https://stackoverflow.com/questions/20383647/pandas-selecting-by-label-sometimes-return-series-sometimes-returns-dataframe</span>
+    <span class="n">outDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">OutSubDF</span><span class="p">)</span>
+    <span class="c1"># Group by rows code is from here:</span>
+    <span class="c1"># https://stackoverflow.com/questions/53114609/pandas-how-to-remove-duplicate-rows-but-keep-all-rows-with-max-value</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">outDF</span><span class="p">[</span><span class="n">outDF</span><span class="p">[</span><span class="s1">&#39;Interaction&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">outDF</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;SourceGENES&#39;</span><span class="p">,</span><span class="s1">&#39;TargetGENES&#39;</span><span class="p">])[</span><span class="s1">&#39;Interaction&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="s1">&#39;max&#39;</span><span class="p">)]</span>
+    <span class="c1"># Sort values in the dataframe   </span>
+    <span class="n">finalDF</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;Interaction&#39;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">finalDF</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span> <span class="o">=</span> <span class="s1">&#39;Edges&#39;</span><span class="p">,</span><span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;columns&#39;</span><span class="p">,</span> <span class="n">inplace</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+    <span class="c1"># SINCERITIES output is incorrectly orderd</span>
+    <span class="n">finalDF</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">,</span><span class="s1">&#39;Gene1&#39;</span><span class="p">,</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span>
+    <span class="n">finalDF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outDir</span><span class="o">+</span><span class="s1">&#39;rankedEdges.csv&#39;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> 
+                   <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">,</span><span class="s1">&#39;Gene2&#39;</span><span class="p">,</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">],</span><span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span></div>
+    
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Aditya Pratapa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,284 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BLRun.runner &mdash; BEELINE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> BEELINE
+          
+
+          
+            
+            <img src="../../_static/beeline.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../BLRun.html">BLRun</a> &raquo;</li>
+        
+      <li>BLRun.runner</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for BLRun.runner</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">BLRun.scodeRunner</span> <span class="k">as</span> <span class="nn">SCODE</span>
+<span class="kn">import</span> <span class="nn">BLRun.scnsRunner</span> <span class="k">as</span> <span class="nn">SCNS</span>
+<span class="kn">import</span> <span class="nn">BLRun.sinceritiesRunner</span> <span class="k">as</span> <span class="nn">SINCERITIES</span>
+<span class="kn">import</span> <span class="nn">BLRun.pidcRunner</span> <span class="k">as</span> <span class="nn">PIDC</span>
+<span class="kn">import</span> <span class="nn">BLRun.grnvbemRunner</span> <span class="k">as</span> <span class="nn">GRNVBEM</span>
+<span class="kn">import</span> <span class="nn">BLRun.genie3Runner</span> <span class="k">as</span> <span class="nn">GENIE3</span>
+<span class="kn">import</span> <span class="nn">BLRun.grnboost2Runner</span> <span class="k">as</span> <span class="nn">GRNBOOST2</span>
+<span class="kn">import</span> <span class="nn">BLRun.leapRunner</span> <span class="k">as</span> <span class="nn">LEAP</span>
+<span class="kn">import</span> <span class="nn">BLRun.jump3Runner</span> <span class="k">as</span> <span class="nn">JUMP3</span>
+<span class="kn">import</span> <span class="nn">BLRun.ppcorRunner</span> <span class="k">as</span> <span class="nn">PPCOR</span>
+<span class="kn">import</span> <span class="nn">BLRun.grisliRunner</span> <span class="k">as</span> <span class="nn">GRISLI</span>
+<span class="kn">import</span> <span class="nn">BLRun.scingeRunner</span> <span class="k">as</span> <span class="nn">SCINGE</span>
+<span class="kn">import</span> <span class="nn">BLRun.scribeRunner</span> <span class="k">as</span> <span class="nn">SCRIBE</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+
+
+<span class="n">InputMapper</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;SCODE&#39;</span><span class="p">:</span><span class="n">SCODE</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;SINCERITIES&#39;</span><span class="p">:</span><span class="n">SINCERITIES</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;SCNS&#39;</span><span class="p">:</span><span class="n">SCNS</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;PIDC&#39;</span><span class="p">:</span><span class="n">PIDC</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;GRNVBEM&#39;</span><span class="p">:</span><span class="n">GRNVBEM</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;GENIE3&#39;</span><span class="p">:</span><span class="n">GENIE3</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;GRNBOOST2&#39;</span><span class="p">:</span><span class="n">GRNBOOST2</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;LEAP&#39;</span><span class="p">:</span><span class="n">LEAP</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;JUMP3&#39;</span><span class="p">:</span><span class="n">JUMP3</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;PPCOR&#39;</span><span class="p">:</span><span class="n">PPCOR</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;GRISLI&#39;</span><span class="p">:</span><span class="n">GRISLI</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;SCINGE&#39;</span><span class="p">:</span><span class="n">SCINGE</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">,</span>
+               <span class="s1">&#39;SCRIBE&#39;</span><span class="p">:</span><span class="n">SCRIBE</span><span class="o">.</span><span class="n">generateInputs</span><span class="p">}</span>
+
+
+
+
+
+<span class="n">AlgorithmMapper</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;SCODE&#39;</span><span class="p">:</span><span class="n">SCODE</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;SINCERITIES&#39;</span><span class="p">:</span><span class="n">SINCERITIES</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;SCNS&#39;</span><span class="p">:</span><span class="n">SCNS</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;PIDC&#39;</span><span class="p">:</span><span class="n">PIDC</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;GRNVBEM&#39;</span><span class="p">:</span><span class="n">GRNVBEM</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;GENIE3&#39;</span><span class="p">:</span><span class="n">GENIE3</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;GRNBOOST2&#39;</span><span class="p">:</span><span class="n">GRNBOOST2</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;LEAP&#39;</span><span class="p">:</span><span class="n">LEAP</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;JUMP3&#39;</span><span class="p">:</span><span class="n">JUMP3</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;PPCOR&#39;</span><span class="p">:</span><span class="n">PPCOR</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;GRISLI&#39;</span><span class="p">:</span><span class="n">GRISLI</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;SCINGE&#39;</span><span class="p">:</span><span class="n">SCINGE</span><span class="o">.</span><span class="n">run</span><span class="p">,</span>
+            <span class="s1">&#39;SCRIBE&#39;</span><span class="p">:</span><span class="n">SCRIBE</span><span class="o">.</span><span class="n">run</span><span class="p">}</span>
+
+
+
+
+<span class="n">OutputParser</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;SCODE&#39;</span><span class="p">:</span><span class="n">SCODE</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span> 
+            <span class="s1">&#39;SINCERITIES&#39;</span><span class="p">:</span><span class="n">SINCERITIES</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;SCNS&#39;</span><span class="p">:</span><span class="n">SCNS</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;PIDC&#39;</span><span class="p">:</span><span class="n">PIDC</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;GRNVBEM&#39;</span><span class="p">:</span><span class="n">GRNVBEM</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;GENIE3&#39;</span><span class="p">:</span><span class="n">GENIE3</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;GRNBOOST2&#39;</span><span class="p">:</span><span class="n">GRNBOOST2</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;LEAP&#39;</span><span class="p">:</span> <span class="n">LEAP</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;JUMP3&#39;</span><span class="p">:</span> <span class="n">JUMP3</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;PPCOR&#39;</span><span class="p">:</span><span class="n">PPCOR</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;GRISLI&#39;</span><span class="p">:</span><span class="n">GRISLI</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;SCINGE&#39;</span><span class="p">:</span><span class="n">SCINGE</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">,</span>
+            <span class="s1">&#39;SCRIBE&#39;</span><span class="p">:</span><span class="n">SCRIBE</span><span class="o">.</span><span class="n">parseOutput</span><span class="p">}</span>
+
+
+
+<div class="viewcode-block" id="Runner"><a class="viewcode-back" href="../../BLRun.html#BLRun.runner.Runner">[docs]</a><span class="k">class</span> <span class="nc">Runner</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A runnable analysis to be incorporated into the pipeline</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                <span class="n">params</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputDir</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;inputDir&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exprData</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;exprData&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cellData</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;cellData&#39;</span><span class="p">]</span>
+        
+<div class="viewcode-block" id="Runner.generateInputs"><a class="viewcode-back" href="../../BLRun.html#BLRun.runner.Runner.generateInputs">[docs]</a>    <span class="k">def</span> <span class="nf">generateInputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">InputMapper</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span></div>
+        
+        
+<div class="viewcode-block" id="Runner.run"><a class="viewcode-back" href="../../BLRun.html#BLRun.runner.Runner.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">AlgorithmMapper</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Runner.parseOutput"><a class="viewcode-back" href="../../BLRun.html#BLRun.runner.Runner.parseOutput">[docs]</a>    <span class="k">def</span> <span class="nf">parseOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">OutputParser</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">](</span><span class="bp">self</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Aditya Pratapa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

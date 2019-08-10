@@ -1,0 +1,394 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Beeline &mdash; BEELINE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Algorithms" href="algorithms.html" />
+    <link rel="prev" title="Welcome to BEELINE’s documentation!" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> BEELINE
+          
+
+          
+            
+            <img src="_static/beeline.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Beeline</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#project-outline">Project outline</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#input-files">Input files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#config-files">Config files</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#running-the-pipeline">Running the pipeline</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BEELINE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Beeline</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Beeline.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="beeline">
+<span id="id1"></span><h1>Beeline<a class="headerlink" href="#beeline" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>BEELINE provides a set of tools for evaluating methods that infer gene
+regulatory networks (GRN) from single-cell gene expression
+data. The BEELINE framework is divided into the following modules:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="BLRun.html#blrun"><span class="std std-ref">BLRun package</span></a> : contains the BEELINE’s Runner module, a Python
+wrapper for 12 GRN inference algorithms with options to add new
+methods.</p></li>
+<li><p><a class="reference internal" href="BLEval.html#bleval"><span class="std std-ref">BLEval package</span></a> : contains the BEELINE’s Evaluation module that
+provides easy-to-use tools for evaluating GRN reconstructions.</p></li>
+<li><p><a class="reference internal" href="BLPlot.html#blplot"><span class="std std-ref">BLPlot package</span></a> : contains the BEELINE’s plotting module for
+visualizing output from BLEval.</p></li>
+</ul>
+</div>
+<div class="section" id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>The BEELINE pipeline interfaces with the implementations of various
+algorithms through Docker containers.  Please follow this tutorial on
+how to <a class="reference external" href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04">install docker</a>
+on Ubuntu 18.0.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Setup docker to run docker without sudo using the following shell command</p>
+<div class="highlight-sh notranslate"><div class="highlight"><pre><span></span>sudo usermod -aG docker <span class="nv">$USER</span>
+</pre></div>
+</div>
+<p>See more details <a class="reference external" href="https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo">here</a>.</p>
+</div>
+<p>Once docker has been set up correctly, the next step is to create the
+docker containers for each of the algorithms.  The script
+<cite>initialize.sh</cite> builds these containers. Run the following in the
+terminal</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>. initialize.sh
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This step will take a while!</p>
+</div>
+<p>To compute ranked list of edges, run</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLStart</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>To compute areas under the ROC and PR curves using the BEELINE’s
+evaluation pipeline, run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvalAggregator.py --config config-files/config.yaml --auc
+</pre></div>
+</div>
+<p>To display the complete list of
+evaluation options, run</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvalAggregator.py --help
+</pre></div>
+</div>
+</div>
+<div class="section" id="tutorial">
+<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<p>This tutorial will first explain the structure of the Beeline repository,
+with a walkthrough of the different components that the user can customize.</p>
+<div class="section" id="project-outline">
+<h3>Project outline<a class="headerlink" href="#project-outline" title="Permalink to this headline">¶</a></h3>
+<p>The BEELINE repository is structured as follows:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Beeline
+|-- inputs/
+|   `-- examples/
+|       `-- GSD/
+|           |--refNetwork.csv
+|           |--PseudoTime.csv
+|           `--ExpressionData.csv
+|-- config-files/
+|   `-- config.yaml
+|-- BLRun/
+|   |-- sinceritiesRunner.py
+|   `-- ...
+|-- BLPlot/
+|   |-- NetworkMotifs.py
+|   `-- CuratedOverview.py
+|-- BLEval/
+|   |-- parseTime.py
+|    `-- ...
+`-- Algorithms/
+    `-- SINCERITIES/
+</pre></div>
+</div>
+<div class="section" id="input-files">
+<h4>Input files<a class="headerlink" href="#input-files" title="Permalink to this headline">¶</a></h4>
+<p>The sample input data set provided is generated by <a class="reference internal" href="BoolODE.html#boolode"><span class="std std-ref">BoolODE</span></a>
+using the Boolean model of <a class="reference external" href="https://www.ncbi.nlm.nih.gov/pubmed/26573569">Gonadal Sex Determination</a> as input.  Note that
+this dataset has been pre-processed to produce three files that are
+required in the BEELINE pipline.</p>
+<ol class="arabic simple">
+<li><p><cite>ExpressionData.csv</cite> contains the RNAseq data, with genes as
+rows and cell IDs as columns. This file is a required input to the
+pipline</p></li>
+<li><p><cite>PseudoTime.csv</cite> contains the pseudotime values for the cells in
+<cite>ExpressionData.csv</cite>.  We recommend using the Slingshot method to
+obtain the pseudotime for a dataset. Many algorithms in the
+pipeline require a pseudotime file as input.</p></li>
+<li><p><cite>refNetwork.csv</cite> contains the ground truth network underlying the
+interactions between genes in <cite>ExpressionData.csv</cite>. Typically this
+network is not available, and will have to be curated from various
+Transcription Factor databases. While this file is not a
+requirement to run the base pipeline, a reference network is
+required to run some of the performance evaluations in
+<a class="reference internal" href="BLEval.html#bleval"><span class="std std-ref">BLEval package</span></a>.</p></li>
+</ol>
+<p>The figure below shows the t-SNE visualization of the expression
+data from the example dataset.</p>
+<img alt="_images/SlingshotOutputVis.png" src="_images/SlingshotOutputVis.png" />
+<p>This dataset shows a bifurcating
+trajectory, as is evidenced by the part (a) of the figure, where
+each ‘cell’ is colored by the timepoint at which it was sampled
+in the simulation (the darker colors indicate earlier time points).
+Clustering the simulation confirms the two trajectories, indicated
+in red and blue respectively in part (b). Finally, running Slingshot
+on this dataset and specifying the cluster of cells corresponding to
+the early time points yields two pseudotime trajectories, shown in part (c).</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Please ensure that any input dataset you create is
+comma separated, and contains the correct style of
+column names.</p>
+</div>
+</div>
+<div class="section" id="config-files">
+<h4>Config files<a class="headerlink" href="#config-files" title="Permalink to this headline">¶</a></h4>
+<p>Beeline uses <a class="reference external" href="https://yaml.org/">YAML</a> files to allow users to
+flexibly specify inputs and algorithm run parameters. A sample config file is
+provided in <cite>config-files/</cite>. A config file should contain at minimum</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>input_settings:
+    datasets:
+        - name: &quot;Dataset name&quot;
+          exprData: &quot;Expression Data filename&quot;
+          cellData: &quot;PseudoTime filename&quot;
+          trueEdges: &quot;Ground truth network filename&quot;
+
+    algorithms:
+        - name: &quot;Algorithm name&quot;
+          params:
+              # Any other parameters that can be passed to
+              # this algorithm
+              should_run: [True] # or False
+</pre></div>
+</div>
+<p>Apart from indicating the path to the base directory and the specific
+folder containing the input, the config file indicates which
+algorithms should be run, along with the parameters to be passed to
+the algorithms, if any. For a list of parameters that the pipeline
+currently passes to the algorithms, see <a class="reference internal" href="algorithms.html#algorithms"><span class="std std-ref">Algorithms</span></a>.  Finally,
+the YAML file also specifies the paths to the outputs.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Please ensure that the YAML file is correctly indented!</p>
+</div>
+</div>
+<div class="section" id="running-the-pipeline">
+<h4>Running the pipeline<a class="headerlink" href="#running-the-pipeline" title="Permalink to this headline">¶</a></h4>
+<p>Once the input dataset has been generated and the config file has been created,
+the pipeline can be executed by simply calling  <span class="xref std std-ref">BLStart</span> on</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beeline-reference.html">Modules</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html">BLRun package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html">BLEval package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html">BLPlot package</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="algorithms.html" class="btn btn-neutral float-right" title="Algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Welcome to BEELINE’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Aditya Pratapa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

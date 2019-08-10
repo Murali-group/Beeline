@@ -1,0 +1,408 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BLPlot.CuratedOverview &mdash; BEELINE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> BEELINE
+          
+
+          
+            
+            <img src="../../_static/beeline.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>BLPlot.CuratedOverview</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for BLPlot.CuratedOverview</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">unicode_literals</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.lines</span> <span class="k">as</span> <span class="nn">line</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+<span class="c1">#%matplotlib inline</span>
+
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">emoji</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.font_manager</span> <span class="k">as</span> <span class="nn">font_manager</span>
+<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/home/adyprat/.fonts/Proxima Nova Reg.ttf&#39;</span>
+<span class="n">prop</span> <span class="o">=</span> <span class="n">font_manager</span><span class="o">.</span><span class="n">FontProperties</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+
+
+<span class="n">prop</span> <span class="o">=</span> <span class="n">font_manager</span><span class="o">.</span><span class="n">FontProperties</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+
+    
+<div class="viewcode-block" id="plot"><a class="viewcode-back" href="../../BLPlot.html#BLPlot.CuratedOverview.plot">[docs]</a><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">inputDF</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="n">randValues</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">[],</span> 
+            <span class="n">palettes</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">text</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">levels</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">rotation</span> <span class="o">=</span> <span class="p">[]):</span>
+    
+    <span class="n">levls</span> <span class="o">=</span> <span class="n">levels</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">levls</span><span class="p">)</span>
+    <span class="n">rowNames</span> <span class="o">=</span> <span class="n">inputDF</span><span class="o">.</span><span class="n">index</span>
+    <span class="n">maxRows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputDF</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">maxCols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputDF</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">pad</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">aspRatio</span> <span class="o">=</span> <span class="p">(</span><span class="n">maxCols</span><span class="o">+</span><span class="n">pad</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">maxRows</span><span class="o">+</span><span class="n">pad</span><span class="p">)</span>
+    <span class="n">fSize</span> <span class="o">=</span> <span class="p">(</span><span class="n">height</span><span class="o">*</span><span class="n">aspRatio</span><span class="o">+</span><span class="mf">0.5</span><span class="p">,</span><span class="n">height</span><span class="p">)</span>
+
+    <span class="n">f</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">fSize</span><span class="p">)</span>
+
+    
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">maxRows</span><span class="o">+</span><span class="n">pad</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">maxCols</span><span class="o">+</span><span class="n">pad</span><span class="p">))</span>
+    
+
+    <span class="n">Indices</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">rowNames</span><span class="p">)</span>  <span class="o">+</span>  <span class="p">[</span><span class="s2">&quot;&quot;</span><span class="p">]</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">(</span><span class="n">Indices</span><span class="p">,</span> <span class="n">fontproperties</span> <span class="o">=</span> <span class="n">prop</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;top&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;bottom&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">spines</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="n">aspRatio</span> <span class="o">=</span> <span class="n">fSize</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">fSize</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">aspRatio</span><span class="p">)</span>
+    <span class="n">alt</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">for</span> <span class="n">rowIdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rowNames</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">alt</span><span class="p">:</span>
+            <span class="n">ptch</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">rowIdx</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span>
+                               <span class="n">width</span> <span class="o">=</span> <span class="n">maxCols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span>
+                               <span class="n">height</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>  
+                               <span class="n">edgecolor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span>
+                               <span class="n">facecolor</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.9</span><span class="p">),)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ptch</span> <span class="o">=</span> <span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">rowIdx</span><span class="o">+</span><span class="mf">0.5</span><span class="p">),</span>
+                   <span class="n">width</span> <span class="o">=</span> <span class="n">maxCols</span><span class="p">,</span>
+                   <span class="n">height</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>  
+                   <span class="n">edgecolor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span>
+                   <span class="n">facecolor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),)</span>
+        <span class="n">alt</span> <span class="o">=</span> <span class="ow">not</span><span class="p">(</span><span class="n">alt</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">ptch</span><span class="p">)</span>
+
+    <span class="n">colCnt</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">levlIdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">levls</span><span class="p">)):</span>
+        <span class="n">randValue</span> <span class="o">=</span> <span class="n">randValues</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]</span>
+        <span class="n">colStart</span> <span class="o">=</span> <span class="n">colCnt</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">colStart</span><span class="o">+</span><span class="mi">2</span><span class="p">,</span> <span class="n">maxRows</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> 
+                        <span class="n">levls</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                        <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">fontproperties</span> <span class="o">=</span> <span class="n">prop</span><span class="p">,</span>
+                        <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round&quot;</span><span class="p">,</span>
+                        <span class="n">ec</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">fc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)))</span>
+        
+        <span class="n">colNames</span> <span class="o">=</span> <span class="n">inputDF</span><span class="p">[</span><span class="n">levels</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]]</span><span class="o">.</span><span class="n">columns</span>
+
+        <span class="k">for</span> <span class="n">colIdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colNames</span><span class="p">)):</span>
+                <span class="n">colCnt</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">colStart</span> <span class="o">+</span> <span class="n">colIdx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">maxRows</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">colNames</span><span class="p">[</span><span class="n">colIdx</span><span class="p">],</span>
+                         <span class="n">size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="n">rotation</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">],</span>
+                         <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span>  <span class="n">fontproperties</span> <span class="o">=</span> <span class="n">prop</span><span class="p">,</span>
+                         <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round&quot;</span><span class="p">,</span>
+                         <span class="n">ec</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+                         <span class="n">fc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)))</span>
+
+                <span class="k">for</span> <span class="n">rowIdx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rowNames</span><span class="p">)):</span>
+
+                    <span class="n">value</span>  <span class="o">=</span>  <span class="n">inputDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rowNames</span><span class="p">[</span><span class="n">rowIdx</span><span class="p">],</span><span class="n">levls</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]][</span><span class="n">colNames</span><span class="p">[</span><span class="n">colIdx</span><span class="p">]]</span>
+                    <span class="k">if</span> <span class="n">text</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]:</span>
+                        <span class="n">fSize</span> <span class="o">=</span> <span class="mi">23</span>
+
+                        <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;Y&#39;</span><span class="p">:</span>
+                            <span class="n">txt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2713</span><span class="s1">&#39;</span>
+                            <span class="n">col</span> <span class="o">=</span> <span class="s1">&#39;#4CAF50&#39;</span>
+                        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="s1">&#39;N&#39;</span><span class="p">:</span>
+                            <span class="n">txt</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\u2717</span><span class="s1">&#39;</span>
+                            <span class="n">col</span> <span class="o">=</span> <span class="s1">&#39;#E53935&#39;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">valList</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\u2B24</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\u25EF</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\u25B0</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\u25B1</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\u25AE</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\u25AF</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\u2593</span><span class="s1">&#39;</span><span class="p">,</span><span class="s1">&#39;</span><span class="se">\u2591</span><span class="s1">&#39;</span><span class="p">]</span>
+                            
+                            <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                                <span class="n">txt</span> <span class="o">=</span> <span class="n">valList</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">valList</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">valList</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="k">elif</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                                <span class="n">txt</span> <span class="o">=</span> <span class="n">valList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">valList</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">valList</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="k">elif</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                                <span class="n">txt</span> <span class="o">=</span> <span class="n">valList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">valList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">valList</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                            <span class="k">else</span><span class="p">:</span>
+                                <span class="n">txt</span> <span class="o">=</span> <span class="n">valList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">valList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">valList</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+                            <span class="n">col</span> <span class="o">=</span> <span class="s1">&#39;#2E4053&#39;</span>
+                            <span class="n">fSize</span> <span class="o">=</span> <span class="mi">9</span>
+                        <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">colStart</span><span class="o">+</span><span class="n">colIdx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">rowIdx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> 
+                            <span class="n">txt</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span> <span class="n">fSize</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span>
+                            <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round&quot;</span><span class="p">,</span> 
+                            <span class="n">ec</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)))</span>
+                    
+                    <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;text&#39;</span><span class="p">:</span>
+                        <span class="c1">#randValue = inputDF.loc[&#39;dummy&#39;,levls[levlIdx]][colNames[colIdx]]</span>
+                        <span class="n">Oldvalue</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">randValue</span><span class="p">:</span>
+                            <span class="n">col</span> <span class="o">=</span> <span class="s1">&#39;#2E4053&#39;</span>
+                        <span class="k">elif</span> <span class="n">value</span> <span class="o">&gt;=</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">Oldvalue</span> <span class="o">=</span> <span class="n">value</span>
+
+                            <span class="n">value</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+                            <span class="n">col</span> <span class="o">=</span> <span class="n">palettes</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">value</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="p">))]</span>
+
+                            <span class="n">value</span> <span class="o">=</span> <span class="mi">1</span>
+
+
+                                
+                        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">col</span> <span class="o">=</span> <span class="n">palettes</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">][</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">((</span><span class="n">value</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="p">))]</span>
+
+
+                        <span class="k">if</span> <span class="n">shape</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span>
+                            <span class="n">circle1</span><span class="o">=</span><span class="n">patches</span><span class="o">.</span><span class="n">Circle</span><span class="p">((</span><span class="n">colStart</span><span class="o">+</span><span class="n">colIdx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">rowIdx</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span>
+                                               <span class="n">radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">/</span><span class="mf">2.5</span><span class="p">,</span>
+                                               <span class="c1">#height = value,    </span>
+                                               <span class="n">facecolor</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                                               <span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,)</span>
+
+                        <span class="k">elif</span> <span class="n">shape</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;s&#39;</span><span class="p">:</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">*</span><span class="mf">0.8</span>
+                            <span class="n">circle1</span><span class="o">=</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">colStart</span><span class="o">+</span><span class="n">colIdx</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">value</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="n">rowIdx</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
+                                       <span class="n">width</span> <span class="o">=</span> <span class="n">value</span><span class="p">,</span>
+                                       <span class="n">height</span> <span class="o">=</span> <span class="n">value</span><span class="p">,</span>    
+                                       <span class="n">facecolor</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                                       <span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,)</span>
+
+                        <span class="k">elif</span> <span class="n">shape</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;rs&#39;</span><span class="p">:</span>
+                            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">*</span><span class="mf">0.8</span>
+                            <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;=</span> <span class="mf">0.15</span><span class="p">:</span>
+                                <span class="n">value</span> <span class="o">=</span> <span class="mf">0.15</span>
+                            <span class="n">boxPad</span> <span class="o">=</span> <span class="mf">0.075</span>
+                            <span class="n">newVal</span> <span class="o">=</span> <span class="n">value</span> <span class="o">-</span> <span class="n">boxPad</span><span class="o">*</span><span class="mi">2</span>
+                            <span class="n">circle1</span><span class="o">=</span><span class="n">patches</span><span class="o">.</span><span class="n">FancyBboxPatch</span><span class="p">((</span><span class="n">colStart</span><span class="o">+</span><span class="n">colIdx</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">newVal</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="n">rowIdx</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="p">(</span><span class="n">newVal</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span>
+                                       <span class="n">width</span> <span class="o">=</span> <span class="n">newVal</span><span class="p">,</span>
+                                       <span class="n">height</span> <span class="o">=</span> <span class="n">newVal</span><span class="p">,</span>    
+                                       <span class="n">facecolor</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                                       <span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span>
+                                       <span class="n">boxstyle</span><span class="o">=</span><span class="n">patches</span><span class="o">.</span><span class="n">BoxStyle</span><span class="p">(</span><span class="s2">&quot;Round&quot;</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="n">boxPad</span><span class="p">))</span>
+                                        <span class="c1">#patches.BoxStyle(&quot;Round4&quot;, pad=0.05))</span>
+                                
+                        <span class="k">elif</span> <span class="n">shape</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;w&#39;</span><span class="p">:</span>
+                            <span class="n">circle1</span><span class="o">=</span><span class="n">patches</span><span class="o">.</span><span class="n">Wedge</span><span class="p">((</span><span class="n">colStart</span><span class="o">+</span><span class="n">colIdx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">rowIdx</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span>
+                                       <span class="n">r</span> <span class="o">=</span> <span class="mf">0.4</span><span class="p">,</span>
+                                       <span class="n">theta1</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                                       <span class="n">theta2</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">value</span><span class="o">*</span><span class="mi">360</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span>    
+                                       <span class="n">facecolor</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span>
+                                       <span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,)</span>
+                        <span class="k">elif</span> <span class="n">shape</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;b&#39;</span><span class="p">:</span>
+                            <span class="n">circle1</span><span class="o">=</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">colStart</span><span class="o">+</span><span class="n">colIdx</span><span class="o">+</span><span class="mf">0.6</span><span class="p">,</span><span class="n">rowIdx</span><span class="o">+</span><span class="mf">0.65</span><span class="p">),</span>
+                                       <span class="n">width</span> <span class="o">=</span> <span class="mf">0.75</span><span class="p">,</span>
+                                       <span class="n">height</span> <span class="o">=</span> <span class="n">value</span><span class="p">,</span>    
+                                       <span class="n">facecolor</span><span class="o">=</span><span class="n">col</span><span class="p">,</span>
+                                       <span class="n">edgecolor</span> <span class="o">=</span> <span class="s1">&#39;k&#39;</span><span class="p">,)</span>
+                            
+                        <span class="k">elif</span> <span class="n">shape</span><span class="p">[</span><span class="n">levlIdx</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;f&#39;</span><span class="p">:</span>
+                            <span class="c1"># flat color</span>
+                            <span class="n">circle1</span><span class="o">=</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">((</span><span class="n">colStart</span><span class="o">+</span><span class="n">colIdx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">rowIdx</span><span class="o">+</span><span class="mf">0.6</span><span class="p">),</span>
+                                       <span class="n">width</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+                                       <span class="n">height</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>    
+                                       <span class="n">facecolor</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span>
+                                       <span class="n">edgecolor</span> <span class="o">=</span> <span class="n">col</span><span class="p">,)</span>
+
+                            
+
+                        <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">circle1</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="n">Oldvalue</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">colStart</span><span class="o">+</span><span class="n">colIdx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">rowIdx</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> 
+                            <span class="nb">round</span><span class="p">(</span><span class="n">Oldvalue</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">rotation</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                            <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span><span class="o">=</span><span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s1">&#39;white&#39;</span><span class="p">,</span>
+                            <span class="n">bbox</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">boxstyle</span><span class="o">=</span><span class="s2">&quot;round&quot;</span><span class="p">,</span> 
+                            <span class="n">ec</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">fc</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)))</span>
+                            
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">)</span> 
+    <span class="n">ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">)</span> 
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([])</span></div>
+
+    <span class="c1">#plt.grid()</span>
+<span class="c1">#PTData = pd.read_csv(&quot;outputs/dyn-BF/dyn-BF-AUROCscores.csv&quot;, header = 0, index_col = 0)</span>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Aditya Pratapa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

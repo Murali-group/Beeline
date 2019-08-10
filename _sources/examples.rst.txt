@@ -1,0 +1,9 @@
+Usage Examples
+==============
+In a terminal run the following command
+
+.. code:: bash
+               
+   python src/BoolODE.py --path=data/test_vars.txt --max-time=5 --num-cells 10
+
+The above command 
