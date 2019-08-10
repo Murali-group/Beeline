@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>BLEval &mdash; BEELINE 0.1 documentation</title>
+  <title>BLEval &mdash; BEELINE  documentation</title>
   
 
   
@@ -60,10 +60,6 @@
           
             
             
-              <div class="version">
-                0.1
-              </div>
-            
           
 
           
@@ -85,8 +81,12 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BoolODE.html">BoolODE</a></li>
+</ul>
+
             
           
         </div>
@@ -179,12 +179,13 @@
 
 
 <span class="c1"># local imports</span>
-<span class="kn">from</span> <span class="nn">BLEval.computeAUC</span> <span class="k">import</span> <span class="n">PRROC</span>
 <span class="kn">from</span> <span class="nn">BLEval.parseTime</span> <span class="k">import</span> <span class="n">getTime</span>
+<span class="kn">from</span> <span class="nn">BLEval.computeDGAUC</span> <span class="k">import</span> <span class="n">PRROC</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeJaccard</span> <span class="k">import</span> <span class="n">Jaccard</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeSpearman</span> <span class="k">import</span> <span class="n">Spearman</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeNetMotifs</span> <span class="k">import</span> <span class="n">Motifs</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeEarlyPrec</span> <span class="k">import</span> <span class="n">EarlyPrec</span>
+<span class="c1">#from BLEval.computePathStats import pathAnalysis</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeSignedEPrec</span> <span class="k">import</span> <span class="n">signedEPrec</span>
 
 
@@ -223,7 +224,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    base_dir: str</span>
-<span class="sd">        output root directory, typically &#39;ouputs/&#39;</span>
+<span class="sd">        output root directory, typically &#39;outputs/&#39;</span>
 
 <span class="sd">    output_prefix: str</span>
 <span class="sd">        A prefix added to the final output files.</span>
@@ -375,6 +376,20 @@
         <span class="n">MI</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">MIDict</span><span class="p">)</span>
         
         <span class="k">return</span> <span class="n">FBL</span><span class="p">,</span> <span class="n">FFL</span><span class="p">,</span> <span class="n">MI</span></div>
+    
+    
+    <span class="c1"># def computePaths(self):</span>
+    <span class="c1">#     &#39;&#39;&#39;</span>
+    <span class="c1">#     For each algorithm-dataset combination, this function computes path lengths</span>
+    <span class="c1">#     through TP edges and FP edges, returns statistics on path lengths.</span>
+
+    <span class="c1">#     :returns:</span>
+    <span class="c1">#         - pathStats: A dataframe path lengths in predicted network</span>
+    <span class="c1">#     &#39;&#39;&#39;</span>
+    <span class="c1">#     for dataset in tqdm(self.input_settings.datasets, </span>
+    <span class="c1">#                         total = len(self.input_settings.datasets), unit = &quot; Datasets&quot;):</span>
+    <span class="c1">#         pathAnalysis(dataset, self.input_settings)</span>
+
                  
 <div class="viewcode-block" id="BLEval.computeEarlyPrec"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computeEarlyPrec">[docs]</a>    <span class="k">def</span> <span class="nf">computeEarlyPrec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 

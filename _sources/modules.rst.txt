@@ -1,7 +1,7 @@
-BLEval
+BLPlot
 ======
 
 .. toctree::
    :maxdepth: 4
 
-   BLEval
+   BLPlot

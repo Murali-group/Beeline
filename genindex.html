@@ -9,7 +9,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Index &mdash; BEELINE 0.1 documentation</title>
+  <title>Index &mdash; BEELINE  documentation</title>
   
 
   
@@ -61,10 +61,6 @@
           
             
             
-              <div class="version">
-                0.1
-              </div>
-            
           
 
           
@@ -86,8 +82,12 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
+</ul>
+
             
           
         </div>
@@ -161,6 +161,7 @@
  | <a href="#M"><strong>M</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
+ | <a href="#R"><strong>R</strong></a>
  | <a href="#S"><strong>S</strong></a>
  
 </div>
@@ -175,10 +176,10 @@
       </ul></li>
       <li><a href="BLEval.html#module-BLEval.computeAUC">BLEval.computeAUC (module)</a>
 </li>
+      <li><a href="BLEval.html#module-BLEval.computeDGAUC">BLEval.computeDGAUC (module)</a>
+</li>
       <li><a href="BLEval.html#module-BLEval.computeEarlyPrec">BLEval.computeEarlyPrec (module)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="BLEval.html#module-BLEval.computeJaccard">BLEval.computeJaccard (module)</a>
 </li>
       <li><a href="BLEval.html#module-BLEval.computeNetMotifs">BLEval.computeNetMotifs (module)</a>
@@ -188,6 +189,48 @@
       <li><a href="BLEval.html#module-BLEval.computeSpearman">BLEval.computeSpearman (module)</a>
 </li>
       <li><a href="BLEval.html#module-BLEval.parseTime">BLEval.parseTime (module)</a>
+</li>
+      <li><a href="BLPlot.html#module-BLPlot">BLPlot (module)</a>
+</li>
+      <li><a href="BLPlot.html#module-BLPlot.CuratedOverview">BLPlot.CuratedOverview (module)</a>
+</li>
+      <li><a href="BLPlot.html#module-BLPlot.NetworkMotifs">BLPlot.NetworkMotifs (module)</a>
+</li>
+      <li><a href="BLRun.html#BLRun.BLRun">BLRun (class in BLRun)</a>
+
+      <ul>
+        <li><a href="BLRun.html#module-BLRun">(module)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="BLRun.html#module-BLRun.genie3Runner">BLRun.genie3Runner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.grisliRunner">BLRun.grisliRunner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.grnboost2Runner">BLRun.grnboost2Runner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.grnvbemRunner">BLRun.grnvbemRunner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.jump3Runner">BLRun.jump3Runner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.leapRunner">BLRun.leapRunner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.pidcRunner">BLRun.pidcRunner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.ppcorRunner">BLRun.ppcorRunner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.runner">BLRun.runner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.scingeRunner">BLRun.scingeRunner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.scnsRunner">BLRun.scnsRunner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.scodeRunner">BLRun.scodeRunner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.scribeRunner">BLRun.scribeRunner (module)</a>
+</li>
+      <li><a href="BLRun.html#module-BLRun.sinceritiesRunner">BLRun.sinceritiesRunner (module)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -203,18 +246,26 @@
 </li>
       <li><a href="BLEval.html#BLEval.BLEval.computeNetMotifs">computeNetMotifs() (BLEval.BLEval method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="BLEval.html#BLEval.computeJaccard.computePairwiseJacc">computePairwiseJacc() (in module BLEval.computeJaccard)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="BLEval.html#BLEval.computeAUC.computeScores">computeScores() (in module BLEval.computeAUC)</a>
+
+      <ul>
+        <li><a href="BLEval.html#BLEval.computeDGAUC.computeScores">(in module BLEval.computeDGAUC)</a>
 </li>
+      </ul></li>
       <li><a href="BLEval.html#BLEval.BLEval.computeSignedEPrec">computeSignedEPrec() (BLEval.BLEval method)</a>
 </li>
       <li><a href="BLEval.html#BLEval.BLEval.computeSpearman">computeSpearman() (BLEval.BLEval method)</a>
 </li>
       <li><a href="BLEval.html#BLEval.ConfigParser">ConfigParser (class in BLEval)</a>
+
+      <ul>
+        <li><a href="BLRun.html#BLRun.ConfigParser">(class in BLRun)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -224,15 +275,49 @@
       <li><a href="BLEval.html#BLEval.computeEarlyPrec.EarlyPrec">EarlyPrec() (in module BLEval.computeEarlyPrec)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="BLRun.html#BLRun.BLRun.execute_runners">execute_runners() (BLRun.BLRun method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="G">G</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="BLEval.html#BLEval.computeNetMotifs.getNetProp">getNetProp() (in module BLEval.computeNetMotifs)</a>
+      <li><a href="BLRun.html#BLRun.runner.Runner.generateInputs">generateInputs() (BLRun.runner.Runner method)</a>
+
+      <ul>
+        <li><a href="BLRun.html#BLRun.genie3Runner.generateInputs">(in module BLRun.genie3Runner)</a>
 </li>
+        <li><a href="BLRun.html#BLRun.grisliRunner.generateInputs">(in module BLRun.grisliRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.grnboost2Runner.generateInputs">(in module BLRun.grnboost2Runner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.grnvbemRunner.generateInputs">(in module BLRun.grnvbemRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.jump3Runner.generateInputs">(in module BLRun.jump3Runner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.leapRunner.generateInputs">(in module BLRun.leapRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.pidcRunner.generateInputs">(in module BLRun.pidcRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.ppcorRunner.generateInputs">(in module BLRun.ppcorRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scingeRunner.generateInputs">(in module BLRun.scingeRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scnsRunner.generateInputs">(in module BLRun.scnsRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scodeRunner.generateInputs">(in module BLRun.scodeRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scribeRunner.generateInputs">(in module BLRun.scribeRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.sinceritiesRunner.generateInputs">(in module BLRun.sinceritiesRunner)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="BLEval.html#BLEval.computeNetMotifs.getNetProp">getNetProp() (in module BLEval.computeNetMotifs)</a>
+</li>
       <li><a href="BLEval.html#BLEval.parseTime.getTime">getTime() (in module BLEval.parseTime)</a>
 </li>
   </ul></td>
@@ -242,7 +327,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="BLEval.html#BLEval.InputSettings">InputSettings (class in BLEval)</a>
+
+      <ul>
+        <li><a href="BLRun.html#BLRun.InputSettings">(class in BLRun)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -266,7 +355,11 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="BLEval.html#BLEval.OutputSettings">OutputSettings (class in BLEval)</a>
+
+      <ul>
+        <li><a href="BLRun.html#BLRun.OutputSettings">(class in BLRun)</a>
 </li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -274,14 +367,98 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="BLEval.html#BLEval.ConfigParser.parse">parse() (BLEval.ConfigParser static method)</a>
+
+      <ul>
+        <li><a href="BLRun.html#BLRun.ConfigParser.parse">(BLRun.ConfigParser static method)</a>
 </li>
+      </ul></li>
       <li><a href="BLEval.html#BLEval.parseTime.parse_time_files">parse_time_files() (in module BLEval.parseTime)</a>
 </li>
+      <li><a href="BLRun.html#BLRun.runner.Runner.parseOutput">parseOutput() (BLRun.runner.Runner method)</a>
+
+      <ul>
+        <li><a href="BLRun.html#BLRun.genie3Runner.parseOutput">(in module BLRun.genie3Runner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.grisliRunner.parseOutput">(in module BLRun.grisliRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.grnboost2Runner.parseOutput">(in module BLRun.grnboost2Runner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.grnvbemRunner.parseOutput">(in module BLRun.grnvbemRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.jump3Runner.parseOutput">(in module BLRun.jump3Runner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.leapRunner.parseOutput">(in module BLRun.leapRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.pidcRunner.parseOutput">(in module BLRun.pidcRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.ppcorRunner.parseOutput">(in module BLRun.ppcorRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scingeRunner.parseOutput">(in module BLRun.scingeRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scnsRunner.parseOutput">(in module BLRun.scnsRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scodeRunner.parseOutput">(in module BLRun.scodeRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scribeRunner.parseOutput">(in module BLRun.scribeRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.sinceritiesRunner.parseOutput">(in module BLRun.sinceritiesRunner)</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="BLEval.html#BLEval.BLEval.parseTime">parseTime() (BLEval.BLEval method)</a>
 </li>
+      <li><a href="BLPlot.html#BLPlot.CuratedOverview.plot">plot() (in module BLPlot.CuratedOverview)</a>
+
+      <ul>
+        <li><a href="BLPlot.html#BLPlot.NetworkMotifs.plot">(in module BLPlot.NetworkMotifs)</a>
+</li>
+      </ul></li>
       <li><a href="BLEval.html#BLEval.computeAUC.PRROC">PRROC() (in module BLEval.computeAUC)</a>
+
+      <ul>
+        <li><a href="BLEval.html#BLEval.computeDGAUC.PRROC">(in module BLEval.computeDGAUC)</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="R">R</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="BLRun.html#BLRun.runner.Runner.run">run() (BLRun.runner.Runner method)</a>
+
+      <ul>
+        <li><a href="BLRun.html#BLRun.genie3Runner.run">(in module BLRun.genie3Runner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.grisliRunner.run">(in module BLRun.grisliRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.grnboost2Runner.run">(in module BLRun.grnboost2Runner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.grnvbemRunner.run">(in module BLRun.grnvbemRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.jump3Runner.run">(in module BLRun.jump3Runner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.leapRunner.run">(in module BLRun.leapRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.pidcRunner.run">(in module BLRun.pidcRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.ppcorRunner.run">(in module BLRun.ppcorRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scingeRunner.run">(in module BLRun.scingeRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scnsRunner.run">(in module BLRun.scnsRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scodeRunner.run">(in module BLRun.scodeRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.scribeRunner.run">(in module BLRun.scribeRunner)</a>
+</li>
+        <li><a href="BLRun.html#BLRun.sinceritiesRunner.run">(in module BLRun.sinceritiesRunner)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="BLRun.html#BLRun.runner.Runner">Runner (class in BLRun.runner)</a>
 </li>
   </ul></td>
 </tr></table>

@@ -1,3 +1,8 @@
+.. BoolODE documentation master file, created by
+   sphinx-quickstart on Wed Aug  7 14:17:46 2019.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
 .. BEELINE documentation master file, created by
    sphinx-quickstart on Fri Jun 14 18:25:02 2019.
    You can adapt this file completely to your liking, but it should at least
@@ -6,15 +11,22 @@
 Welcome to BEELINE's documentation!
 ===================================
 
+This site serves as the documentation for the code released under the
+**Benchmarking gEnE reguLatory network Inference from siNgle-cEll
+transcriptomic data** (BEELINE) project.  The first part of this
+project is the :ref:`BEELINE` pipeline which provides tools to
+evaluate the performance of algorithms for the reconstruction of gene
+regulatory networks (GRNs) from single-cell RNAseq data. The second
+part of this project is :ref:`BoolODE`, a tool to automatically
+convert a Boolean model to an ODE model, and subsequently carry out
+stochastic simulations.
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents: 
 
-BEELINE provides a set of tools for evaluating methods that infer gene regulatory networks (GRN) from single-cell gene expression data. BEELINE framework is divided into the following modules:
-
-* :ref:`BLRun`: contains the BEELINE's Runner module, a Python wrapper for 12 GRN inference algorithms with options to add new methods.
-* :ref:`BLEval`: contains the BEELINE's Evaluation module that provides easy-to-use tools for evaluating GRN reconstructions.
-* :ref:`BLPlot`: contains the BEELINE's plotting module for visualizing output from BLEval.
+   Beeline
+   BoolODE
 
 
 Indices and tables
