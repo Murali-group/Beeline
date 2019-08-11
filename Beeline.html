@@ -35,7 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Algorithms" href="algorithms.html" />
+    <link rel="next" title="BLRun package" href="BLRun.html" />
     <link rel="prev" title="Welcome to BEELINE’s documentation!" href="index.html" /> 
 </head>
 
@@ -83,8 +83,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul class="current">
+              <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">BEELINE</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a></li>
@@ -93,11 +92,14 @@
 <li class="toctree-l3"><a class="reference internal" href="#input-files">Input files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#config-files">Config files</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#running-the-pipeline">Running the pipeline</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#running-the-evaluation-scripts">Running the evaluation scripts</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="algorithms.html">Algorithms</a></li>
-<li class="toctree-l4"><a class="reference internal" href="beeline-reference.html">Modules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-the-evaluation-scripts">Running the evaluation scripts</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#algorithm-details">Algorithm details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html">BLRun package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html">BLEval package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html">BLPlot package</a></li>
 </ul>
 </li>
 </ul>
@@ -178,7 +180,7 @@ data. The BEELINE framework is divided into the following modules:</p>
 <li><p><a class="reference internal" href="BLRun.html#blrun"><span class="std std-ref">BLRun package</span></a> : contains the BEELINE’s Runner module, a Python
 wrapper for 12 GRN inference algorithms with options to add new
 methods.</p></li>
-<li><p><span class="xref std std-ref">bleval</span> : contains the BEELINE’s Evaluation module that
+<li><p><a class="reference internal" href="BLEval.html#bleval"><span class="std std-ref">BLEval package</span></a> : contains the BEELINE’s Evaluation module that
 provides easy-to-use tools for evaluating GRN reconstructions.</p></li>
 <li><p><a class="reference internal" href="BLPlot.html#blplot"><span class="std std-ref">BLPlot package</span></a> : contains the BEELINE’s plotting module for
 visualizing output from BLEval.</p></li>
@@ -274,7 +276,7 @@ network is not available, and will have to be curated from various
 Transcription Factor databases. While this file is not a
 requirement to run the base pipeline, a reference network is
 required to run some of the performance evaluations in
-<span class="xref std std-ref">BLEval</span>.</p></li>
+<a class="reference internal" href="BLEval.html#bleval"><span class="std std-ref">BLEval package</span></a>.</p></li>
 </ol>
 <p>The figure below shows the t-SNE visualization of the expression
 data from the example dataset.</p>
@@ -318,7 +320,7 @@ provided in <cite>config-files/</cite>. A config file should contain at minimum<
 folder containing the input, the config file indicates which
 algorithms should be run, along with the parameters to be passed to
 the algorithms, if any. For a list of parameters that the pipeline
-currently passes to the algorithms, see <a class="reference internal" href="algorithms.html#algorithms"><span class="std std-ref">Algorithms</span></a>.  Finally,
+currently passes to the algorithms, see <span class="xref std std-ref">Algorithms</span>.  Finally,
 the YAML file also specifies the paths to the outputs.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
@@ -327,16 +329,9 @@ the YAML file also specifies the paths to the outputs.</p>
 </div>
 <div class="section" id="running-the-pipeline">
 <h3>Running the pipeline<a class="headerlink" href="#running-the-pipeline" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; python BLRun.py --help
-usage: BLRun.py <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>--config CONFIG<span class="o">]</span>
-
-Run pathway reconstruction pipeline.
-
-optional arguments:
--h, --help       show this <span class="nb">help</span> message and <span class="nb">exit</span>
---config CONFIG  Configuration file
-</pre></div>
-</div>
+<p><code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> requires the path to the config file to be specified.</p>
+<p>Command line arguments:
+–config CONFIG  Path to configuration file.</p>
 <p>Once the input dataset has been generated and the config file has been
 created, the pipeline can be executed by simply calling <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code>
 with the config file specifying the inputs and the algorithms to run,
@@ -370,48 +365,186 @@ target).</p>
 </div>
 <div class="section" id="running-the-evaluation-scripts">
 <h3>Running the evaluation scripts<a class="headerlink" href="#running-the-evaluation-scripts" title="Permalink to this headline">¶</a></h3>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt; python BLEvalAggregator.py --help
-usage: BLEvalAggregator.py <span class="o">[</span>-h<span class="o">]</span> <span class="o">[</span>-c CONFIG<span class="o">]</span> <span class="o">[</span>-a<span class="o">]</span> <span class="o">[</span>-j<span class="o">]</span> <span class="o">[</span>-r<span class="o">]</span> <span class="o">[</span>-t<span class="o">]</span> <span class="o">[</span>-e<span class="o">]</span> <span class="o">[</span>-s<span class="o">]</span> <span class="o">[</span>-m<span class="o">]</span>
-
-Run pathway reconstruction pipeline.
-
-optional arguments:
-  -h, --help            show this <span class="nb">help</span> message and <span class="nb">exit</span>
-  -c CONFIG, --config CONFIG
-                        Configuration file containing list of datasets
-                        algorithms and output specifications.
-  -a, --auc             Compute median of areas under Precision-Recall and ROC
-                        curves.
-  -j, --jaccard         Compute median Jaccard index of predicted top-k
-                        networks <span class="k">for</span> each algorithm <span class="k">for</span> a given <span class="nb">set</span> of
-                        datasets generated from the same ground truth network.
-  -r, --spearman        Compute median Spearman Corr. of predicted edges <span class="k">for</span>
-                        each algorithm <span class="k">for</span> a given <span class="nb">set</span> of datasets generated
-                        from the same ground truth network.
-  -t, --time            Analyze <span class="nb">time</span> taken by each algorithm <span class="k">for</span> a.
-  -e, --epr             Compute median early precision.
-  -s, --sepr            Analyze median <span class="o">(</span>signed<span class="o">)</span> early precision <span class="k">for</span> activation
-                        and inhibitory edges.
-  -m, --motifs          Compute network motifs in the predicted top-k
-                        networks.
-</pre></div>
-</div>
+<p><code class="docutils literal notranslate"><span class="pre">BLEval.py</span></code> requires the path to the config file. Optionally the list
+of evaluations to be performed can be specified. The available options are
+list below.</p>
+<dl>
+<dt>Command line arguments:</dt><dd><dl class="option-list">
+<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
+<dd><p>show this help message and exit</p>
+</dd>
+<dt><kbd><span class="option">-c <var>CONFIG</var></span>, <span class="option">--config <var>CONFIG</var></span></kbd></dt>
+<dd><p>Configuration file containing list of datasets
+algorithms and output specifications.</p>
+</dd>
+<dt><kbd><span class="option">-a</span>, <span class="option">--auc</span></kbd></dt>
+<dd><p>Compute median of areas under Precision-Recall and ROC
+curves. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeAUC" title="BLEval.computeAUC"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeAUC</span></code></a>.</p>
+</dd>
+<dt><kbd><span class="option">-j</span>, <span class="option">--jaccard</span></kbd></dt>
+<dd><p>Compute median Jaccard index of predicted top-k
+networks for each algorithm for a given set of
+datasets generated from the same ground truth network. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeJaccard" title="BLEval.computeJaccard"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeJaccard</span></code></a>.</p>
+</dd>
+<dt><kbd><span class="option">-r</span>, <span class="option">--spearman</span></kbd></dt>
+<dd><p>Compute median Spearman Corr. of predicted edges for
+each algorithm for a given set of datasets generated
+from the same ground truth network.  Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeSpearman" title="BLEval.computeSpearman"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeSpearman</span></code></a>.</p>
+</dd>
+<dt><kbd><span class="option">-t</span>, <span class="option">--time</span></kbd></dt>
+<dd><p>Analyze time taken by each algorithm for a. Calls <a class="reference internal" href="BLEval.html#module-BLEval.parseTime" title="BLEval.parseTime"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.parseTime</span></code></a>.</p>
+</dd>
+<dt><kbd><span class="option">-e</span>, <span class="option">--epr</span></kbd></dt>
+<dd><p>Compute median early precision. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeEarlyPrec" title="BLEval.computeEarlyPrec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeEarlyPrec</span></code></a>.</p>
+</dd>
+<dt><kbd><span class="option">-s</span>, <span class="option">--sepr</span></kbd></dt>
+<dd><p>Analyze median (signed) early precision for activation
+and inhibitory edges. <a class="reference internal" href="BLEval.html#module-BLEval.computeSignedEPrec" title="BLEval.computeSignedEPrec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeSignedEPrec</span></code></a>.</p>
+</dd>
+<dt><kbd><span class="option">-m</span>, <span class="option">--motifs</span></kbd></dt>
+<dd><p>Compute network motifs in the predicted top-k
+networks. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeNetMotifs" title="BLEval.computeNetMotifs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeNetMotifs</span></code></a>.</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <p>The evaluation of the inferred networks is done by calling the
 <code class="docutils literal notranslate"><span class="pre">BLEvalAggregator.py</span></code> script.  Like the <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> script, the
 EvalAggregator script takes the config file as input. Every  subsequent
 option passed to this script calls a different evaluation script.</p>
+</div>
+</div>
+<div class="section" id="algorithm-details">
+<h2>Algorithm details<a class="headerlink" href="#algorithm-details" title="Permalink to this headline">¶</a></h2>
+<p id="algorithms">The following table lists the  algorithms and the parameters they take as input, along with the default parameter values</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 85%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Algorithms</strong></p></th>
+<th class="head"><p><strong>Input Parameters</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SINCERITIES</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nBins</span></code> : (Default 10)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>SCODE</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">z</span></code> : (Default 10)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nIter</span></code> : (Default 1000)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nRep</span></code> : Default(6)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>SCNS</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>SCINGE</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lambda</span></code> : (Default 0.01)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dT</span></code> : (Default 15)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_lags</span></code> : (Default 5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kernel_width</span></code> : (Default 0.5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prob_zero_removal</span></code> : (Default 0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prob_remove_samples</span></code> : (Default 0.0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">family</span></code> : (Default <code class="docutils literal notranslate"><span class="pre">gaussian</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_replicates</span></code> : (Default 6)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>PPCOR</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pVal</span></code> : p-value cutoff (Default=0.01)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>PIDC</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-even"><td><p>LEAP</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">maxLag</span></code> : (Default 0.33)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>SCRIBE</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">delay</span></code> :  (Default  5 )</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">method</span></code> : Any of <code class="docutils literal notranslate"><span class="pre">RDI</span></code>, <code class="docutils literal notranslate"><span class="pre">uRDI</span></code>, <code class="docutils literal notranslate"><span class="pre">cRDI</span></code>, or <code class="docutils literal notranslate"><span class="pre">ucRDI</span></code> (Default <code class="docutils literal notranslate"><span class="pre">ucRDI</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lowerDetectionLimit</span></code> : (Default 0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">expressionFamily</span></code> : If mRNA counts, use <code class="docutils literal notranslate"><span class="pre">negbinomial.size()</span></code> (Default <code class="docutils literal notranslate"><span class="pre">uninormal</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span></code> : Log transform expression values (Default False)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ignorePT</span></code> : Ignore Pseudotime (Default True)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>GRNVBEM</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>GRISLI</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">L</span></code> : (Default 10)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">R</span></code> : (Default 3000)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">alphaMin</span></code> : (Default 0.0)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>GENIE3</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>GRNBOOST2</p></td>
+<td><p>None</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="reference">
+<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Reference</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Algorithms</a></li>
-<li class="toctree-l1"><a class="reference internal" href="beeline-reference.html">Modules</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="BLRun.html">BLRun package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BLEval.html">BLEval package</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BLPlot.html">BLPlot package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BLRun.html">BLRun package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.genie3Runner">BLRun.genie3Runner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.grisliRunner">BLRun.grisliRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.grnboost2Runner">BLRun.grnboost2Runner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.grnvbemRunner">BLRun.grnvbemRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.jump3Runner">BLRun.jump3Runner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.leapRunner">BLRun.leapRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.pidcRunner">BLRun.pidcRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.ppcorRunner">BLRun.ppcorRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.runner">BLRun.runner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.scingeRunner">BLRun.scingeRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.scnsRunner">BLRun.scnsRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.scodeRunner">BLRun.scodeRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.scribeRunner">BLRun.scribeRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.sinceritiesRunner">BLRun.sinceritiesRunner module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BLEval.html">BLEval package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.computeAUC">BLEval.computeAUC module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.computeDGAUC">BLEval.computeDGAUC module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.computeEarlyPrec">BLEval.computeEarlyPrec module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.computeJaccard">BLEval.computeJaccard module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.computeNetMotifs">BLEval.computeNetMotifs module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.computeSignedEPrec">BLEval.computeSignedEPrec module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.computeSpearman">BLEval.computeSpearman module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.parseTime">BLEval.parseTime module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BLPlot.html">BLPlot package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#module-BLPlot.CuratedOverview">BLPlot.CuratedOverview module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#module-BLPlot.NetworkMotifs">BLPlot.NetworkMotifs module</a></li>
 </ul>
 </li>
 </ul>
-</div>
 </div>
 </div>
 </div>
@@ -424,7 +557,7 @@ option passed to this script calls a different evaluation script.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="algorithms.html" class="btn btn-neutral float-right" title="Algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="BLRun.html" class="btn btn-neutral float-right" title="BLRun package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to BEELINE’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -1,8 +1,5 @@
 .. _algorithms:
 
-Algorithms
-==========
-
 The following table lists the  algorithms and the parameters they take as input, along with the default parameter values
 
 

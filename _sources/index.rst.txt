@@ -11,6 +11,11 @@
 Welcome to BEELINE's documentation!
 ===================================
 
+.. figure:: figs/overview-graphic.png
+   :align: center
+
+   Overview of BEELINE
+
 This site serves as the documentation for the code released under the
 **Benchmarking gEnE reguLatory network Inference from siNgle-cEll
 transcriptomic data** (BEELINE) project.  The first part of this
@@ -21,9 +26,10 @@ part of this project is :ref:`BoolODE`, a tool to automatically
 convert a Boolean model to an ODE model, and subsequently carry out
 stochastic simulations.
 
+
+
 .. toctree::
    :maxdepth: 2
-   :caption: Contents: 
 
    Beeline
    BoolODE
