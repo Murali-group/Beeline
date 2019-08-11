@@ -85,14 +85,17 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="Beeline.html">Beeline</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Beeline.html">BEELINE</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Beeline.html#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Beeline.html#getting-started">Getting Started</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="Beeline.html#tutorial">Tutorial</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="Beeline.html#project-outline">Project outline</a><ul class="current">
-<li class="toctree-l4"><a class="reference internal" href="Beeline.html#input-files">Input files</a></li>
-<li class="toctree-l4"><a class="reference internal" href="Beeline.html#config-files">Config files</a></li>
-<li class="toctree-l4 current"><a class="reference internal" href="Beeline.html#running-the-pipeline">Running the pipeline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#project-outline">Project outline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#input-files">Input files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#config-files">Config files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#running-the-pipeline">Running the pipeline</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="Beeline.html#running-the-evaluation-scripts">Running the evaluation scripts</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="algorithms.html">Algorithms</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="beeline-reference.html">Modules</a></li>
 </ul>
 </li>
 </ul>
@@ -145,7 +148,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="Beeline.html">Beeline</a> &raquo;</li>
+          <li><a href="Beeline.html">BEELINE</a> &raquo;</li>
         
           <li><a href="beeline-reference.html">Modules</a> &raquo;</li>
         
@@ -172,11 +175,7 @@
 <span id="blrun-package"></span><span id="blrun"></span><h1>BLRun package<a class="headerlink" href="#module-BLRun" title="Permalink to this headline">¶</a></h1>
 <p>BEELINE Run (<a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLRun</span></code></a>) module contains the following main class:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#BLRun.BLRun" title="BLRun.BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.BLRun</span></code></a></p></li>
-</ul>
-<p>and three additional classes used in the definition 
-of BLRun class</p>
-<ul class="simple">
+<li><p><a class="reference internal" href="#BLRun.BLRun" title="BLRun.BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.BLRun</span></code></a> and three additional classes used in the definition of BLRun class</p></li>
 <li><p><a class="reference internal" href="#BLRun.ConfigParser" title="BLRun.ConfigParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.ConfigParser</span></code></a></p></li>
 <li><p><a class="reference internal" href="#BLRun.InputSettings" title="BLRun.InputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.InputSettings</span></code></a></p></li>
 <li><p><a class="reference internal" href="#BLRun.OutputSettings" title="BLRun.OutputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.OutputSettings</span></code></a></p></li>
@@ -234,18 +233,33 @@ be written to</p>
 <dd><p>Function to generate desired inputs for GENIE3.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.genie3Runner.parseOutput">
 <code class="sig-prename descclassname">BLRun.genie3Runner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/genie3Runner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.genie3Runner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from GENIE3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.genie3Runner.run">
 <code class="sig-prename descclassname">BLRun.genie3Runner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/genie3Runner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.genie3Runner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run GENIE3 algorithm</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -360,6 +374,7 @@ this function will not do anything.</p>
 <dt id="BLRun.leapRunner.run">
 <code class="sig-prename descclassname">BLRun.leapRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/leapRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.leapRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run LEAP algorithm</p>
+<p>Requires the maxLag parameter</p>
 </dd></dl>
 
 </div>
@@ -536,12 +551,22 @@ docker run scribe:base /bin/sh -c “Rscript runScribe.R -h”</p>
 <dd><p>Function to generate desired inputs for SINCERITIES.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.sinceritiesRunner.parseOutput">
 <code class="sig-prename descclassname">BLRun.sinceritiesRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/sinceritiesRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.sinceritiesRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from SINCERITIES.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">

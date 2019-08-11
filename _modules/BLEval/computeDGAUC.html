@@ -83,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -169,21 +169,14 @@
 <span class="sd">    Computes areas under the precision-recall and ROC curves</span>
 <span class="sd">    for a given dataset for each algorithm.</span>
 <span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    -----------</span>
-<span class="sd">        directed: bool</span>
-<span class="sd">            A flag to indicate whether to treat predictions</span>
-<span class="sd">            as directed edges (directed = True) or </span>
-<span class="sd">            undirected edges (directed = False).</span>
-<span class="sd">            </span>
-<span class="sd">        selfEdges: bool</span>
-<span class="sd">            A flag to indicate whether to include</span>
-<span class="sd">            self-edges (selfEdges = True) or </span>
-<span class="sd">            exclude self-edges (selfEdges = False) from evaluation.</span>
+
+<span class="sd">    :param directed:   A flag to indicate whether to treat predictions as directed edges (directed = True) or undirected edges (directed = False).</span>
+<span class="sd">    :type directed: bool</span>
+<span class="sd">    :param selfEdges:   A flag to indicate whether to includeself-edges (selfEdges = True) or exclude self-edges (selfEdges = False) from evaluation.</span>
+<span class="sd">    :type selfEdges: bool</span>
+<span class="sd">    :param plotFlag:   A flag to indicate whether or not to save PR and ROC plots.</span>
+<span class="sd">    :type plotFlag: bool</span>
 <span class="sd">        </span>
-<span class="sd">        plotFlag: bool</span>
-<span class="sd">            A flag to indicate whether or not to save PR and ROC plots.</span>
-<span class="sd">            </span>
 <span class="sd">    :returns:</span>
 <span class="sd">            - AUPRC: A dictionary containing AUPRC values for each algorithm</span>
 <span class="sd">            - AUROC: A dictionary containing AUROC values for each algorithm</span>
@@ -283,33 +276,18 @@
 <span class="sd">    using scikit-learn for a given set of predictions in the </span>
 <span class="sd">    form of a DataFrame.</span>
 <span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    -----------</span>
-<span class="sd">        trueEdgesDF: DataFrame</span>
-<span class="sd">            A pandas dataframe containing the true classes.</span>
-<span class="sd">            The indices of this dataframe are all possible edges</span>
-<span class="sd">            in a graph formed using the genes in the given dataset. </span>
-<span class="sd">            This dataframe only has one column to indicate the class</span>
-<span class="sd">            label of an edge. If an edge is present in the reference</span>
-<span class="sd">            network, it gets a class label of 1, else 0.</span>
-<span class="sd">            </span>
-<span class="sd">        predEdgeDF: DataFrame</span>
-<span class="sd">            A pandas dataframe containing the edge ranks from the prediced </span>
-<span class="sd">            network. The indices of this dataframe are all possible edges.</span>
-<span class="sd">            This dataframe only has one column to indicate the edge weights</span>
-<span class="sd">            in the predicted network. Higher the weight, higher the </span>
-<span class="sd">            edge confidence.</span>
+<span class="sd">    :param trueEdgesDF:   A pandas dataframe containing the true classes.The indices of this dataframe are all possible edgesin a graph formed using the genes in the given dataset. This dataframe only has one column to indicate the classlabel of an edge. If an edge is present in the reference network, it gets a class label of 1, else 0.</span>
+<span class="sd">    :type trueEdgesDF: DataFrame</span>
 <span class="sd">        </span>
-<span class="sd">        directed: bool</span>
-<span class="sd">            A flag to indicate whether to treat predictions</span>
-<span class="sd">            as directed edges (directed = True) or </span>
-<span class="sd">            undirected edges (directed = False).</span>
-<span class="sd">            </span>
-<span class="sd">        selfEdges: bool</span>
-<span class="sd">            A flag to indicate whether to include</span>
-<span class="sd">            self-edges (selfEdges = True) or </span>
-<span class="sd">            exclude self-edges (selfEdges = False) from evaluation.</span>
-<span class="sd">            </span>
+<span class="sd">    :param predEdgeDF:   A pandas dataframe containing the edge ranks from the prediced network. The indices of this dataframe are all possible edges.This dataframe only has one column to indicate the edge weightsin the predicted network. Higher the weight, higher the edge confidence.</span>
+<span class="sd">    :type predEdgeDF: DataFrame</span>
+<span class="sd">    </span>
+<span class="sd">    :param directed:   A flag to indicate whether to treat predictionsas directed edges (directed = True) or undirected edges (directed = False).</span>
+<span class="sd">    :type directed: bool</span>
+<span class="sd">        </span>
+<span class="sd">    :param selfEdges:   A flag to indicate whether to includeself-edges (selfEdges = True) or exclude self-edges (selfEdges = False) from evaluation.</span>
+<span class="sd">    :type selfEdges: bool</span>
+<span class="sd">        </span>
 <span class="sd">    :returns:</span>
 <span class="sd">            - prec: A list of precision values (for PR plot)</span>
 <span class="sd">            - recall: A list of precision values (for PR plot)</span>

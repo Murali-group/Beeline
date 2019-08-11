@@ -83,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -165,15 +165,42 @@
 
 <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
 <span class="kn">import</span> <span class="nn">matplotlib.font_manager</span> <span class="k">as</span> <span class="nn">font_manager</span>
-<span class="n">path</span> <span class="o">=</span> <span class="s1">&#39;/home/adyprat/.fonts/Proxima Nova Reg.ttf&#39;</span>
-<span class="n">prop</span> <span class="o">=</span> <span class="n">font_manager</span><span class="o">.</span><span class="n">FontProperties</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+<span class="c1">## We recommend using the font Proxima Nova Reg</span>
+<span class="c1">## After downloading the .ttf file, it can be configured to</span>
+<span class="c1">## be used in this script by uncommenting the following lines</span>
 
+<span class="c1"># path = &#39;/path/to/Proxima Nova Reg.ttf&#39;</span>
+<span class="c1"># prop = font_manager.FontProperties(fname=path)</span>
 
-<span class="n">prop</span> <span class="o">=</span> <span class="n">font_manager</span><span class="o">.</span><span class="n">FontProperties</span><span class="p">(</span><span class="n">fname</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
-
-    
 <div class="viewcode-block" id="plot"><a class="viewcode-back" href="../../BLPlot.html#BLPlot.CuratedOverview.plot">[docs]</a><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">inputDF</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> <span class="n">randValues</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">shape</span> <span class="o">=</span> <span class="p">[],</span> 
             <span class="n">palettes</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">text</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">levels</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">rotation</span> <span class="o">=</span> <span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    :param inputDF: Multilevel dataframe to be plotted</span>
+<span class="sd">    :type inputDF: :obj:`pandas DataFrame`</span>
+
+<span class="sd">    :param height: Height of image to be generated</span>
+<span class="sd">    :type height: float</span>
+
+<span class="sd">    :param randValues: Cutoffs below which a pre-defined shape is set, useful for indicating less-than-significant values</span>
+<span class="sd">    :type randValues: list</span>
+
+<span class="sd">    :param shape: Shape to be drawn, choose from &#39;s&#39; (square), &#39;rs&#39; (rounded square), &#39;w&#39; (wedge), &#39;b&#39; (fixed width rectangle), &#39;f&#39; (full width, fixed color square), &#39;text&#39;</span>
+<span class="sd">    :type shape: list</span>
+
+<span class="sd">    :param palettes: Color palette. Define this object using sns.color_palette()</span>
+<span class="sd">    :type palettes: list</span>
+
+<span class="sd">    :param text: Specify if column is to be treated as text</span>
+<span class="sd">    :type text: list</span>
+
+<span class="sd">    :param levels: Which columns to plot, specified using column names</span>
+<span class="sd">    :type levels: list</span>
+
+<span class="sd">    :param rotation: Whether to rotate the text of a column name.</span>
+<span class="sd">    :type rotation: list</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     
     <span class="n">levls</span> <span class="o">=</span> <span class="n">levels</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">levls</span><span class="p">)</span>

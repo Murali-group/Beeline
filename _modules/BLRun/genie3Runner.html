@@ -83,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -160,6 +160,8 @@
 <span class="sd">    Function to generate desired inputs for GENIE3.</span>
 <span class="sd">    If the folder/files under RunnerObj.datadir exist, </span>
 <span class="sd">    this function will not do anything.</span>
+
+<span class="sd">    :param RunnerObj: An instance of the :class:`BLRun`</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;GENIE3&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input folder for GENIE3 does not exist, creating input folder...&quot;</span><span class="p">)</span>
@@ -177,6 +179,8 @@
 <div class="viewcode-block" id="run"><a class="viewcode-back" href="../../BLRun.html#BLRun.genie3Runner.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">RunnerObj</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Function to run GENIE3 algorithm</span>
+
+<span class="sd">    :param RunnerObj: An instance of the :class:`BLRun`</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">inputPath</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()))[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> \
                     <span class="s2">&quot;/GENIE3/ExpressionData.csv&quot;</span>
@@ -197,6 +201,8 @@
 <div class="viewcode-block" id="parseOutput"><a class="viewcode-back" href="../../BLRun.html#BLRun.genie3Runner.parseOutput">[docs]</a><span class="k">def</span> <span class="nf">parseOutput</span><span class="p">(</span><span class="n">RunnerObj</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Function to parse outputs from GENIE3.</span>
+
+<span class="sd">    :param RunnerObj: An instance of the :class:`BLRun`</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="c1"># Quit if output directory does not exist</span>
     <span class="n">outDir</span> <span class="o">=</span> <span class="s2">&quot;outputs/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;inputs/&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="s2">&quot;/GENIE3/&quot;</span>

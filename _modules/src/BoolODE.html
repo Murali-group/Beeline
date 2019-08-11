@@ -1,0 +1,1282 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>src.BoolODE &mdash; BEELINE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> BEELINE
+          
+
+          
+            
+            <img src="../../_static/beeline.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>src.BoolODE</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for src.BoolODE</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># coding: utf-8</span>
+<span class="n">__author__</span> <span class="o">=</span> <span class="s1">&#39;Amogh Jalihal&#39;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy</span> <span class="k">as</span> <span class="nn">sc</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">combinations</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">odeint</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">importlib</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span> 
+<span class="kn">from</span> <span class="nn">optparse</span> <span class="k">import</span> <span class="n">OptionParser</span>
+<span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">Process</span><span class="p">,</span> <span class="n">Lock</span><span class="p">,</span> <span class="n">Manager</span>
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">from</span> <span class="nn">importlib.machinery</span> <span class="k">import</span> <span class="n">SourceFileLoader</span>
+<span class="kn">import</span> <span class="nn">utils</span> 
+<span class="kn">import</span> <span class="nn">simulator</span> 
+
+<span class="n">np</span><span class="o">.</span><span class="n">seterr</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s1">&#39;raise&#39;</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="readBooleanRules"><a class="viewcode-back" href="../../src.html#src.BoolODE.readBooleanRules">[docs]</a><span class="k">def</span> <span class="nf">readBooleanRules</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">parameterInputsPath</span><span class="p">,</span> <span class="n">outPrefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                     <span class="n">add_dummy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">max_parents</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Reads a rule file from path and stores the rules in a dictionary</span>
+<span class="sd">    </span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    :param path: Path to Boolean Rule file</span>
+<span class="sd">    :type path: str</span>
+<span class="sd">    :param parameterInputsPath: Path to file containing input parameters to the model</span>
+<span class="sd">    :type parameterInputsPath: str</span>
+<span class="sd">    :param add_dummy: Experimental feature, adds dummy targets to each gene in the model. Useful to change the density of the network</span>
+<span class="sd">    :type add_dummy: bool</span>
+<span class="sd">    :param max_parents: Experimental feature, specifies number of parent genes per dummy gene added</span>
+<span class="sd">    :type max_parents: int</span>
+
+<span class="sd">    :returns:</span>
+<span class="sd">        - DF: Dataframe containing rules</span>
+<span class="sd">        - withoutrules: list of nodes in input file without rules</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">DF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+    <span class="n">withRules</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;Gene&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    <span class="n">allnodes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ind</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">DF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Rule&#39;</span><span class="p">]</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">rhs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">rhs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">rhs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+        <span class="n">reg</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;not&#39;</span><span class="p">,</span><span class="s1">&#39;and&#39;</span><span class="p">,</span><span class="s1">&#39;or&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">]]</span>
+        <span class="n">allnodes</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">reg</span><span class="p">))</span>
+
+    <span class="n">withoutRules</span> <span class="o">=</span> <span class="n">allnodes</span><span class="o">.</span><span class="n">difference</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">withRules</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">withoutRules</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameterInputsPath</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="s2">&quot;has no rule, adding self-activation.&quot;</span><span class="p">)</span>
+            <span class="n">DF</span> <span class="o">=</span> <span class="n">DF</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;Gene&#39;</span><span class="p">:</span><span class="n">n</span><span class="p">,</span><span class="s1">&#39;Rule&#39;</span><span class="p">:</span><span class="n">n</span><span class="p">},</span><span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Treating </span><span class="si">%s</span><span class="s2"> as parameter&quot;</span> <span class="o">%</span> <span class="p">{</span><span class="n">n</span><span class="p">})</span>
+    <span class="c1">## Add dummy genes</span>
+    <span class="c1">## determinisitcally add parents</span>
+    <span class="k">if</span> <span class="n">add_dummy</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;using max_parents=&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">max_parents</span><span class="p">))</span>
+        <span class="n">num_dummy</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">allnodes</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">dg</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dummy</span><span class="p">):</span>
+            <span class="c1">## Variable number of parents</span>
+            <span class="c1"># DF = DF.append({&#39;Gene&#39;:&#39;dummy&#39; + str(dg),</span>
+            <span class="c1">#                 &#39;Rule&#39;:&#39; or &#39;.join([s for s in \</span>
+            <span class="c1">#                                     np.random.choice(list(allnodes),</span>
+            <span class="c1">#                                                      size=np.random.choice([i+1 for i in range(len(allnodes)-1)]))])},</span>
+            <span class="c1">#                ignore_index = True)</span>
+            <span class="n">DF</span> <span class="o">=</span> <span class="n">DF</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;Gene&#39;</span><span class="p">:</span><span class="s1">&#39;dummy&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dg</span><span class="p">),</span>
+                            <span class="s1">&#39;Rule&#39;</span><span class="p">:</span><span class="s1">&#39; or &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">s</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> \
+                                                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">allnodes</span><span class="p">),</span>
+                                                                 <span class="n">size</span><span class="o">=</span><span class="n">max_parents</span><span class="p">)])},</span>
+                           <span class="n">ignore_index</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+            <span class="n">DF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s1">&#39;rules-with-added-genes.csv&#39;</span><span class="p">)</span>
+            
+    <span class="nb">print</span><span class="p">(</span><span class="n">DF</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">DF</span><span class="p">,</span> <span class="n">withoutRules</span></div>
+
+<div class="viewcode-block" id="getParameters"><a class="viewcode-back" href="../../src.html#src.BoolODE.getParameters">[docs]</a><span class="k">def</span> <span class="nf">getParameters</span><span class="p">(</span><span class="n">DF</span><span class="p">,</span><span class="n">identicalPars</span><span class="p">,</span>
+                  <span class="n">samplePars</span><span class="p">,</span>
+                  <span class="n">sampleStd</span><span class="p">,</span>
+                  <span class="n">genelist</span><span class="p">,</span>
+                  <span class="n">proteinlist</span><span class="p">,</span>
+                  <span class="n">withoutRules</span><span class="p">,</span>
+                  <span class="n">parameterInputsDF</span><span class="p">,</span>
+                  <span class="n">parameterSetDF</span><span class="p">,</span>
+                  <span class="n">interactionStrengthDF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create dictionary of parameters and values. Assigns</span>
+<span class="sd">    parameter values by evaluating the Boolean expression</span>
+<span class="sd">    for each variable.</span>
+
+<span class="sd">    :param DF: Table of values with two columns, &#39;Gene&#39; specifies target, &#39;Rule&#39; specifies Boolean function</span>
+<span class="sd">    :type DF: pandas DataFrame</span>
+<span class="sd">    :param identicalPars: Passed to utils.getSaneNval to set identical parameters</span>
+<span class="sd">    :type identicalPars: bool</span>
+<span class="sd">    :param samplePars: Sample kinetic parameters using a Gaussian distribution  centered around the default parameters</span>
+<span class="sd">    :type samplePars: bool</span>
+<span class="sd">    :param parameterInputsDF: Optional table that specifies input parameter values. Useful to specify experimental conditions.</span>
+<span class="sd">    :type parameterInputsDF: pandas DataFrame</span>
+<span class="sd">    :param parameterSetDF: Optional table that specifies predefined parameter set.</span>
+<span class="sd">    :type parameterSetDF: pandas DataFrame</span>
+<span class="sd">    :param interactionStrengthDF: Optional table that specifies interaction strengths. When not specified, default strength is set to 1.</span>
+<span class="sd">    :type interactionStrengthDF: pandas DataFrame</span>
+<span class="sd">    :returns:</span>
+<span class="sd">        pars : dict</span>
+<span class="sd">            Dictionary of parameters </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">## Set default parameters</span>
+    <span class="n">mRNATranscription</span> <span class="o">=</span> <span class="mf">20.</span>
+    <span class="n">mRNADegradation</span> <span class="o">=</span> <span class="n">mRNATranscription</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">proteinTranslation</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">proteinDegradation</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1">## The threshold is calculated as the max value of the species</span>
+    <span class="c1">## divided by 2.</span>
+    <span class="n">y_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">proteinTranslation</span><span class="o">/</span><span class="n">proteinDegradation</span><span class="p">)</span><span class="o">*</span>\
+            <span class="p">(</span><span class="n">mRNATranscription</span><span class="o">/</span><span class="n">mRNADegradation</span><span class="p">)</span>
+    <span class="n">x_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">mRNATranscription</span><span class="o">/</span><span class="n">mRNADegradation</span><span class="p">)</span>
+    <span class="n">hillThreshold</span> <span class="o">=</span> <span class="n">y_max</span><span class="o">/</span><span class="mi">2</span>
+
+    <span class="c1"># Chosen arbitrarily</span>
+    <span class="n">signalingtimescale</span> <span class="o">=</span> <span class="mf">5.0</span>
+    <span class="n">hillCoefficient</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">interactionStrength</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="n">parameterNamePrefixAndDefaultsAll</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># Hill coefficients</span>
+        <span class="s1">&#39;n_&#39;</span><span class="p">:</span><span class="n">hillCoefficient</span><span class="p">,</span>
+        <span class="c1"># Thresholds</span>
+        <span class="s1">&#39;k_&#39;</span><span class="p">:</span><span class="n">hillThreshold</span><span class="p">,</span>
+    <span class="p">}</span>     
+    <span class="n">parameterNamePrefixAndDefaultsGenes</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># mRNA transcription rates</span>
+        <span class="s1">&#39;m_&#39;</span><span class="p">:</span><span class="n">mRNATranscription</span><span class="p">,</span>
+        <span class="c1"># mRNA degradation rates</span>
+        <span class="s1">&#39;l_x_&#39;</span><span class="p">:</span><span class="n">mRNADegradation</span><span class="p">,</span>
+        <span class="c1"># Protein translation rate</span>
+        <span class="s1">&#39;r_&#39;</span><span class="p">:</span><span class="n">proteinTranslation</span><span class="p">,</span>
+        <span class="c1"># protein degradation rates</span>
+        <span class="s1">&#39;l_p_&#39;</span><span class="p">:</span><span class="n">proteinDegradation</span>
+    <span class="p">}</span>     
+    
+    <span class="n">par</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="c1">## If there is even one signaling protein,</span>
+    <span class="c1">## create the y_max parameter</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">proteinlist</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">par</span><span class="p">[</span><span class="s1">&#39;y_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y_max</span>
+        <span class="n">par</span><span class="p">[</span><span class="s1">&#39;signalingtimescale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">signalingtimescale</span>
+        
+    <span class="n">parameterInputsDict</span>  <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">interactionStrengths</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1">## Get set of species which have rules specified for them</span>
+    <span class="n">species</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;Gene&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+    
+    <span class="c1">## Check 1:</span>
+    <span class="c1">## If a parameter input file is specified,</span>
+    <span class="c1">## Every row in parameterInputsDF contains two</span>
+    <span class="c1">## columns:</span>
+    <span class="c1">##     &#39;Inputs&#39; is a python list of strings</span>
+    <span class="c1">## specifying the parameters.</span>
+    <span class="c1">##     &#39;Values&#39; is a python list of floats</span>
+    <span class="c1">## each corresponding to the value of a parameter.</span>
+    <span class="c1">## Now, we create a fake hill term for this input, even</span>
+    <span class="c1">## though there is no equation corresponding to it. Thus,</span>
+    <span class="c1">## we create a hillThreshold and hillCoefficient </span>
+    <span class="c1">## term for it. This is useful so we can treat this input</span>
+    <span class="c1">## parameter as a &quot;regulator&quot; and leave the structure of</span>
+    <span class="c1">## the logic term unchanged.</span>
+    <span class="k">if</span> <span class="n">parameterInputsDF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">parameterInputsDF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="c1"># initialize</span>
+            <span class="n">parameterInputsDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">:</span><span class="mi">0</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">withoutRules</span><span class="p">}</span>
+            <span class="n">inputParams</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Inputs&#39;</span><span class="p">])</span>
+            <span class="n">inputValues</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Values&#39;</span><span class="p">])</span>
+            <span class="c1"># Set to a max value</span>
+            <span class="n">parameterInputsDict</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">p</span><span class="p">:</span><span class="n">hillThreshold</span><span class="o">*</span><span class="mi">2</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span>\
+                                       <span class="nb">zip</span><span class="p">(</span><span class="n">inputParams</span><span class="p">,</span><span class="n">inputValues</span><span class="p">)</span> <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">})</span>
+            
+        <span class="c1"># Add input parameters, set to 0 by default</span>
+        <span class="n">par</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">p</span><span class="p">:</span><span class="mi">0</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameterInputsDict</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()})</span>
+        <span class="n">par</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;k_&#39;</span><span class="o">+</span><span class="n">p</span><span class="p">:</span><span class="n">hillThreshold</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameterInputsDict</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()})</span>
+        <span class="n">par</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;n_&#39;</span><span class="o">+</span><span class="n">p</span><span class="p">:</span><span class="n">hillCoefficient</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameterInputsDict</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()})</span>
+
+
+    <span class="c1">## Check 2:</span>
+    <span class="c1">## If interaction strengths are specified.</span>
+    <span class="c1">## Create a new parameter specifying the strength</span>
+    <span class="c1">## of a given interaction. For all other equations in</span>
+    <span class="c1">## which &quot;regulator&quot; appears in, its hillThreshold value</span>
+    <span class="c1">## will remain the default value.</span>
+    <span class="k">if</span> <span class="n">interactionStrengthDF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">interactionStrengthDF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">regulator</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span>
+            <span class="n">interactionStrength</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Strength&#39;</span><span class="p">]</span>
+            <span class="n">par</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;k_&#39;</span> <span class="o">+</span> <span class="n">regulator</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">target</span><span class="p">:</span> <span class="n">hillThreshold</span><span class="o">/</span><span class="n">interactionStrength</span><span class="p">})</span>
+
+    <span class="c1">## Check 3:</span>
+    <span class="c1">## Whether to sample parameters or stick to defaults</span>
+    <span class="k">if</span> <span class="n">samplePars</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sampling parameters&quot;</span><span class="p">)</span>
+        <span class="n">sigmamult</span> <span class="o">=</span> <span class="n">sampleStd</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using std=&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sampleStd</span><span class="p">))</span>
+        <span class="n">lomult</span> <span class="o">=</span> <span class="mf">0.9</span>
+        <span class="n">himult</span> <span class="o">=</span> <span class="mf">1.1</span>
+        <span class="k">for</span> <span class="n">parPrefix</span><span class="p">,</span> <span class="n">parDefault</span> <span class="ow">in</span> <span class="n">parameterNamePrefixAndDefaultsAll</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">sampledParameterValues</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">getSaneNval</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">species</span><span class="p">),</span>\
+                                                 <span class="n">lo</span><span class="o">=</span><span class="n">lomult</span><span class="o">*</span><span class="n">parDefault</span><span class="p">,</span>\
+                                                 <span class="n">hi</span><span class="o">=</span><span class="n">himult</span><span class="o">*</span><span class="n">parDefault</span><span class="p">,</span>\
+                                                 <span class="n">mu</span><span class="o">=</span><span class="n">parDefault</span><span class="p">,</span>\
+                                                 <span class="n">sig</span><span class="o">=</span><span class="n">sigmamult</span><span class="o">*</span><span class="n">parDefault</span><span class="p">,</span>\
+                                                 <span class="n">identicalPars</span><span class="o">=</span><span class="n">identicalPars</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sp</span><span class="p">,</span> <span class="n">sparval</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="n">sampledParameterValues</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">genelist</span><span class="p">:</span>
+                    <span class="n">par</span><span class="p">[</span><span class="n">parPrefix</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="n">sparval</span>
+                    
+        <span class="n">transcriptionRate</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">mRNADegradationRate</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">for</span> <span class="n">parPrefix</span><span class="p">,</span> <span class="n">parDefault</span> <span class="ow">in</span> <span class="n">parameterNamePrefixAndDefaultsGenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">sampledParameterValues</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">getSaneNval</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">species</span><span class="p">),</span>\
+                                                 <span class="n">lo</span><span class="o">=</span><span class="n">lomult</span><span class="o">*</span><span class="n">parDefault</span><span class="p">,</span>\
+                                                 <span class="n">hi</span><span class="o">=</span><span class="n">himult</span><span class="o">*</span><span class="n">parDefault</span><span class="p">,</span>\
+                                                 <span class="n">mu</span><span class="o">=</span><span class="n">parDefault</span><span class="p">,</span>\
+                                                 <span class="n">sig</span><span class="o">=</span><span class="n">sigmamult</span><span class="o">*</span><span class="n">parDefault</span><span class="p">,</span>\
+                                                 <span class="n">identicalPars</span><span class="o">=</span><span class="n">identicalPars</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">identicalPars</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">parPrefix</span> <span class="o">==</span> <span class="s1">&#39;m_&#39;</span><span class="p">:</span>
+                    <span class="n">transcriptionRate</span> <span class="o">=</span> <span class="n">sampledParameterValues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">parPrefix</span> <span class="o">==</span> <span class="s1">&#39;l_x_&#39;</span><span class="p">:</span>
+                    <span class="n">mRNADegradationRate</span> <span class="o">=</span> <span class="n">sampledParameterValues</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">parPrefix</span> <span class="o">==</span> <span class="s1">&#39;m_&#39;</span><span class="p">:</span>
+                    <span class="n">transcriptionRate</span> <span class="o">=</span> <span class="n">parDefault</span>
+                <span class="k">if</span> <span class="n">parPrefix</span> <span class="o">==</span> <span class="s1">&#39;l_x_&#39;</span><span class="p">:</span>
+                    <span class="n">mRNADegradationRate</span> <span class="o">=</span> <span class="n">parDefault</span>
+            
+            <span class="k">for</span> <span class="n">sp</span><span class="p">,</span> <span class="n">sparval</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">species</span><span class="p">,</span> <span class="n">sampledParameterValues</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">genelist</span><span class="p">:</span>
+                    <span class="n">par</span><span class="p">[</span><span class="n">parPrefix</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="n">sparval</span>
+        <span class="c1">## Based on these samples, estimate max value a</span>
+        <span class="c1">## gene can take at _steady-state_</span>
+        <span class="n">x_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">transcriptionRate</span><span class="o">/</span><span class="n">mRNADegradationRate</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Fixing rate parameters to defaults&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">parPrefix</span><span class="p">,</span> <span class="n">parDefault</span> <span class="ow">in</span> <span class="n">parameterNamePrefixAndDefaultsAll</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">species</span><span class="p">:</span>
+                <span class="n">par</span><span class="p">[</span><span class="n">parPrefix</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="n">parDefault</span>
+
+        <span class="k">for</span> <span class="n">parPrefix</span><span class="p">,</span> <span class="n">parDefault</span> <span class="ow">in</span> <span class="n">parameterNamePrefixAndDefaultsGenes</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">species</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">genelist</span><span class="p">:</span>
+                    <span class="n">par</span><span class="p">[</span><span class="n">parPrefix</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="n">parDefault</span>
+    <span class="c1">## Final Check.</span>
+    <span class="c1">## If parameterSetDF is specified, reassign</span>
+    <span class="c1">## parameter values to those from table</span>
+    <span class="c1">## This guarantees that all the parameters are defined without</span>
+    <span class="c1">## specific checks in parameterSetDF</span>
+    <span class="k">if</span> <span class="n">parameterSetDF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">pname</span><span class="p">,</span> <span class="n">pvalue</span> <span class="ow">in</span> <span class="n">parameterSetDF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">par</span><span class="p">[</span><span class="n">pname</span><span class="p">]</span> <span class="o">=</span> <span class="n">pvalue</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">par</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">parameterInputsDict</span></div>
+
+<div class="viewcode-block" id="generateModelDict"><a class="viewcode-back" href="../../src.html#src.BoolODE.generateModelDict">[docs]</a><span class="k">def</span> <span class="nf">generateModelDict</span><span class="p">(</span><span class="n">DF</span><span class="p">,</span><span class="n">identicalPars</span><span class="p">,</span>
+                      <span class="n">samplePars</span><span class="p">,</span>
+                      <span class="n">sampleStd</span><span class="p">,</span>
+                      <span class="n">withoutRules</span><span class="p">,</span>
+                      <span class="n">speciesTypeDF</span><span class="p">,</span>
+                      <span class="n">parameterInputsDF</span><span class="p">,</span>
+                      <span class="n">parameterSetDF</span><span class="p">,</span>
+                      <span class="n">interactionStrengthDF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Take a DataFrame object with Boolean rules,</span>
+<span class="sd">    construct ODE equations for each variable.</span>
+<span class="sd">    Takes optional parameter inputs and interaction</span>
+<span class="sd">    strengths</span>
+
+<span class="sd">    :param DF: Table of values with two columns, &#39;Gene&#39; specifies target, &#39;Rule&#39; specifies Boolean function</span>
+<span class="sd">    :type DF: pandas DataFrame</span>
+<span class="sd">    :param identicalPars: Passed to utils.getSaneNval to set identical parameters</span>
+<span class="sd">    :type identicalPars: bool</span>
+<span class="sd">    :param samplePars: Sample kinetic parameters using a Gaussian distribution  centered around the default parameters</span>
+<span class="sd">    :type samplePars: bool</span>
+<span class="sd">    :param sampleStd: Sample from a distribution of mean=par, sigma=sampleStd*par</span>
+<span class="sd">    :type sampleStd: float</span>
+<span class="sd">    :param speciesTypeDF: Table defining type of each species. Takes values  &#39;gene&#39; or &#39;protein&#39;</span>
+<span class="sd">    :type speciesTypeDF: pandas DataFrame</span>
+<span class="sd">    :param parameterInputsDF: Optional table that specifies parameter input values. Useful to specify experimental conditions.</span>
+<span class="sd">    :type parameterInputsDF: pandas DataFrame</span>
+<span class="sd">    :param parameterSetDF: Optional table that specifies a predefined parameter set.</span>
+<span class="sd">    :type parameterSetDF: pandas DataFrame</span>
+<span class="sd">    :param interactionStrengthDF: Optional table that specifies interaction strengths. When not specified, default strength is set to 1.</span>
+<span class="sd">    :type interactionStrengthDF: pandas DataFrame</span>
+<span class="sd">    :returns:</span>
+<span class="sd">        ModelSpec : dict</span>
+<span class="sd">            Dictionary of dictionaries. </span>
+<span class="sd">            &#39;varspecs&#39; {variable:ODE equation}</span>
+<span class="sd">            &#39;ics&#39; {variable:initial condition}</span>
+<span class="sd">            &#39;pars&#39; {parameter:parameter value}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">species</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">DF</span><span class="p">[</span><span class="s1">&#39;Gene&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+
+    <span class="c1"># Variables:</span>
+    <span class="c1">## Check:</span>
+    <span class="c1">## If speciesType is provided, initialize the</span>
+    <span class="c1">## correct species names</span>
+    <span class="c1">## Rule:</span>
+    <span class="c1">## Every gene (x_species) gets a corresponding</span>
+    <span class="c1">## protein (p_species). The gene equation contains</span>
+    <span class="c1">## regulatory logic, protein equation contains production</span>
+    <span class="c1">## degradation terms.</span>
+    <span class="c1">## Every &#39;protein&#39; (p_species) only gets one variable,</span>
+    <span class="c1">## and the corresponding equation contains the regulatory</span>
+    <span class="c1">## logic term. There is no production/degradation associated</span>
+    <span class="c1">## with this species.</span>
+    <span class="n">varspecs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">genelist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">proteinlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">speciesTypeDF</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Assume everything is a gene.</span>
+        <span class="k">for</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">species</span><span class="p">:</span>
+            <span class="n">varspecs</span><span class="p">[</span><span class="s1">&#39;x_&#39;</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">varspecs</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">genelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">speciesTypeDF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">sp</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Species&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;protein&#39;</span><span class="p">:</span>
+                <span class="n">varspecs</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">proteinlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;gene&#39;</span><span class="p">:</span>
+                <span class="n">varspecs</span><span class="p">[</span><span class="s1">&#39;x_&#39;</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">varspecs</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+                <span class="n">genelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+        <span class="n">specified</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">speciesTypeDF</span><span class="p">[</span><span class="s1">&#39;Species&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">sp</span> <span class="ow">in</span> <span class="n">species</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sp</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">specified</span><span class="p">:</span>
+                <span class="n">genelist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span>
+                
+    <span class="c1">## Useful for debugging. </span>
+    <span class="c1"># print(genelist)</span>
+    <span class="c1"># print(proteinlist)</span>
+
+    <span class="n">par</span><span class="p">,</span> <span class="n">x_max</span><span class="p">,</span> <span class="n">parameterInputs</span> <span class="o">=</span> <span class="n">getParameters</span><span class="p">(</span><span class="n">DF</span><span class="p">,</span><span class="n">identicalPars</span><span class="p">,</span>
+                                                <span class="n">samplePars</span><span class="p">,</span>
+                                                <span class="n">sampleStd</span><span class="p">,</span>
+                                                <span class="n">genelist</span><span class="p">,</span>
+                                                <span class="n">proteinlist</span><span class="p">,</span>
+                                                <span class="n">withoutRules</span><span class="p">,</span>
+                                                <span class="n">parameterInputsDF</span><span class="p">,</span>
+                                                <span class="n">parameterSetDF</span><span class="p">,</span>
+                                                <span class="n">interactionStrengthDF</span><span class="p">)</span>
+
+    <span class="c1">##########################################################</span>
+    <span class="c1">## Assign values to alpha parameters representing the logic</span>
+    <span class="c1">## relationships between variables</span>
+    <span class="c1"># Initialize new namespace</span>
+    <span class="n">boolodespace</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">DF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="c1"># Initialize species to 0</span>
+        <span class="n">tempStr</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Gene&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; = 0&quot;</span>  
+        <span class="n">exec</span><span class="p">(</span><span class="n">tempStr</span><span class="p">,</span> <span class="n">boolodespace</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">parameterInputsDF</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">withoutRules</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parameterInputs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="c1"># Initialize variables to 0</span>
+            <span class="n">tempStr</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="s2">&quot; = 0&quot;</span>  
+            <span class="n">exec</span><span class="p">(</span><span class="n">tempStr</span><span class="p">,</span> <span class="n">boolodespace</span><span class="p">)</span>
+            
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">DF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="c1"># Basal alpha:</span>
+        <span class="c1"># Execute the rule to figure out</span>
+        <span class="c1"># the value of alpha_0</span>
+        <span class="n">exec</span><span class="p">(</span><span class="s1">&#39;booleval = &#39;</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Rule&#39;</span><span class="p">],</span> <span class="n">boolodespace</span><span class="p">)</span> 
+        <span class="n">par</span><span class="p">[</span><span class="s1">&#39;alpha_&#39;</span><span class="o">+</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;Gene&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">boolodespace</span><span class="p">[</span><span class="s1">&#39;booleval&#39;</span><span class="p">])</span>
+
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">DF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Rule&#39;</span><span class="p">]</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">rhs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">rhs</span> <span class="o">=</span> <span class="n">rhs</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;)&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+        <span class="n">tokens</span> <span class="o">=</span> <span class="n">rhs</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
+
+        <span class="n">allreg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="p">(</span><span class="n">t</span> <span class="ow">in</span> <span class="n">species</span> <span class="ow">or</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">)])</span>
+        <span class="n">regulatorySpecies</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">species</span><span class="p">])</span>
+        <span class="n">inputreg</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tokens</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">inputs</span><span class="p">])</span>
+        
+        <span class="n">currSp</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Gene&#39;</span><span class="p">]</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="s1">&#39;( alpha_&#39;</span> <span class="o">+</span> <span class="n">currSp</span>
+        <span class="n">den</span> <span class="o">=</span> <span class="s1">&#39;( 1&#39;</span>
+
+        <span class="n">strengthSpecified</span> <span class="o">=</span> <span class="kc">False</span>
+        
+        <span class="k">if</span> <span class="n">interactionStrengthDF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">currSp</span> <span class="ow">in</span> <span class="n">interactionStrengthDF</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+                <span class="n">strengthSpecified</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="c1"># Get the list of regulators of currSp</span>
+                <span class="c1"># whose interaction strengths have been specified</span>
+                <span class="n">regulatorsWithStrength</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">interactionStrengthDF</span><span class="p">[</span>\
+                                                                   <span class="n">interactionStrengthDF</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span>\
+                                                                   <span class="o">==</span> <span class="n">currSp</span><span class="p">][</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">regulatorsWithStrength</span><span class="p">)</span>
+                
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">allreg</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">allreg</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
+                <span class="c1"># Create the hill function terms for each regulator</span>
+                <span class="n">hills</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">strengthSpecified</span> <span class="ow">and</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">regulatorsWithStrength</span><span class="p">:</span>
+                            <span class="n">hillThresholdName</span> <span class="o">=</span> <span class="s1">&#39;k_&#39;</span> <span class="o">+</span> <span class="n">ci</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="n">currSp</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">hillThresholdName</span> <span class="o">=</span> <span class="s1">&#39;k_&#39;</span> <span class="o">+</span> <span class="n">ci</span>
+                        
+                    <span class="k">if</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">regulatorySpecies</span><span class="p">:</span>
+                        <span class="c1"># Note: Only proteins can be regulators</span>
+                        <span class="n">hills</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;(p_&#39;</span><span class="o">+</span><span class="n">ci</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">hillThresholdName</span><span class="o">+</span><span class="s1">&#39;)^n_&#39;</span><span class="o">+</span><span class="n">ci</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">ci</span> <span class="ow">in</span> <span class="n">inputreg</span><span class="p">:</span>
+                        <span class="n">hills</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;(&#39;</span><span class="o">+</span><span class="n">ci</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">hillThresholdName</span><span class="o">+</span><span class="s1">&#39;)^n_&#39;</span><span class="o">+</span><span class="n">ci</span><span class="p">)</span>
+                <span class="n">mult</span> <span class="o">=</span> <span class="s1">&#39;*&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">hills</span><span class="p">)</span>
+                <span class="c1"># Create Numerator and Denominator</span>
+                <span class="n">den</span> <span class="o">+=</span> <span class="s1">&#39; +&#39;</span> <span class="o">+</span>  <span class="n">mult</span>                
+                <span class="n">num</span> <span class="o">+=</span> <span class="s1">&#39; + a_&#39;</span> <span class="o">+</span> <span class="n">currSp</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span>  <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="n">mult</span>
+                
+                <span class="k">for</span> <span class="n">i1</span><span class="p">,</span> <span class="n">row1</span> <span class="ow">in</span> <span class="n">DF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                    <span class="n">exec</span><span class="p">(</span><span class="n">row1</span><span class="p">[</span><span class="s1">&#39;Gene&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39; = 0&#39;</span><span class="p">,</span> <span class="n">boolodespace</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">geneInList</span> <span class="ow">in</span> <span class="n">c</span><span class="p">:</span>
+                    <span class="n">exec</span><span class="p">(</span><span class="n">geneInList</span> <span class="o">+</span> <span class="s1">&#39; = 1&#39;</span><span class="p">,</span> <span class="n">boolodespace</span><span class="p">)</span>
+                <span class="n">exec</span><span class="p">(</span><span class="s1">&#39;boolval = &#39;</span> <span class="o">+</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;Rule&#39;</span><span class="p">],</span> <span class="n">boolodespace</span><span class="p">)</span>
+
+                <span class="n">par</span><span class="p">[</span><span class="s1">&#39;a_&#39;</span> <span class="o">+</span> <span class="n">currSp</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span>  <span class="o">+</span> <span class="s1">&#39;_&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">c</span><span class="p">))]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">boolodespace</span><span class="p">[</span><span class="s1">&#39;boolval&#39;</span><span class="p">])</span> 
+
+        <span class="n">num</span> <span class="o">+=</span> <span class="s1">&#39; )&#39;</span>
+        <span class="n">den</span> <span class="o">+=</span> <span class="s1">&#39; )&#39;</span>
+        
+        <span class="k">if</span> <span class="n">currSp</span> <span class="ow">in</span> <span class="n">proteinlist</span><span class="p">:</span>
+            <span class="n">Production</span> <span class="o">=</span>  <span class="s1">&#39;(&#39;</span> <span class="o">+</span><span class="n">num</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">den</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+            <span class="n">Degradation</span> <span class="o">=</span> <span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">currSp</span>
+            <span class="n">varspecs</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">currSp</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;signalingtimescale*(y_max*&#39;</span> <span class="o">+</span> <span class="n">Production</span> \
+                                       <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">Degradation</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Production</span> <span class="o">=</span> <span class="s1">&#39;m_&#39;</span><span class="o">+</span> <span class="n">currSp</span> <span class="o">+</span> <span class="s1">&#39;*(&#39;</span> <span class="o">+</span><span class="n">num</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">den</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+            <span class="n">Degradation</span> <span class="o">=</span> <span class="s1">&#39;l_x_&#39;</span>  <span class="o">+</span> <span class="n">currSp</span> <span class="o">+</span> <span class="s1">&#39;*x_&#39;</span> <span class="o">+</span> <span class="n">currSp</span>
+            <span class="n">varspecs</span><span class="p">[</span><span class="s1">&#39;x_&#39;</span> <span class="o">+</span> <span class="n">currSp</span><span class="p">]</span> <span class="o">=</span>  <span class="n">Production</span> \
+                                       <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="n">Degradation</span>
+            <span class="c1"># Create the corresponding translated protein equation</span>
+            <span class="n">varspecs</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">currSp</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;r_&#39;</span><span class="o">+</span><span class="n">currSp</span><span class="o">+</span><span class="s1">&#39;*&#39;</span><span class="o">+</span><span class="s1">&#39;x_&#39;</span> <span class="o">+</span><span class="n">currSp</span> <span class="o">+</span> <span class="s1">&#39;- l_p_&#39;</span><span class="o">+</span><span class="n">currSp</span><span class="o">+</span><span class="s1">&#39;*&#39;</span><span class="o">+</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">currSp</span>
+            
+    <span class="c1">##########################################################                                       </span>
+        
+    <span class="c1"># Initialize variables between 0 and 1, Doesn&#39;t matter.</span>
+    <span class="n">xvals</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">genelist</span><span class="p">))]</span>
+    <span class="n">pvals</span> <span class="o">=</span> <span class="p">[</span><span class="mf">20.</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">proteinlist</span><span class="p">))]</span>    
+    <span class="n">ics</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">sp</span><span class="p">,</span> <span class="n">xv</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">genelist</span><span class="p">,</span> <span class="n">xvals</span><span class="p">):</span>
+        <span class="n">ics</span><span class="p">[</span><span class="s1">&#39;x_&#39;</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="n">xv</span>
+        <span class="n">ics</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">sp</span><span class="p">,</span> <span class="n">pv</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">proteinlist</span><span class="p">,</span> <span class="n">pvals</span><span class="p">):</span>
+        <span class="n">ics</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">sp</span><span class="p">]</span> <span class="o">=</span> <span class="n">pv</span>
+
+    <span class="n">ModelSpec</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;varspecs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">varspecs</span>
+    <span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">par</span>
+    <span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;ics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ics</span>
+    <span class="k">return</span> <span class="n">ModelSpec</span><span class="p">,</span> <span class="n">parameterInputs</span><span class="p">,</span> <span class="n">genelist</span><span class="p">,</span> <span class="n">proteinlist</span><span class="p">,</span> <span class="n">x_max</span></div>
+
+
+<div class="viewcode-block" id="simulateModel"><a class="viewcode-back" href="../../src.html#src.BoolODE.simulateModel">[docs]</a><span class="k">def</span> <span class="nf">simulateModel</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">y0</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span><span class="n">isStochastic</span><span class="p">,</span> <span class="n">tspan</span><span class="p">,</span><span class="n">seed</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Call numerical integration functions, either odeint() from Scipy,</span>
+<span class="sd">    or simulator.eulersde() defined in simulator.py. By default, stochastic simulations are</span>
+<span class="sd">    carried out using simulator.eulersde.</span>
+
+<span class="sd">    :param Model: Function defining ODE model</span>
+<span class="sd">    :type Model: function</span>
+<span class="sd">    :param y0: array of initial values for each state variable</span>
+<span class="sd">    :type y0: array</span>
+<span class="sd">    :param parameters: list of parameter values to be used in simulations</span>
+<span class="sd">    :type parameters: list</span>
+<span class="sd">    :param isStochastic: User defined parameter. Default = True, can be turned off to perform ODE simulations.</span>
+<span class="sd">    :type isStochastic: bool</span>
+<span class="sd">    :param tspan: Time points to simulate</span>
+<span class="sd">    :type tspan: ndarray</span>
+<span class="sd">    :param seed: Seed to initialize random number generator</span>
+<span class="sd">    :type seed: float</span>
+<span class="sd">    :returns: </span>
+<span class="sd">        - P: Time course from numerical integration</span>
+<span class="sd">    :rtype: ndarray</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">isStochastic</span><span class="p">:</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">odeint</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span><span class="n">y0</span><span class="p">,</span><span class="n">tspan</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">parameters</span><span class="p">,))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">simulator</span><span class="o">.</span><span class="n">eulersde</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span><span class="n">simulator</span><span class="o">.</span><span class="n">noise</span><span class="p">,</span><span class="n">y0</span><span class="p">,</span><span class="n">tspan</span><span class="p">,</span><span class="n">parameters</span><span class="p">,</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">P</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="getInitialCondition"><a class="viewcode-back" href="../../src.html#src.BoolODE.getInitialCondition">[docs]</a><span class="k">def</span> <span class="nf">getInitialCondition</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span> <span class="n">ModelSpec</span><span class="p">,</span> <span class="n">rnaIndex</span><span class="p">,</span>
+                        <span class="n">proteinIndex</span><span class="p">,</span>
+                        <span class="n">genelist</span><span class="p">,</span> <span class="n">proteinlist</span><span class="p">,</span>
+                        <span class="n">varmapper</span><span class="p">,</span><span class="n">revvarmapper</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the initial values of all state variables. </span>
+<span class="sd">    Takes into consideration user defined initial conditions, and computes the steady </span>
+<span class="sd">    states of the protein variables based on the estimated values of their corresponding genes.</span>
+
+<span class="sd">    :param ss: Steady state array</span>
+<span class="sd">    :type ss: ndarray</span>
+<span class="sd">    :param ModelSpec: Dictionary of dictionary specifying the ODE model, containing parameters, initial conditions and equations.</span>
+<span class="sd">    :type ModelSpec: dict</span>
+<span class="sd">    :param rnaIndex: list of indices of genes</span>
+<span class="sd">    :type rnaIndex: list</span>
+<span class="sd">    :param proteinIndex: List of indices of proteins</span>
+<span class="sd">    :type proteinIndex: list</span>
+<span class="sd">    :param genelist: List of names of all genes in the model</span>
+<span class="sd">    :type genelist: list</span>
+<span class="sd">    :param proteinlist: List of names of all proteins in the model</span>
+<span class="sd">    :type proteinlist: list</span>
+<span class="sd">    :param varmapper: Mapper: {variable name : index}</span>
+<span class="sd">    :type varmapper: dict</span>
+<span class="sd">    :param revvarmapper: Mapper: {index : variable name}</span>
+<span class="sd">    :type revvarmapper: dict</span>
+<span class="sd">    :returns:</span>
+<span class="sd">        - newics: List containing new initial conditions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># Initialize</span>
+    <span class="n">new_ics</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">varmapper</span><span class="o">.</span><span class="n">keys</span><span class="p">()))]</span>
+    <span class="c1"># Set the mRNA ics</span>
+    <span class="k">for</span> <span class="n">ind</span> <span class="ow">in</span> <span class="n">rnaIndex</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">ss</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ss</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">new_ics</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span>  <span class="n">ss</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">new_ics</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new_ics</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">proteinlist</span><span class="p">:</span>
+        <span class="n">ind</span> <span class="o">=</span> <span class="n">revvarmapper</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span><span class="o">+</span><span class="n">p</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">ss</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">ss</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="n">new_ics</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span>  <span class="n">ss</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">new_ics</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">new_ics</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>            
+    <span class="c1"># Calculate the Protein ics based on mRNA levels</span>
+    <span class="k">for</span> <span class="n">genename</span> <span class="ow">in</span> <span class="n">genelist</span><span class="p">:</span>
+        <span class="n">pss</span> <span class="o">=</span> <span class="p">((</span><span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">][</span><span class="s1">&#39;r_&#39;</span> <span class="o">+</span> <span class="n">genename</span><span class="p">])</span><span class="o">/</span>\
+                                      <span class="p">(</span><span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">][</span><span class="s1">&#39;l_p_&#39;</span> <span class="o">+</span> <span class="n">genename</span><span class="p">]))</span>\
+                                      <span class="o">*</span><span class="n">new_ics</span><span class="p">[</span><span class="n">revvarmapper</span><span class="p">[</span><span class="s1">&#39;x_&#39;</span> <span class="o">+</span> <span class="n">genename</span><span class="p">]]</span>
+        <span class="n">new_ics</span><span class="p">[</span><span class="n">revvarmapper</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">genename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">pss</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">new_ics</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="simulateAndSample"><a class="viewcode-back" href="../../src.html#src.BoolODE.simulateAndSample">[docs]</a><span class="k">def</span> <span class="nf">simulateAndSample</span><span class="p">(</span><span class="n">argdict</span><span class="p">):</span>
+    <span class="n">allParameters</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;allParameters&#39;</span><span class="p">]</span>
+    <span class="n">parNames</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;parNames&#39;</span><span class="p">]</span>
+    <span class="n">Model</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">]</span>
+    <span class="n">isStochastic</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;isStochastic&#39;</span><span class="p">]</span>
+    <span class="n">tspan</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;tspan&#39;</span><span class="p">]</span>
+    <span class="n">varmapper</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;varmapper&#39;</span><span class="p">]</span>
+    <span class="n">timeIndex</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;timeIndex&#39;</span><span class="p">]</span>
+    <span class="n">genelist</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;genelist&#39;</span><span class="p">]</span>
+    <span class="n">proteinlist</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;proteinlist&#39;</span><span class="p">]</span>
+    <span class="n">writeProtein</span><span class="o">=</span><span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;writeProtein&#39;</span><span class="p">]</span>
+    <span class="n">cellid</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;cellid&#39;</span><span class="p">]</span>
+    <span class="n">outPrefix</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span>
+    <span class="n">sampleCells</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;sampleCells&#39;</span><span class="p">]</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;ss&#39;</span><span class="p">]</span>
+    <span class="n">ModelSpec</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;ModelSpec&#39;</span><span class="p">]</span>
+    <span class="n">rnaIndex</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;rnaIndex&#39;</span><span class="p">]</span>
+    <span class="n">proteinIndex</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;proteinIndex&#39;</span><span class="p">]</span>
+    <span class="n">genelist</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;genelist&#39;</span><span class="p">]</span>
+    <span class="n">proteinlist</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;proteinlist&#39;</span><span class="p">]</span>
+    <span class="n">revvarmapper</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;revvarmapper&#39;</span><span class="p">]</span>
+    <span class="n">seed</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">]</span>
+    <span class="n">x_max</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;x_max&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">sampleCells</span><span class="p">:</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;header&#39;</span><span class="p">]</span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">allParameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">pars</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">pars</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parNames</span><span class="p">]</span>
+    
+    <span class="c1">## Boolean to check if a simulation is going to a</span>
+    <span class="c1">## 0 steady state, with all genes/proteins dying out</span>
+    <span class="n">retry</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">trys</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="c1">## timepoints</span>
+    <span class="n">tps</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">tspan</span><span class="p">))]</span>
+    <span class="c1">## gene ids</span>
+    <span class="n">gid</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">n</span> <span class="ow">in</span> <span class="n">varmapper</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s1">&#39;x_&#39;</span> <span class="ow">in</span> <span class="n">n</span><span class="p">]</span>
+    <span class="n">outPrefix</span> <span class="o">=</span> <span class="n">outPrefix</span> <span class="o">+</span><span class="s1">&#39;simulations/&#39;</span>
+    <span class="k">while</span> <span class="n">retry</span><span class="p">:</span>
+        <span class="n">seed</span> <span class="o">+=</span> <span class="mi">1000</span>
+        <span class="n">y0_exp</span> <span class="o">=</span> <span class="n">getInitialCondition</span><span class="p">(</span><span class="n">ss</span><span class="p">,</span> <span class="n">ModelSpec</span><span class="p">,</span> <span class="n">rnaIndex</span><span class="p">,</span> <span class="n">proteinIndex</span><span class="p">,</span>
+                                     <span class="n">genelist</span><span class="p">,</span> <span class="n">proteinlist</span><span class="p">,</span>
+                                     <span class="n">varmapper</span><span class="p">,</span><span class="n">revvarmapper</span><span class="p">)</span>
+        
+        <span class="n">P</span> <span class="o">=</span> <span class="n">simulateModel</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">y0_exp</span><span class="p">,</span> <span class="n">pars</span><span class="p">,</span> <span class="n">isStochastic</span><span class="p">,</span> <span class="n">tspan</span><span class="p">,</span> <span class="n">seed</span><span class="p">)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">retry</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1">## Extract Time points</span>
+        <span class="n">subset</span> <span class="o">=</span> <span class="n">P</span><span class="p">[</span><span class="n">gid</span><span class="p">,:][:,</span><span class="n">tps</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span>
+                          <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">genelist</span><span class="p">),</span>
+                          <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;E&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cellid</span><span class="p">)</span> <span class="o">+</span><span class="s1">&#39;_&#39;</span> <span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>\
+                                     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">tps</span><span class="p">])</span>
+        <span class="c1">## Heuristic:</span>
+        <span class="c1">## If the largest value of a protein achieved in a simulation is</span>
+        <span class="c1">## less than 10% of the y_max, drop the simulation.</span>
+        <span class="c1">## This check stems from the observation that in some simulations,</span>
+        <span class="c1">## all genes go to the 0 steady state in some rare simulations.</span>
+        <span class="n">dfmax</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">colmax</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">colmax</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">x_max</span><span class="p">:</span>
+                <span class="n">retry</span><span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        
+        <span class="k">if</span> <span class="n">sampleCells</span><span class="p">:</span>
+            <span class="c1">## Write a single cell to file</span>
+            <span class="c1">## These samples allow for quickly and</span>
+            <span class="c1">## reproducibly testing the output.</span>
+            <span class="n">sampledf</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">sampleCellFromTraj</span><span class="p">(</span><span class="n">cellid</span><span class="p">,</span>
+                                          <span class="n">tspan</span><span class="p">,</span> 
+                                          <span class="n">P</span><span class="p">,</span>
+                                          <span class="n">varmapper</span><span class="p">,</span> <span class="n">timeIndex</span><span class="p">,</span>
+                                          <span class="n">genelist</span><span class="p">,</span> <span class="n">proteinlist</span><span class="p">,</span>
+                                          <span class="n">header</span><span class="p">,</span>
+                                          <span class="n">writeProtein</span><span class="o">=</span><span class="n">writeProtein</span><span class="p">)</span>
+            <span class="n">sampledf</span> <span class="o">=</span> <span class="n">sampledf</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">sampledf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s1">&#39;E&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cellid</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-cell.csv&#39;</span><span class="p">)</span>            
+            
+        <span class="n">trys</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">trys</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;try&#39;</span><span class="p">,</span> <span class="n">trys</span><span class="p">)</span>
+            
+
+    <span class="c1"># write to file</span>
+    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s1">&#39;E&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cellid</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="Experiment"><a class="viewcode-back" href="../../src.html#src.BoolODE.Experiment">[docs]</a><span class="k">def</span> <span class="nf">Experiment</span><span class="p">(</span><span class="n">Model</span><span class="p">,</span> <span class="n">ModelSpec</span><span class="p">,</span><span class="n">tspan</span><span class="p">,</span>
+               <span class="n">num_cells</span><span class="p">,</span>
+               <span class="n">sampleCells</span><span class="p">,</span>
+               <span class="n">varmapper</span><span class="p">,</span> <span class="n">parmapper</span><span class="p">,</span>
+               <span class="n">genelist</span><span class="p">,</span> <span class="n">proteinlist</span><span class="p">,</span>
+               <span class="n">outPrefix</span><span class="p">,</span><span class="n">icsDF</span><span class="p">,</span>
+               <span class="n">nClusters</span><span class="p">,</span>
+               <span class="n">x_max</span><span class="p">,</span>
+               <span class="n">doParallel</span><span class="p">,</span>
+               <span class="n">burnin</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">writeProtein</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+               <span class="n">normalizeTrajectory</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Carry out an `in-silico` experiment. This function takes as input </span>
+<span class="sd">    an ODE model defined as a python function and carries out stochastic</span>
+<span class="sd">    simulations. BoolODE defines a _cell_ as a single time point from </span>
+<span class="sd">    a simulated time course. Thus, in order to obtain 50 single cells,</span>
+<span class="sd">    BoolODE carries out 50 simulations, which are stored in ./simulations/.</span>
+<span class="sd">    Further, if it is known that the resulting single cell dataset will</span>
+<span class="sd">    exhibit multiple trajectories, the user can specify  the number of clusters in</span>
+<span class="sd">    `nClusters`; BoolODE will then cluster the entire simulation, such that each</span>
+<span class="sd">    simulated trajectory possesess a cluster ID.</span>
+
+<span class="sd">    :param Model: Function defining ODE model</span>
+<span class="sd">    :type Model: function</span>
+<span class="sd">    :param ModelSpec: Dictionary defining ODE model. See readBooleanRules()</span>
+<span class="sd">    :type ModelSpec: dict</span>
+<span class="sd">    :param tspan: Array of time points</span>
+<span class="sd">    :type tspan: ndarray</span>
+<span class="sd">    :param num_cells: Number of simulations to perform</span>
+<span class="sd">    :type num_cells: int</span>
+<span class="sd">    :param sampleCells: Bool that specifies if a random sample of size num_cells should be generated from the simulated output, where one cell is picked per simulation without replacement</span>
+<span class="sd">    :type sampleCells: bool</span>
+<span class="sd">    :param varmapper: </span>
+<span class="sd">    :type varmapper: dict</span>
+<span class="sd">    :param parmapper: </span>
+<span class="sd">    :type parmapper: dict</span>
+<span class="sd">    :param genelist: List of all gene names</span>
+<span class="sd">    :type genelist:  list</span>
+<span class="sd">    :param proteinlist: List of all protein names</span>
+<span class="sd">    :type proteinlist: list</span>
+<span class="sd">    :param outPrefix: Name of output folder. </span>
+<span class="sd">    :type outPrefix: str</span>
+<span class="sd">    :param icsDF: Dataframe specifying initial condition for simulation</span>
+<span class="sd">    :type icsDF: pandas DataFrame</span>
+<span class="sd">    :param nClusters: Number of expected trajectories. Used to perform k-means clustering</span>
+<span class="sd">    :type nClusters: int</span>
+<span class="sd">    :param x_max: max value of gene. By default 2.0, will vary if parameters are sampled</span>
+<span class="sd">    :type x_max: float</span>
+<span class="sd">    :param doParallel: Bool specifying starting simulations in parallel</span>
+<span class="sd">    :type doParallel: bool</span>
+<span class="sd">    :param burnin: Bool specifying that initial fraction of simulation should be discarded. Obsolete</span>
+<span class="sd">    :type burnin: bool</span>
+<span class="sd">    :param writeProtein: Bool specifying if the protein values should be written to file. Default = False</span>
+<span class="sd">    :type writeProtein: bool</span>
+<span class="sd">    :param normalizeTrajectory: Bool specifying if the gene expression values should be scaled between 0 and 1.</span>
+<span class="sd">    :type normalizeTrajectory: bool </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">sampleCells</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Note: Simulated trajectories will be clustered. nClusters = </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">nClusters</span><span class="p">)</span>
+    <span class="c1">####################    </span>
+    <span class="n">allParameters</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">])</span>
+    <span class="n">parNames</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">allParameters</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    <span class="c1">## Use default parameters </span>
+    <span class="n">pars</span> <span class="o">=</span> <span class="p">[</span><span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">][</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parNames</span><span class="p">]</span>
+    <span class="c1">####################</span>
+    <span class="n">rnaIndex</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">varmapper</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="k">if</span> <span class="s1">&#39;x_&#39;</span> <span class="ow">in</span> <span class="n">varmapper</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+    <span class="n">revvarmapper</span> <span class="o">=</span> <span class="p">{</span><span class="n">v</span><span class="p">:</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">varmapper</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+    <span class="n">proteinIndex</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">varmapper</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span> <span class="k">if</span> <span class="s1">&#39;p_&#39;</span> <span class="ow">in</span> <span class="n">varmapper</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+
+    <span class="n">y0</span> <span class="o">=</span> <span class="p">[</span><span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;ics&#39;</span><span class="p">][</span><span class="n">varmapper</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">varmapper</span><span class="o">.</span><span class="n">keys</span><span class="p">()))]</span>
+    <span class="n">ss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">varmapper</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+    
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">k</span> <span class="ow">in</span> <span class="n">varmapper</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="s1">&#39;x_&#39;</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
+            <span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="k">elif</span> <span class="s1">&#39;p_&#39;</span> <span class="ow">in</span> <span class="n">k</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;p_&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">proteinlist</span><span class="p">:</span>
+                <span class="c1"># Seting them to the threshold</span>
+                <span class="c1"># causes them to drop to 0 rapidly</span>
+                <span class="c1"># TODO: try setting to threshold &lt; v &lt; y_max</span>
+                <span class="n">ss</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">20.</span>
+            
+    <span class="k">if</span> <span class="n">icsDF</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">icsspec</span> <span class="o">=</span> <span class="n">icsDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">genes</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">icsspec</span><span class="p">[</span><span class="s1">&#39;Genes&#39;</span><span class="p">])</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">icsspec</span><span class="p">[</span><span class="s1">&#39;Values&#39;</span><span class="p">])</span>
+        <span class="n">icsmap</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="p">:</span><span class="n">v</span> <span class="k">for</span> <span class="n">g</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">genes</span><span class="p">,</span><span class="n">values</span><span class="p">)}</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">k</span> <span class="ow">in</span> <span class="n">varmapper</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">proteinlist</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">icsmap</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">ss</span><span class="p">[</span><span class="n">revvarmapper</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span><span class="o">+</span><span class="n">p</span><span class="p">]]</span> <span class="o">=</span> <span class="n">icsmap</span><span class="p">[</span><span class="n">p</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ss</span><span class="p">[</span><span class="n">revvarmapper</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span><span class="o">+</span><span class="n">p</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">0.01</span>
+            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">genelist</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">icsmap</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="n">ss</span><span class="p">[</span><span class="n">revvarmapper</span><span class="p">[</span><span class="s1">&#39;x_&#39;</span><span class="o">+</span><span class="n">g</span><span class="p">]]</span> <span class="o">=</span> <span class="n">icsmap</span><span class="p">[</span><span class="n">g</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ss</span><span class="p">[</span><span class="n">revvarmapper</span><span class="p">[</span><span class="s1">&#39;x_&#39;</span><span class="o">+</span><span class="n">g</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">0.01</span>
+            
+    <span class="n">outputfilenames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">isStochastic</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">]:</span> 
+        <span class="c1"># &quot;WT&quot; simulation</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">proteinlist</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">([</span><span class="n">varmapper</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">rnaIndex</span><span class="p">]))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">speciesoi</span> <span class="o">=</span> <span class="p">[</span><span class="n">revvarmapper</span><span class="p">[</span><span class="s1">&#39;p_&#39;</span> <span class="o">+</span> <span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">proteinlist</span><span class="p">]</span>
+            <span class="n">speciesoi</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">revvarmapper</span><span class="p">[</span><span class="s1">&#39;x_&#39;</span> <span class="o">+</span> <span class="n">g</span><span class="p">]</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">genelist</span><span class="p">])</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">([</span><span class="n">varmapper</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">speciesoi</span><span class="p">]))</span>
+            
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="n">burnin</span><span class="p">:</span>
+            <span class="n">burninFraction</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="c1"># Chosen arbitrarily as 25%</span>
+            <span class="c1"># Ignore the first 25% of the simulation</span>
+            <span class="n">startat</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">burninFraction</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">tspan</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">startat</span> <span class="o">=</span> <span class="mi">0</span>
+            
+        <span class="c1"># Index of every possible time point. Sample from this list</span>
+        <span class="n">timeIndex</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">startat</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tspan</span><span class="p">))]</span>        
+        <span class="k">if</span> <span class="n">sampleCells</span><span class="p">:</span>
+
+            <span class="c1"># pre-define the time points from which a cell will be sampled</span>
+            <span class="c1"># per simulation</span>
+            <span class="n">sampleAt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">timeIndex</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">num_cells</span><span class="p">)</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;E&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cellid</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> \
+                      <span class="k">for</span> <span class="n">cellid</span><span class="p">,</span> <span class="n">time</span> <span class="ow">in</span>\
+                      <span class="nb">zip</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_cells</span><span class="p">),</span> <span class="n">sampleAt</span><span class="p">)]</span>
+
+        <span class="c1">## Construct dictionary of arguments to be passed</span>
+        <span class="c1">## to simulateAndSample(), done in parallel</span>
+        <span class="n">argdict</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;allParameters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">allParameters</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;parNames&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parNames</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;Model&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Model</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;isStochastic&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">isStochastic</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;tspan&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tspan</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;varmapper&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">varmapper</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;timeIndex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timeIndex</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;genelist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">genelist</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;proteinlist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">proteinlist</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;writeProtein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">writeProtein</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">outPrefix</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;sampleCells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sampleCells</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pars</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;ss&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ss</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;ModelSpec&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ModelSpec</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;rnaIndex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rnaIndex</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;proteinIndex&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">proteinIndex</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;genelist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">genelist</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;proteinlist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">proteinlist</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;revvarmapper&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">revvarmapper</span>
+        <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;x_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_max</span>
+
+        <span class="k">if</span> <span class="n">sampleCells</span><span class="p">:</span>
+            <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;header&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">header</span>
+
+        <span class="n">simfilepath</span> <span class="o">=</span> <span class="n">outPrefix</span> <span class="o">+</span> <span class="s1">&#39;simulations/&#39;</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">simfilepath</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">simfilepath</span><span class="p">:</span>
+                <span class="n">outDir</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">simfilepath</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">simfilepath</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">simfilepath</span><span class="p">,</span> <span class="s2">&quot;does not exist, creating it...&quot;</span><span class="p">)</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">simfilepath</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting simulations&#39;</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="c1">########################</span>
+        <span class="k">if</span> <span class="n">doParallel</span><span class="p">:</span>
+            <span class="c1">## Carry out simulations in parrallel</span>
+            <span class="n">lock</span> <span class="o">=</span> <span class="n">Lock</span><span class="p">()</span>
+            <span class="n">jobs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">cellid</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_cells</span><span class="p">):</span>
+                <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cellid</span>
+                <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;cellid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cellid</span>
+                <span class="n">p</span> <span class="o">=</span> <span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">simulateAndSample</span><span class="p">,</span><span class="n">args</span><span class="o">=</span><span class="p">([</span><span class="n">argdict</span><span class="p">]))</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+                <span class="c1">#p.join()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">cellid</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_cells</span><span class="p">)):</span>
+                <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;seed&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cellid</span>
+                <span class="n">argdict</span><span class="p">[</span><span class="s1">&#39;cellid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cellid</span>
+                <span class="n">simulateAndSample</span><span class="p">(</span><span class="n">argdict</span><span class="p">)</span>
+        <span class="c1">########################</span>
+        <span class="c1">## Sleep for 1 s to allow for IO. Hack necessary for smalle number of simulations</span>
+        <span class="c1">## where sim time &lt; IO time.</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Simulations took </span><span class="si">%0.3f</span><span class="s2"> s&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;starting to concat files&#39;</span><span class="p">)</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sampleCells</span><span class="p">:</span>
+            <span class="c1"># initialize dictionary to hold raveled values, used to cluster</span>
+            <span class="n">groupedDict</span> <span class="o">=</span> <span class="p">{}</span> 
+        <span class="k">for</span> <span class="n">cellid</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_cells</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">sampleCells</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s1">&#39;simulations/E&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">cellid</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-cell.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>                
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s1">&#39;simulations/E&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">cellid</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+                <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+                <span class="n">groupedDict</span><span class="p">[</span><span class="s1">&#39;E&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">cellid</span><span class="p">)]</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+            <span class="n">frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">stop</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Concating files took </span><span class="si">%.2f</span><span class="s2"> s&quot;</span> <span class="o">%</span><span class="p">(</span><span class="n">stop</span><span class="o">-</span><span class="n">start</span><span class="p">))</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">newindices</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;x_&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">]</span>
+        <span class="n">result</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">newindices</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sampleCells</span><span class="p">:</span>
+            <span class="c1">## Carry out k-means clustering to identify which</span>
+            <span class="c1">## trajectory a simulation belongs to</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting k-means clustering&#39;</span><span class="p">)</span>
+            <span class="c1">#headers = result.columns</span>
+            <span class="c1"># simulations = sorted(list(set([h.split(&#39;_&#39;)[0] + &#39;_&#39; for h in headers])))</span>
+            <span class="c1">## group each simulation</span>
+            <span class="c1">#groupedDict = {} </span>
+            <span class="c1">## The following loop takes time for a large number of</span>
+            <span class="c1">## simulations</span>
+            <span class="c1">#print(&#39;Raveling dataframe to start clustering&#39;)</span>
+            <span class="c1">#for s in tqdm(simulations):</span>
+            <span class="c1">#    groupedDict[s] = result.loc[:, result.columns.str.startswith(s)].values.ravel()</span>
+            <span class="n">groupedDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">groupedDict</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Clustering simulations...&#39;</span><span class="p">)</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>            
+            <span class="c1"># Find clusters in the experiments</span>
+            <span class="n">clusterLabels</span><span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span><span class="o">=</span><span class="n">nClusters</span><span class="p">,</span>
+                                  <span class="n">n_jobs</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">groupedDF</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Clustering took </span><span class="si">%0.3f</span><span class="s1">s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+            <span class="n">clusterDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">clusterLabels</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span>\
+                                     <span class="n">groupedDF</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;cl&#39;</span><span class="p">])</span>
+        <span class="c1">##################################################</span>
+
+        <span class="k">if</span> <span class="n">normalizeTrajectory</span><span class="p">:</span>
+            <span class="n">resultN</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">normalizeExp</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">resultN</span> <span class="o">=</span> <span class="n">result</span>
+            
+        <span class="k">if</span> <span class="n">isStochastic</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;stoch&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;ode&#39;</span>
+
+
+        <span class="n">resultN</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span><span class="s1">&#39;_experiment.txt&#39;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sampleCells</span><span class="p">:</span>
+            <span class="n">clusterDF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s1">&#39;ClusterIds.csv&#39;</span><span class="p">)</span>
+        <span class="n">outputfilenames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span><span class="s1">&#39;_experiment.txt&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">outputfilenames</span><span class="p">,</span> <span class="n">resultN</span></div>
+            
+<div class="viewcode-block" id="parseArgs"><a class="viewcode-back" href="../../src.html#src.BoolODE.parseArgs">[docs]</a><span class="k">def</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">OptionParser</span><span class="p">()</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--max-time&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Total time of simulation. (Default = 20)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--num-cells&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of cells sample. (Default = 100)&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--sample-cells&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sample a single cell from each trajectory?</span><span class="se">\n</span><span class="s2">&quot;</span>
+                      <span class="s2">&quot;By default will store full trajectory of each simulation (Default = False)&quot;</span><span class="p">)</span>    
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--add-dummy&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Add dummy genes&#39;</span><span class="p">)</span>        
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-n&#39;</span><span class="p">,</span> <span class="s1">&#39;--normalize-trajectory&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Min-Max normalize genes across all experiments&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-i&#39;</span><span class="p">,</span> <span class="s1">&#39;--identical-pars&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Set single value to similar parameters</span><span class="se">\n</span><span class="s2">&quot;</span>
+                      <span class="s2">&quot;NOTE: Consider setting this if you are using --sample-pars.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-s&#39;</span><span class="p">,</span> <span class="s1">&#39;--sample-pars&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sample rate parameters around the hardcoded means</span><span class="se">\n</span><span class="s2">&quot;</span>
+                      <span class="s2">&quot;, using 10</span><span class="si">% s</span><span class="s2">tand. dev.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--std&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;float&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s2">&quot;If sampling parameters, specify standard deviation. (Default 0.1)&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--write-protein&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Write both protein and RNA values to file. Useful for debugging.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-b&#39;</span><span class="p">,</span> <span class="s1">&#39;--burn-in&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Treats the first 25</span><span class="si">% o</span><span class="s2">f the time course as burnin</span><span class="se">\n</span><span class="s2">&quot;</span>
+                      <span class="s2">&quot;, samples from the rest.&quot;</span><span class="p">)</span>        
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--outPrefix&#39;</span><span class="p">,</span> <span class="nb">type</span> <span class="o">=</span> <span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Prefix for output files.&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--path&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;str&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Path to boolean model file&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--inputs&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Path to input parameter files. This is different from specifying a parameter set!&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--pset&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Path to pre-generated parameter set.&#39;</span><span class="p">)</span>        
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--ics&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Path to list of initial conditions&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--strengths&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Path to list of interaction strengths&#39;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--species-type&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;str&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Path to list of molecular species type file.&quot;</span>\
+                      <span class="s2">&quot;Useful to specify proteins/genes&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--nClusters&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of expected clusters in the dataset. (Default = 1)&#39;</span><span class="p">)</span>    
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--max-parents&#39;</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;int&#39;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Number of parents to add to dummy genes. (Default = 1)&#39;</span><span class="p">)</span>    
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;--do-parallel&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                      <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Run simulations in parallel. Recommended for &gt; 50 simulations&#39;</span><span class="p">)</span>    
+        
+    <span class="p">(</span><span class="n">opts</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">opts</span><span class="p">,</span> <span class="n">args</span></div>
+
+<div class="viewcode-block" id="main"><a class="viewcode-back" href="../../src.html#src.BoolODE.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+    <span class="n">startfull</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+    <span class="n">opts</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">parseArgs</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">path</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please specify path to Boolean model&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+
+    <span class="n">tmax</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">max_time</span>
+    <span class="n">numCells</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">num_cells</span>
+    <span class="n">identicalPars</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">identical_pars</span>
+    <span class="n">burnin</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">burn_in</span>
+    <span class="n">samplePars</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">sample_pars</span>
+    <span class="n">sampleStd</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">std</span>
+    <span class="n">outPrefix</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">outPrefix</span>
+    <span class="n">parameterInputsPath</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">inputs</span>
+    <span class="n">parameterSetPath</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">pset</span>
+    <span class="n">icsPath</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">ics</span>    
+    <span class="n">writeProtein</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">write_protein</span>
+    <span class="n">normalizeTrajectory</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">normalize_trajectory</span>
+    <span class="n">interactionStrengthPath</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">strengths</span>
+    <span class="n">speciesTypePath</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">species_type</span>
+    <span class="n">add_dummy</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">add_dummy</span>
+    <span class="n">sampleCells</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">sample_cells</span>
+    <span class="n">nClusters</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">nClusters</span>
+    <span class="n">max_parents</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">max_parents</span>
+    <span class="n">doParallel</span> <span class="o">=</span> <span class="n">opts</span><span class="o">.</span><span class="n">do_parallel</span>    
+    <span class="c1"># if output directory doesn&#39;t exist</span>
+    <span class="c1"># create one!</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">outPrefix</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">outPrefix</span><span class="p">:</span>
+            <span class="n">outDir</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">outPrefix</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outDir</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">outDir</span><span class="p">,</span> <span class="s2">&quot;does not exist, creating it...&quot;</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outDir</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameterInputsPath</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="n">parameterInputsDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">parameterInputsPath</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parameterInputsDF</span> <span class="o">=</span> <span class="kc">None</span>
+        
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameterSetPath</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="n">parameterSetDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">parameterSetPath</span><span class="p">,</span>
+                                     <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                     <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span>
+                                     <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">parameterSetDF</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">icsPath</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="n">icsDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">icsPath</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">icsDF</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">interactionStrengthPath</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Interaction Strengths are supplied&quot;</span><span class="p">)</span>
+        <span class="n">interactionStrengthDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">interactionStrengthPath</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span><span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">interactionStrengthDF</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">speciesTypePath</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> 
+        <span class="n">speciesTypeDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">speciesTypePath</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">speciesTypeDF</span> <span class="o">=</span> <span class="kc">None</span>
+        
+    <span class="c1">## Hardcoded  ODE simulation time steps</span>
+    <span class="c1">## This can be reduced</span>
+    <span class="n">timesteps</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">tspan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">tmax</span><span class="p">,</span><span class="n">tmax</span><span class="o">*</span><span class="n">timesteps</span><span class="p">)</span>
+    
+    <span class="n">DF</span><span class="p">,</span> <span class="n">withoutRules</span> <span class="o">=</span> <span class="n">readBooleanRules</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">parameterInputsPath</span><span class="p">,</span>
+                                        <span class="n">outPrefix</span><span class="p">,</span> <span class="n">add_dummy</span><span class="p">,</span> <span class="n">max_parents</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">withoutRules</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">withoutRules</span> <span class="o">=</span> <span class="p">[]</span>
+        
+    <span class="n">it</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">someexception</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">while</span> <span class="n">someexception</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">genesDict</span> <span class="o">=</span> <span class="p">{}</span>
+            
+            <span class="n">ModelSpec</span><span class="p">,</span>\
+                <span class="n">parameterInputs</span><span class="p">,</span>\
+                <span class="n">genelist</span><span class="p">,</span>\
+                <span class="n">proteinlist</span><span class="p">,</span>\
+                <span class="n">x_max</span> <span class="o">=</span> <span class="n">generateModelDict</span><span class="p">(</span><span class="n">DF</span><span class="p">,</span><span class="n">identicalPars</span><span class="p">,</span>
+                                          <span class="n">samplePars</span><span class="p">,</span>
+                                          <span class="n">sampleStd</span><span class="p">,</span>
+                                          <span class="n">withoutRules</span><span class="p">,</span>
+                                          <span class="n">speciesTypeDF</span><span class="p">,</span>
+                                          <span class="n">parameterInputsDF</span><span class="p">,</span>
+                                          <span class="n">parameterSetDF</span><span class="p">,</span>
+                                          <span class="n">interactionStrengthDF</span><span class="p">)</span>
+            <span class="c1"># FIXME : ask user to pass row if parameter input file</span>
+            <span class="c1"># Hardcoded. We only care about one input vector, say the first one</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameterInputsPath</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">parameterInputs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">varmapper</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span><span class="n">var</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">var</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;varspecs&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>
+            <span class="n">parmapper</span> <span class="o">=</span> <span class="p">{</span><span class="n">i</span><span class="p">:</span><span class="n">par</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">par</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())}</span>    
+            <span class="n">dir_path</span>  <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">writeModelToFile</span><span class="p">(</span><span class="n">ModelSpec</span><span class="p">)</span>
+            <span class="c1">## Load file from path</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="n">SourceFileLoader</span><span class="p">(</span><span class="s2">&quot;model&quot;</span><span class="p">,</span> <span class="n">dir_path</span> <span class="o">+</span> <span class="s2">&quot;/model.py&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">load_module</span><span class="p">()</span>
+            <span class="c1">#import model</span>
+            <span class="n">outputfilenames</span><span class="p">,</span> <span class="n">resultDF</span> <span class="o">=</span> <span class="n">Experiment</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">Model</span><span class="p">,</span>
+                                                   <span class="n">ModelSpec</span><span class="p">,</span>
+                                                   <span class="n">tspan</span><span class="p">,</span>
+                                                   <span class="n">numCells</span><span class="p">,</span>
+                                                   <span class="n">sampleCells</span><span class="p">,</span>
+                                                   <span class="n">varmapper</span><span class="p">,</span> <span class="n">parmapper</span><span class="p">,</span>
+                                                   <span class="n">genelist</span><span class="p">,</span><span class="n">proteinlist</span><span class="p">,</span>
+                                                   <span class="n">outPrefix</span><span class="p">,</span> <span class="n">icsDF</span><span class="p">,</span>
+                                                   <span class="n">nClusters</span><span class="p">,</span>
+                                                   <span class="n">x_max</span><span class="p">,</span>
+                                                   <span class="n">doParallel</span><span class="p">,</span>
+                                                   <span class="n">burnin</span><span class="o">=</span><span class="n">burnin</span><span class="p">,</span>
+                                                   <span class="n">writeProtein</span><span class="o">=</span><span class="n">writeProtein</span><span class="p">,</span>
+                                                   <span class="n">normalizeTrajectory</span><span class="o">=</span><span class="n">normalizeTrajectory</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Generating input files for pipline...&#39;</span><span class="p">)</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+            <span class="n">utils</span><span class="o">.</span><span class="n">generateInputFiles</span><span class="p">(</span><span class="n">resultDF</span><span class="p">,</span> <span class="n">outputfilenames</span><span class="p">,</span> <span class="n">DF</span><span class="p">,</span>
+                               <span class="n">withoutRules</span><span class="p">,</span>
+                               <span class="n">parameterInputsPath</span><span class="p">,</span>
+                               <span class="n">outPrefix</span><span class="o">=</span><span class="n">outPrefix</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Input file generation took </span><span class="si">%0.2f</span><span class="s1"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">))</span>
+
+            
+            <span class="n">someexception</span><span class="o">=</span> <span class="kc">False</span>
+            
+        <span class="k">except</span> <span class="ne">FloatingPointError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">it</span> <span class="o">+=</span><span class="mi">1</span> 
+            <span class="nb">print</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">attempt </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span><span class="n">it</span><span class="p">)</span>
+        
+    <span class="n">utils</span><span class="o">.</span><span class="n">writeParametersToFile</span><span class="p">(</span><span class="n">ModelSpec</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BoolODE.py took </span><span class="si">%0.2f</span><span class="s2">s&quot;</span><span class="o">%</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">startfull</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;all done.&#39;</span><span class="p">)</span>    </div>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Aditya Pratapa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

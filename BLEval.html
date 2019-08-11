@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>BLEval &mdash; BEELINE 0.1 documentation</title>
+  <title>BLEval package &mdash; BEELINE  documentation</title>
   
 
   
@@ -34,7 +34,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="BLPlot package" href="BLPlot.html" />
+    <link rel="prev" title="BLRun package" href="BLRun.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -60,10 +62,6 @@
           
             
             
-              <div class="version">
-                0.1
-              </div>
-            
           
 
           
@@ -85,23 +83,28 @@
               
             
             
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">BLEval</a><ul>
-<li><a class="reference internal" href="#bleval-runner-module">BLEval.runner module</a></li>
-<li><a class="reference internal" href="#module-BLEval">Module contents</a></li>
-<li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#module-BLEval.computeAUC">BLEval.computeAUC module</a></li>
-<li><a class="reference internal" href="#module-BLEval.computeEarlyPrec">BLEval.computeEarlyPrec module</a></li>
-<li><a class="reference internal" href="#module-BLEval.computeJaccard">BLEval.computeJaccard module</a></li>
-<li><a class="reference internal" href="#module-BLEval.computeNetMotifs">BLEval.computeNetMotifs module</a></li>
-<li><a class="reference internal" href="#module-BLEval.computeSignedEPrec">BLEval.computeSignedEPrec module</a></li>
-<li><a class="reference internal" href="#module-BLEval.computeSpearman">BLEval.computeSpearman module</a></li>
-<li><a class="reference internal" href="#module-BLEval.parseTime">BLEval.parseTime module</a></li>
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Beeline.html">BEELINE</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Beeline.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Beeline.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="Beeline.html#tutorial">Tutorial</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#project-outline">Project outline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#input-files">Input files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#config-files">Config files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#running-the-pipeline">Running the pipeline</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="Beeline.html#running-the-evaluation-scripts">Running the evaluation scripts</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="algorithms.html">Algorithms</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="beeline-reference.html">Modules</a></li>
 </ul>
 </li>
 </ul>
-</div>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
+</ul>
+
             
           
         </div>
@@ -145,7 +148,11 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>BLEval</li>
+          <li><a href="Beeline.html">BEELINE</a> &raquo;</li>
+        
+          <li><a href="beeline-reference.html">Modules</a> &raquo;</li>
+        
+      <li>BLEval package</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -164,227 +171,198 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="bleval">
-<span id="id1"></span><h1>BLEval<a class="headerlink" href="#bleval" title="Permalink to this headline">¶</a></h1>
-<p>The BEELINE’s Evaluation (BLEval) module contains the necessary funtions used for evaluating the predicted gene regulatory network (GRN) reconstructions. This documention contains classes and functions defined exclusively for generating statistics such as accuracy, robustness, and efficiency of predictions from the GRN inference methods.</p>
-<div class="section" id="bleval-runner-module">
-<h2>BLEval.runner module<a class="headerlink" href="#bleval-runner-module" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="module-BLEval">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-BLEval" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="module-BLEval">
+<span id="bleval-package"></span><h1>BLEval package<a class="headerlink" href="#module-BLEval" title="Permalink to this headline">¶</a></h1>
 <p>BEELINE Evaluation (<a class="reference internal" href="#module-BLEval" title="BLEval"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval</span></code></a>) module contains the following main class:</p>
 <ul class="simple">
-<li><a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a></li>
+<li><p><a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a></p></li>
 </ul>
 <p>and three additional classes used in the definition 
 of BLEval class</p>
 <ul class="simple">
-<li><a class="reference internal" href="#BLEval.ConfigParser" title="BLEval.ConfigParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.ConfigParser</span></code></a></li>
-<li><a class="reference internal" href="#BLEval.InputSettings" title="BLEval.InputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.InputSettings</span></code></a></li>
-<li><a class="reference internal" href="#BLEval.OutputSettings" title="BLEval.OutputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.OutputSettings</span></code></a></li>
+<li><p><a class="reference internal" href="#BLEval.ConfigParser" title="BLEval.ConfigParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.ConfigParser</span></code></a></p></li>
+<li><p><a class="reference internal" href="#BLEval.InputSettings" title="BLEval.InputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.InputSettings</span></code></a></p></li>
+<li><p><a class="reference internal" href="#BLEval.OutputSettings" title="BLEval.OutputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.OutputSettings</span></code></a></p></li>
 </ul>
 <dl class="class">
 <dt id="BLEval.BLEval">
-<em class="property">class </em><code class="descclassname">BLEval.</code><code class="descname">BLEval</code><span class="sig-paren">(</span><em>input_settings: BLEval.InputSettings</em>, <em>output_settings: BLEval.OutputSettings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">BLEval.</code><code class="sig-name descname">BLEval</code><span class="sig-paren">(</span><em class="sig-param">input_settings: BLEval.InputSettings</em>, <em class="sig-param">output_settings: BLEval.OutputSettings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The BEELINE Evaluation object is created by parsing a user-provided configuration
 file. Its methods provide for further processing its inputs into
 a series of jobs to be run, as well as running these jobs.</p>
 <dl class="method">
 <dt id="BLEval.BLEval.computeAUC">
-<code class="descname">computeAUC</code><span class="sig-paren">(</span><em>directed=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeAUC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeAUC" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">computeAUC</code><span class="sig-paren">(</span><em class="sig-param">directed=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeAUC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeAUC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes areas under the precision-recall (PR) and
 and ROC plots for each algorithm-dataset combination.</p>
-<dl class="docutils">
-<dt>directedFlag: bool</dt>
-<dd>A flag to specifiy whether to treat predictions
+<dl class="simple">
+<dt>directedFlag: bool</dt><dd><p>A flag to specifiy whether to treat predictions
 as directed edges (directed = True) or 
-undirected edges (directed = False).</dd>
+undirected edges (directed = False).</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>AUPRC: A dataframe containing AUPRC values for each algorithm-dataset combination</li>
-<li>AUROC: A dataframe containing AUROC values for each algorithm-dataset combination</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>AUPRC: A dataframe containing AUPRC values for each algorithm-dataset combination</p></li>
+<li><p>AUROC: A dataframe containing AUROC values for each algorithm-dataset combination</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="BLEval.BLEval.computeEarlyPrec">
-<code class="descname">computeEarlyPrec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeEarlyPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeEarlyPrec" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">computeEarlyPrec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeEarlyPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeEarlyPrec" title="Permalink to this definition">¶</a></dt>
 <dd><p>For each algorithm-dataset combination,
 this function computes the Early Precision values of the 
 network formed using the predicted top-k edges.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataframe containing the early precision values 
-for each algorithm-dataset combination.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dataframe containing the early precision values 
+for each algorithm-dataset combination.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="BLEval.BLEval.computeJaccard">
-<code class="descname">computeJaccard</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeJaccard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeJaccard" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">computeJaccard</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeJaccard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeJaccard" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes Jaccard Index between top-k edge predictions
 of the same algorithm.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataframe containing the median and median absolute
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dataframe containing the median and median absolute
 deviation of the Jaccard Index values of each algorithm
-on the given set of datasets.</td>
-</tr>
-</tbody>
-</table>
+on the given set of datasets.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="BLEval.BLEval.computeNetMotifs">
-<code class="descname">computeNetMotifs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeNetMotifs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeNetMotifs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">computeNetMotifs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeNetMotifs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeNetMotifs" title="Permalink to this definition">¶</a></dt>
 <dd><p>For each algorithm-dataset combination, this function computes the network motifs such as 
 Feedforward loops, Feedback loops and 
 Mutual interactions in the predicted top-k network. It returns the ratio of network motif counts
 compared to their respective values in the reference network.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>FBL: A dataframe containing ratios of number of Feedback loops</li>
-<li>FFL: A dataframe containing ratios of number of Feedforward loops</li>
-<li>MI: A dataframe containing ratios of number of Mutual Interactions</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>FBL: A dataframe containing ratios of number of Feedback loops</p></li>
+<li><p>FFL: A dataframe containing ratios of number of Feedforward loops</p></li>
+<li><p>MI: A dataframe containing ratios of number of Mutual Interactions</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="BLEval.BLEval.computeSignedEPrec">
-<code class="descname">computeSignedEPrec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeSignedEPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeSignedEPrec" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">computeSignedEPrec</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeSignedEPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeSignedEPrec" title="Permalink to this definition">¶</a></dt>
 <dd><p>For each algorithm-dataset combination,
 this function computes the Early Precision values separately 
 for the activation and inhibitory edges.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>A dataframe containing early precision for activation edges</li>
-<li>A dataframe containing early precision for inhibitory edges</li>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>A dataframe containing early precision for activation edges</p></li>
+<li><p>A dataframe containing early precision for inhibitory edges</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="BLEval.BLEval.computeSpearman">
-<code class="descname">computeSpearman</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeSpearman"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeSpearman" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">computeSpearman</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.computeSpearman"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.computeSpearman" title="Permalink to this definition">¶</a></dt>
 <dd><p>Finds the Spearman’s correlation coefficient between
 the ranked edges of the same algorithm on the given
 set of datasets.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataframe containing the median and median absolute
-deviation of the Separman’s correlation values of each algorithm.</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dataframe containing the median and median absolute
+deviation of the Separman’s correlation values of each algorithm.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
 <dt id="BLEval.BLEval.parseTime">
-<code class="descname">parseTime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.parseTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.parseTime" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">parseTime</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#BLEval.parseTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.BLEval.parseTime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parse time output for each
 algorithm-dataset combination.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dictionary of times for all dataset-algorithm combinations</td>
-</tr>
-</tbody>
-</table>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary of times for all dataset-algorithm combinations</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="BLEval.ConfigParser">
-<em class="property">class </em><code class="descclassname">BLEval.</code><code class="descname">ConfigParser</code><a class="reference internal" href="_modules/BLEval.html#ConfigParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.ConfigParser" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">BLEval.</code><code class="sig-name descname">ConfigParser</code><a class="reference internal" href="_modules/BLEval.html#ConfigParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.ConfigParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The class define static methods for parsing and storing the contents 
 of the config file that sets a that sets a large number of parameters 
 used in the BLEval.</p>
-<dl class="staticmethod">
+<dl class="method">
 <dt id="BLEval.ConfigParser.parse">
-<em class="property">static </em><code class="descname">parse</code><span class="sig-paren">(</span><em>config_file_handle</em><span class="sig-paren">)</span> &#x2192; BLEval.BLEval<a class="reference internal" href="_modules/BLEval.html#ConfigParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.ConfigParser.parse" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param">config_file_handle</em><span class="sig-paren">)</span> &#x2192; BLEval.BLEval<a class="reference internal" href="_modules/BLEval.html#ConfigParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.ConfigParser.parse" title="Permalink to this definition">¶</a></dt>
 <dd><p>A method for parsing the input .yaml file.</p>
-<dl class="docutils">
-<dt>config_file_handle: str</dt>
-<dd>Name of the .yaml file to be parsed</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config_file_handle</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the .yaml file to be parsed</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="BLEval.InputSettings">
-<em class="property">class </em><code class="descclassname">BLEval.</code><code class="descname">InputSettings</code><span class="sig-paren">(</span><em>datadir</em>, <em>datasets</em>, <em>algorithms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#InputSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.InputSettings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">BLEval.</code><code class="sig-name descname">InputSettings</code><span class="sig-paren">(</span><em class="sig-param">datadir</em>, <em class="sig-param">datasets</em>, <em class="sig-param">algorithms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#InputSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.InputSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The class for storing the names of input files.
 This initilizes an InputSettings object based on the
 following three parameters.</p>
-<dl class="docutils">
-<dt>datadir: str</dt>
-<dd>input dataset root directory, typically ‘inputs/’</dd>
-<dt>datasets: list</dt>
-<dd>List of dataset names</dd>
-<dt>algorithms: list</dt>
-<dd>List of algorithm names</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datadir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – input dataset root directory, typically ‘inputs/’</p></li>
+<li><p><strong>datasets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of dataset names</p></li>
+<li><p><strong>algorithms</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of algorithm names</p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="class">
 <dt id="BLEval.OutputSettings">
-<em class="property">class </em><code class="descclassname">BLEval.</code><code class="descname">OutputSettings</code><span class="sig-paren">(</span><em>base_dir</em>, <em>output_prefix: pathlib.Path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#OutputSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.OutputSettings" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<em class="property">class </em><code class="sig-prename descclassname">BLEval.</code><code class="sig-name descname">OutputSettings</code><span class="sig-paren">(</span><em class="sig-param">base_dir</em>, <em class="sig-param">output_prefix: pathlib.Path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval.html#OutputSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.OutputSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The class for storing the names of directories that output should
 be written to. This initilizes an OutputSettings object based on the
 following two parameters.</p>
-<dl class="docutils">
-<dt>base_dir: str</dt>
-<dd>output root directory, typically ‘ouputs/’</dd>
-<dt>output_prefix: str</dt>
-<dd>A prefix added to the final output files.</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – output root directory, typically ‘outputs/’</p></li>
+<li><p><strong>output_prefix</strong> – A prefix added to the final output files.</p></li>
+</ul>
+</dd>
 </dl>
 </dd></dl>
 
-</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -392,84 +370,109 @@ following two parameters.</p>
 <span id="bleval-computeauc-module"></span><h2>BLEval.computeAUC module<a class="headerlink" href="#module-BLEval.computeAUC" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLEval.computeAUC.PRROC">
-<code class="descclassname">BLEval.computeAUC.</code><code class="descname">PRROC</code><span class="sig-paren">(</span><em>dataDict</em>, <em>inputSettings</em>, <em>directed=True</em>, <em>selfEdges=False</em>, <em>plotFlag=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeAUC.html#PRROC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeAUC.PRROC" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.computeAUC.</code><code class="sig-name descname">PRROC</code><span class="sig-paren">(</span><em class="sig-param">dataDict</em>, <em class="sig-param">inputSettings</em>, <em class="sig-param">directed=True</em>, <em class="sig-param">selfEdges=False</em>, <em class="sig-param">plotFlag=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeAUC.html#PRROC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeAUC.PRROC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes areas under the precision-recall and ROC curves
 for a given dataset for each algorithm.</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>directed: bool</dt>
-<dd>A flag to indicate whether to treat predictions
-as directed edges (directed = True) or 
-undirected edges (directed = False).</dd>
-<dt>selfEdges: bool</dt>
-<dd>A flag to indicate whether to include
-self-edges (selfEdges = True) or 
-exclude self-edges (selfEdges = False) from evaluation.</dd>
-<dt>plotFlag: bool</dt>
-<dd>A flag to indicate whether or not to save PR and ROC plots.</dd>
-</dl>
-</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>AUPRC: A dictionary containing AUPRC values for each algorithm</li>
-<li>AUROC: A dictionary containing AUROC values for each algorithm</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether to treat predictionsas directed edges (directed = True) or undirected edges (directed = False).</p></li>
+<li><p><strong>selfEdges</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether to includeself-edges (selfEdges = True) or exclude self-edges (selfEdges = False) from evaluation.</p></li>
+<li><p><strong>plotFlag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether or not to save PR and ROC plots.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>AUPRC: A dictionary containing AUPRC values for each algorithm</p></li>
+<li><p>AUROC: A dictionary containing AUROC values for each algorithm</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLEval.computeAUC.computeScores">
-<code class="descclassname">BLEval.computeAUC.</code><code class="descname">computeScores</code><span class="sig-paren">(</span><em>trueEdgesDF</em>, <em>predEdgeDF</em>, <em>directed=True</em>, <em>selfEdges=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeAUC.html#computeScores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeAUC.computeScores" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.computeAUC.</code><code class="sig-name descname">computeScores</code><span class="sig-paren">(</span><em class="sig-param">trueEdgesDF</em>, <em class="sig-param">predEdgeDF</em>, <em class="sig-param">directed=True</em>, <em class="sig-param">selfEdges=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeAUC.html#computeScores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeAUC.computeScores" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes precision-recall and ROC curves
 using scikit-learn for a given set of predictions in the 
 form of a DataFrame.</p>
-<blockquote>
-<div><dl class="docutils">
-<dt>trueEdgesDF: DataFrame</dt>
-<dd>A pandas dataframe containing the true classes.
-The indices of this dataframe are all possible edges
-in a graph formed using the genes in the given dataset. 
-This dataframe only has one column to indicate the class
-label of an edge. If an edge is present in the reference
-network, it gets a class label of 1, else 0.</dd>
-<dt>predEdgeDF: DataFrame</dt>
-<dd>A pandas dataframe containing the edge ranks from the prediced 
-network. The indices of this dataframe are all possible edges.
-This dataframe only has one column to indicate the edge weights
-in the predicted network. Higher the weight, higher the 
-edge confidence.</dd>
-<dt>directed: bool</dt>
-<dd>A flag to indicate whether to treat predictions
-as directed edges (directed = True) or 
-undirected edges (directed = False).</dd>
-<dt>selfEdges: bool</dt>
-<dd>A flag to indicate whether to include
-self-edges (selfEdges = True) or 
-exclude self-edges (selfEdges = False) from evaluation.</dd>
-</dl>
-</div></blockquote>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>prec: A list of precision values (for PR plot)</li>
-<li>recall: A list of precision values (for PR plot)</li>
-<li>fpr: A list of false positive rates (for ROC plot)</li>
-<li>tpr: A list of true positive rates (for ROC plot)</li>
-<li>AUPRC: Area under the precision-recall curve</li>
-<li>AUROC: Area under the ROC curve</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trueEdgesDF</strong> (<em>DataFrame</em>) – A pandas dataframe containing the true classes.The indices of this dataframe are all possible edgesin a graph formed using the genes in the given dataset. This dataframe only has one column to indicate the classlabel of an edge. If an edge is present in the reference network, it gets a class label of 1, else 0.</p></li>
+<li><p><strong>predEdgeDF</strong> (<em>DataFrame</em>) – A pandas dataframe containing the edge ranks from the prediced network. The indices of this dataframe are all possible edges.This dataframe only has one column to indicate the edge weightsin the predicted network. Higher the weight, higher the edge confidence.</p></li>
+<li><p><strong>directed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether to treat predictionsas directed edges (directed = True) or undirected edges (directed = False).</p></li>
+<li><p><strong>selfEdges</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether to includeself-edges (selfEdges = True) or exclude self-edges (selfEdges = False) from evaluation.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>prec: A list of precision values (for PR plot)</p></li>
+<li><p>recall: A list of precision values (for PR plot)</p></li>
+<li><p>fpr: A list of false positive rates (for ROC plot)</p></li>
+<li><p>tpr: A list of true positive rates (for ROC plot)</p></li>
+<li><p>AUPRC: Area under the precision-recall curve</p></li>
+<li><p>AUROC: Area under the ROC curve</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-BLEval.computeDGAUC">
+<span id="bleval-computedgauc-module"></span><h2>BLEval.computeDGAUC module<a class="headerlink" href="#module-BLEval.computeDGAUC" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="BLEval.computeDGAUC.PRROC">
+<code class="sig-prename descclassname">BLEval.computeDGAUC.</code><code class="sig-name descname">PRROC</code><span class="sig-paren">(</span><em class="sig-param">dataDict</em>, <em class="sig-param">inputSettings</em>, <em class="sig-param">directed=True</em>, <em class="sig-param">selfEdges=False</em>, <em class="sig-param">plotFlag=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeDGAUC.html#PRROC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeDGAUC.PRROC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes areas under the precision-recall and ROC curves
+for a given dataset for each algorithm.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>directed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether to treat predictions as directed edges (directed = True) or undirected edges (directed = False).</p></li>
+<li><p><strong>selfEdges</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether to includeself-edges (selfEdges = True) or exclude self-edges (selfEdges = False) from evaluation.</p></li>
+<li><p><strong>plotFlag</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether or not to save PR and ROC plots.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>AUPRC: A dictionary containing AUPRC values for each algorithm</p></li>
+<li><p>AUROC: A dictionary containing AUROC values for each algorithm</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="BLEval.computeDGAUC.computeScores">
+<code class="sig-prename descclassname">BLEval.computeDGAUC.</code><code class="sig-name descname">computeScores</code><span class="sig-paren">(</span><em class="sig-param">trueEdgesDF</em>, <em class="sig-param">predEdgeDF</em>, <em class="sig-param">directed=True</em>, <em class="sig-param">selfEdges=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeDGAUC.html#computeScores"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeDGAUC.computeScores" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes precision-recall and ROC curves
+using scikit-learn for a given set of predictions in the 
+form of a DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>trueEdgesDF</strong> (<em>DataFrame</em>) – A pandas dataframe containing the true classes.The indices of this dataframe are all possible edgesin a graph formed using the genes in the given dataset. This dataframe only has one column to indicate the classlabel of an edge. If an edge is present in the reference network, it gets a class label of 1, else 0.</p></li>
+<li><p><strong>predEdgeDF</strong> (<em>DataFrame</em>) – A pandas dataframe containing the edge ranks from the prediced network. The indices of this dataframe are all possible edges.This dataframe only has one column to indicate the edge weightsin the predicted network. Higher the weight, higher the edge confidence.</p></li>
+<li><p><strong>directed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether to treat predictionsas directed edges (directed = True) or undirected edges (directed = False).</p></li>
+<li><p><strong>selfEdges</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – A flag to indicate whether to includeself-edges (selfEdges = True) or exclude self-edges (selfEdges = False) from evaluation.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>prec: A list of precision values (for PR plot)</p></li>
+<li><p>recall: A list of precision values (for PR plot)</p></li>
+<li><p>fpr: A list of false positive rates (for ROC plot)</p></li>
+<li><p>tpr: A list of true positive rates (for ROC plot)</p></li>
+<li><p>AUPRC: Area under the precision-recall curve</p></li>
+<li><p>AUROC: Area under the ROC curve</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -477,26 +480,23 @@ exclude self-edges (selfEdges = False) from evaluation.</dd>
 <span id="bleval-computeearlyprec-module"></span><h2>BLEval.computeEarlyPrec module<a class="headerlink" href="#module-BLEval.computeEarlyPrec" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLEval.computeEarlyPrec.EarlyPrec">
-<code class="descclassname">BLEval.computeEarlyPrec.</code><code class="descname">EarlyPrec</code><span class="sig-paren">(</span><em>evalObject</em>, <em>algorithmName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeEarlyPrec.html#EarlyPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeEarlyPrec.EarlyPrec" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.computeEarlyPrec.</code><code class="sig-name descname">EarlyPrec</code><span class="sig-paren">(</span><em class="sig-param">evalObject</em>, <em class="sig-param">algorithmName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeEarlyPrec.html#EarlyPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeEarlyPrec.EarlyPrec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes early precision for a given algorithm for each dataset.
 We define early precision as the fraction of true 
 positives in the top-k edges, where k is the number of
 edges in the ground truth network (excluding self loops).</p>
-<dl class="docutils">
-<dt>evalObject: BLEval</dt>
-<dd>An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</dd>
-<dt>algorithmName: str</dt>
-<dd>Name of the algorithm for which the early precision is computed.</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evalObject</strong> (<a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><em>BLEval</em></a>) – An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</p></li>
+<li><p><strong>algorithmName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the algorithm for which the early precision is computed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe containing early precision values
+for a given algorithm for each dataset.</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataframe containing early precision values
-for a given algorithm for each dataset.</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </div>
@@ -504,52 +504,43 @@ for a given algorithm for each dataset.</td>
 <span id="bleval-computejaccard-module"></span><h2>BLEval.computeJaccard module<a class="headerlink" href="#module-BLEval.computeJaccard" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLEval.computeJaccard.Jaccard">
-<code class="descclassname">BLEval.computeJaccard.</code><code class="descname">Jaccard</code><span class="sig-paren">(</span><em>evalObject</em>, <em>algorithmName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeJaccard.html#Jaccard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeJaccard.Jaccard" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.computeJaccard.</code><code class="sig-name descname">Jaccard</code><span class="sig-paren">(</span><em class="sig-param">evalObject</em>, <em class="sig-param">algorithmName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeJaccard.html#Jaccard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeJaccard.Jaccard" title="Permalink to this definition">¶</a></dt>
 <dd><p>A function to compute median pairwirse Jaccard similarity index
 of predicted top-k edges for a given set of datasets (obtained from
 the same reference network). Here k is the number of edges in the
 reference network (excluding self loops).</p>
-<dl class="docutils">
-<dt>evalObject: BLEval</dt>
-<dd>An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</dd>
-<dt>algorithmName: str</dt>
-<dd>Name of the algorithm for which the Spearman correlation is computed.</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>median: Median of Jaccard correlation values</li>
-<li>mad: Median Absolute Deviation of  the Spearman correlation values</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evalObject</strong> (<a class="reference internal" href="#module-BLEval" title="BLEval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLEval</span></code></a>) – An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</p></li>
+<li><p><strong>algorithmName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the algorithm for which the Spearman correlation is computed.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>median: Median of Jaccard correlation values</p></li>
+<li><p>mad: Median Absolute Deviation of  the Spearman correlation values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLEval.computeJaccard.computePairwiseJacc">
-<code class="descclassname">BLEval.computeJaccard.</code><code class="descname">computePairwiseJacc</code><span class="sig-paren">(</span><em>inDict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeJaccard.html#computePairwiseJacc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeJaccard.computePairwiseJacc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.computeJaccard.</code><code class="sig-name descname">computePairwiseJacc</code><span class="sig-paren">(</span><em class="sig-param">inDict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeJaccard.html#computePairwiseJacc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeJaccard.computePairwiseJacc" title="Permalink to this definition">¶</a></dt>
 <dd><p>A helper function to compute all pairwise Jaccard similarity indices
 of predicted top-k edges for a given set of datasets (obtained from
 the same reference network). Here k is the number of edges in the
 reference network (excluding self loops).</p>
-<dl class="docutils">
-<dt>inDict: dict</dt>
-<dd>A dictionary contaninig top-k predicted edges 
-for each dataset. Here, keys are the dataset name 
-and the values are the set of top-k edges.</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inDict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – A dictionary contaninig top-k predicted edges  for each dataset. Here, keys are the dataset name and the values are the set of top-k edges.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe containing pairwise Jaccard similarity index values</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataframe containing pairwise Jaccard similarity index values</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </div>
@@ -557,56 +548,48 @@ and the values are the set of top-k edges.</dd>
 <span id="bleval-computenetmotifs-module"></span><h2>BLEval.computeNetMotifs module<a class="headerlink" href="#module-BLEval.computeNetMotifs" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLEval.computeNetMotifs.Motifs">
-<code class="descclassname">BLEval.computeNetMotifs.</code><code class="descname">Motifs</code><span class="sig-paren">(</span><em>datasetDict</em>, <em>inputSettings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeNetMotifs.html#Motifs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeNetMotifs.Motifs" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.computeNetMotifs.</code><code class="sig-name descname">Motifs</code><span class="sig-paren">(</span><em class="sig-param">datasetDict</em>, <em class="sig-param">inputSettings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeNetMotifs.html#Motifs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeNetMotifs.Motifs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes ratios of the counts of various network motifs
 for each algorithm for a given dataset. The ratios are 
 computed by dividing the counts of various network motifs
 in the predicted top-k network, to their respective values 
 in the reference network.</p>
-<dl class="docutils">
-<dt>datasetDict: dict</dt>
-<dd>A dictionary containing the dataset name, 
-path to reference network.</dd>
-<dt>inputSettings: InputSettings</dt>
-<dd>An object of class <a class="reference internal" href="#BLEval.InputSettings" title="BLEval.InputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.InputSettings</span></code></a>.</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>FBL: A dataframe containing ratios of three-node feedback loop motis</li>
-<li>FFL: A dataframe containing ratios of three-node feedforward loop motis</li>
-<li>MI: A dataframe containing ratios of two-node mutual interaction motis</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datasetDict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – A dictionary containing the dataset name, path to reference network.</p></li>
+<li><p><strong>inputSettings</strong> (<a class="reference internal" href="#BLEval.InputSettings" title="BLEval.InputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.InputSettings</span></code></a>) – An object of class <a class="reference internal" href="#BLEval.InputSettings" title="BLEval.InputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.InputSettings</span></code></a>.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>FBL: A dataframe containing ratios of three-node feedback loop motis</p></li>
+<li><p>FFL: A dataframe containing ratios of three-node feedforward loop motis</p></li>
+<li><p>MI: A dataframe containing ratios of two-node mutual interaction motis</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLEval.computeNetMotifs.getNetProp">
-<code class="descclassname">BLEval.computeNetMotifs.</code><code class="descname">getNetProp</code><span class="sig-paren">(</span><em>inGraph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeNetMotifs.html#getNetProp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeNetMotifs.getNetProp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.computeNetMotifs.</code><code class="sig-name descname">getNetProp</code><span class="sig-paren">(</span><em class="sig-param">inGraph</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeNetMotifs.html#getNetProp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeNetMotifs.getNetProp" title="Permalink to this definition">¶</a></dt>
 <dd><p>A helper function to compute
 counts of various network motifs.</p>
-<dl class="docutils">
-<dt>inGraph: networkx.DiGraph()</dt>
-<dd>An graph object of class <code class="xref py py-class docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code>.</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>A value corresponding to the number of three-node feedback loops</li>
-<li>A value corresponding to the number of three-node feedforward loops</li>
-<li>A value corresponding to the number of two-node mutual interaction</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>inGraph</strong> (<em>:obj:networkx.DiGraph</em>) – An graph object of class <code class="xref py py-class docutils literal notranslate"><span class="pre">networkx.DiGraph</span></code>.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>A value corresponding to the number of three-node feedback loops</p></li>
+<li><p>A value corresponding to the number of three-node feedforward loops</p></li>
+<li><p>A value corresponding to the number of two-node mutual interaction</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -614,7 +597,7 @@ counts of various network motifs.</p>
 <span id="bleval-computesignedeprec-module"></span><h2>BLEval.computeSignedEPrec module<a class="headerlink" href="#module-BLEval.computeSignedEPrec" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLEval.computeSignedEPrec.signedEPrec">
-<code class="descclassname">BLEval.computeSignedEPrec.</code><code class="descname">signedEPrec</code><span class="sig-paren">(</span><em>evalObject</em>, <em>algorithmName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeSignedEPrec.html#signedEPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeSignedEPrec.signedEPrec" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.computeSignedEPrec.</code><code class="sig-name descname">signedEPrec</code><span class="sig-paren">(</span><em class="sig-param">evalObject</em>, <em class="sig-param">algorithmName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeSignedEPrec.html#signedEPrec"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeSignedEPrec.signedEPrec" title="Permalink to this definition">¶</a></dt>
 <dd><p>Computes median signed early precision for a given algorithm across all datasets, 
 i.e., the function computes early precision of activation edges and
 early precision for inhibitory edges in the reference network.
@@ -624,21 +607,18 @@ edges in the reference network (excluding self loops).
 We define early precision of inhibitory edges as the fraction of true 
 positives in the top-ki edges, where ki is the number of inhibitory
 edges in the reference network (excluding self loops).</p>
-<dl class="docutils">
-<dt>evalObject: BLEval</dt>
-<dd>An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</dd>
-<dt>algorithmName: str</dt>
-<dd>Name of the algorithm for which the early precision is computed.</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evalObject</strong> (<a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><em>BLEval</em></a>) – An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</p></li>
+<li><p><strong>algorithmName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the algorithm for which the early precision is computed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A dataframe with early precision of activation edges (+) and inhibitory edges (-)
+for a given algorithm</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A dataframe with early precision of activation edges (+) and inhibitory edges (-)
-for a given algorithm</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </div>
@@ -646,28 +626,25 @@ for a given algorithm</td>
 <span id="bleval-computespearman-module"></span><h2>BLEval.computeSpearman module<a class="headerlink" href="#module-BLEval.computeSpearman" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLEval.computeSpearman.Spearman">
-<code class="descclassname">BLEval.computeSpearman.</code><code class="descname">Spearman</code><span class="sig-paren">(</span><em>evalObject</em>, <em>algorithmName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeSpearman.html#Spearman"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeSpearman.Spearman" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.computeSpearman.</code><code class="sig-name descname">Spearman</code><span class="sig-paren">(</span><em class="sig-param">evalObject</em>, <em class="sig-param">algorithmName</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/computeSpearman.html#Spearman"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.computeSpearman.Spearman" title="Permalink to this definition">¶</a></dt>
 <dd><p>A function to compute median pairwirse Spearman correlation
 of predicted ranked edges, i.e., the outputs of different datasets
 generated from the same reference network, for a given algorithm.</p>
-<dl class="docutils">
-<dt>evalObject: BLEval</dt>
-<dd>An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</dd>
-<dt>algorithmName: str</dt>
-<dd>Name of the algorithm for which the Spearman correlation is computed.</dd>
-</dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
-<li>median: Median of Spearman correlation values</li>
-<li>mad: Median Absolute Deviation of  the Spearman correlation values</li>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evalObject</strong> (<a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><em>BLEval</em></a>) – An object of class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a>.</p></li>
+<li><p><strong>algorithmName</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of the algorithm for which the Spearman correlation is computed.</p></li>
 </ul>
-</td>
-</tr>
-</tbody>
-</table>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>median: Median of Spearman correlation values</p></li>
+<li><p>mad: Median Absolute Deviation of  the Spearman correlation values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
@@ -675,48 +652,40 @@ generated from the same reference network, for a given algorithm.</p>
 <span id="bleval-parsetime-module"></span><h2>BLEval.parseTime module<a class="headerlink" href="#module-BLEval.parseTime" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLEval.parseTime.getTime">
-<code class="descclassname">BLEval.parseTime.</code><code class="descname">getTime</code><span class="sig-paren">(</span><em>evalObject</em>, <em>dataset</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/parseTime.html#getTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.parseTime.getTime" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.parseTime.</code><code class="sig-name descname">getTime</code><span class="sig-paren">(</span><em class="sig-param">evalObject</em>, <em class="sig-param">dataset</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/parseTime.html#getTime"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.parseTime.getTime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return time taken for each of the algorithms
 in the evalObject on the dataset specified.
 The output stored in time.txt is parsed to
 obtain the CPU time.</p>
-<dl class="docutils">
-<dt>evalObject: BLEval</dt>
-<dd>An object of the class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a></dd>
-<dt>dataset: str</dt>
-<dd>Dataset name for which the time output must be parsed for each algorithm.</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>evalObject</strong> (<a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><em>BLEval</em></a>) – An object of the class <a class="reference internal" href="#BLEval.BLEval" title="BLEval.BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval.BLEval</span></code></a></p></li>
+<li><p><strong>dataset</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Dataset name for which the time output must be parsed for each algorithm.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A Dictionary of time taken by each of the algorithms, i.e., key is the algorithm name, and
+value is the time taken (in sec.).</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A Dictionary of time taken by each of the algorithms, i.e., key is the algorithm name, and
-value is the time taken (in sec.).</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLEval.parseTime.parse_time_files">
-<code class="descclassname">BLEval.parseTime.</code><code class="descname">parse_time_files</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/parseTime.html#parse_time_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.parseTime.parse_time_files" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">BLEval.parseTime.</code><code class="sig-name descname">parse_time_files</code><span class="sig-paren">(</span><em class="sig-param">path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLEval/parseTime.html#parse_time_files"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLEval.parseTime.parse_time_files" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return time taken for each of the algorithms
 in the evalObject on the dataset specified.
 The output stored in time.txt is parsed to
 obtain the CPU time.</p>
-<dl class="docutils">
-<dt>path: str</dt>
-<dd>Path to the time.txt file, or timex.txt file where x corresponds to the
-trajectory ID for a given algorithm-dataset combination.</dd>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Path to the time.txt file, or timex.txt file where x corresponds to the trajectory ID for a given algorithm-dataset combination.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A float value corresponding to the time taken.</p>
+</dd>
 </dl>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">A float value corresponding to the time taken.</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 </div>
@@ -727,6 +696,15 @@ trajectory ID for a given algorithm-dataset combination.</dd>
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="BLPlot.html" class="btn btn-neutral float-right" title="BLPlot package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="BLRun.html" class="btn btn-neutral float-left" title="BLRun package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

@@ -83,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -171,8 +171,18 @@
     
 <div class="viewcode-block" id="plot"><a class="viewcode-back" href="../../BLPlot.html#BLPlot.NetworkMotifs.plot">[docs]</a><span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="n">inputDF</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span> 
          <span class="n">levels</span> <span class="o">=</span> <span class="p">[],</span> <span class="n">rotation</span> <span class="o">=</span> <span class="p">[]):</span>
-    
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Script to produce Figure </span>
 
+<span class="sd">    :param inputDF: Dataframe containing ratios to be visualized either as slanted arrows (&gt; 1.25 or &lt; 0.75)or a double squiggly arrow (&gt;0.75 and &lt; 1.25)</span>
+<span class="sd">    :type inputDF: :obj:`pandas DataFrame`</span>
+<span class="sd">    :param height: Height of final image</span>
+<span class="sd">    :type height: float</span>
+<span class="sd">    :param levels: Which columns in Level 1 to use for plotting, specified using column names</span>
+<span class="sd">    :type levels: list</span>
+<span class="sd">    :param rotation: specify which column titles have to be rotated</span>
+<span class="sd">    :type rotation: list</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">rowNames</span> <span class="o">=</span> <span class="n">inputDF</span><span class="o">.</span><span class="n">index</span>
     <span class="n">maxRows</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputDF</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
     <span class="n">maxCols</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inputDF</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>

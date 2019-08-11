@@ -83,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -192,6 +192,8 @@
 <div class="viewcode-block" id="run"><a class="viewcode-back" href="../../BLRun.html#BLRun.leapRunner.run">[docs]</a><span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="n">RunnerObj</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Function to run LEAP algorithm</span>
+
+<span class="sd">    Requires the maxLag parameter</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     
     <span class="n">inputPath</span> <span class="o">=</span> <span class="s2">&quot;data&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()))[</span><span class="mi">1</span><span class="p">]</span>

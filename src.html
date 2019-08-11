@@ -1,0 +1,622 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>src package &mdash; BEELINE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Usage Examples" href="examples.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> BEELINE
+          
+
+          
+            
+            <img src="_static/beeline.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Beeline.html">Beeline</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="BoolODE.html">BoolODE</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="BoolODE.html#overview">Overview</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="usage.html">Command Line Options</a></li>
+<li class="toctree-l3"><a class="reference internal" href="examples.html">Usage Examples</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">src package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-src.BoolODE">src.BoolODE module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-src.simulator">src.simulator module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-src.utils">src.utils module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BEELINE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="BoolODE.html">BoolODE</a> &raquo;</li>
+        
+      <li>src package</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/src.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-src">
+<span id="src-package"></span><h1>src package<a class="headerlink" href="#module-src" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-src.BoolODE">
+<span id="src-boolode-module"></span><h2>src.BoolODE module<a class="headerlink" href="#module-src.BoolODE" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.BoolODE.Experiment">
+<code class="sig-prename descclassname">src.BoolODE.</code><code class="sig-name descname">Experiment</code><span class="sig-paren">(</span><em class="sig-param">Model</em>, <em class="sig-param">ModelSpec</em>, <em class="sig-param">tspan</em>, <em class="sig-param">num_cells</em>, <em class="sig-param">sampleCells</em>, <em class="sig-param">varmapper</em>, <em class="sig-param">parmapper</em>, <em class="sig-param">genelist</em>, <em class="sig-param">proteinlist</em>, <em class="sig-param">outPrefix</em>, <em class="sig-param">icsDF</em>, <em class="sig-param">nClusters</em>, <em class="sig-param">x_max</em>, <em class="sig-param">doParallel</em>, <em class="sig-param">burnin=False</em>, <em class="sig-param">writeProtein=False</em>, <em class="sig-param">normalizeTrajectory=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/BoolODE.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.BoolODE.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Carry out an <cite>in-silico</cite> experiment. This function takes as input 
+an ODE model defined as a python function and carries out stochastic
+simulations. BoolODE defines a _cell_ as a single time point from 
+a simulated time course. Thus, in order to obtain 50 single cells,
+BoolODE carries out 50 simulations, which are stored in ./simulations/.
+Further, if it is known that the resulting single cell dataset will
+exhibit multiple trajectories, the user can specify  the number of clusters in
+<cite>nClusters</cite>; BoolODE will then cluster the entire simulation, such that each
+simulated trajectory possesess a cluster ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Model</strong> (<em>function</em>) – Function defining ODE model</p></li>
+<li><p><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary defining ODE model. See readBooleanRules()</p></li>
+<li><p><strong>tspan</strong> (<em>ndarray</em>) – Array of time points</p></li>
+<li><p><strong>num_cells</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to perform</p></li>
+<li><p><strong>sampleCells</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool that specifies if a random sample of size num_cells should be generated from the simulated output, where one cell is picked per simulation without replacement</p></li>
+<li><p><strong>varmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – </p></li>
+<li><p><strong>parmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – </p></li>
+<li><p><strong>genelist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of all gene names</p></li>
+<li><p><strong>proteinlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of all protein names</p></li>
+<li><p><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of output folder.</p></li>
+<li><p><strong>icsDF</strong> (<em>pandas DataFrame</em>) – Dataframe specifying initial condition for simulation</p></li>
+<li><p><strong>nClusters</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of expected trajectories. Used to perform k-means clustering</p></li>
+<li><p><strong>x_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – max value of gene. By default 2.0, will vary if parameters are sampled</p></li>
+<li><p><strong>doParallel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool specifying starting simulations in parallel</p></li>
+<li><p><strong>burnin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool specifying that initial fraction of simulation should be discarded. Obsolete</p></li>
+<li><p><strong>writeProtein</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool specifying if the protein values should be written to file. Default = False</p></li>
+<li><p><strong>normalizeTrajectory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool specifying if the gene expression values should be scaled between 0 and 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.BoolODE.generateModelDict">
+<code class="sig-prename descclassname">src.BoolODE.</code><code class="sig-name descname">generateModelDict</code><span class="sig-paren">(</span><em class="sig-param">DF</em>, <em class="sig-param">identicalPars</em>, <em class="sig-param">samplePars</em>, <em class="sig-param">sampleStd</em>, <em class="sig-param">withoutRules</em>, <em class="sig-param">speciesTypeDF</em>, <em class="sig-param">parameterInputsDF</em>, <em class="sig-param">parameterSetDF</em>, <em class="sig-param">interactionStrengthDF</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/BoolODE.html#generateModelDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.BoolODE.generateModelDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a DataFrame object with Boolean rules,
+construct ODE equations for each variable.
+Takes optional parameter inputs and interaction
+strengths</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DF</strong> (<em>pandas DataFrame</em>) – Table of values with two columns, ‘Gene’ specifies target, ‘Rule’ specifies Boolean function</p></li>
+<li><p><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Passed to utils.getSaneNval to set identical parameters</p></li>
+<li><p><strong>samplePars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Sample kinetic parameters using a Gaussian distribution  centered around the default parameters</p></li>
+<li><p><strong>sampleStd</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Sample from a distribution of mean=par, sigma=sampleStd*par</p></li>
+<li><p><strong>speciesTypeDF</strong> (<em>pandas DataFrame</em>) – Table defining type of each species. Takes values  ‘gene’ or ‘protein’</p></li>
+<li><p><strong>parameterInputsDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies parameter input values. Useful to specify experimental conditions.</p></li>
+<li><p><strong>parameterSetDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies a predefined parameter set.</p></li>
+<li><p><strong>interactionStrengthDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies interaction strengths. When not specified, default strength is set to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>ModelSpec<span class="classifier">dict</span></dt><dd><p>Dictionary of dictionaries. 
+‘varspecs’ {variable:ODE equation}
+‘ics’ {variable:initial condition}
+‘pars’ {parameter:parameter value}</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.BoolODE.getInitialCondition">
+<code class="sig-prename descclassname">src.BoolODE.</code><code class="sig-name descname">getInitialCondition</code><span class="sig-paren">(</span><em class="sig-param">ss</em>, <em class="sig-param">ModelSpec</em>, <em class="sig-param">rnaIndex</em>, <em class="sig-param">proteinIndex</em>, <em class="sig-param">genelist</em>, <em class="sig-param">proteinlist</em>, <em class="sig-param">varmapper</em>, <em class="sig-param">revvarmapper</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/BoolODE.html#getInitialCondition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.BoolODE.getInitialCondition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the initial values of all state variables. 
+Takes into consideration user defined initial conditions, and computes the steady 
+states of the protein variables based on the estimated values of their corresponding genes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ss</strong> (<em>ndarray</em>) – Steady state array</p></li>
+<li><p><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary of dictionary specifying the ODE model, containing parameters, initial conditions and equations.</p></li>
+<li><p><strong>rnaIndex</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – list of indices of genes</p></li>
+<li><p><strong>proteinIndex</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of indices of proteins</p></li>
+<li><p><strong>genelist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of names of all genes in the model</p></li>
+<li><p><strong>proteinlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of names of all proteins in the model</p></li>
+<li><p><strong>varmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Mapper: {variable name : index}</p></li>
+<li><p><strong>revvarmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Mapper: {index : variable name}</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>newics: List containing new initial conditions</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.BoolODE.getParameters">
+<code class="sig-prename descclassname">src.BoolODE.</code><code class="sig-name descname">getParameters</code><span class="sig-paren">(</span><em class="sig-param">DF</em>, <em class="sig-param">identicalPars</em>, <em class="sig-param">samplePars</em>, <em class="sig-param">sampleStd</em>, <em class="sig-param">genelist</em>, <em class="sig-param">proteinlist</em>, <em class="sig-param">withoutRules</em>, <em class="sig-param">parameterInputsDF</em>, <em class="sig-param">parameterSetDF</em>, <em class="sig-param">interactionStrengthDF</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/BoolODE.html#getParameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.BoolODE.getParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create dictionary of parameters and values. Assigns
+parameter values by evaluating the Boolean expression
+for each variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>DF</strong> (<em>pandas DataFrame</em>) – Table of values with two columns, ‘Gene’ specifies target, ‘Rule’ specifies Boolean function</p></li>
+<li><p><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Passed to utils.getSaneNval to set identical parameters</p></li>
+<li><p><strong>samplePars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Sample kinetic parameters using a Gaussian distribution  centered around the default parameters</p></li>
+<li><p><strong>parameterInputsDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies input parameter values. Useful to specify experimental conditions.</p></li>
+<li><p><strong>parameterSetDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies predefined parameter set.</p></li>
+<li><p><strong>interactionStrengthDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies interaction strengths. When not specified, default strength is set to 1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>pars<span class="classifier">dict</span></dt><dd><p>Dictionary of parameters</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.BoolODE.main">
+<code class="sig-prename descclassname">src.BoolODE.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><em class="sig-param">args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/BoolODE.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.BoolODE.main" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.BoolODE.parseArgs">
+<code class="sig-prename descclassname">src.BoolODE.</code><code class="sig-name descname">parseArgs</code><span class="sig-paren">(</span><em class="sig-param">args</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/BoolODE.html#parseArgs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.BoolODE.parseArgs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.BoolODE.readBooleanRules">
+<code class="sig-prename descclassname">src.BoolODE.</code><code class="sig-name descname">readBooleanRules</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">parameterInputsPath</em>, <em class="sig-param">outPrefix=''</em>, <em class="sig-param">add_dummy=False</em>, <em class="sig-param">max_parents=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/BoolODE.html#readBooleanRules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.BoolODE.readBooleanRules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a rule file from path and stores the rules in a dictionary</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Path to Boolean Rule file</p></li>
+<li><p><strong>parameterInputsPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Path to file containing input parameters to the model</p></li>
+<li><p><strong>add_dummy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Experimental feature, adds dummy targets to each gene in the model. Useful to change the density of the network</p></li>
+<li><p><strong>max_parents</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Experimental feature, specifies number of parent genes per dummy gene added</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>DF: Dataframe containing rules</p></li>
+<li><p>withoutrules: list of nodes in input file without rules</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.BoolODE.simulateAndSample">
+<code class="sig-prename descclassname">src.BoolODE.</code><code class="sig-name descname">simulateAndSample</code><span class="sig-paren">(</span><em class="sig-param">argdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/BoolODE.html#simulateAndSample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.BoolODE.simulateAndSample" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="src.BoolODE.simulateModel">
+<code class="sig-prename descclassname">src.BoolODE.</code><code class="sig-name descname">simulateModel</code><span class="sig-paren">(</span><em class="sig-param">Model</em>, <em class="sig-param">y0</em>, <em class="sig-param">parameters</em>, <em class="sig-param">isStochastic</em>, <em class="sig-param">tspan</em>, <em class="sig-param">seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/BoolODE.html#simulateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.BoolODE.simulateModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call numerical integration functions, either odeint() from Scipy,
+or simulator.eulersde() defined in simulator.py. By default, stochastic simulations are
+carried out using simulator.eulersde.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Model</strong> (<em>function</em>) – Function defining ODE model</p></li>
+<li><p><strong>y0</strong> (<em>array</em>) – array of initial values for each state variable</p></li>
+<li><p><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – list of parameter values to be used in simulations</p></li>
+<li><p><strong>isStochastic</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – User defined parameter. Default = True, can be turned off to perform ODE simulations.</p></li>
+<li><p><strong>tspan</strong> (<em>ndarray</em>) – Time points to simulate</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Seed to initialize random number generator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>P: Time course from numerical integration</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-src.simulator">
+<span id="src-simulator-module"></span><h2>src.simulator module<a class="headerlink" href="#module-src.simulator" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.simulator.deltaW">
+<code class="sig-prename descclassname">src.simulator.</code><code class="sig-name descname">deltaW</code><span class="sig-paren">(</span><em class="sig-param">N</em>, <em class="sig-param">m</em>, <em class="sig-param">h</em>, <em class="sig-param">seed=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/simulator.html#deltaW"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.simulator.deltaW" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate sequence of Wiener increments for m independent Wiener
+processes W_j(t) j=0..m-1 for each of N time intervals of length h.    
+From the sdeint implementation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p>dW : The [n, j] element has the value W_j((n+1)*h) - W_j(n*h) ( has shape (N, m) )</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.simulator.eulersde">
+<code class="sig-prename descclassname">src.simulator.</code><code class="sig-name descname">eulersde</code><span class="sig-paren">(</span><em class="sig-param">f</em>, <em class="sig-param">G</em>, <em class="sig-param">y0</em>, <em class="sig-param">tspan</em>, <em class="sig-param">pars</em>, <em class="sig-param">seed=0.0</em>, <em class="sig-param">dW=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/simulator.html#eulersde"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.simulator.eulersde" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapted from sdeint implementation <a class="reference external" href="https://github.com/mattja/sdeint/">https://github.com/mattja/sdeint/</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>f</strong> (<em>function</em>) – function defining ODE model. Should take vector of current state, current time, and list of parameter values as arguments.</p></li>
+<li><p><strong>pars</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of parameter values</p></li>
+<li><p><strong>y0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – list of initial values</p></li>
+<li><p><strong>tspan</strong> (<em>ndarray</em>) – Array of timepoints to simulate</p></li>
+<li><p><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Seed to initialize random number generator</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>y: Array containing the time course of state variables</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.simulator.noise">
+<code class="sig-prename descclassname">src.simulator.</code><code class="sig-name descname">noise</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/simulator.html#noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.simulator.noise" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-src.utils">
+<span id="src-utils-module"></span><h2>src.utils module<a class="headerlink" href="#module-src.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="src.utils.generateInputFiles">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">generateInputFiles</code><span class="sig-paren">(</span><em class="sig-param">resultDF</em>, <em class="sig-param">outputfilenames</em>, <em class="sig-param">BoolDF</em>, <em class="sig-param">withoutRules</em>, <em class="sig-param">parameterInputsPath</em>, <em class="sig-param">outPrefix=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#generateInputFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.generateInputFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates input files required from the Beeline pipeline</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resultDF</strong> (<em>pandas DataFrame</em>) – The simulation output, rows are genes, columns are “cells” or timepoints</p></li>
+<li><p><strong>outputfilenames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of filenames generated containing individual time courses</p></li>
+<li><p><strong>BoolDF</strong> (<em>pandas DataFrame</em>) – Dataframe containing rules</p></li>
+<li><p><strong>withoutrules</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of nodes in input file without rules</p></li>
+<li><p><strong>parameterInputsPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Specifies if there are any inputs to the model</p></li>
+<li><p><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> (</em><em>Optional</em><em>)</em>) – Prefix specifying target directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.getSaneNval">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">getSaneNval</code><span class="sig-paren">(</span><em class="sig-param">size</em>, <em class="sig-param">lo=1.0</em>, <em class="sig-param">hi=10.0</em>, <em class="sig-param">mu=2.0</em>, <em class="sig-param">sig=2.0</em>, <em class="sig-param">identicalPars=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#getSaneNval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.getSaneNval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a gaussian random number which is
+bounded by <cite>lo</cite> and <cite>hi</cite></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – number of random numbers to generate</p></li>
+<li><p><strong>lo</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – lower bound of sample range</p></li>
+<li><p><strong>hi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – upper bound of sample range</p></li>
+<li><p><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Mean of Gaussian distribution to be sampled from</p></li>
+<li><p><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Standard deviation of Gausssian distribution to be sampled from</p></li>
+<li><p><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Flag to sample single value and return a list of identical values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>K: list of sampled values</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.get_ss">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">get_ss</code><span class="sig-paren">(</span><em class="sig-param">P</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#get_ss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.get_ss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the final time point of the simulated time course</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>P</strong> (<em>np.array</em>) – 2-D array containing time course of the model</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>ss : np.array containing the last entry in each time series list</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.minmaxnorm">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">minmaxnorm</code><span class="sig-paren">(</span><em class="sig-param">X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#minmaxnorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.minmaxnorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales the values in X</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>X</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Input list of values to be scaled</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>N : list of values scaled between min and max values in input list</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.normalizeData">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">normalizeData</code><span class="sig-paren">(</span><em class="sig-param">P</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#normalizeData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.normalizeData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls minmaxnorm() for each time series</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Pnorm : list of scaled values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.normalizeExp">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">normalizeExp</code><span class="sig-paren">(</span><em class="sig-param">DF</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#normalizeExp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.normalizeExp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls minmaxnorm() for each gene across all experiments</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>DF</strong> (<em>pd.DataFrame</em>) – Dataframe containing gene expression values as rows, time points as columns</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>newDF : DataFrame with values of DF scaled between min and max of DF</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.sampleCellFromTraj">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">sampleCellFromTraj</code><span class="sig-paren">(</span><em class="sig-param">cellid</em>, <em class="sig-param">tspan</em>, <em class="sig-param">P</em>, <em class="sig-param">varmapper</em>, <em class="sig-param">sampleAt</em>, <em class="sig-param">genelist</em>, <em class="sig-param">proteinlist</em>, <em class="sig-param">header</em>, <em class="sig-param">writeProtein=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#sampleCellFromTraj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.sampleCellFromTraj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns pandas DataFrame with columns corresponding to 
+time points and rows corresponding to genes</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.sampleTimeSeries">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">sampleTimeSeries</code><span class="sig-paren">(</span><em class="sig-param">num_timepoints</em>, <em class="sig-param">expnum</em>, <em class="sig-param">tspan</em>, <em class="sig-param">P</em>, <em class="sig-param">varmapper</em>, <em class="sig-param">timeIndex</em>, <em class="sig-param">genelist</em>, <em class="sig-param">proteinlist</em>, <em class="sig-param">header</em>, <em class="sig-param">writeProtein=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#sampleTimeSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.sampleTimeSeries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns pandas DataFrame with columns corresponding to 
+time points and rows corresponding to genes</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.writeModelToFile">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">writeModelToFile</code><span class="sig-paren">(</span><em class="sig-param">ModelSpec</em>, <em class="sig-param">prefix=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#writeModelToFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.writeModelToFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes model to file as a python function, which is then imported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – ODE equations stored in a dictionary</p></li>
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Optional argument that specifies prefix to model filename</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p>dir_path : path to output directory</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="src.utils.writeParametersToFile">
+<code class="sig-prename descclassname">src.utils.</code><code class="sig-name descname">writeParametersToFile</code><span class="sig-paren">(</span><em class="sig-param">ModelSpec</em>, <em class="sig-param">outPrefix</em>, <em class="sig-param">outname='parameters.txt'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/src/utils.html#writeParametersToFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#src.utils.writeParametersToFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes dictionary of parameters to file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Model definition dictionary containing the keys ‘ics’, ‘pars’, and ‘varspec’</p></li>
+<li><p><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Prefix to output folder name</p></li>
+<li><p><strong>outname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> (</em><em>Optional</em><em>)</em>) – User defined name for parameters file. Default is parameters.txt</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="examples.html" class="btn btn-neutral float-left" title="Usage Examples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Aditya Pratapa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

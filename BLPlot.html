@@ -84,8 +84,24 @@
             
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Beeline.html">Beeline</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="Beeline.html">BEELINE</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Beeline.html#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Beeline.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="Beeline.html#tutorial">Tutorial</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#project-outline">Project outline</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#input-files">Input files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#config-files">Config files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Beeline.html#running-the-pipeline">Running the pipeline</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="Beeline.html#running-the-evaluation-scripts">Running the evaluation scripts</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="algorithms.html">Algorithms</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="beeline-reference.html">Modules</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -132,7 +148,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-          <li><a href="Beeline.html">Beeline</a> &raquo;</li>
+          <li><a href="Beeline.html">BEELINE</a> &raquo;</li>
         
           <li><a href="beeline-reference.html">Modules</a> &raquo;</li>
         
@@ -165,7 +181,21 @@
 <dl class="function">
 <dt id="BLPlot.CuratedOverview.plot">
 <code class="sig-prename descclassname">BLPlot.CuratedOverview.</code><code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">inputDF</em>, <em class="sig-param">height=7</em>, <em class="sig-param">randValues=[]</em>, <em class="sig-param">shape=[]</em>, <em class="sig-param">palettes=[]</em>, <em class="sig-param">text=[]</em>, <em class="sig-param">levels=[]</em>, <em class="sig-param">rotation=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLPlot/CuratedOverview.html#plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLPlot.CuratedOverview.plot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputDF</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span> <span class="pre">DataFrame</span></code>) – Multilevel dataframe to be plotted</p></li>
+<li><p><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Height of image to be generated</p></li>
+<li><p><strong>randValues</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Cutoffs below which a pre-defined shape is set, useful for indicating less-than-significant values</p></li>
+<li><p><strong>shape</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Shape to be drawn, choose from ‘s’ (square), ‘rs’ (rounded square), ‘w’ (wedge), ‘b’ (fixed width rectangle), ‘f’ (full width, fixed color square), ‘text’</p></li>
+<li><p><strong>palettes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Color palette. Define this object using sns.color_palette()</p></li>
+<li><p><strong>text</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Specify if column is to be treated as text</p></li>
+<li><p><strong>levels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Which columns to plot, specified using column names</p></li>
+<li><p><strong>rotation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Whether to rotate the text of a column name.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="module-BLPlot.NetworkMotifs">
@@ -173,7 +203,18 @@
 <dl class="function">
 <dt id="BLPlot.NetworkMotifs.plot">
 <code class="sig-prename descclassname">BLPlot.NetworkMotifs.</code><code class="sig-name descname">plot</code><span class="sig-paren">(</span><em class="sig-param">inputDF</em>, <em class="sig-param">height=7</em>, <em class="sig-param">levels=[]</em>, <em class="sig-param">rotation=[]</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLPlot/NetworkMotifs.html#plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLPlot.NetworkMotifs.plot" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Script to produce Figure</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputDF</strong> (<code class="xref py py-obj docutils literal notranslate"><span class="pre">pandas</span> <span class="pre">DataFrame</span></code>) – Dataframe containing ratios to be visualized either as slanted arrows (&gt; 1.25 or &lt; 0.75)or a double squiggly arrow (&gt;0.75 and &lt; 1.25)</p></li>
+<li><p><strong>height</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Height of final image</p></li>
+<li><p><strong>levels</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Which columns in Level 1 to use for plotting, specified using column names</p></li>
+<li><p><strong>rotation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – specify which column titles have to be rotated</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 </div>

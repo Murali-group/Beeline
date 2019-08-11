@@ -83,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -172,13 +172,12 @@
 <span class="sd">    reference network (excluding self loops). </span>
 <span class="sd">    </span>
 <span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    evalObject: BLEval</span>
-<span class="sd">      An object of class :class:`BLEval.BLEval`.</span>
+<span class="sd">    :param evalObject: An object of class :class:`BLEval.BLEval`.</span>
+<span class="sd">    :type evalObject: :obj:`BLEval`</span>
 <span class="sd">      </span>
-<span class="sd">    algorithmName: str</span>
-<span class="sd">      Name of the algorithm for which the Spearman correlation is computed.</span>
+<span class="sd">      </span>
+<span class="sd">    :param algorithmName: Name of the algorithm for which the Spearman correlation is computed.</span>
+<span class="sd">    :type algorithmName: str</span>
 <span class="sd">      </span>
 <span class="sd">      </span>
 <span class="sd">    :returns:</span>
@@ -268,14 +267,9 @@
 <span class="sd">    reference network (excluding self loops). </span>
 <span class="sd">    </span>
 <span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    inDict: dict</span>
-<span class="sd">        A dictionary contaninig top-k predicted edges </span>
-<span class="sd">        for each dataset. Here, keys are the dataset name </span>
-<span class="sd">        and the values are the set of top-k edges.</span>
 
-<span class="sd">      </span>
+<span class="sd">    :param inDict:  A dictionary contaninig top-k predicted edges  for each dataset. Here, keys are the dataset name and the values are the set of top-k edges.</span>
+<span class="sd">    :type inDict: dict</span>
 <span class="sd">    :returns:</span>
 <span class="sd">        A dataframe containing pairwise Jaccard similarity index values</span>
 <span class="sd">    &quot;&quot;&quot;</span>

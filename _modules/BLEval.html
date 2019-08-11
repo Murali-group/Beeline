@@ -83,7 +83,7 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../Beeline.html">Beeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Beeline.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -195,16 +195,15 @@
 <span class="sd">    This initilizes an InputSettings object based on the</span>
 <span class="sd">    following three parameters.</span>
 <span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    -----------</span>
-<span class="sd">    datadir: str</span>
-<span class="sd">        input dataset root directory, typically &#39;inputs/&#39;</span>
 
-<span class="sd">    datasets: list</span>
-<span class="sd">        List of dataset names</span>
+<span class="sd">    :param datadir:   input dataset root directory, typically &#39;inputs/&#39;</span>
+<span class="sd">    :type datadir: str</span>
+
+<span class="sd">    :param datasets:   List of dataset names</span>
+<span class="sd">    :type datasets: list</span>
 <span class="sd">        </span>
-<span class="sd">    algorithms: list</span>
-<span class="sd">        List of algorithm names</span>
+<span class="sd">    :param algorithms:   List of algorithm names</span>
+<span class="sd">    :type algorithms: list</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
@@ -221,14 +220,11 @@
 <span class="sd">    be written to. This initilizes an OutputSettings object based on the</span>
 <span class="sd">    following two parameters.</span>
 <span class="sd">    </span>
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    base_dir: str</span>
-<span class="sd">        output root directory, typically &#39;outputs/&#39;</span>
 
-<span class="sd">    output_prefix: str</span>
-<span class="sd">        A prefix added to the final output files.</span>
-<span class="sd">    </span>
+<span class="sd">    :param base_dir: output root directory, typically &#39;outputs/&#39;</span>
+<span class="sd">    :type base_dir: str</span>
+<span class="sd">    :param output_prefix: A prefix added to the final output files.</span>
+<span class="sd">    :type str:</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_dir</span><span class="p">,</span> <span class="n">output_prefix</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -448,10 +444,8 @@
         <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">        A method for parsing the input .yaml file.</span>
 <span class="sd">        </span>
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        config_file_handle: str</span>
-<span class="sd">            Name of the .yaml file to be parsed</span>
+<span class="sd">        :param config_file_handle: Name of the .yaml file to be parsed</span>
+<span class="sd">        :type config_file_handle: str</span>
 <span class="sd">        </span>
 <span class="sd">        :returns: </span>
 <span class="sd">            An object of class :class:`BLEval.BLEval`.</span>
