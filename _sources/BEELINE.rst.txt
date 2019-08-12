@@ -84,9 +84,15 @@ Algorithm details
 
 .. include:: algorithms.rst
 
+             
+Developer Guide
+---------------
 
-Reference
----------
+.. include:: beeline-developer.rst
+
+             
+API Reference
+-------------
 
 .. include:: beeline-reference.rst
 
