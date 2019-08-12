@@ -13,12 +13,16 @@ simulations.
 
    python src/BoolODE.py --path=data/test_vars.txt --max-time=5 --num-cells 10
 
-
-
 Tutorial
 --------
 
 .. include:: boolode-tutorial.rst
+
+
+Generating inputs for BEELINE
+-----------------------------
+
+.. include:: boolode-processing.rst
 
 .. _boolodeoptions:
 
@@ -27,8 +31,8 @@ Command Line Options
 
 .. include:: usage.rst
 
-Reference
----------
+API Reference
+-------------
 
 .. include:: boolode-reference.rst
 
