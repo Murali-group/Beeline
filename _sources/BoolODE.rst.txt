@@ -18,6 +18,12 @@ Tutorial
 
 .. include:: boolode-tutorial.rst
 
+
+Generating inputs for BEELINE
+-----------------------------
+
+.. include:: boolode-processing.rst
+
 .. _boolodeoptions:
 
 Command Line Options
