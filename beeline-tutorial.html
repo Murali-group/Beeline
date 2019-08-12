@@ -81,9 +81,8 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="Beeline.html">BEELINE</a></li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="BEELINE.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -241,7 +240,7 @@ provided in <cite>config-files/</cite>. A config file should contain at minimum<
 folder containing the input, the config file indicates which
 algorithms should be run, along with the parameters to be passed to
 the algorithms, if any. For a list of parameters that the pipeline
-currently passes to the algorithms, see <span class="xref std std-ref">Algorithms</span>.  Finally,
+currently passes to the algorithms, see  <a class="reference internal" href="BEELINE.html#algorithms"><span class="std std-ref">Algorithm details</span></a>  .  Finally,
 the YAML file also specifies the paths to the outputs.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
@@ -251,8 +250,17 @@ the YAML file also specifies the paths to the outputs.</p>
 <div class="section" id="running-the-pipeline">
 <h1>Running the pipeline<a class="headerlink" href="#running-the-pipeline" title="Permalink to this headline">¶</a></h1>
 <p><code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> requires the path to the config file to be specified.</p>
-<p>Command line arguments:
-–config CONFIG  Path to configuration file.</p>
+<dl>
+<dt>Command line arguments:</dt><dd><dl class="option-list">
+<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
+<dd><p>show this help message and exit</p>
+</dd>
+<dt><kbd><span class="option">--config</span></kbd></dt>
+<dd><p>Path to the config file</p>
+</dd>
+</dl>
+</dd>
+</dl>
 <p>Once the input dataset has been generated and the config file has been
 created, the pipeline can be executed by simply calling <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code>
 with the config file specifying the inputs and the algorithms to run,

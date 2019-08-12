@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>BoolODE &mdash; BEELINE  documentation</title>
+  <title>Defining an input model &mdash; BEELINE  documentation</title>
   
 
   
@@ -34,9 +34,7 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="src package" href="src.html" />
-    <link rel="prev" title="BLPlot package" href="BLPlot.html" /> 
+    <link rel="search" title="Search" href="search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,21 +81,9 @@
               
             
             
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="BEELINE.html">BEELINE</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">BoolODE</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#defining-an-input-model">Defining an input model</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#command-line-options">Command Line Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#reference">Reference</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src.html">src package</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
 </ul>
 
             
@@ -143,13 +129,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>BoolODE</li>
+      <li>Defining an input model</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/BoolODE.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/boolode-tutorial.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -162,28 +148,16 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="boolode">
-<span id="id1"></span><h1>BoolODE<a class="headerlink" href="#boolode" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>The BoolODE package converts a Boolean model to an ODE model and carries out stochastic
-simulations.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python src/BoolODE.py --path<span class="o">=</span>data/test_vars.txt --max-time<span class="o">=</span><span class="m">5</span> --num-cells <span class="m">10</span>
-</pre></div>
-</div>
-</div>
-<div class="section" id="tutorial">
-<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="defining-an-input-model">
-<h3>Defining an input model<a class="headerlink" href="#defining-an-input-model" title="Permalink to this headline">¶</a></h3>
+  <div class="section" id="defining-an-input-model">
+<h1>Defining an input model<a class="headerlink" href="#defining-an-input-model" title="Permalink to this headline">¶</a></h1>
 <p>Consider a toy gene regulatory network with a series of mutual
 inhibition motifs as illustrated below:</p>
-<div class="figure align-center" id="id2">
+<div class="figure align-center" id="id1">
 <img alt="_images/boolode-example.png" src="_images/boolode-example.png" />
 <p class="caption"><span class="caption-text">If there is an equal probabiliy of taking either the left hand branch
 or the right hand branch starting at (g1=high,g2=high), this network will
 result in 8 distinct steady states, with one of the eight extreme genes being
-active in each steady state.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+active in each steady state.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
 </div>
 <p>BoolODE can be used to generate gene expression data of a sample of cells undergoing
 a developmental process controlled by a gene regulatory network with a wiring diagram
@@ -262,7 +236,7 @@ directive puts together all the information collected so far</p>
                       --sample-cells                  <span class="c1"># sample one cell from each simulation</span>
 </pre></div>
 </div>
-<p>For a full list of available options, see <a class="reference internal" href="#boolodeoptions"><span class="std std-ref">Command Line Options</span></a>
+<p>For a full list of available options, see <a class="reference internal" href="usage.html#boolodeoptions"><span class="std std-ref">Command Line Options</span></a>
 The simulations will take about 5 minutes to complete. At the end of a successful run, the
 output directory should like this:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>test/                      # User specified destination
@@ -311,107 +285,11 @@ t-SNE. A script like the one below is a good starting point for this.</p>
 <p>Here, the time point of each cell is inferred from the cell ID, and this information
 is used to color each cell in the scatter plot. Darker colors imply early time points in the
 simulation. The output should look like the following</p>
-<div class="figure align-center" id="id3">
+<div class="figure align-center" id="id2">
 <img alt="_images/tree.png" src="_images/tree.png" />
-<p class="caption"><span class="caption-text">t-SNE visualization of BoolODE output</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">t-SNE visualization of BoolODE output</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
 <p>Notice the eight steady state clusters!</p>
-</div>
-</div>
-<div class="section" id="command-line-options">
-<span id="boolodeoptions"></span><h2>Command Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><dl class="option-list">
-<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
-<dd><p>show this help message and exit</p>
-</dd>
-<dt><kbd><span class="option">--max-time=<var>MAX_TIME</var></span></kbd></dt>
-<dd><p>Total time of simulation. (Default = 20)</p>
-</dd>
-<dt><kbd><span class="option">--num-cells=<var>NUM_CELLS</var></span></kbd></dt>
-<dd><p>Number of cells sample. (Default = 100)</p>
-</dd>
-<dt><kbd><span class="option">--sample-cells</span></kbd></dt>
-<dd><p>Sample a single cell from each trajectory? By default
-will store full trajectory of each simulation (Default
-= False)</p>
-</dd>
-<dt><kbd><span class="option">--add-dummy</span></kbd></dt>
-<dd><p>Add dummy genes</p>
-</dd>
-<dt><kbd><span class="option">-n</span>, <span class="option">--normalize-trajectory</span></kbd></dt>
-<dd><p>Min-Max normalize genes across all experiments</p>
-</dd>
-<dt><kbd><span class="option">-i</span>, <span class="option">--identical-pars</span></kbd></dt>
-<dd><p>Set single value to similar parameters NOTE: Consider
-setting this if you are using –sample-pars.</p>
-</dd>
-<dt><kbd><span class="option">-s</span>, <span class="option">--sample-pars</span></kbd></dt>
-<dd><p>Sample rate parameters around the hardcoded means ,
-using 10% stand. dev.</p>
-</dd>
-<dt><kbd><span class="option">--std=<var>STD</var></span></kbd></dt>
-<dd><p>If sampling parameters, specify standard deviation.
-(Default 0.1)</p>
-</dd>
-<dt><kbd><span class="option">--write-protein</span></kbd></dt>
-<dd><p>Write both protein and RNA values to file. Useful for
-debugging.</p>
-</dd>
-<dt><kbd><span class="option">-b</span>, <span class="option">--burn-in</span></kbd></dt>
-<dd><p>Treats the first 25% of the time course as burnin ,
-samples from the rest.</p>
-</dd>
-<dt><kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></dt>
-<dd><p>Prefix for output files.</p>
-</dd>
-<dt><kbd><span class="option">--path=<var>PATH</var></span></kbd></dt>
-<dd><p>Path to boolean model file</p>
-</dd>
-<dt><kbd><span class="option">--inputs=<var>INPUTS</var></span></kbd></dt>
-<dd><p>Path to input parameter files. This is different from
-specifying a parameter set!</p>
-</dd>
-<dt><kbd><span class="option">--pset=<var>PSET</var></span></kbd></dt>
-<dd><p>Path to pre-generated parameter set.</p>
-</dd>
-<dt><kbd><span class="option">--ics=<var>ICS</var></span></kbd></dt>
-<dd><p>Path to list of initial conditions</p>
-</dd>
-<dt><kbd><span class="option">--strengths=<var>STRENGTHS</var></span></kbd></dt>
-<dd><p>Path to list of interaction strengths</p>
-</dd>
-<dt><kbd><span class="option">--species-type=<var>SPECIES_TYPE</var></span></kbd></dt>
-<dd><p>Path to list of molecular species type file.Useful to
-specify proteins/genes</p>
-</dd>
-<dt><kbd><span class="option">-c <var>NCLUSTERS</var></span>, <span class="option">--nClusters=<var>NCLUSTERS</var></span></kbd></dt>
-<dd><p>Number of expected clusters in the dataset. (Default =1)</p>
-</dd>
-<dt><kbd><span class="option">--max-parents=<var>MAX_PARENTS</var></span></kbd></dt>
-<dd><p>Number of parents to add to dummy genes. (Default = 1)</p>
-</dd>
-<dt><kbd><span class="option">--do-parallel</span></kbd></dt>
-<dd><p>Run simulations in parallel. Recommended for &gt; 50
-simulations</p>
-</dd>
-</dl>
-</div></blockquote>
-</div>
-<div class="section" id="reference">
-<h2>Reference<a class="headerlink" href="#reference" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="src.html">src package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.BoolODE">src.BoolODE module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.simulator">src.simulator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.utils">src.utils module</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
 </div>
 
 
@@ -419,15 +297,6 @@ simulations</p>
            
           </div>
           <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="src.html" class="btn btn-neutral float-right" title="src package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="BLPlot.html" class="btn btn-neutral float-left" title="BLPlot package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
   
 
   <hr/>

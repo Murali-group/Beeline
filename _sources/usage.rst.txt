@@ -1,7 +1,5 @@
-Command Line Options
-====================
 
-Options:
+
   -h, --help            show this help message and exit
   --max-time=MAX_TIME   Total time of simulation. (Default = 20)
   --num-cells=NUM_CELLS

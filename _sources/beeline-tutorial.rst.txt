@@ -104,7 +104,7 @@ Apart from indicating the path to the base directory and the specific
 folder containing the input, the config file indicates which
 algorithms should be run, along with the parameters to be passed to
 the algorithms, if any. For a list of parameters that the pipeline
-currently passes to the algorithms, see :ref:`Algorithms`.  Finally,
+currently passes to the algorithms, see  :ref:`algorithms`  .  Finally,
 the YAML file also specifies the paths to the outputs.
 
 .. attention:: Please ensure that the YAML file is correctly indented!
@@ -115,8 +115,9 @@ Running the pipeline
 ``BLRun.py`` requires the path to the config file to be specified.
 
 Command line arguments:
---config CONFIG  Path to configuration file.
-
+  -h, --help            show this help message and exit
+  --config              Path to the config file
+        
 
 Once the input dataset has been generated and the config file has been
 created, the pipeline can be executed by simply calling ``BLRun.py``

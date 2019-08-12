@@ -82,7 +82,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../Beeline.html">BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BEELINE.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -152,7 +152,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
-<div class="viewcode-block" id="getSaneNval"><a class="viewcode-back" href="../../src.html#src.utils.getSaneNval">[docs]</a><span class="k">def</span> <span class="nf">getSaneNval</span><span class="p">(</span><span class="n">size</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span><span class="n">mu</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span><span class="n">sig</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span><span class="n">identicalPars</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="getSaneNval"><a class="viewcode-back" href="../../BoolODE.html#src.utils.getSaneNval">[docs]</a><span class="k">def</span> <span class="nf">getSaneNval</span><span class="p">(</span><span class="n">size</span><span class="p">,</span><span class="n">lo</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span><span class="n">hi</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span><span class="n">mu</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span><span class="n">sig</span><span class="o">=</span><span class="mf">2.</span><span class="p">,</span><span class="n">identicalPars</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Generates a gaussian random number which is</span>
 <span class="sd">    bounded by `lo` and `hi`</span>
@@ -187,7 +187,7 @@
             <span class="n">K</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">K</span></div>
 
-<div class="viewcode-block" id="writeModelToFile"><a class="viewcode-back" href="../../src.html#src.utils.writeModelToFile">[docs]</a><span class="k">def</span> <span class="nf">writeModelToFile</span><span class="p">(</span><span class="n">ModelSpec</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writeModelToFile"><a class="viewcode-back" href="../../BoolODE.html#src.utils.writeModelToFile">[docs]</a><span class="k">def</span> <span class="nf">writeModelToFile</span><span class="p">(</span><span class="n">ModelSpec</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes model to file as a python function, which is then imported.</span>
 
@@ -228,7 +228,7 @@
         <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#####################################################&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">dir_path</span> </div>
 
-<div class="viewcode-block" id="writeParametersToFile"><a class="viewcode-back" href="../../src.html#src.utils.writeParametersToFile">[docs]</a><span class="k">def</span> <span class="nf">writeParametersToFile</span><span class="p">(</span><span class="n">ModelSpec</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="s1">&#39;parameters.txt&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="writeParametersToFile"><a class="viewcode-back" href="../../BoolODE.html#src.utils.writeParametersToFile">[docs]</a><span class="k">def</span> <span class="nf">writeParametersToFile</span><span class="p">(</span><span class="n">ModelSpec</span><span class="p">,</span> <span class="n">outPrefix</span><span class="p">,</span> <span class="n">outname</span><span class="o">=</span><span class="s1">&#39;parameters.txt&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Writes dictionary of parameters to file</span>
 
@@ -243,7 +243,7 @@
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">ModelSpec</span><span class="p">[</span><span class="s1">&#39;pars&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="minmaxnorm"><a class="viewcode-back" href="../../src.html#src.utils.minmaxnorm">[docs]</a><span class="k">def</span> <span class="nf">minmaxnorm</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+<div class="viewcode-block" id="minmaxnorm"><a class="viewcode-back" href="../../BoolODE.html#src.utils.minmaxnorm">[docs]</a><span class="k">def</span> <span class="nf">minmaxnorm</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Scales the values in X</span>
 
 <span class="sd">    :param X: Input list of values to be scaled</span>
@@ -257,7 +257,7 @@
     <span class="k">return</span> <span class="n">N</span></div>
 
 
-<div class="viewcode-block" id="normalizeData"><a class="viewcode-back" href="../../src.html#src.utils.normalizeData">[docs]</a><span class="k">def</span> <span class="nf">normalizeData</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
+<div class="viewcode-block" id="normalizeData"><a class="viewcode-back" href="../../BoolODE.html#src.utils.normalizeData">[docs]</a><span class="k">def</span> <span class="nf">normalizeData</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calls minmaxnorm() for each time series</span>
 
@@ -270,7 +270,7 @@
     <span class="k">return</span> <span class="n">Pnorm</span></div>
 
 
-<div class="viewcode-block" id="normalizeExp"><a class="viewcode-back" href="../../src.html#src.utils.normalizeExp">[docs]</a><span class="k">def</span> <span class="nf">normalizeExp</span><span class="p">(</span><span class="n">DF</span><span class="p">):</span>
+<div class="viewcode-block" id="normalizeExp"><a class="viewcode-back" href="../../BoolODE.html#src.utils.normalizeExp">[docs]</a><span class="k">def</span> <span class="nf">normalizeExp</span><span class="p">(</span><span class="n">DF</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Calls minmaxnorm() for each gene across all experiments</span>
 
@@ -288,7 +288,7 @@
         
     <span class="k">return</span> <span class="n">newDF</span></div>
 
-<div class="viewcode-block" id="get_ss"><a class="viewcode-back" href="../../src.html#src.utils.get_ss">[docs]</a><span class="k">def</span> <span class="nf">get_ss</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
+<div class="viewcode-block" id="get_ss"><a class="viewcode-back" href="../../BoolODE.html#src.utils.get_ss">[docs]</a><span class="k">def</span> <span class="nf">get_ss</span><span class="p">(</span><span class="n">P</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Return the final time point of the simulated time course</span>
 
@@ -301,7 +301,7 @@
     <span class="n">ss</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">P</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,:]]</span>
     <span class="k">return</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="generateInputFiles"><a class="viewcode-back" href="../../src.html#src.utils.generateInputFiles">[docs]</a><span class="k">def</span> <span class="nf">generateInputFiles</span><span class="p">(</span><span class="n">resultDF</span><span class="p">,</span> <span class="n">outputfilenames</span><span class="p">,</span> <span class="n">BoolDF</span><span class="p">,</span> <span class="n">withoutRules</span><span class="p">,</span>
+<div class="viewcode-block" id="generateInputFiles"><a class="viewcode-back" href="../../BoolODE.html#src.utils.generateInputFiles">[docs]</a><span class="k">def</span> <span class="nf">generateInputFiles</span><span class="p">(</span><span class="n">resultDF</span><span class="p">,</span> <span class="n">outputfilenames</span><span class="p">,</span> <span class="n">BoolDF</span><span class="p">,</span> <span class="n">withoutRules</span><span class="p">,</span>
                        <span class="n">parameterInputsPath</span><span class="p">,</span>
                        <span class="n">outPrefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -379,8 +379,6 @@
         <span class="n">PseudoTimeDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">PseudoTimeDict</span><span class="p">)</span>
         <span class="n">PseudoTimeDF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span> <span class="s1">&#39;PseudoTime.csv&#39;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="n">PseudoTimeDF</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">PseudoTimeDF</span><span class="p">[</span><span class="s1">&#39;Cell ID&#39;</span><span class="p">]</span>
-        <span class="n">PseudoTimeDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cellID</span><span class="p">]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPrefix</span> <span class="o">+</span>\
-                                               <span class="s1">&#39;PseudoTime-dropped.csv&#39;</span><span class="p">,</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span>
         
         <span class="c1"># ExpressionData.csv</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">resultDF</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e5</span><span class="p">:</span>
@@ -395,7 +393,7 @@
             <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Dataset too large. Skipping generation of ExpressionData.csv.</span><span class="se">\n</span><span class="s1"> Please sample from simulations.&#39;</span><span class="p">)</span></div>
             
 
-<div class="viewcode-block" id="sampleTimeSeries"><a class="viewcode-back" href="../../src.html#src.utils.sampleTimeSeries">[docs]</a><span class="k">def</span> <span class="nf">sampleTimeSeries</span><span class="p">(</span><span class="n">num_timepoints</span><span class="p">,</span> <span class="n">expnum</span><span class="p">,</span>\
+<div class="viewcode-block" id="sampleTimeSeries"><a class="viewcode-back" href="../../BoolODE.html#src.utils.sampleTimeSeries">[docs]</a><span class="k">def</span> <span class="nf">sampleTimeSeries</span><span class="p">(</span><span class="n">num_timepoints</span><span class="p">,</span> <span class="n">expnum</span><span class="p">,</span>\
                      <span class="n">tspan</span><span class="p">,</span>  <span class="n">P</span><span class="p">,</span>\
                      <span class="n">varmapper</span><span class="p">,</span><span class="n">timeIndex</span><span class="p">,</span>
                      <span class="n">genelist</span><span class="p">,</span> <span class="n">proteinlist</span><span class="p">,</span>
@@ -431,7 +429,7 @@
     <span class="n">sampleDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sampleDict</span><span class="p">)</span>
     <span class="k">return</span><span class="p">(</span><span class="n">sampleDF</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="sampleCellFromTraj"><a class="viewcode-back" href="../../src.html#src.utils.sampleCellFromTraj">[docs]</a><span class="k">def</span> <span class="nf">sampleCellFromTraj</span><span class="p">(</span><span class="n">cellid</span><span class="p">,</span>
+<div class="viewcode-block" id="sampleCellFromTraj"><a class="viewcode-back" href="../../BoolODE.html#src.utils.sampleCellFromTraj">[docs]</a><span class="k">def</span> <span class="nf">sampleCellFromTraj</span><span class="p">(</span><span class="n">cellid</span><span class="p">,</span>
                        <span class="n">tspan</span><span class="p">,</span>
                        <span class="n">P</span><span class="p">,</span>
                        <span class="n">varmapper</span><span class="p">,</span><span class="n">sampleAt</span><span class="p">,</span>
