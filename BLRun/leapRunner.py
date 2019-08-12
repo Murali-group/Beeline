@@ -40,6 +40,8 @@ def generateInputs(RunnerObj):
 def run(RunnerObj):
     '''
     Function to run LEAP algorithm
+
+    Requires the maxLag parameter
     '''
     
     inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1]

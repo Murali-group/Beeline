@@ -20,13 +20,12 @@ def Jaccard(evalObject, algorithmName):
     reference network (excluding self loops). 
     
     
-    Parameters
-    ----------
-    evalObject: BLEval
-      An object of class :class:`BLEval.BLEval`.
+    :param evalObject: An object of class :class:`BLEval.BLEval`.
+    :type evalObject: :obj:`BLEval`
       
-    algorithmName: str
-      Name of the algorithm for which the Spearman correlation is computed.
+      
+    :param algorithmName: Name of the algorithm for which the Spearman correlation is computed.
+    :type algorithmName: str
       
       
     :returns:
@@ -116,14 +115,9 @@ def computePairwiseJacc(inDict):
     reference network (excluding self loops). 
     
     
-    Parameters
-    ----------
-    inDict: dict
-        A dictionary contaninig top-k predicted edges 
-        for each dataset. Here, keys are the dataset name 
-        and the values are the set of top-k edges.
 
-      
+    :param inDict:  A dictionary contaninig top-k predicted edges  for each dataset. Here, keys are the dataset name and the values are the set of top-k edges.
+    :type inDict: dict
     :returns:
         A dataframe containing pairwise Jaccard similarity index values
     """

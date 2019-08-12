@@ -1,14 +1,13 @@
 
 """
-BEELINE Evaluation (:mod:`BLEval`) module contains the following main class:
+BEELINE Evaluation (:mod:`BLEval`) module contains the following
+:class:`BLEval.BLEval` and three additional classes used in the
+definition of BLEval class 
 
-- :class:`BLEval.BLEval`
-and three additional classes used in the definition 
-of BLEval class
-
-- :class:`BLEval.ConfigParser`
-- :class:`BLEval.InputSettings`
+- :class:`BLEval.ConfigParser` 
+- :class:`BLEval.InputSettings` 
 - :class:`BLEval.OutputSettings`
+
 
 """
 import os
@@ -35,7 +34,7 @@ from BLEval.computeJaccard import Jaccard
 from BLEval.computeSpearman import Spearman
 from BLEval.computeNetMotifs import Motifs
 from BLEval.computeEarlyPrec import EarlyPrec
-from BLEval.computePathStats import pathAnalysis
+#from BLEval.computePathStats import pathAnalysis
 from BLEval.computeSignedEPrec import signedEPrec
 
 
@@ -45,16 +44,15 @@ class InputSettings(object):
     This initilizes an InputSettings object based on the
     following three parameters.
     
-    Parameters
-    -----------
-    datadir: str
-        input dataset root directory, typically 'inputs/'
 
-    datasets: list
-        List of dataset names
+    :param datadir:   input dataset root directory, typically 'inputs/'
+    :type datadir: str
+
+    :param datasets:   List of dataset names
+    :type datasets: list
         
-    algorithms: list
-        List of algorithm names
+    :param algorithms:   List of algorithm names
+    :type algorithms: list
     '''
 
     def __init__(self,
@@ -71,14 +69,11 @@ class OutputSettings(object):
     be written to. This initilizes an OutputSettings object based on the
     following two parameters.
     
-    Parameters
-    ----------
-    base_dir: str
-        output root directory, typically 'ouputs/'
 
-    output_prefix: str
-        A prefix added to the final output files.
-    
+    :param base_dir: output root directory, typically 'outputs/'
+    :type base_dir: str
+    :param output_prefix: A prefix added to the final output files.
+    :type str:
     '''
 
     def __init__(self, base_dir, output_prefix: Path) -> None:
@@ -228,17 +223,17 @@ class BLEval(object):
         return FBL, FFL, MI
     
     
-    def computePaths(self):
-        '''
-        For each algorithm-dataset combination, this function computes path lengths
-        through TP edges and FP edges, returns statistics on path lengths.
+    # def computePaths(self):
+    #     '''
+    #     For each algorithm-dataset combination, this function computes path lengths
+    #     through TP edges and FP edges, returns statistics on path lengths.
 
-        :returns:
-            - pathStats: A dataframe path lengths in predicted network
-        '''
-        for dataset in tqdm(self.input_settings.datasets, 
-                            total = len(self.input_settings.datasets), unit = " Datasets"):
-            pathAnalysis(dataset, self.input_settings)
+    #     :returns:
+    #         - pathStats: A dataframe path lengths in predicted network
+    #     '''
+    #     for dataset in tqdm(self.input_settings.datasets, 
+    #                         total = len(self.input_settings.datasets), unit = " Datasets"):
+    #         pathAnalysis(dataset, self.input_settings)
 
                  
     def computeEarlyPrec(self):
@@ -298,10 +293,8 @@ class ConfigParser(object):
         '''
         A method for parsing the input .yaml file.
         
-        Parameters
-        ----------
-        config_file_handle: str
-            Name of the .yaml file to be parsed
+        :param config_file_handle: Name of the .yaml file to be parsed
+        :type config_file_handle: str
         
         :returns: 
             An object of class :class:`BLEval.BLEval`.

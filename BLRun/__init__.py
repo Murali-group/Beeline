@@ -1,8 +1,13 @@
-#!/usr/bin/env python
-# coding: utf-8
+"""
+BEELINE Run (:mod:`BLRun`) module contains the following main class:
 
-# In[ ]:
+- :class:`BLRun.BLRun` and three additional classes used in the definition of BLRun class
 
+- :class:`BLRun.ConfigParser`
+- :class:`BLRun.InputSettings`
+- :class:`BLRun.OutputSettings`
+
+"""
 
 import yaml
 import argparse
@@ -22,9 +27,10 @@ import multiprocessing
 from multiprocessing import Pool, cpu_count
 import concurrent.futures
 from typing import Dict, List
-from src.runner import Runner
+from BLRun.runner import Runner
 import os
 import pandas as pd
+
 
 class InputSettings(object):
     def __init__(self,
@@ -45,10 +51,9 @@ class OutputSettings(object):
         self.base_dir = base_dir
         self.output_prefix = output_prefix
 
-        
-class Evaluation(object):
+class BLRun(object):
     '''
-    The Evaluation object is created by parsing a user-provided configuration
+    The BLRun object is created by parsing a user-provided configuration
     file. Its methods provide for further processing its inputs into
     a series of jobs to be run, as well as running these jobs.
     '''
@@ -116,15 +121,16 @@ class Evaluation(object):
                 for runner in self.runners[batch]:
                     runner.run(output_dir=base_output_dir)
                     
+                    
 class ConfigParser(object):
     '''
     Define static methods for parsing a config file that sets a large number
     of parameters for the pipeline
     '''
     @staticmethod
-    def parse(config_file_handle) -> Evaluation:
+    def parse(config_file_handle) -> BLRun:
         config_map = yaml.load(config_file_handle)
-        return Evaluation(
+        return BLRun(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),
             ConfigParser.__parse_output_settings(
@@ -165,51 +171,8 @@ class ConfigParser(object):
         return OutputSettings(output_dir,
                              output_prefix)
 
-def get_parser() -> argparse.ArgumentParser:
-    '''
-    :return: an argparse ArgumentParser object for parsing command
-        line parameters
-    '''
-    parser = argparse.ArgumentParser(
-        description='Run pathway reconstruction pipeline.')
-
-    parser.add_argument('--config', default='config.yaml',
-        help='Configuration file')
-
-    return parser
-
-def parse_arguments():
-    '''
-    Initialize a parser and use it to parse the command line arguments
-    :return: parsed dictionary of command line arguments
-    '''
-    parser = get_parser()
-    opts = parser.parse_args()
-
-    return opts
-
-def main():
-    opts = parse_arguments()
-    config_file = opts.config
 
 
-    with open(config_file, 'r') as conf:
-        evaluation = ConfigParser.parse(conf)
-    print(evaluation)
-    print('Evaluation started')
 
 
-    for idx in range(len(evaluation.runners)):
-        evaluation.runners[idx].generateInputs()
-
-    for idx in range(len(evaluation.runners)):
-        evaluation.runners[idx].run()
-
-    for idx in range(len(evaluation.runners)):
-        evaluation.runners[idx].parseOutput()
-
-    print('Evaluation complete')
-
-
-if __name__ == '__main__':
-  main()
+                    

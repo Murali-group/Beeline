@@ -26,13 +26,12 @@ def signedEPrec(evalObject, algorithmName):
     positives in the top-ki edges, where ki is the number of inhibitory
     edges in the reference network (excluding self loops).
     
-    Parameters
-    -----------
-    evalObject: BLEval
-      An object of class :class:`BLEval.BLEval`.
+
+    :param evalObject: An object of class :class:`BLEval.BLEval`.
+    :type evalObject: BLEval
       
-    algorithmName: str
-      Name of the algorithm for which the early precision is computed.
+    :param algorithmName: Name of the algorithm for which the early precision is computed.
+    :type algorithmName: str
       
             
     :returns: 

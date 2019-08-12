@@ -9,6 +9,8 @@ def generateInputs(RunnerObj):
     Function to generate desired inputs for SINCERITIES.
     If the folder/files under RunnerObj.datadir exist, 
     this function will not do anything.
+
+    :param RunnerObj: An instance of the :class:`BLRun`
     '''
     if not RunnerObj.inputDir.joinpath("SINCERITIES").exists():
         print("Input folder for SINCERITIES does not exist, creating input folder...")
@@ -40,6 +42,8 @@ def generateInputs(RunnerObj):
 def run(RunnerObj):
     '''
     Function to run SINCERITIES algorithm
+
+    :param RunnerObj: A BLRun object
     '''
     inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
                         "/SINCERITIES/"
@@ -65,6 +69,8 @@ def run(RunnerObj):
 def parseOutput(RunnerObj):
     '''
     Function to parse outputs from SINCERITIES.
+
+    :param RunnerObj: An instance of the :class:`BLRun`
     '''
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINCERITIES/"
 

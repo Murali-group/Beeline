@@ -18,13 +18,12 @@ def Motifs(datasetDict, inputSettings):
     in the predicted top-k network, to their respective values 
     in the reference network.
     
-    Parameters
-    ----------
-    datasetDict: dict
-        A dictionary containing the dataset name, 
-        path to reference network.
-    inputSettings: InputSettings
-      An object of class :class:`BLEval.InputSettings`.
+
+    :param datasetDict:   A dictionary containing the dataset name, path to reference network.
+    :type datasetDict: dict
+    
+    :param inputSettings: An object of class :class:`BLEval.InputSettings`.
+    :type inputSettings: :class:`BLEval.InputSettings`
 
     :returns:
         - FBL: A dataframe containing ratios of three-node feedback loop motis
@@ -157,10 +156,9 @@ def getNetProp(inGraph):
     A helper function to compute
     counts of various network motifs.
     
-    Parameters
-    ----------
-    inGraph: networkx.DiGraph()
-      An graph object of class :class:`networkx.DiGraph`.
+
+    :param inGraph: An graph object of class :class:`networkx.DiGraph`.
+    :type inGraph: :obj:networkx.DiGraph
 
     :returns:
         - A value corresponding to the number of three-node feedback loops

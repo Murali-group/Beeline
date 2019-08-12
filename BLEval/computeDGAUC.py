@@ -17,21 +17,14 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
     Computes areas under the precision-recall and ROC curves
     for a given dataset for each algorithm.
     
-    Parameters
-    -----------
-        directed: bool
-            A flag to indicate whether to treat predictions
-            as directed edges (directed = True) or 
-            undirected edges (directed = False).
-            
-        selfEdges: bool
-            A flag to indicate whether to include
-            self-edges (selfEdges = True) or 
-            exclude self-edges (selfEdges = False) from evaluation.
+
+    :param directed:   A flag to indicate whether to treat predictions as directed edges (directed = True) or undirected edges (directed = False).
+    :type directed: bool
+    :param selfEdges:   A flag to indicate whether to includeself-edges (selfEdges = True) or exclude self-edges (selfEdges = False) from evaluation.
+    :type selfEdges: bool
+    :param plotFlag:   A flag to indicate whether or not to save PR and ROC plots.
+    :type plotFlag: bool
         
-        plotFlag: bool
-            A flag to indicate whether or not to save PR and ROC plots.
-            
     :returns:
             - AUPRC: A dictionary containing AUPRC values for each algorithm
             - AUROC: A dictionary containing AUROC values for each algorithm
@@ -131,33 +124,18 @@ def computeScores(trueEdgesDF, predEdgeDF,
     using scikit-learn for a given set of predictions in the 
     form of a DataFrame.
     
-    Parameters
-    -----------
-        trueEdgesDF: DataFrame
-            A pandas dataframe containing the true classes.
-            The indices of this dataframe are all possible edges
-            in a graph formed using the genes in the given dataset. 
-            This dataframe only has one column to indicate the class
-            label of an edge. If an edge is present in the reference
-            network, it gets a class label of 1, else 0.
-            
-        predEdgeDF: DataFrame
-            A pandas dataframe containing the edge ranks from the prediced 
-            network. The indices of this dataframe are all possible edges.
-            This dataframe only has one column to indicate the edge weights
-            in the predicted network. Higher the weight, higher the 
-            edge confidence.
+    :param trueEdgesDF:   A pandas dataframe containing the true classes.The indices of this dataframe are all possible edgesin a graph formed using the genes in the given dataset. This dataframe only has one column to indicate the classlabel of an edge. If an edge is present in the reference network, it gets a class label of 1, else 0.
+    :type trueEdgesDF: DataFrame
         
-        directed: bool
-            A flag to indicate whether to treat predictions
-            as directed edges (directed = True) or 
-            undirected edges (directed = False).
-            
-        selfEdges: bool
-            A flag to indicate whether to include
-            self-edges (selfEdges = True) or 
-            exclude self-edges (selfEdges = False) from evaluation.
-            
+    :param predEdgeDF:   A pandas dataframe containing the edge ranks from the prediced network. The indices of this dataframe are all possible edges.This dataframe only has one column to indicate the edge weightsin the predicted network. Higher the weight, higher the edge confidence.
+    :type predEdgeDF: DataFrame
+    
+    :param directed:   A flag to indicate whether to treat predictionsas directed edges (directed = True) or undirected edges (directed = False).
+    :type directed: bool
+        
+    :param selfEdges:   A flag to indicate whether to includeself-edges (selfEdges = True) or exclude self-edges (selfEdges = False) from evaluation.
+    :type selfEdges: bool
+        
     :returns:
             - prec: A list of precision values (for PR plot)
             - recall: A list of precision values (for PR plot)

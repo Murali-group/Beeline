@@ -19,12 +19,10 @@ def getTime(evalObject, dataset):
     The output stored in time.txt is parsed to
     obtain the CPU time.
 
-    Parameters
-    -----------
-    evalObject: BLEval
-        An object of the class :class:`BLEval.BLEval`
-    dataset: str
-        Dataset name for which the time output must be parsed for each algorithm.
+    :param evalObject:   An object of the class :class:`BLEval.BLEval`
+    :type evalObject: BLEval
+    :param dataset:   Dataset name for which the time output must be parsed for each algorithm.
+    :type dataset: str
       
     
     :returns: 
@@ -114,11 +112,8 @@ def parse_time_files(path):
     The output stored in time.txt is parsed to
     obtain the CPU time.
 
-    Parameters
-    -----------
-    path: str
-        Path to the time.txt file, or timex.txt file where x corresponds to the
-        trajectory ID for a given algorithm-dataset combination.
+    :param path: Path to the time.txt file, or timex.txt file where x corresponds to the trajectory ID for a given algorithm-dataset combination.
+    :type path: str
       
     :returns: 
         A float value corresponding to the time taken.

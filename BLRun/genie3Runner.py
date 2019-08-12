@@ -8,6 +8,8 @@ def generateInputs(RunnerObj):
     Function to generate desired inputs for GENIE3.
     If the folder/files under RunnerObj.datadir exist, 
     this function will not do anything.
+
+    :param RunnerObj: An instance of the :class:`BLRun`
     '''
     if not RunnerObj.inputDir.joinpath("GENIE3").exists():
         print("Input folder for GENIE3 does not exist, creating input folder...")
@@ -25,6 +27,8 @@ def generateInputs(RunnerObj):
 def run(RunnerObj):
     '''
     Function to run GENIE3 algorithm
+
+    :param RunnerObj: An instance of the :class:`BLRun`
     '''
     inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
                     "/GENIE3/ExpressionData.csv"
@@ -45,6 +49,8 @@ def run(RunnerObj):
 def parseOutput(RunnerObj):
     '''
     Function to parse outputs from GENIE3.
+
+    :param RunnerObj: An instance of the :class:`BLRun`
     '''
     # Quit if output directory does not exist
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GENIE3/"

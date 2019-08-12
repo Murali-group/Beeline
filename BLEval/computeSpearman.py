@@ -21,13 +21,11 @@ def Spearman(evalObject, algorithmName):
     generated from the same reference network, for a given algorithm.
     
 
-    Parameters
-    ----------
-    evalObject: BLEval
-      An object of class :class:`BLEval.BLEval`.
+    :param evalObject: An object of class :class:`BLEval.BLEval`.
+    :type evalObject: BLEval
       
-    algorithmName: str
-      Name of the algorithm for which the Spearman correlation is computed.
+    :param algorithmName: Name of the algorithm for which the Spearman correlation is computed.
+    :type algorithmName: str
       
       
     :returns:
