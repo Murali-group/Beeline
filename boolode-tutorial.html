@@ -215,6 +215,9 @@ of the column names.</p>
 between 0 and 2, since larger values might cause numerical
 instability.</p>
 </div>
+</div>
+<div class="section" id="running-boolode">
+<h1>Running BoolODE<a class="headerlink" href="#running-boolode" title="Permalink to this headline">¶</a></h1>
 <p>A few more decisions before we get our simulated dataset of gene expression
 values:</p>
 <ol class="arabic simple">
@@ -236,14 +239,17 @@ directive puts together all the information collected so far</p>
                       --sample-cells                  <span class="c1"># sample one cell from each simulation</span>
 </pre></div>
 </div>
-<p>For a full list of available options, see <a class="reference internal" href="usage.html#boolodeoptions"><span class="std std-ref">Command Line Options</span></a>
-The simulations will take about 5 minutes to complete. At the end of a successful run, the
+<p>For a full list of available options, see <a class="reference internal" href="BoolODE.html#boolodeoptions"><span class="std std-ref">Command Line Options</span></a></p>
+</div>
+<div class="section" id="working-with-boolode-output">
+<h1>Working with BoolODE output<a class="headerlink" href="#working-with-boolode-output" title="Permalink to this headline">¶</a></h1>
+<p>The simulations will take about 5 minutes to complete. At the end of a successful run, the
 output directory should like this:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>test/                      # User specified destination
 |-- parameters.txt         # Parameter names and values generated for input model
 |-- ExpressionData.csv     # Gene expression dataset
 |-- PseudoTime.csv         # Simulation time of each sample time point/cell
-|-- refNetwork.csv         # T
+|-- refNetwork.csv         # Boolean network represented as an edge list, the ground truth network
 `-- simulations/
     |-- E1.csv
     |-- E2.csv
@@ -251,7 +257,7 @@ output directory should like this:</p>
 </pre></div>
 </div>
 <p>Where <code class="docutils literal notranslate"><span class="pre">E1.csv,</span> <span class="pre">E2.csv,</span> <span class="pre">...</span></code> are individual simulations. Each column in these
-files has the form <code class="docutils literal notranslate"><span class="pre">E&lt;simulation</span> <span class="pre">number&gt;_&lt;timepoint&gt;</span></code>.</p>
+files, the cell IDs, has the form <code class="docutils literal notranslate"><span class="pre">E&lt;simulation</span> <span class="pre">number&gt;_&lt;timepoint&gt;</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>By default BoolODE will store the entire simulated time
@@ -289,7 +295,9 @@ simulation. The output should look like the following</p>
 <img alt="_images/tree.png" src="_images/tree.png" />
 <p class="caption"><span class="caption-text">t-SNE visualization of BoolODE output</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
 </div>
-<p>Notice the eight steady state clusters!</p>
+<p>Notice the eight steady state clusters! This dataset can now be
+processed further using the tools described in  <a class="reference internal" href="BoolODE.html#geninputs"><span class="std std-ref">Generating inputs for BEELINE</span></a> to produce
+input datasets for the BEELINE pipeline.</p>
 </div>
 
 

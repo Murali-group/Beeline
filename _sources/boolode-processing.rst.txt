@@ -45,7 +45,9 @@ Generate dropouts from expression data
 In order to mimic real single-cell expression datasets, BoolODE
 includes ``genDropouts.py`` which implements dropouts as described in
 the paper, by dropping expression values below ``DROP_CUTOFF`` using a
-probability of ``DROP_PROB``.
+probability of ``DROP_PROB``. This script samples ``NCELLS`` from the
+columns in the expression dataset ``EXPR``, and will throw an error if
+the number is greater than the number of columns.
 
 ``genDropouts.py`` takes the following command line arguments
   -h, --help            show this help message and exit

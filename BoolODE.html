@@ -89,6 +89,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#defining-an-input-model">Defining an input model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-boolode">Running BoolODE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#working-with-boolode-output">Working with BoolODE output</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#generating-inputs-for-beeline">Generating inputs for BEELINE</a><ul>
@@ -172,7 +174,8 @@
 <div class="section" id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>The BoolODE package converts a Boolean model to an ODE model and carries out stochastic
-simulations.</p>
+simulations. It reads a model definition file, and outputs the simulated expression data
+for a given network.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python src/BoolODE.py --path<span class="o">=</span>data/test_vars.txt --max-time<span class="o">=</span><span class="m">5</span> --num-cells <span class="m">10</span>
 </pre></div>
 </div>
@@ -246,6 +249,9 @@ of the column names.</p>
 between 0 and 2, since larger values might cause numerical
 instability.</p>
 </div>
+</div>
+<div class="section" id="running-boolode">
+<h3>Running BoolODE<a class="headerlink" href="#running-boolode" title="Permalink to this headline">¶</a></h3>
 <p>A few more decisions before we get our simulated dataset of gene expression
 values:</p>
 <ol class="arabic simple">
@@ -267,14 +273,17 @@ directive puts together all the information collected so far</p>
                       --sample-cells                  <span class="c1"># sample one cell from each simulation</span>
 </pre></div>
 </div>
-<p>For a full list of available options, see <a class="reference internal" href="#boolodeoptions"><span class="std std-ref">Command Line Options</span></a>
-The simulations will take about 5 minutes to complete. At the end of a successful run, the
+<p>For a full list of available options, see <a class="reference internal" href="#boolodeoptions"><span class="std std-ref">Command Line Options</span></a></p>
+</div>
+<div class="section" id="working-with-boolode-output">
+<h3>Working with BoolODE output<a class="headerlink" href="#working-with-boolode-output" title="Permalink to this headline">¶</a></h3>
+<p>The simulations will take about 5 minutes to complete. At the end of a successful run, the
 output directory should like this:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>test/                      # User specified destination
 |-- parameters.txt         # Parameter names and values generated for input model
 |-- ExpressionData.csv     # Gene expression dataset
 |-- PseudoTime.csv         # Simulation time of each sample time point/cell
-|-- refNetwork.csv         # T
+|-- refNetwork.csv         # Boolean network represented as an edge list, the ground truth network
 `-- simulations/
     |-- E1.csv
     |-- E2.csv
@@ -282,7 +291,7 @@ output directory should like this:</p>
 </pre></div>
 </div>
 <p>Where <code class="docutils literal notranslate"><span class="pre">E1.csv,</span> <span class="pre">E2.csv,</span> <span class="pre">...</span></code> are individual simulations. Each column in these
-files has the form <code class="docutils literal notranslate"><span class="pre">E&lt;simulation</span> <span class="pre">number&gt;_&lt;timepoint&gt;</span></code>.</p>
+files, the cell IDs, has the form <code class="docutils literal notranslate"><span class="pre">E&lt;simulation</span> <span class="pre">number&gt;_&lt;timepoint&gt;</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>By default BoolODE will store the entire simulated time
@@ -320,11 +329,13 @@ simulation. The output should look like the following</p>
 <img alt="_images/tree.png" src="_images/tree.png" />
 <p class="caption"><span class="caption-text">t-SNE visualization of BoolODE output</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
 </div>
-<p>Notice the eight steady state clusters!</p>
+<p>Notice the eight steady state clusters! This dataset can now be
+processed further using the tools described in  <a class="reference internal" href="#geninputs"><span class="std std-ref">Generating inputs for BEELINE</span></a> to produce
+input datasets for the BEELINE pipeline.</p>
 </div>
 </div>
 <div class="section" id="generating-inputs-for-beeline">
-<h2>Generating inputs for BEELINE<a class="headerlink" href="#generating-inputs-for-beeline" title="Permalink to this headline">¶</a></h2>
+<span id="geninputs"></span><h2>Generating inputs for BEELINE<a class="headerlink" href="#generating-inputs-for-beeline" title="Permalink to this headline">¶</a></h2>
 <p>BoolODE provides additional scripts, located in <code class="docutils literal notranslate"><span class="pre">scripts/</span></code> to
 process simulation output to be used by BEELINE.</p>
 <div class="section" id="compute-pseudotime-using-slingshot">
@@ -382,7 +393,9 @@ Slingshot itself.</p>
 <p>In order to mimic real single-cell expression datasets, BoolODE
 includes <code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> which implements dropouts as described in
 the paper, by dropping expression values below <code class="docutils literal notranslate"><span class="pre">DROP_CUTOFF</span></code> using a
-probability of <code class="docutils literal notranslate"><span class="pre">DROP_PROB</span></code>.</p>
+probability of <code class="docutils literal notranslate"><span class="pre">DROP_PROB</span></code>. This script samples <code class="docutils literal notranslate"><span class="pre">NCELLS</span></code> from the
+columns in the expression dataset <code class="docutils literal notranslate"><span class="pre">EXPR</span></code>, and will throw an error if
+the number is greater than the number of columns.</p>
 <dl>
 <dt><code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> takes the following command line arguments</dt><dd><dl class="option-list">
 <dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>

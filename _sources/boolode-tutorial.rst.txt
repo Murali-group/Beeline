@@ -65,6 +65,7 @@ Let us save the initial condition specification in
 ``/data/multistate_ics.txt``.
 
 
+
 .. note:: The initial condition file should also be tab
            separated. Also, pay attention to the capitalization
            of the column names.
@@ -74,6 +75,9 @@ Let us save the initial condition specification in
          between 0 and 2, since larger values might cause numerical
          instability.
 
+
+Running BoolODE
+###############
 
 A few more decisions before we get our simulated dataset of gene expression
 values:
@@ -102,6 +106,10 @@ directive puts together all the information collected so far
 
 
 For a full list of available options, see :ref:`boolodeoptions`
+
+Working with BoolODE output
+###########################
+
 The simulations will take about 5 minutes to complete. At the end of a successful run, the
 output directory should like this:
 
@@ -111,14 +119,14 @@ output directory should like this:
           |-- parameters.txt         # Parameter names and values generated for input model
           |-- ExpressionData.csv     # Gene expression dataset
           |-- PseudoTime.csv         # Simulation time of each sample time point/cell
-          |-- refNetwork.csv         # T
+          |-- refNetwork.csv         # Boolean network represented as an edge list, the ground truth network
           `-- simulations/
               |-- E1.csv
               |-- E2.csv
               ...
 
 Where ``E1.csv, E2.csv, ...`` are individual simulations. Each column in these
-files has the form ``E<simulation number>_<timepoint>``.
+files, the cell IDs, has the form ``E<simulation number>_<timepoint>``.
           
 .. note:: By default BoolODE will store the entire simulated time
           course for every simulation. Specifying the ``--sample-cells``
@@ -162,5 +170,7 @@ simulation. The output should look like the following
 
    t-SNE visualization of BoolODE output
            
-Notice the eight steady state clusters!
+Notice the eight steady state clusters! This dataset can now be
+processed further using the tools described in  :ref:`geninputs` to produce
+input datasets for the BEELINE pipeline.
             
