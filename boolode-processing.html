@@ -205,7 +205,9 @@ Slingshot itself.</p>
 <p>In order to mimic real single-cell expression datasets, BoolODE
 includes <code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> which implements dropouts as described in
 the paper, by dropping expression values below <code class="docutils literal notranslate"><span class="pre">DROP_CUTOFF</span></code> using a
-probability of <code class="docutils literal notranslate"><span class="pre">DROP_PROB</span></code>.</p>
+probability of <code class="docutils literal notranslate"><span class="pre">DROP_PROB</span></code>. This script samples <code class="docutils literal notranslate"><span class="pre">NCELLS</span></code> from the
+columns in the expression dataset <code class="docutils literal notranslate"><span class="pre">EXPR</span></code>, and will throw an error if
+the number is greater than the number of columns.</p>
 <dl>
 <dt><code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> takes the following command line arguments</dt><dd><dl class="option-list">
 <dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>

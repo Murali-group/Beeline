@@ -56,7 +56,7 @@ To compute ranked list of edges, run
 
 .. code:: python
 
-          python BLStart.py --config config-files/config.yaml
+          python BLRun.py --config config-files/config.yaml
     
 To compute areas under the ROC and PR curves using the BEELINE's
 evaluation pipeline, run
@@ -79,8 +79,8 @@ Tutorial
              
 .. _algorithms:
 
-Algorithm details
------------------
+Details of supported algorithms 
+-------------------------------
 
 .. include:: algorithms.rst
 

@@ -95,7 +95,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#running-the-evaluation-scripts">Running the evaluation scripts</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#algorithm-details">Algorithm details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#details-of-supported-algorithms">Details of supported algorithms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#developer-guide">Developer Guide</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#blrun-details">BLRun Details</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#bleval-details">BLEval Details</a></li>
@@ -217,7 +217,7 @@ terminal</p>
 <p>This step will take a while!</p>
 </div>
 <p>To compute ranked list of edges, run</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLStart</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLRun</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
 </pre></div>
 </div>
 <p>To compute areas under the ROC and PR curves using the BEELINE’s
@@ -328,7 +328,7 @@ config file should contain at minimum</p>
 folder containing the input, the config file indicates which
 algorithms should be run, along with the parameters to be passed to
 the algorithms, if any. For a list of parameters that the pipeline
-currently passes to the algorithms, see  <a class="reference internal" href="#algorithms"><span class="std std-ref">Algorithm details</span></a>  .  Finally,
+currently passes to the algorithms, see  <a class="reference internal" href="#algorithms"><span class="std std-ref">Details of supported algorithms</span></a>  .  Finally,
 the YAML file also specifies the paths to the outputs.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
@@ -338,8 +338,13 @@ the YAML file also specifies the paths to the outputs.</p>
 <div class="section" id="running-the-pipeline">
 <h3>Running the pipeline<a class="headerlink" href="#running-the-pipeline" title="Permalink to this headline">¶</a></h3>
 <p>Once the input dataset has been generated and formatted as described
+<<<<<<< HEAD
 in Section <a class="reference internal" href="beeline-tutorial.html#input-datasets"><span class="std std-ref">Input Datasets</span></a> , and the config file has been
 created as described in <a class="reference internal" href="beeline-tutorial.html#configfiles"><span class="std std-ref">Config files</span></a>, the pipeline can be
+=======
+in Section <a class="reference internal" href="#input-datasets"><span class="std std-ref">Input Datasets</span></a> , and the config file has been
+created as described in <a class="reference internal" href="#configfiles"><span class="std std-ref">Config files</span></a>, the pipeline can be
+>>>>>>> aj-pages
 executed by simply calling <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> with the config file
 specifying the inputs and the algorithms to run, passed using the
 <code class="docutils literal notranslate"><span class="pre">--config</span></code> option which takes the path to the config file.</p>
@@ -364,13 +369,19 @@ use the following command</p>
                            --auc <span class="se">\ </span><span class="c1"># calls the computeAUC script</span>
                            --motifs <span class="se">\ </span><span class="c1"># calls the computeNetMotifs script</span>
 </pre></div>
+<<<<<<< HEAD
+</div>
+<p>For a full list of available evaluation functions and their corresponding options to
+be passed to <code class="docutils literal notranslate"><span class="pre">BLEvalAggregator.py</span></code>, see <a class="reference internal" href="#blevalguide"><span class="std std-ref">BLEval Details</span></a> .</p>
+=======
+>>>>>>> aj-pages
 </div>
 <p>For a full list of available evaluation functions and their corresponding options to
 be passed to <code class="docutils literal notranslate"><span class="pre">BLEvalAggregator.py</span></code>, see <a class="reference internal" href="#blevalguide"><span class="std std-ref">BLEval Details</span></a> .</p>
 </div>
 </div>
-<div class="section" id="algorithm-details">
-<span id="algorithms"></span><h2>Algorithm details<a class="headerlink" href="#algorithm-details" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="details-of-supported-algorithms">
+<span id="algorithms"></span><h2>Details of supported algorithms<a class="headerlink" href="#details-of-supported-algorithms" title="Permalink to this headline">¶</a></h2>
 <p>The following table lists the  algorithms and the parameters they take as input, along with the default parameter values</p>
 <table class="docutils align-default">
 <colgroup>
