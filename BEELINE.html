@@ -217,17 +217,17 @@ terminal</p>
 <p>This step will take a while!</p>
 </div>
 <p>To compute ranked list of edges, run</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLRun</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLRunner</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
 </pre></div>
 </div>
 <p>To compute areas under the ROC and PR curves using the BEELINE’s
 evaluation pipeline, run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvalAggregator.py --config config-files/config.yaml --auc
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvaluator.py --config config-files/config.yaml --auc
 </pre></div>
 </div>
 <p>To display the complete list of
 evaluation options, run</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvalAggregator.py --help
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvaluator.py --help
 </pre></div>
 </div>
 </div>
@@ -338,16 +338,16 @@ the YAML file also specifies the paths to the outputs.</p>
 <div class="section" id="running-the-pipeline">
 <h3>Running the pipeline<a class="headerlink" href="#running-the-pipeline" title="Permalink to this headline">¶</a></h3>
 <p>Once the input dataset has been generated and formatted as described
-in Section <a class="reference internal" href="#input-datasets"><span class="std std-ref">Input Datasets</span></a> , and the config file has been
-created as described in <a class="reference internal" href="#configfiles"><span class="std std-ref">Config files</span></a>, the pipeline can be
+in Section <a class="reference internal" href="beeline-tutorial.html#input-datasets"><span class="std std-ref">Input Datasets</span></a> , and the config file has been
+created as described in <a class="reference internal" href="beeline-tutorial.html#configfiles"><span class="std std-ref">Config files</span></a>, the pipeline can be
 executed by simply calling <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> with the config file
 specifying the inputs and the algorithms to run, passed using the
 <code class="docutils literal notranslate"><span class="pre">--config</span></code> option which takes the path to the config file.</p>
 <p>To run the pipeline, simply invoke</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLRun.py --config PATH/TO/CONFIG/FILE
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLRunner.py --config PATH/TO/CONFIG/FILE
 </pre></div>
 </div>
-<p>For details about the implementation of <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a> , see <a class="reference internal" href="#blrunguide"><span class="std std-ref">BLRun Details</span></a> .</p>
+<p>For details about the implementation of <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a> , see <a class="reference internal" href="beeline-developer.html#blrunguide"><span class="std std-ref">BLRun Details</span></a> .</p>
 </div>
 <div class="section" id="running-the-evaluation-scripts">
 <h3>Running the evaluation scripts<a class="headerlink" href="#running-the-evaluation-scripts" title="Permalink to this headline">¶</a></h3>
@@ -355,18 +355,18 @@ specifying the inputs and the algorithms to run, passed using the
 BEELINE implements a consistent interface using the config file in order to retrieve
 the predictions of multiple algorithms and evaluate them using a variety of methods.</p>
 <p>The evaluation of the inferred networks is done by calling the
-<code class="docutils literal notranslate"><span class="pre">BLEvalAggregator.py</span></code> script.  Like the <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> script, the
+<code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code> script.  Like the <code class="docutils literal notranslate"><span class="pre">BLRunner.py</span></code> script, the
 EvalAggregator script takes the config file as input. Every  subsequent
 option passed to this script calls a different evaluation script. For instance,
 in order to analyze the AUROC and AUPRC values, and also analyze network motifs,
 use the following command</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvalaggregator.py --config PATH/TO/CONFIG/FILE <span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvaluator.py --config PATH/TO/CONFIG/FILE <span class="se">\</span>
                            --auc <span class="se">\ </span><span class="c1"># calls the computeAUC script</span>
                            --motifs <span class="se">\ </span><span class="c1"># calls the computeNetMotifs script</span>
 </pre></div>
 </div>
 <p>For a full list of available evaluation functions and their corresponding options to
-be passed to <code class="docutils literal notranslate"><span class="pre">BLEvalAggregator.py</span></code>, see <a class="reference internal" href="#blevalguide"><span class="std std-ref">BLEval Details</span></a> .</p>
+be passed to <code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code>, see <a class="reference internal" href="beeline-developer.html#blevalguide"><span class="std std-ref">BLEval Details</span></a> .</p>
 </div>
 </div>
 <div class="section" id="details-of-supported-algorithms">
@@ -463,7 +463,7 @@ be passed to <code class="docutils literal notranslate"><span class="pre">BLEval
 <h2>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="blrun-details">
 <span id="blrunguide"></span><h3>BLRun Details<a class="headerlink" href="#blrun-details" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> creates a <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object for each algorithm
+<p>The <code class="docutils literal notranslate"><span class="pre">BLRunner.py</span></code> creates a <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object for each algorithm
 specified in the config file. Each <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object should contain three
 modules</p>
 <ol class="arabic simple">
