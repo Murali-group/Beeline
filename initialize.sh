@@ -63,10 +63,14 @@ echo "Docker container for SINCERITIES is built and tagged as sincerities:base"
 cd $BASEDIR
 
 
-echo "Setting up Anaconda"
+echo "Setting up Anaconda..."
+# Comment the following lines if you want to install the packages
+# directly from requirements.
 conda create -y --name BEELINE python=3.7.1 r=3.5.0 --file requirements.txt
-
 conda activate BEELINE
+
+# Install the PRROC package for computing area under PR curve
+# TODO: Write the PRROC AUC function and make it BEELINE package without using rpy2
 
 R -e "install.packages('https://cran.r-project.org/src/contrib/PRROC_1.3.1.tar.gz', type = 'source')"
 
