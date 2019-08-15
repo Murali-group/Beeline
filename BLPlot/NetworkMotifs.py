@@ -9,7 +9,7 @@ import matplotlib.lines as line
 import matplotlib.patches as patches
 from tqdm import tqdm
 
-import emoji
+
 plt.rcParams["font.size"] = 13
 
 import matplotlib as mpl

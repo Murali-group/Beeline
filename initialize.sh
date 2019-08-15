@@ -61,3 +61,12 @@ docker build -q -t sincerities:base .
 echo "Docker container for SINCERITIES is built and tagged as sincerities:base"
 
 cd $BASEDIR
+
+
+echo "Setting up Anaconda"
+conda create -y --name BEELINE python=3.7.1 r=3.5.0 --file requirements.txt
+
+conda activate BEELINE
+
+R -e "install.packages('https://cran.r-project.org/src/contrib/PRROC_1.3.1.tar.gz', type = 'source')"
+
