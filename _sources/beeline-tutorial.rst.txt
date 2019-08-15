@@ -133,7 +133,7 @@ To run the pipeline, simply invoke
 
 .. code:: bash
 
-          python BLRun.py --config PATH/TO/CONFIG/FILE
+          python BLRunner.py --config PATH/TO/CONFIG/FILE
 
 For details about the implementation of :class:`BLRun` , see :ref:`blrunguide` .
 
@@ -145,7 +145,7 @@ BEELINE implements a consistent interface using the config file in order to retr
 the predictions of multiple algorithms and evaluate them using a variety of methods.
 
 The evaluation of the inferred networks is done by calling the
-``BLEvalAggregator.py`` script.  Like the ``BLRun.py`` script, the
+``BLEvaluator.py`` script.  Like the ``BLRunner.py`` script, the
 EvalAggregator script takes the config file as input. Every  subsequent
 option passed to this script calls a different evaluation script. For instance,
 in order to analyze the AUROC and AUPRC values, and also analyze network motifs,
@@ -153,11 +153,11 @@ use the following command
 
 .. code:: bash
 
-          python BLEvalaggregator.py --config PATH/TO/CONFIG/FILE \
+          python BLEvaluator.py --config PATH/TO/CONFIG/FILE \
                                      --auc \ # calls the computeAUC script
                                      --motifs \ # calls the computeNetMotifs script
 
 
 For a full list of available evaluation functions and their corresponding options to
-be passed to ``BLEvalAggregator.py``, see :ref:`blevalguide` .
+be passed to ``BLEvaluator.py``, see :ref:`blevalguide` .
 

@@ -243,7 +243,7 @@ config file should contain at minimum</p>
 folder containing the input, the config file indicates which
 algorithms should be run, along with the parameters to be passed to
 the algorithms, if any. For a list of parameters that the pipeline
-currently passes to the algorithms, see  <a class="reference internal" href="BEELINE.html#algorithms"><span class="std std-ref">Algorithm details</span></a>  .  Finally,
+currently passes to the algorithms, see  <a class="reference internal" href="BEELINE.html#algorithms"><span class="std std-ref">Details of supported algorithms</span></a>  .  Finally,
 the YAML file also specifies the paths to the outputs.</p>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
@@ -259,10 +259,10 @@ executed by simply calling <code class="docutils literal notranslate"><span clas
 specifying the inputs and the algorithms to run, passed using the
 <code class="docutils literal notranslate"><span class="pre">--config</span></code> option which takes the path to the config file.</p>
 <p>To run the pipeline, simply invoke</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLRun.py --config PATH/TO/CONFIG/FILE
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLRunner.py --config PATH/TO/CONFIG/FILE
 </pre></div>
 </div>
-<p>For details about the implementation of <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a> , see <a class="reference internal" href="BEELINE.html#blrunguide"><span class="std std-ref">BLRun Details</span></a> .</p>
+<p>For details about the implementation of <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a> , see <a class="reference internal" href="beeline-developer.html#blrunguide"><span class="std std-ref">BLRun Details</span></a> .</p>
 </div>
 <div class="section" id="running-the-evaluation-scripts">
 <h1>Running the evaluation scripts<a class="headerlink" href="#running-the-evaluation-scripts" title="Permalink to this headline">¶</a></h1>
@@ -270,18 +270,18 @@ specifying the inputs and the algorithms to run, passed using the
 BEELINE implements a consistent interface using the config file in order to retrieve
 the predictions of multiple algorithms and evaluate them using a variety of methods.</p>
 <p>The evaluation of the inferred networks is done by calling the
-<code class="docutils literal notranslate"><span class="pre">BLEvalAggregator.py</span></code> script.  Like the <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> script, the
+<code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code> script.  Like the <code class="docutils literal notranslate"><span class="pre">BLRunner.py</span></code> script, the
 EvalAggregator script takes the config file as input. Every  subsequent
 option passed to this script calls a different evaluation script. For instance,
 in order to analyze the AUROC and AUPRC values, and also analyze network motifs,
 use the following command</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvalaggregator.py --config PATH/TO/CONFIG/FILE <span class="se">\</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python BLEvaluator.py --config PATH/TO/CONFIG/FILE <span class="se">\</span>
                            --auc <span class="se">\ </span><span class="c1"># calls the computeAUC script</span>
                            --motifs <span class="se">\ </span><span class="c1"># calls the computeNetMotifs script</span>
 </pre></div>
 </div>
 <p>For a full list of available evaluation functions and their corresponding options to
-be passed to <code class="docutils literal notranslate"><span class="pre">BLEvalAggregator.py</span></code>, see <a class="reference internal" href="BEELINE.html#blevalguide"><span class="std std-ref">BLEval Details</span></a> .</p>
+be passed to <code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code>, see <a class="reference internal" href="beeline-developer.html#blevalguide"><span class="std std-ref">BLEval Details</span></a> .</p>
 </div>
 
 
