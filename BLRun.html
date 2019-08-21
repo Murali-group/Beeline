@@ -83,38 +83,8 @@
               
             
             
-              <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="BEELINE.html">BEELINE</a><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="BEELINE.html#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BEELINE.html#getting-started">Getting Started</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BEELINE.html#tutorial">Tutorial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BEELINE.html#algorithm-details">Algorithm details</a></li>
-<li class="toctree-l2"><a class="reference internal" href="BEELINE.html#developer-guide">Developer Guide</a></li>
-<li class="toctree-l2 current"><a class="reference internal" href="BEELINE.html#api-reference">API Reference</a><ul class="current">
-<li class="toctree-l3 current"><a class="current reference internal" href="#">BLRun package</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.genie3Runner">BLRun.genie3Runner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.grisliRunner">BLRun.grisliRunner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.grnboost2Runner">BLRun.grnboost2Runner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.grnvbemRunner">BLRun.grnvbemRunner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.jump3Runner">BLRun.jump3Runner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.leapRunner">BLRun.leapRunner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.pidcRunner">BLRun.pidcRunner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.ppcorRunner">BLRun.ppcorRunner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.runner">BLRun.runner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.scingeRunner">BLRun.scingeRunner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.scnsRunner">BLRun.scnsRunner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.scodeRunner">BLRun.scodeRunner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.scribeRunner">BLRun.scribeRunner module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-BLRun.sinceritiesRunner">BLRun.sinceritiesRunner module</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="BLEval.html">BLEval package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="BLPlot.html">BLPlot package</a></li>
-</ul>
-</li>
-</ul>
-</li>
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="BEELINE.html">BEELINE</a></li>
 <li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
 </ul>
 
@@ -186,21 +156,21 @@
 <span id="blrun-package"></span><span id="blrun"></span><h1>BLRun package<a class="headerlink" href="#module-BLRun" title="Permalink to this headline">¶</a></h1>
 <p>BEELINE Run (<a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLRun</span></code></a>) module contains the following main class:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="#BLRun.BLRun" title="BLRun.BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.BLRun</span></code></a> and three additional classes used in the definition of BLRun class</p></li>
-<li><p><a class="reference internal" href="#BLRun.ConfigParser" title="BLRun.ConfigParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.ConfigParser</span></code></a></p></li>
-<li><p><a class="reference internal" href="#BLRun.InputSettings" title="BLRun.InputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.InputSettings</span></code></a></p></li>
-<li><p><a class="reference internal" href="#BLRun.OutputSettings" title="BLRun.OutputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.OutputSettings</span></code></a></p></li>
+<li><a class="reference internal" href="#BLRun.BLRun" title="BLRun.BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.BLRun</span></code></a> and three additional classes used in the definition of BLRun class</li>
+<li><a class="reference internal" href="#BLRun.ConfigParser" title="BLRun.ConfigParser"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.ConfigParser</span></code></a></li>
+<li><a class="reference internal" href="#BLRun.InputSettings" title="BLRun.InputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.InputSettings</span></code></a></li>
+<li><a class="reference internal" href="#BLRun.OutputSettings" title="BLRun.OutputSettings"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun.OutputSettings</span></code></a></li>
 </ul>
 <dl class="class">
 <dt id="BLRun.BLRun">
-<em class="property">class </em><code class="sig-prename descclassname">BLRun.</code><code class="sig-name descname">BLRun</code><span class="sig-paren">(</span><em class="sig-param">input_settings: BLRun.InputSettings</em>, <em class="sig-param">output_settings: BLRun.OutputSettings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun.html#BLRun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.BLRun" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">BLRun.</code><code class="descname">BLRun</code><span class="sig-paren">(</span><em>input_settings: BLRun.InputSettings</em>, <em>output_settings: BLRun.OutputSettings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun.html#BLRun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.BLRun" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The BLRun object is created by parsing a user-provided configuration
 file. Its methods provide for further processing its inputs into
 a series of jobs to be run, as well as running these jobs.</p>
 <dl class="method">
 <dt id="BLRun.BLRun.execute_runners">
-<code class="sig-name descname">execute_runners</code><span class="sig-paren">(</span><em class="sig-param">parallel=False</em>, <em class="sig-param">num_threads=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun.html#BLRun.execute_runners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.BLRun.execute_runners" title="Permalink to this definition">¶</a></dt>
+<code class="descname">execute_runners</code><span class="sig-paren">(</span><em>parallel=False</em>, <em>num_threads=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun.html#BLRun.execute_runners"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.BLRun.execute_runners" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run each of the algorithms</p>
 </dd></dl>
 
@@ -208,26 +178,26 @@ a series of jobs to be run, as well as running these jobs.</p>
 
 <dl class="class">
 <dt id="BLRun.ConfigParser">
-<em class="property">class </em><code class="sig-prename descclassname">BLRun.</code><code class="sig-name descname">ConfigParser</code><a class="reference internal" href="_modules/BLRun.html#ConfigParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ConfigParser" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">BLRun.</code><code class="descname">ConfigParser</code><a class="reference internal" href="_modules/BLRun.html#ConfigParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ConfigParser" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Define static methods for parsing a config file that sets a large number
 of parameters for the pipeline</p>
-<dl class="method">
+<dl class="staticmethod">
 <dt id="BLRun.ConfigParser.parse">
-<em class="property">static </em><code class="sig-name descname">parse</code><span class="sig-paren">(</span><em class="sig-param">config_file_handle</em><span class="sig-paren">)</span> &#x2192; BLRun.BLRun<a class="reference internal" href="_modules/BLRun.html#ConfigParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ConfigParser.parse" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="descname">parse</code><span class="sig-paren">(</span><em>config_file_handle</em><span class="sig-paren">)</span> &#x2192; BLRun.BLRun<a class="reference internal" href="_modules/BLRun.html#ConfigParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ConfigParser.parse" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="BLRun.InputSettings">
-<em class="property">class </em><code class="sig-prename descclassname">BLRun.</code><code class="sig-name descname">InputSettings</code><span class="sig-paren">(</span><em class="sig-param">datadir</em>, <em class="sig-param">datasets</em>, <em class="sig-param">algorithms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun.html#InputSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.InputSettings" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">BLRun.</code><code class="descname">InputSettings</code><span class="sig-paren">(</span><em>datadir</em>, <em>datasets</em>, <em>algorithms</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun.html#InputSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.InputSettings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 </dd></dl>
 
 <dl class="class">
 <dt id="BLRun.OutputSettings">
-<em class="property">class </em><code class="sig-prename descclassname">BLRun.</code><code class="sig-name descname">OutputSettings</code><span class="sig-paren">(</span><em class="sig-param">base_dir</em>, <em class="sig-param">output_prefix: pathlib.Path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun.html#OutputSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.OutputSettings" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">BLRun.</code><code class="descname">OutputSettings</code><span class="sig-paren">(</span><em>base_dir</em>, <em>output_prefix: pathlib.Path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun.html#OutputSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.OutputSettings" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Structure for storing the names of directories that output should
 be written to</p>
@@ -240,37 +210,46 @@ be written to</p>
 <span id="blrun-genie3runner-module"></span><h2>BLRun.genie3Runner module<a class="headerlink" href="#module-BLRun.genie3Runner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.genie3Runner.generateInputs">
-<code class="sig-prename descclassname">BLRun.genie3Runner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/genie3Runner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.genie3Runner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.genie3Runner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/genie3Runner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.genie3Runner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for GENIE3.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.genie3Runner.parseOutput">
-<code class="sig-prename descclassname">BLRun.genie3Runner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/genie3Runner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.genie3Runner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.genie3Runner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/genie3Runner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.genie3Runner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from GENIE3.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.genie3Runner.run">
-<code class="sig-prename descclassname">BLRun.genie3Runner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/genie3Runner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.genie3Runner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.genie3Runner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/genie3Runner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.genie3Runner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run GENIE3 algorithm</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -278,7 +257,7 @@ this function will not do anything.</p>
 <span id="blrun-grislirunner-module"></span><h2>BLRun.grisliRunner module<a class="headerlink" href="#module-BLRun.grisliRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.grisliRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.grisliRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grisliRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grisliRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.grisliRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grisliRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grisliRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for GRISLI.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
@@ -286,13 +265,13 @@ this function will not do anything.</p>
 
 <dl class="function">
 <dt id="BLRun.grisliRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.grisliRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grisliRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grisliRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.grisliRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grisliRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grisliRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from GRISLI.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.grisliRunner.run">
-<code class="sig-prename descclassname">BLRun.grisliRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grisliRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grisliRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.grisliRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grisliRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grisliRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run GRISLI algorithm</p>
 </dd></dl>
 
@@ -301,7 +280,7 @@ this function will not do anything.</p>
 <span id="blrun-grnboost2runner-module"></span><h2>BLRun.grnboost2Runner module<a class="headerlink" href="#module-BLRun.grnboost2Runner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.grnboost2Runner.generateInputs">
-<code class="sig-prename descclassname">BLRun.grnboost2Runner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnboost2Runner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnboost2Runner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.grnboost2Runner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnboost2Runner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnboost2Runner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for GRNBoost2.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
@@ -309,13 +288,13 @@ this function will not do anything.</p>
 
 <dl class="function">
 <dt id="BLRun.grnboost2Runner.parseOutput">
-<code class="sig-prename descclassname">BLRun.grnboost2Runner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnboost2Runner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnboost2Runner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.grnboost2Runner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnboost2Runner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnboost2Runner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from GRNBOOST2.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.grnboost2Runner.run">
-<code class="sig-prename descclassname">BLRun.grnboost2Runner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnboost2Runner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnboost2Runner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.grnboost2Runner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnboost2Runner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnboost2Runner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run GRNBOOST2 algorithm</p>
 </dd></dl>
 
@@ -324,21 +303,23 @@ this function will not do anything.</p>
 <span id="blrun-grnvbemrunner-module"></span><h2>BLRun.grnvbemRunner module<a class="headerlink" href="#module-BLRun.grnvbemRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.grnvbemRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.grnvbemRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnvbemRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnvbemRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.grnvbemRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnvbemRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnvbemRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for GRNVBEM.
-If the folder/files under RunnerObj.datadir exist, 
-this function will not do anything.</p>
+It will create the input folder at RunnerObj.dataset.name/GRNVBEM/ if it
+does not exist already. The input folder will contain an ExpressionData.csv with
+cells ordered according to the pseudotime along the columns, and genes along
+the rows. If the files already exist, this function will overwrite it.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.grnvbemRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.grnvbemRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnvbemRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnvbemRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.grnvbemRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnvbemRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnvbemRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from GRNVBEM.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.grnvbemRunner.run">
-<code class="sig-prename descclassname">BLRun.grnvbemRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnvbemRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnvbemRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.grnvbemRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/grnvbemRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.grnvbemRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run GRN-VBEM algorithm</p>
 </dd></dl>
 
@@ -347,7 +328,7 @@ this function will not do anything.</p>
 <span id="blrun-jump3runner-module"></span><h2>BLRun.jump3Runner module<a class="headerlink" href="#module-BLRun.jump3Runner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.jump3Runner.generateInputs">
-<code class="sig-prename descclassname">BLRun.jump3Runner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/jump3Runner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.jump3Runner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.jump3Runner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/jump3Runner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.jump3Runner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for JUMP3.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
@@ -355,13 +336,13 @@ this function will not do anything.</p>
 
 <dl class="function">
 <dt id="BLRun.jump3Runner.parseOutput">
-<code class="sig-prename descclassname">BLRun.jump3Runner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/jump3Runner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.jump3Runner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.jump3Runner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/jump3Runner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.jump3Runner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from JUMP3.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.jump3Runner.run">
-<code class="sig-prename descclassname">BLRun.jump3Runner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/jump3Runner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.jump3Runner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.jump3Runner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/jump3Runner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.jump3Runner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run GRN-VBEM algorithm</p>
 </dd></dl>
 
@@ -370,20 +351,20 @@ this function will not do anything.</p>
 <span id="blrun-leaprunner-module"></span><h2>BLRun.leapRunner module<a class="headerlink" href="#module-BLRun.leapRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.leapRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.leapRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/leapRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.leapRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.leapRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/leapRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.leapRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.leapRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.leapRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/leapRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.leapRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.leapRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/leapRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.leapRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from LEAP.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.leapRunner.run">
-<code class="sig-prename descclassname">BLRun.leapRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/leapRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.leapRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.leapRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/leapRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.leapRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run LEAP algorithm</p>
 <p>Requires the maxLag parameter</p>
 </dd></dl>
@@ -393,7 +374,7 @@ this function will not do anything.</p>
 <span id="blrun-pidcrunner-module"></span><h2>BLRun.pidcRunner module<a class="headerlink" href="#module-BLRun.pidcRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.pidcRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.pidcRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/pidcRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.pidcRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.pidcRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/pidcRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.pidcRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for SCODE.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
@@ -401,13 +382,13 @@ this function will not do anything.</p>
 
 <dl class="function">
 <dt id="BLRun.pidcRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.pidcRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/pidcRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.pidcRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.pidcRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/pidcRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.pidcRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from SCODE.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.pidcRunner.run">
-<code class="sig-prename descclassname">BLRun.pidcRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/pidcRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.pidcRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.pidcRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/pidcRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.pidcRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run PIDC algorithm</p>
 </dd></dl>
 
@@ -416,7 +397,7 @@ this function will not do anything.</p>
 <span id="blrun-ppcorrunner-module"></span><h2>BLRun.ppcorRunner module<a class="headerlink" href="#module-BLRun.ppcorRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.ppcorRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.ppcorRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/ppcorRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ppcorRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.ppcorRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/ppcorRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ppcorRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for PPCOR.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
@@ -424,13 +405,13 @@ this function will not do anything.</p>
 
 <dl class="function">
 <dt id="BLRun.ppcorRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.ppcorRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/ppcorRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ppcorRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.ppcorRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/ppcorRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ppcorRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from PPCOR.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.ppcorRunner.run">
-<code class="sig-prename descclassname">BLRun.ppcorRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/ppcorRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ppcorRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.ppcorRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/ppcorRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.ppcorRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run PPCOR algorithm</p>
 </dd></dl>
 
@@ -439,22 +420,22 @@ this function will not do anything.</p>
 <span id="blrun-runner-module"></span><h2>BLRun.runner module<a class="headerlink" href="#module-BLRun.runner" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="BLRun.runner.Runner">
-<em class="property">class </em><code class="sig-prename descclassname">BLRun.runner.</code><code class="sig-name descname">Runner</code><span class="sig-paren">(</span><em class="sig-param">params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/runner.html#Runner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.runner.Runner" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="descclassname">BLRun.runner.</code><code class="descname">Runner</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/runner.html#Runner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.runner.Runner" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.7)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A runnable analysis to be incorporated into the pipeline</p>
 <dl class="method">
 <dt id="BLRun.runner.Runner.generateInputs">
-<code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/runner.html#Runner.generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.runner.Runner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descname">generateInputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/runner.html#Runner.generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.runner.Runner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="BLRun.runner.Runner.parseOutput">
-<code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/runner.html#Runner.parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.runner.Runner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descname">parseOutput</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/runner.html#Runner.parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.runner.Runner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
 <dt id="BLRun.runner.Runner.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/runner.html#Runner.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.runner.Runner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/runner.html#Runner.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.runner.Runner.run" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -464,7 +445,7 @@ this function will not do anything.</p>
 <span id="blrun-scingerunner-module"></span><h2>BLRun.scingeRunner module<a class="headerlink" href="#module-BLRun.scingeRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.scingeRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.scingeRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scingeRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scingeRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scingeRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scingeRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scingeRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for SCINGE.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
@@ -472,13 +453,13 @@ this function will not do anything.</p>
 
 <dl class="function">
 <dt id="BLRun.scingeRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.scingeRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scingeRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scingeRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scingeRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scingeRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scingeRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from SCINGE.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.scingeRunner.run">
-<code class="sig-prename descclassname">BLRun.scingeRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scingeRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scingeRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scingeRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scingeRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scingeRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run SCINGE algorithm</p>
 </dd></dl>
 
@@ -487,7 +468,7 @@ this function will not do anything.</p>
 <span id="blrun-scnsrunner-module"></span><h2>BLRun.scnsRunner module<a class="headerlink" href="#module-BLRun.scnsRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.scnsRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.scnsRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scnsRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scnsRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scnsRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scnsRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scnsRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for SCNS.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
@@ -495,13 +476,13 @@ this function will not do anything.</p>
 
 <dl class="function">
 <dt id="BLRun.scnsRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.scnsRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scnsRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scnsRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scnsRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scnsRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scnsRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse output from SCNS</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.scnsRunner.run">
-<code class="sig-prename descclassname">BLRun.scnsRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scnsRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scnsRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scnsRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scnsRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scnsRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run SCNS algorithm</p>
 </dd></dl>
 
@@ -510,7 +491,7 @@ this function will not do anything.</p>
 <span id="blrun-scoderunner-module"></span><h2>BLRun.scodeRunner module<a class="headerlink" href="#module-BLRun.scodeRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.scodeRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.scodeRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scodeRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scodeRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scodeRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scodeRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scodeRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for SCODE.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
@@ -518,13 +499,13 @@ this function will not do anything.</p>
 
 <dl class="function">
 <dt id="BLRun.scodeRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.scodeRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scodeRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scodeRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scodeRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scodeRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scodeRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from SCODE.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.scodeRunner.run">
-<code class="sig-prename descclassname">BLRun.scodeRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scodeRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scodeRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scodeRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scodeRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scodeRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run SCODE algorithm</p>
 </dd></dl>
 
@@ -533,7 +514,7 @@ this function will not do anything.</p>
 <span id="blrun-scriberunner-module"></span><h2>BLRun.scribeRunner module<a class="headerlink" href="#module-BLRun.scribeRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.scribeRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.scribeRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scribeRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scribeRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scribeRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scribeRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scribeRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for SCRIBE.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
@@ -541,13 +522,13 @@ this function will not do anything.</p>
 
 <dl class="function">
 <dt id="BLRun.scribeRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.scribeRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scribeRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scribeRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scribeRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scribeRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scribeRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from SCRIBE.</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.scribeRunner.run">
-<code class="sig-prename descclassname">BLRun.scribeRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scribeRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scribeRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.scribeRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/scribeRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.scribeRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run SCRIBE algorithm.
 To see all the inputs runScribe.R script takes, run:
 docker run scribe:base /bin/sh -c “Rscript runScribe.R -h”</p>
@@ -558,37 +539,46 @@ docker run scribe:base /bin/sh -c “Rscript runScribe.R -h”</p>
 <span id="blrun-sinceritiesrunner-module"></span><h2>BLRun.sinceritiesRunner module<a class="headerlink" href="#module-BLRun.sinceritiesRunner" title="Permalink to this headline">¶</a></h2>
 <dl class="function">
 <dt id="BLRun.sinceritiesRunner.generateInputs">
-<code class="sig-prename descclassname">BLRun.sinceritiesRunner.</code><code class="sig-name descname">generateInputs</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/sinceritiesRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.sinceritiesRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.sinceritiesRunner.</code><code class="descname">generateInputs</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/sinceritiesRunner.html#generateInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.sinceritiesRunner.generateInputs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to generate desired inputs for SINCERITIES.
 If the folder/files under RunnerObj.datadir exist, 
 this function will not do anything.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.sinceritiesRunner.parseOutput">
-<code class="sig-prename descclassname">BLRun.sinceritiesRunner.</code><code class="sig-name descname">parseOutput</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/sinceritiesRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.sinceritiesRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.sinceritiesRunner.</code><code class="descname">parseOutput</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/sinceritiesRunner.html#parseOutput"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.sinceritiesRunner.parseOutput" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to parse outputs from SINCERITIES.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>RunnerObj</strong> – An instance of the <a class="reference internal" href="#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="function">
 <dt id="BLRun.sinceritiesRunner.run">
-<code class="sig-prename descclassname">BLRun.sinceritiesRunner.</code><code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/sinceritiesRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.sinceritiesRunner.run" title="Permalink to this definition">¶</a></dt>
+<code class="descclassname">BLRun.sinceritiesRunner.</code><code class="descname">run</code><span class="sig-paren">(</span><em>RunnerObj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BLRun/sinceritiesRunner.html#run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BLRun.sinceritiesRunner.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Function to run SINCERITIES algorithm</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>RunnerObj</strong> – A BLRun object</p>
-</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>RunnerObj</strong> – A BLRun object</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>

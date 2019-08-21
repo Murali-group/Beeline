@@ -3,7 +3,7 @@
 BLRun Details
 #############
 
-The ``BLRunner.py`` creates a :obj:`BLRun` object for each algorithm
+The ``BLRun.py`` creates a :obj:`BLRun` object for each algorithm
 specified in the config file. Each :obj:`BLRun` object should contain three
 modules
 

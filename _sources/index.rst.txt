@@ -31,7 +31,7 @@ stochastic simulations.
 
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 3 
 
    BEELINE
    BoolODE

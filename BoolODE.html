@@ -175,8 +175,8 @@
 <h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
 <p>The BoolODE package converts a Boolean model to an ODE model and carries out stochastic
 simulations. It reads a model definition file, and outputs the simulated expression data
-for a given network.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python src/BoolODE.py --path<span class="o">=</span>data/test_vars.txt --max-time<span class="o">=</span><span class="m">5</span> --num-cells <span class="m">10</span>
+for a given model.</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">BoolODE</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="n">data</span><span class="o">/</span><span class="n">test_vars</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">time</span><span class="o">=</span><span class="mi">5</span> <span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">cells</span> <span class="mi">10</span>
 </pre></div>
 </div>
 </div>
@@ -191,34 +191,34 @@ inhibition motifs as illustrated below:</p>
 <p class="caption"><span class="caption-text">If there is an equal probabiliy of taking either the left hand branch
 or the right hand branch starting at (g1=high,g2=high), this network will
 result in 8 distinct steady states, with one of the eight extreme genes being
-active in each steady state.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+active in each steady state.</span></p>
 </div>
 <p>BoolODE can be used to generate gene expression data of a sample of cells undergoing
 a developmental process controlled by a gene regulatory network with a wiring diagram
 as shown above.</p>
 <p>The above network diagram can be represented as a Boolean model as follows:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Gene  Rule
-g1    ( g1 ) and not ( g2 )
-g2    ( g2 ) and not ( g1 )
-g11   ( g1 or g11 ) and not ( g12 )
-g12   ( g1 or g12 ) and not ( g11 )
-g21   ( g2 or g21 ) and not ( g22 )
-g22   ( g2 or g22 ) and not ( g21 )
-g111  ( g11 or g111 ) and not ( g112 )
-g112  ( g11 or g112 ) and not ( g111 )
-g121  ( g12 or g121 ) and not ( g122 )
-g122  ( g12 or g122 ) and not ( g121 )
-g211  ( g21 or g211 ) and not ( g212 )
-g212  ( g21 or g212 ) and not ( g211 )
-g221  ( g22 or g221 ) and not ( g222 )
-g222  ( g22 or g222 ) and not ( g221 )
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Gene</span>  <span class="n">Rule</span>
+<span class="n">g1</span>    <span class="p">(</span> <span class="n">g1</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g2</span> <span class="p">)</span>
+<span class="n">g2</span>    <span class="p">(</span> <span class="n">g2</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g1</span> <span class="p">)</span>
+<span class="n">g11</span>   <span class="p">(</span> <span class="n">g1</span> <span class="ow">or</span> <span class="n">g11</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g12</span> <span class="p">)</span>
+<span class="n">g12</span>   <span class="p">(</span> <span class="n">g1</span> <span class="ow">or</span> <span class="n">g12</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g11</span> <span class="p">)</span>
+<span class="n">g21</span>   <span class="p">(</span> <span class="n">g2</span> <span class="ow">or</span> <span class="n">g21</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g22</span> <span class="p">)</span>
+<span class="n">g22</span>   <span class="p">(</span> <span class="n">g2</span> <span class="ow">or</span> <span class="n">g22</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g21</span> <span class="p">)</span>
+<span class="n">g111</span>  <span class="p">(</span> <span class="n">g11</span> <span class="ow">or</span> <span class="n">g111</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g112</span> <span class="p">)</span>
+<span class="n">g112</span>  <span class="p">(</span> <span class="n">g11</span> <span class="ow">or</span> <span class="n">g112</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g111</span> <span class="p">)</span>
+<span class="n">g121</span>  <span class="p">(</span> <span class="n">g12</span> <span class="ow">or</span> <span class="n">g121</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g122</span> <span class="p">)</span>
+<span class="n">g122</span>  <span class="p">(</span> <span class="n">g12</span> <span class="ow">or</span> <span class="n">g122</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g121</span> <span class="p">)</span>
+<span class="n">g211</span>  <span class="p">(</span> <span class="n">g21</span> <span class="ow">or</span> <span class="n">g211</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g212</span> <span class="p">)</span>
+<span class="n">g212</span>  <span class="p">(</span> <span class="n">g21</span> <span class="ow">or</span> <span class="n">g212</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g211</span> <span class="p">)</span>
+<span class="n">g221</span>  <span class="p">(</span> <span class="n">g22</span> <span class="ow">or</span> <span class="n">g221</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g222</span> <span class="p">)</span>
+<span class="n">g222</span>  <span class="p">(</span> <span class="n">g22</span> <span class="ow">or</span> <span class="n">g222</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g221</span> <span class="p">)</span>
 </pre></div>
 </div>
 <p>In order to test BoolODE, copy the rules  above into a file, say <code class="docutils literal notranslate"><span class="pre">multistate.txt</span></code>,
 in the <code class="docutils literal notranslate"><span class="pre">/data</span></code> folder in the BoolODE folder.</p>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>BoolODE expects a tab separated rule file! Make sure the
+<p class="first admonition-title">Note</p>
+<p class="last">BoolODE expects a tab separated rule file! Make sure the
 input file has tabs between the <code class="docutils literal notranslate"><span class="pre">Gene</span></code> and <code class="docutils literal notranslate"><span class="pre">Rule</span></code> column.</p>
 </div>
 <p>Notice that the <code class="docutils literal notranslate"><span class="pre">g1&lt;-&gt;g2</span></code> interaction is central to the behavior of
@@ -227,8 +227,8 @@ have a medium/high value. Biologically, this can be interpreted as the
 initial undifferentiated cells have genes <code class="docutils literal notranslate"><span class="pre">g1</span></code> and <code class="docutils literal notranslate"><span class="pre">g2</span></code> ‘ON’, and
 all other genes ‘OFF’.  We can specify this initial state by creating a file with the
 following lines:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Genes Values
-[&#39;g1&#39;,&#39;g2&#39;]   [1,1]
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Genes</span> <span class="n">Values</span>
+<span class="p">[</span><span class="s1">&#39;g1&#39;</span><span class="p">,</span><span class="s1">&#39;g2&#39;</span><span class="p">]</span>   <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>The first column takes a list of genes formatted like a python list of
@@ -238,14 +238,14 @@ listed in this file will be assigned an initial value of 0 by default.</strong><
 <p>Let us save the initial condition specification in
 <code class="docutils literal notranslate"><span class="pre">/data/multistate_ics.txt</span></code>.</p>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The initial condition file should also be tab
+<p class="first admonition-title">Note</p>
+<p class="last">The initial condition file should also be tab
 separated. Also, pay attention to the capitalization
 of the column names.</p>
 </div>
 <div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>We recommend starting off with initial condition values
+<p class="first admonition-title">Tip</p>
+<p class="last">We recommend starting off with initial condition values
 between 0 and 2, since larger values might cause numerical
 instability.</p>
 </div>
@@ -255,22 +255,22 @@ instability.</p>
 <p>A few more decisions before we get our simulated dataset of gene expression
 values:</p>
 <ol class="arabic simple">
-<li><p>How long do you want to simulate this model? Let’s choose 8 time units</p></li>
-<li><p>How many cells do you want to simulate? 2000 seems like a good number.</p></li>
-<li><p>Where would you like to store the simulation output? Say, <code class="docutils literal notranslate"><span class="pre">./test/</span></code>. BoolODE will create any folders that don’t already exist.</p></li>
-<li><p>Do you want to speed up the simulations by running simulations in parallel? Yes!</p></li>
+<li>How long do you want to simulate this model? Let’s choose 8 time units</li>
+<li>How many cells do you want to simulate? 2000 seems like a good number.</li>
+<li>Where would you like to store the simulation output? Say, <code class="docutils literal notranslate"><span class="pre">./test/</span></code>. BoolODE will create any folders that don’t already exist.</li>
+<li>Do you want to speed up the simulations by running simulations in parallel? Yes!</li>
 </ol>
 <p>One last option that we will add is <code class="docutils literal notranslate"><span class="pre">--sample-cells</span></code>, which will instruct BoolODE
 to sample one cell from each simulated trajectory.</p>
 <p>This is all we need to call BoolODE on this model! The following
 directive puts together all the information collected so far</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python src/BoolODE.py --path data/multistate.txt <span class="se">\ </span>   <span class="c1"># path to the Boolean rules file</span>
-                      --ics data/multistate_ics.txt <span class="se">\ </span><span class="c1"># path to initial condition specification</span>
-                      --max-time <span class="m">8</span> <span class="se">\ </span>                 <span class="c1"># maximum time of simulation</span>
-                      --num-cells <span class="m">2000</span> <span class="se">\ </span>             <span class="c1"># number of cells/simulations to perform</span>
-                      --outPrefix test/ <span class="se">\ </span>            <span class="c1"># relative path to destination</span>
-                      --do-parallel <span class="se">\ </span>                <span class="c1"># do parallel simulations</span>
-                      --sample-cells                  <span class="c1"># sample one cell from each simulation</span>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">BoolODE</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">path</span> <span class="n">data</span><span class="o">/</span><span class="n">multistate</span><span class="o">.</span><span class="n">txt</span> \    <span class="c1"># path to the Boolean rules file</span>
+                      <span class="o">--</span><span class="n">ics</span> <span class="n">data</span><span class="o">/</span><span class="n">multistate_ics</span><span class="o">.</span><span class="n">txt</span> \ <span class="c1"># path to initial condition specification</span>
+                      <span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">time</span> <span class="mi">8</span> \                  <span class="c1"># maximum time of simulation</span>
+                      <span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">cells</span> <span class="mi">2000</span> \              <span class="c1"># number of cells/simulations to perform</span>
+                      <span class="o">--</span><span class="n">outPrefix</span> <span class="n">test</span><span class="o">/</span> \             <span class="c1"># relative path to destination</span>
+                      <span class="o">--</span><span class="n">do</span><span class="o">-</span><span class="n">parallel</span> \                 <span class="c1"># do parallel simulations</span>
+                      <span class="o">--</span><span class="n">sample</span><span class="o">-</span><span class="n">cells</span>                  <span class="c1"># sample one cell from each simulation</span>
 </pre></div>
 </div>
 <p>For a full list of available options, see <a class="reference internal" href="#boolodeoptions"><span class="std std-ref">Command Line Options</span></a></p>
@@ -279,7 +279,7 @@ directive puts together all the information collected so far</p>
 <h3>Working with BoolODE output<a class="headerlink" href="#working-with-boolode-output" title="Permalink to this headline">¶</a></h3>
 <p>The simulations will take about 5 minutes to complete. At the end of a successful run, the
 output directory should like this:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>test/                      # User specified destination
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span>test/                      # User specified destination
 |-- parameters.txt         # Parameter names and values generated for input model
 |-- ExpressionData.csv     # Gene expression dataset
 |-- PseudoTime.csv         # Simulation time of each sample time point/cell
@@ -293,8 +293,8 @@ output directory should like this:</p>
 <p>Where <code class="docutils literal notranslate"><span class="pre">E1.csv,</span> <span class="pre">E2.csv,</span> <span class="pre">...</span></code> are individual simulations. Each column in these
 files, the cell IDs, has the form <code class="docutils literal notranslate"><span class="pre">E&lt;simulation</span> <span class="pre">number&gt;_&lt;timepoint&gt;</span></code>.</p>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>By default BoolODE will store the entire simulated time
+<p class="first admonition-title">Note</p>
+<p class="last">By default BoolODE will store the entire simulated time
 course for every simulation. Specifying the <code class="docutils literal notranslate"><span class="pre">--sample-cells</span></code>
 option will result in BoolODE sampling cells and creating an
 <code class="docutils literal notranslate"><span class="pre">ExpressionData.csv</span></code> file with genes as rows, and cells as columns.
@@ -303,10 +303,10 @@ sample cells from each simulation</p>
 </div>
 <p>In order to visualize the entire dataset, we can carry out dimensionality reduction using
 t-SNE. A script like the one below is a good starting point for this.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="kn">import</span> <span class="n">TSNE</span>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="k">import</span> <span class="n">TSNE</span>
 <span class="kn">import</span> <span class="nn">matplotlib</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="k">def</span> <span class="nf">vis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
     <span class="n">tsne</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">perplexity</span><span class="o">=</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
@@ -327,7 +327,7 @@ is used to color each cell in the scatter plot. Darker colors imply early time p
 simulation. The output should look like the following</p>
 <div class="figure align-center" id="id3">
 <img alt="_images/tree.png" src="_images/tree.png" />
-<p class="caption"><span class="caption-text">t-SNE visualization of BoolODE output</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+<p class="caption"><span class="caption-text">t-SNE visualization of BoolODE output</span></p>
 </div>
 <p>Notice the eight steady state clusters! This dataset can now be
 processed further using the tools described in  <a class="reference internal" href="#geninputs"><span class="std std-ref">Generating inputs for BEELINE</span></a> to produce
@@ -341,8 +341,8 @@ process simulation output to be used by BEELINE.</p>
 <div class="section" id="compute-pseudotime-using-slingshot">
 <h3>Compute Pseudotime using Slingshot<a class="headerlink" href="#compute-pseudotime-using-slingshot" title="Permalink to this headline">¶</a></h3>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>runSlingshot.py requires the SlingShot docker file! Please make sure
+<p class="first admonition-title">Note</p>
+<p class="last">runSlingshot.py requires the SlingShot docker file! Please make sure
 docker has been setup and the container built.</p>
 </div>
 <p>Slingshot computes pseudotime trajectories for a given dataset by
@@ -352,35 +352,45 @@ compute trajectories. The number of clusters expected depend on the
 features of the dataset. For instance, a dataset with two steady state
 clusters should be specified with <code class="docutils literal notranslate"><span class="pre">--nClusters</span> <span class="pre">3</span></code>, specifying an
 additional initial state cluster.</p>
-<dl>
-<dt><code class="docutils literal notranslate"><span class="pre">runSlingshot.py</span></code> takes the following command line arguments</dt><dd><dl class="option-list">
-<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
-<dd><p>show this help message and exit</p>
-</dd>
-<dt><kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></dt>
-<dd><p>Prefix for output files.</p>
-</dd>
-<dt><kbd><span class="option">-e <var>EXPR</var></span>, <span class="option">--expr=<var>EXPR</var></span></kbd></dt>
-<dd><p>Path to expression data file</p>
-</dd>
-<dt><kbd><span class="option">-p <var>PSEUDO</var></span>, <span class="option">--pseudo=<var>PSEUDO</var></span></kbd></dt>
-<dd><p>Path to ‘pseudotime’ file generated by BoolODE</p>
-</dd>
-<dt><kbd><span class="option">-c <var>NCLUSTERS</var></span>, <span class="option">--nClusters=<var>NCLUSTERS</var></span></kbd></dt>
-<dd><p>Number of expected clusters in the dataset.</p>
-</dd>
-<dt><kbd><span class="option">--noEnd</span></kbd></dt>
-<dd><p>Do not force SlingShot to have an end state.</p>
-</dd>
-<dt><kbd><span class="option">-r <var>PERPLEXITY</var></span>, <span class="option">--perplexity=<var>PERPLEXITY</var></span></kbd></dt>
-<dd><p>Perplexity for tSNE.</p>
-</dd>
-</dl>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">runSlingshot.py</span></code> takes the following command line arguments</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Prefix for output files.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-e <var>EXPR</var></span>, <span class="option">--expr=<var>EXPR</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Path to expression data file</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-p <var>PSEUDO</var></span>, <span class="option">--pseudo=<var>PSEUDO</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Path to ‘pseudotime’ file generated by BoolODE</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-c <var>NCLUSTERS</var></span>, <span class="option">--nClusters=<var>NCLUSTERS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Number of expected clusters in the dataset.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--noEnd</span></kbd></td>
+<td>Do not force SlingShot to have an end state.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r <var>PERPLEXITY</var></span>, <span class="option">--perplexity=<var>PERPLEXITY</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Perplexity for tSNE.</td></tr>
+</tbody>
+</table>
 </dd>
 </dl>
 <div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><code class="docutils literal notranslate"><span class="pre">runslingshot.py</span></code> requires a ‘pseudotime’ file passed
+<p class="first admonition-title">Note</p>
+<p class="last"><code class="docutils literal notranslate"><span class="pre">runslingshot.py</span></code> requires a ‘pseudotime’ file passed
 using the <code class="docutils literal notranslate"><span class="pre">--pseudo</span></code> option. This file should contain the
 actual simulation time from BoolODE, which can then be used
 to compare the quality of the inferred trajectory with the
@@ -396,45 +406,58 @@ the paper, by dropping expression values below <code class="docutils literal not
 probability of <code class="docutils literal notranslate"><span class="pre">DROP_PROB</span></code>. This script samples <code class="docutils literal notranslate"><span class="pre">NCELLS</span></code> from the
 columns in the expression dataset <code class="docutils literal notranslate"><span class="pre">EXPR</span></code>, and will throw an error if
 the number is greater than the number of columns.</p>
-<dl>
-<dt><code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> takes the following command line arguments</dt><dd><dl class="option-list">
-<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
-<dd><p>show this help message and exit</p>
-</dd>
-<dt><kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></dt>
-<dd><p>Prefix for output files.</p>
-</dd>
-<dt><kbd><span class="option">-e <var>EXPR</var></span>, <span class="option">--expr=<var>EXPR</var></span></kbd></dt>
-<dd><p>Path to expression data file</p>
-</dd>
-<dt><kbd><span class="option">-p <var>PSEUDO</var></span>, <span class="option">--pseudo=<var>PSEUDO</var></span></kbd></dt>
-<dd><p>Path to pseudotime file</p>
-</dd>
-<dt><kbd><span class="option">-r <var>REFNET</var></span>, <span class="option">--refNet=<var>REFNET</var></span></kbd></dt>
-<dd><p>Path to reference network file</p>
-</dd>
-<dt><kbd><span class="option">-n <var>NCELLS</var></span>, <span class="option">--nCells=<var>NCELLS</var></span></kbd></dt>
-<dd><p>Number of cells to sample.</p>
-</dd>
-<dt><kbd><span class="option">-d</span>, <span class="option">--dropout</span></kbd></dt>
-<dd><p>Carry out dropout analysis? [Optional]</p>
-</dd>
-<dt><kbd><span class="option">--drop-cutoff=<var>DROP_CUTOFF</var></span></kbd></dt>
-<dd><p>Specify percentile cutoff on gene expression</p>
-</dd>
-<dt><kbd><span class="option">--drop-prob=<var>DROP_PROB</var></span></kbd></dt>
-<dd><p>Specify the probability of dropping a gene below
-quantile q. Ensure 0 &lt; DROP_PROB &lt; 1.</p>
-</dd>
-<dt><kbd><span class="option">-i <var>SAMPLENUM</var></span>, <span class="option">--samplenum=<var>SAMPLENUM</var></span></kbd></dt>
-<dd><p>Sample Number</p>
-</dd>
-</dl>
+<dl class="docutils">
+<dt><code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> takes the following command line arguments</dt>
+<dd><table class="first last docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Prefix for output files.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-e <var>EXPR</var></span>, <span class="option">--expr=<var>EXPR</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Path to expression data file</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-p <var>PSEUDO</var></span>, <span class="option">--pseudo=<var>PSEUDO</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Path to pseudotime file</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-r <var>REFNET</var></span>, <span class="option">--refNet=<var>REFNET</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Path to reference network file</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-n <var>NCELLS</var></span>, <span class="option">--nCells=<var>NCELLS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Number of cells to sample.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-d</span>, <span class="option">--dropout</span></kbd></td>
+<td>Carry out dropout analysis? [Optional]</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--drop-cutoff=<var>DROP_CUTOFF</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Specify percentile cutoff on gene expression</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--drop-prob=<var>DROP_PROB</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Specify the probability of dropping a gene below
+quantile q. Ensure 0 &lt; DROP_PROB &lt; 1.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i <var>SAMPLENUM</var></span>, <span class="option">--samplenum=<var>SAMPLENUM</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Sample Number</td></tr>
+</tbody>
+</table>
 </dd>
 </dl>
 <div class="admonition attention">
-<p class="admonition-title">Attention</p>
-<p>Ensure the <code class="docutils literal notranslate"><span class="pre">--dropout</span></code> option is passed. If not, <code class="docutils literal notranslate"><span class="pre">genDropouts</span></code>
+<p class="first admonition-title">Attention</p>
+<p class="last">Ensure the <code class="docutils literal notranslate"><span class="pre">--dropout</span></code> option is passed. If not, <code class="docutils literal notranslate"><span class="pre">genDropouts</span></code>
 will still randomly sample cells but not dropout any values.</p>
 </div>
 </div>
@@ -442,81 +465,97 @@ will still randomly sample cells but not dropout any values.</p>
 <div class="section" id="command-line-options">
 <span id="boolodeoptions"></span><h2>Command Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this headline">¶</a></h2>
 <blockquote>
-<div><dl class="option-list">
-<dt><kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></dt>
-<dd><p>show this help message and exit</p>
-</dd>
-<dt><kbd><span class="option">--max-time=<var>MAX_TIME</var></span></kbd></dt>
-<dd><p>Total time of simulation. (Default = 20)</p>
-</dd>
-<dt><kbd><span class="option">--num-cells=<var>NUM_CELLS</var></span></kbd></dt>
-<dd><p>Number of cells sample. (Default = 100)</p>
-</dd>
-<dt><kbd><span class="option">--sample-cells</span></kbd></dt>
-<dd><p>Sample a single cell from each trajectory? By default
+<div><table class="docutils option-list" frame="void" rules="none">
+<col class="option" />
+<col class="description" />
+<tbody valign="top">
+<tr><td class="option-group">
+<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
+<td>show this help message and exit</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--max-time=<var>MAX_TIME</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Total time of simulation. (Default = 20)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--num-cells=<var>NUM_CELLS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Number of cells sample. (Default = 100)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--sample-cells</span></kbd></td>
+<td>Sample a single cell from each trajectory? By default
 will store full trajectory of each simulation (Default
-= False)</p>
-</dd>
-<dt><kbd><span class="option">--add-dummy</span></kbd></dt>
-<dd><p>Add dummy genes</p>
-</dd>
-<dt><kbd><span class="option">-n</span>, <span class="option">--normalize-trajectory</span></kbd></dt>
-<dd><p>Min-Max normalize genes across all experiments</p>
-</dd>
-<dt><kbd><span class="option">-i</span>, <span class="option">--identical-pars</span></kbd></dt>
-<dd><p>Set single value to similar parameters NOTE: Consider
-setting this if you are using –sample-pars.</p>
-</dd>
-<dt><kbd><span class="option">-s</span>, <span class="option">--sample-pars</span></kbd></dt>
-<dd><p>Sample rate parameters around the hardcoded means ,
-using 10% stand. dev.</p>
-</dd>
-<dt><kbd><span class="option">--std=<var>STD</var></span></kbd></dt>
-<dd><p>If sampling parameters, specify standard deviation.
-(Default 0.1)</p>
-</dd>
-<dt><kbd><span class="option">--write-protein</span></kbd></dt>
-<dd><p>Write both protein and RNA values to file. Useful for
-debugging.</p>
-</dd>
-<dt><kbd><span class="option">-b</span>, <span class="option">--burn-in</span></kbd></dt>
-<dd><p>Treats the first 25% of the time course as burnin ,
-samples from the rest.</p>
-</dd>
-<dt><kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></dt>
-<dd><p>Prefix for output files.</p>
-</dd>
-<dt><kbd><span class="option">--path=<var>PATH</var></span></kbd></dt>
-<dd><p>Path to boolean model file</p>
-</dd>
-<dt><kbd><span class="option">--inputs=<var>INPUTS</var></span></kbd></dt>
-<dd><p>Path to input parameter files. This is different from
-specifying a parameter set!</p>
-</dd>
-<dt><kbd><span class="option">--pset=<var>PSET</var></span></kbd></dt>
-<dd><p>Path to pre-generated parameter set.</p>
-</dd>
-<dt><kbd><span class="option">--ics=<var>ICS</var></span></kbd></dt>
-<dd><p>Path to list of initial conditions</p>
-</dd>
-<dt><kbd><span class="option">--strengths=<var>STRENGTHS</var></span></kbd></dt>
-<dd><p>Path to list of interaction strengths</p>
-</dd>
-<dt><kbd><span class="option">--species-type=<var>SPECIES_TYPE</var></span></kbd></dt>
-<dd><p>Path to list of molecular species type file.Useful to
-specify proteins/genes</p>
-</dd>
-<dt><kbd><span class="option">-c <var>NCLUSTERS</var></span>, <span class="option">--nClusters=<var>NCLUSTERS</var></span></kbd></dt>
-<dd><p>Number of expected clusters in the dataset. (Default =1)</p>
-</dd>
-<dt><kbd><span class="option">--max-parents=<var>MAX_PARENTS</var></span></kbd></dt>
-<dd><p>Number of parents to add to dummy genes. (Default = 1)</p>
-</dd>
-<dt><kbd><span class="option">--do-parallel</span></kbd></dt>
-<dd><p>Run simulations in parallel. Recommended for &gt; 50
-simulations</p>
-</dd>
-</dl>
+= False)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--add-dummy</span></kbd></td>
+<td>Add dummy genes</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-n</span>, <span class="option">--normalize-trajectory</span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Min-Max normalize genes across all experiments</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-i</span>, <span class="option">--identical-pars</span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Set single value to similar parameters NOTE: Consider
+setting this if you are using –sample-pars.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-s</span>, <span class="option">--sample-pars</span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Sample rate parameters around the hardcoded means ,
+using 10% stand. dev.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--std=<var>STD</var></span></kbd></td>
+<td>If sampling parameters, specify standard deviation.
+(Default 0.1)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--write-protein</span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Write both protein and RNA values to file. Useful for
+debugging.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">-b</span>, <span class="option">--burn-in</span></kbd></td>
+<td>Treats the first 25% of the time course as burnin ,
+samples from the rest.</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Prefix for output files.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--path=<var>PATH</var></span></kbd></td>
+<td>Path to boolean model file</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--inputs=<var>INPUTS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Path to input parameter files. This is different from
+specifying a parameter set!</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--pset=<var>PSET</var></span></kbd></td>
+<td>Path to pre-generated parameter set.</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--ics=<var>ICS</var></span></kbd></td>
+<td>Path to list of initial conditions</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--strengths=<var>STRENGTHS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Path to list of interaction strengths</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--species-type=<var>SPECIES_TYPE</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Path to list of molecular species type file.Useful to
+specify proteins/genes</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">-c <var>NCLUSTERS</var></span>, <span class="option">--nClusters=<var>NCLUSTERS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Number of expected clusters in the dataset. (Default =1)</td></tr>
+<tr><td class="option-group" colspan="2">
+<kbd><span class="option">--max-parents=<var>MAX_PARENTS</var></span></kbd></td>
+</tr>
+<tr><td>&#160;</td><td>Number of parents to add to dummy genes. (Default = 1)</td></tr>
+<tr><td class="option-group">
+<kbd><span class="option">--do-parallel</span></kbd></td>
+<td>Run simulations in parallel. Recommended for &gt; 50
+simulations</td></tr>
+</tbody>
+</table>
 </div></blockquote>
 </div>
 <div class="section" id="api-reference">
@@ -525,9 +564,9 @@ simulations</p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="src.html">src package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="src.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#src-boolode-module">src.BoolODE module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#src-simulator-module">src.simulator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#src-utils-module">src.utils module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.BoolODE">src.BoolODE module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.simulator">src.simulator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.utils">src.utils module</a></li>
 </ul>
 </li>
 </ul>

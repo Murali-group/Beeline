@@ -157,8 +157,11 @@
 <div class="viewcode-block" id="generateInputs"><a class="viewcode-back" href="../../BLRun.html#BLRun.grnvbemRunner.generateInputs">[docs]</a><span class="k">def</span> <span class="nf">generateInputs</span><span class="p">(</span><span class="n">RunnerObj</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Function to generate desired inputs for GRNVBEM.</span>
-<span class="sd">    If the folder/files under RunnerObj.datadir exist, </span>
-<span class="sd">    this function will not do anything.</span>
+<span class="sd">    It will create the input folder at RunnerObj.dataset.name/GRNVBEM/ if it</span>
+<span class="sd">    does not exist already. The input folder will contain an ExpressionData.csv with</span>
+<span class="sd">    cells ordered according to the pseudotime along the columns, and genes along</span>
+<span class="sd">    the rows. If the files already exist, this function will overwrite it.</span>
+<span class="sd">    </span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">RunnerObj</span><span class="o">.</span><span class="n">inputDir</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;GRNVBEM&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Input folder for GRNVBEM does not exist, creating input folder...&quot;</span><span class="p">)</span>

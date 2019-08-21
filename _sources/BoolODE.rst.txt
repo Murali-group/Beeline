@@ -8,7 +8,7 @@ Overview
 
 The BoolODE package converts a Boolean model to an ODE model and carries out stochastic
 simulations. It reads a model definition file, and outputs the simulated expression data
-for a given network.
+for a given model.
 
 .. code:: bash
 
