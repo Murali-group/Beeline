@@ -1,5 +1,5 @@
 
-This tutorial will first explain the structure of the Beeline repository,
+This tutorial will first explain the structure of the BEELINE repository,
 with a walkthrough of the different components that the user can customize.
 
 
@@ -10,7 +10,7 @@ The BEELINE repository is structured as follows:
 
 .. code:: text
 
-          Beeline
+          BEELINE
           |-- inputs/
           |   `-- examples/
           |       `-- GSD/
@@ -28,8 +28,15 @@ The BEELINE repository is structured as follows:
           |-- BLEval/
           |   |-- parseTime.py
           |    `-- ...
-          `-- Algorithms/
-              `-- SINCERITIES/
+          |-- Algorithms/
+          |     |-- SINCERITIES/
+          |     `-- ...
+          |-- LICENSE
+          |-- initialize.sh
+          |-- BLRunner.py
+          |-- BLEvaluator.py
+          |-- README.md
+          `-- requirements.txt
 
 .. _input-datasets:
 
@@ -96,26 +103,68 @@ config file should contain at minimum
 .. code:: text
 
           input_settings:
+              input_dir : "Base input directory name, relative to current working directory (recommended: inputs)"
+              dataset_dir: "Subdirectory of input_dir where the datasets are placed in"
               datasets:
                   - name: "Dataset name"
                     exprData: "Expression Data filename"
                     cellData: "PseudoTime filename"
                     trueEdges: "Ground truth network filename"
-
               algorithms:
                   - name: "Algorithm name"
                     params:
                         # Any other parameters that can be passed to
                         # this algorithm
                         should_run: [True] # or False
+                        
+          output_settings:
+              output_dir : "Base output directory name, relative to current working directory (recommended: outputs)"
+              output_prefix: "Prefix for writing evaluation summary files"
                
 
 Apart from indicating the path to the base directory and the specific
 folder containing the input, the config file indicates which
 algorithms should be run, along with the parameters to be passed to
 the algorithms, if any. For a list of parameters that the pipeline
-currently passes to the algorithms, see  :ref:`algorithms`  .  Finally,
-the YAML file also specifies the paths to the outputs.
+currently passes to the algorithms, see  :ref:`algorithms`.  Finally,
+the YAML file also specifies the output_dir where the outputs are written.
+Note that the output directory structure under output_dir is same
+as the input directory strucutre under input_dir. For example, if the config file
+contains the following:
+
+.. code:: text
+
+          input_settings:
+              input_dir : "inputs"
+              dataset_dir: "example"
+              datasets:
+                  - name: "GSD"
+                    exprData: "ExpressionData.csv"
+                    cellData: "PseudoTime.csv"
+                    trueEdges: "refNetwork.csv"
+              algorithms:
+                  - name: "PIDC"
+                    params:
+                        should_run: [True]
+                  - name: "SCODE"
+                    params:
+                        should_run: [False]
+                        z: [10]
+                        nIter: [1000]
+                        nRep: [6]
+                        
+          output_settings:
+              output_dir : "outputs"
+              output_prefix: "GSD"
+
+
+
+BEELINE would interepret this as follows: 
+
+- The input expression data file is located at ``inputs/example/GSD/ExpressionData.csv``, the pseudotime file is located at ``inputs/example/GSD/PseudoTime.csv``, and the reference network or true edges file is located at ``inputs/example/GSD/refNetwork.csv``. Note that the paths are relative to the current working directory. 
+- The algorithm specific inputs will be placed under ``inputs/example/GSD/<algorithm_name>``. For example, for PIDC, the inputs will be placed under ``inputs/example/GSD/PIDC/``. The SCODE algorithm will be skipped becuase the should_run flag is set to False. 
+- The output folder structure will be similar to that of the inputs under output_dir. For example, the outputs obtained after running PIDC on this dataset will be placed under ``outputs/example/GSD/PIDC/``. 
+
 
 .. attention:: Please ensure that the YAML file is correctly indented!
 
@@ -133,7 +182,7 @@ To run the pipeline, simply invoke
 
 .. code:: bash
 
-          python BLRun.py --config PATH/TO/CONFIG/FILE
+          python BLRunner.py --config PATH/TO/CONFIG/FILE
 
 For details about the implementation of :class:`BLRun` , see :ref:`blrunguide` .
 
@@ -145,19 +194,19 @@ BEELINE implements a consistent interface using the config file in order to retr
 the predictions of multiple algorithms and evaluate them using a variety of methods.
 
 The evaluation of the inferred networks is done by calling the
-``BLEvalAggregator.py`` script.  Like the ``BLRun.py`` script, the
-EvalAggregator script takes the config file as input. Every  subsequent
+``BLEvaluator.py`` script.  Like the ``BLRunner.py`` script, the
+Evaluator script takes the config file as input. Every  subsequent
 option passed to this script calls a different evaluation script. For instance,
 in order to analyze the AUROC and AUPRC values, and also analyze network motifs,
 use the following command
 
 .. code:: bash
 
-          python BLEvalaggregator.py --config PATH/TO/CONFIG/FILE \
+          python BLEvaluator.py --config PATH/TO/CONFIG/FILE \
                                      --auc \ # calls the computeAUC script
                                      --motifs \ # calls the computeNetMotifs script
 
 
 For a full list of available evaluation functions and their corresponding options to
-be passed to ``BLEvalAggregator.py``, see :ref:`blevalguide` .
+be passed to ``BLEvaluator.py``, see :ref:`blevalguide` .
 

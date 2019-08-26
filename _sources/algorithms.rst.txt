@@ -5,41 +5,41 @@ The following table lists the  algorithms and the parameters they take as input,
 +----------------+--------------------------------------------------------------------------------------------+
 | **Algorithms** |   **Input Parameters**                                                                     |
 +================+============================================================================================+
-| SINCERITIES    | - ``nBins`` : (Default 10)                                                                 |
+| SINCERITIES    | - ``nBins`` : (Default=10)                                                                 |
 +----------------+--------------------------------------------------------------------------------------------+
-| SCODE          | - ``z`` : (Default 10)                                                                     |
-|                | - ``nIter`` : (Default 1000)                                                               |
-|                | - ``nRep`` : Default(6)                                                                    |
+| SCODE          | - ``z`` : (Default=10)                                                                     |
+|                | - ``nIter`` : (Default=1000)                                                               |
+|                | - ``nRep`` : (Default=6)                                                                    |
 +----------------+--------------------------------------------------------------------------------------------+
 | SCNS           |   None                                                                                     |
 +----------------+--------------------------------------------------------------------------------------------+
-| SCINGE         | - ``lambda`` : (Default 0.01)                                                              |
-|                | - ``dT`` : (Default 15)                                                                    |
-|                | - ``num_lags`` : (Default 5)                                                               |
-|                | - ``kernel_width`` : (Default 0.5)                                                         |
-|                | - ``prob_zero_removal`` : (Default 0)                                                      |
-|                | - ``prob_remove_samples`` : (Default 0.0)                                                  |
-|                | - ``family`` : (Default ``gaussian``)                                                      |
-|                | - ``num_replicates`` : (Default 6)                                                         |
+| SCINGE         | - ``lambda`` : (Default=0.01)                                                              |
+|                | - ``dT`` : (Default=15)                                                                    |
+|                | - ``num_lags`` : (Default=5)                                                               |
+|                | - ``kernel_width`` : (Default=0.5)                                                         |
+|                | - ``prob_zero_removal`` : (Default=0)                                                      |
+|                | - ``prob_remove_samples`` : (Default=0.0)                                                  |
+|                | - ``family`` : (Default=``gaussian``)                                                      |
+|                | - ``num_replicates`` : (Default=6)                                                         |
 +----------------+--------------------------------------------------------------------------------------------+
 | PPCOR          | - ``pVal`` : p-value cutoff (Default=0.01)                                                 |
 +----------------+--------------------------------------------------------------------------------------------+
 | PIDC           |   None                                                                                     |
 +----------------+--------------------------------------------------------------------------------------------+
-| LEAP           | - ``maxLag`` : (Default 0.33)                                                              |
+| LEAP           | - ``maxLag`` : (Default=0.33)                                                              |
 +----------------+--------------------------------------------------------------------------------------------+
-| SCRIBE         | - ``delay`` :  (Default  5 )                                                               |
-|                | - ``method`` : Any of ``RDI``, ``uRDI``, ``cRDI``, or ``ucRDI`` (Default ``ucRDI``)        |
-|                | - ``lowerDetectionLimit`` : (Default 0)                                                    |
-|                | - ``expressionFamily`` : If mRNA counts, use ``negbinomial.size()`` (Default ``uninormal``)|
-|                | - ``log`` : Log transform expression values (Default False)                                |
-|                | - ``ignorePT`` : Ignore Pseudotime (Default True)                                          |
+| SCRIBE         | - ``delay`` :  (Default= 5 )                                                               |
+|                | - ``method`` : Any of ``RDI``, ``uRDI``, ``cRDI``, or ``ucRDI`` (Default=``ucRDI``)        |
+|                | - ``lowerDetectionLimit`` : (Default=0)                                                    |
+|                | - ``expressionFamily`` : If mRNA counts, use ``negbinomial.size()`` (Default=``uninormal``)|
+|                | - ``log`` : Log transform expression values (Default=False)                                |
+|                | - ``ignorePT`` : Ignore Pseudotime (Default=True)                                          |
 +----------------+--------------------------------------------------------------------------------------------+
 | GRNVBEM        |   None                                                                                     |
 +----------------+--------------------------------------------------------------------------------------------+
-| GRISLI         | - ``L`` : (Default 10)                                                                     |
-|                | - ``R`` : (Default 3000)                                                                   |
-|                | - ``alphaMin`` : (Default 0.0)                                                             |
+| GRISLI         | - ``L`` : (Default=10)                                                                     |
+|                | - ``R`` : (Default=3000)                                                                   |
+|                | - ``alphaMin`` : (Default=0.0)                                                             |
 +----------------+--------------------------------------------------------------------------------------------+
 | GENIE3         |   None                                                                                     |
 +----------------+--------------------------------------------------------------------------------------------+

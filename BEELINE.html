@@ -185,7 +185,7 @@ data. The BEELINE framework is divided into the following modules:</p>
 <li><a class="reference internal" href="BLRun.html#blrun"><span class="std std-ref">BLRun package</span></a> : contains the BEELINE’s Runner module, a Python
 wrapper for 12 GRN inference algorithms with options to add new
 methods.</li>
-<li><a class="reference internal" href="BLEval.html#bleval"><span class="std std-ref">BLEval package</span></a> : contains the BEELINE’s Evaluation module that
+<li><span class="xref std std-ref">bleval</span> : contains the BEELINE’s Evaluation module that
 provides easy-to-use tools for evaluating GRN reconstructions.</li>
 <li><a class="reference internal" href="BLPlot.html#blplot"><span class="std std-ref">BLPlot package</span></a> : contains the BEELINE’s plotting module for
 visualizing output from BLEval.</li>
@@ -216,29 +216,33 @@ terminal</p>
 <p class="first admonition-title">Note</p>
 <p class="last">This step will take a while!</p>
 </div>
-<p>To compute ranked list of edges, run</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLRun</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
+<p>We recommend using <a class="reference external" href="https://www.anaconda.com">Anaconda</a> for Python. Run the following command to automatically create an Anaconda virtual environment named BEELINE from requirements.txt and install necessary libraries required to run BEELINE</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span> <span class="n">setupAnacondaVENV</span><span class="o">.</span><span class="n">sh</span>
 </pre></div>
 </div>
-<p>To compute areas under the ROC and PR curves using the BEELINE’s
-evaluation pipeline, run</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLEvalAggregator</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span> <span class="o">--</span><span class="n">auc</span>
+<p>Alternatively, one can create a virtual environment in Python using venv from requirements.txt as detailed <a class="reference external" href="https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/">here</a>.</p>
+<p>To compute proposed reconstructions using the 12 GRN algorithms on the example dataset, run</p>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLRunner</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+<p>To compute areas under the ROC and PR curves for the proposed reconstructions, run</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLEvaluator</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span> <span class="o">--</span><span class="n">auc</span>
 </pre></div>
 </div>
 <p>To display the complete list of
 evaluation options, run</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLEvalAggregator</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">help</span>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLEvaluator</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">help</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="tutorial">
 <h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
-<p>This tutorial will first explain the structure of the Beeline repository,
+<p>This tutorial will first explain the structure of the BEELINE repository,
 with a walkthrough of the different components that the user can customize.</p>
 <div class="section" id="project-outline">
 <h3>Project outline<a class="headerlink" href="#project-outline" title="Permalink to this headline">¶</a></h3>
 <p>The BEELINE repository is structured as follows:</p>
-<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span>Beeline
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span>BEELINE
 |-- inputs/
 |   `-- examples/
 |       `-- GSD/
@@ -256,13 +260,20 @@ with a walkthrough of the different components that the user can customize.</p>
 |-- BLEval/
 |   |-- parseTime.py
 |    `-- ...
-`-- Algorithms/
-    `-- SINCERITIES/
+|-- Algorithms/
+|     |-- SINCERITIES/
+|     `-- ...
+|-- LICENSE
+|-- initialize.sh
+|-- BLRunner.py
+|-- BLEvaluator.py
+|-- README.md
+`-- requirements.txt
 </pre></div>
 </div>
 </div>
 <div class="section" id="input-datasets">
-<span id="id2"></span><h3>Input Datasets<a class="headerlink" href="#input-datasets" title="Permalink to this headline">¶</a></h3>
+<span id="id3"></span><h3>Input Datasets<a class="headerlink" href="#input-datasets" title="Permalink to this headline">¶</a></h3>
 <p>The sample input data set provided is generated by <a class="reference internal" href="BoolODE.html#boolode"><span class="std std-ref">BoolODE</span></a>
 using the Boolean model of <a class="reference external" href="https://www.ncbi.nlm.nih.gov/pubmed/26573569">Gonadal Sex Determination</a> as input.  Note that
 this dataset has been pre-processed to produce three files that are
@@ -282,7 +293,7 @@ network is not available, and will have to be curated from various
 Transcription Factor databases. While this file is not a
 requirement to run the base pipeline, a reference network is
 required to run some of the performance evaluations in
-<a class="reference internal" href="BLEval.html#bleval"><span class="std std-ref">BLEval package</span></a>.  Here is a <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/inputs/example/GSD/refNetwork.csv">sample refNetwork.csv file</a></li>
+<span class="xref std std-ref">BLEval</span>.  Here is a <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/inputs/example/GSD/refNetwork.csv">sample refNetwork.csv file</a></li>
 </ol>
 <p>The figure below shows the t-SNE visualization of the expression
 data from the example dataset.</p>
@@ -310,26 +321,64 @@ flexibly specify inputs and algorithm run parameters. A sample config
 file is provided in <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/config-files/config.yaml">here</a>. A
 config file should contain at minimum</p>
 <div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">input_settings</span><span class="p">:</span>
+    <span class="n">input_dir</span> <span class="p">:</span> <span class="s2">&quot;Base input directory name, relative to current working directory (recommended: inputs)&quot;</span>
+    <span class="n">dataset_dir</span><span class="p">:</span> <span class="s2">&quot;Subdirectory of input_dir where the datasets are placed in&quot;</span>
     <span class="n">datasets</span><span class="p">:</span>
         <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;Dataset name&quot;</span>
           <span class="n">exprData</span><span class="p">:</span> <span class="s2">&quot;Expression Data filename&quot;</span>
           <span class="n">cellData</span><span class="p">:</span> <span class="s2">&quot;PseudoTime filename&quot;</span>
           <span class="n">trueEdges</span><span class="p">:</span> <span class="s2">&quot;Ground truth network filename&quot;</span>
-
     <span class="n">algorithms</span><span class="p">:</span>
         <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;Algorithm name&quot;</span>
           <span class="n">params</span><span class="p">:</span>
               <span class="c1"># Any other parameters that can be passed to</span>
               <span class="c1"># this algorithm</span>
               <span class="n">should_run</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="c1"># or False</span>
+
+<span class="n">output_settings</span><span class="p">:</span>
+    <span class="n">output_dir</span> <span class="p">:</span> <span class="s2">&quot;Base output directory name, relative to current working directory (recommended: outputs)&quot;</span>
+    <span class="n">output_prefix</span><span class="p">:</span> <span class="s2">&quot;Prefix for writing evaluation summary files&quot;</span>
 </pre></div>
 </div>
 <p>Apart from indicating the path to the base directory and the specific
 folder containing the input, the config file indicates which
 algorithms should be run, along with the parameters to be passed to
 the algorithms, if any. For a list of parameters that the pipeline
-currently passes to the algorithms, see  <a class="reference internal" href="#algorithms"><span class="std std-ref">Details of supported algorithms</span></a>  .  Finally,
-the YAML file also specifies the paths to the outputs.</p>
+currently passes to the algorithms, see  <a class="reference internal" href="#algorithms"><span class="std std-ref">Details of supported algorithms</span></a>.  Finally,
+the YAML file also specifies the output_dir where the outputs are written.
+Note that the output directory structure under output_dir is same
+as the input directory strucutre under input_dir. For example, if the config file
+contains the following:</p>
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">input_settings</span><span class="p">:</span>
+    <span class="n">input_dir</span> <span class="p">:</span> <span class="s2">&quot;inputs&quot;</span>
+    <span class="n">dataset_dir</span><span class="p">:</span> <span class="s2">&quot;example&quot;</span>
+    <span class="n">datasets</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;GSD&quot;</span>
+          <span class="n">exprData</span><span class="p">:</span> <span class="s2">&quot;ExpressionData.csv&quot;</span>
+          <span class="n">cellData</span><span class="p">:</span> <span class="s2">&quot;PseudoTime.csv&quot;</span>
+          <span class="n">trueEdges</span><span class="p">:</span> <span class="s2">&quot;refNetwork.csv&quot;</span>
+    <span class="n">algorithms</span><span class="p">:</span>
+        <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;PIDC&quot;</span>
+          <span class="n">params</span><span class="p">:</span>
+              <span class="n">should_run</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span>
+        <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="s2">&quot;SCODE&quot;</span>
+          <span class="n">params</span><span class="p">:</span>
+              <span class="n">should_run</span><span class="p">:</span> <span class="p">[</span><span class="kc">False</span><span class="p">]</span>
+              <span class="n">z</span><span class="p">:</span> <span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+              <span class="n">nIter</span><span class="p">:</span> <span class="p">[</span><span class="mi">1000</span><span class="p">]</span>
+              <span class="n">nRep</span><span class="p">:</span> <span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+
+<span class="n">output_settings</span><span class="p">:</span>
+    <span class="n">output_dir</span> <span class="p">:</span> <span class="s2">&quot;outputs&quot;</span>
+    <span class="n">output_prefix</span><span class="p">:</span> <span class="s2">&quot;GSD&quot;</span>
+</pre></div>
+</div>
+<p>BEELINE would interepret this as follows:</p>
+<ul class="simple">
+<li>The input expression data file is located at <code class="docutils literal notranslate"><span class="pre">inputs/example/GSD/ExpressionData.csv</span></code>, the pseudotime file is located at <code class="docutils literal notranslate"><span class="pre">inputs/example/GSD/PseudoTime.csv</span></code>, and the reference network or true edges file is located at <code class="docutils literal notranslate"><span class="pre">inputs/example/GSD/refNetwork.csv</span></code>. Note that the paths are relative to the current working directory.</li>
+<li>The algorithm specific inputs will be placed under <code class="docutils literal notranslate"><span class="pre">inputs/example/GSD/&lt;algorithm_name&gt;</span></code>. For example, for PIDC, the inputs will be placed under <code class="docutils literal notranslate"><span class="pre">inputs/example/GSD/PIDC/</span></code>. The SCODE algorithm will be skipped becuase the should_run flag is set to False.</li>
+<li>The output folder structure will be similar to that of the inputs under output_dir. For example, the outputs obtained after running PIDC on this dataset will be placed under <code class="docutils literal notranslate"><span class="pre">outputs/example/GSD/PIDC/</span></code>.</li>
+</ul>
 <div class="admonition attention">
 <p class="first admonition-title">Attention</p>
 <p class="last">Please ensure that the YAML file is correctly indented!</p>
@@ -344,10 +393,10 @@ executed by simply calling <code class="docutils literal notranslate"><span clas
 specifying the inputs and the algorithms to run, passed using the
 <code class="docutils literal notranslate"><span class="pre">--config</span></code> option which takes the path to the config file.</p>
 <p>To run the pipeline, simply invoke</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLRun</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">CONFIG</span><span class="o">/</span><span class="n">FILE</span>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLRunner</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">CONFIG</span><span class="o">/</span><span class="n">FILE</span>
 </pre></div>
 </div>
-<p>For details about the implementation of <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a> , see <a class="reference internal" href="beeline-developer.html#blrunguide"><span class="std std-ref">BLRun Details</span></a> .</p>
+<p>For details about the implementation of <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a> , see <a class="reference internal" href="#blrunguide"><span class="std std-ref">BLRun Details</span></a> .</p>
 </div>
 <div class="section" id="running-the-evaluation-scripts">
 <h3>Running the evaluation scripts<a class="headerlink" href="#running-the-evaluation-scripts" title="Permalink to this headline">¶</a></h3>
@@ -355,115 +404,29 @@ specifying the inputs and the algorithms to run, passed using the
 BEELINE implements a consistent interface using the config file in order to retrieve
 the predictions of multiple algorithms and evaluate them using a variety of methods.</p>
 <p>The evaluation of the inferred networks is done by calling the
-<code class="docutils literal notranslate"><span class="pre">BLEvalAggregator.py</span></code> script.  Like the <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> script, the
-EvalAggregator script takes the config file as input. Every  subsequent
+<code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code> script.  Like the <code class="docutils literal notranslate"><span class="pre">BLRunner.py</span></code> script, the
+Evaluator script takes the config file as input. Every  subsequent
 option passed to this script calls a different evaluation script. For instance,
 in order to analyze the AUROC and AUPRC values, and also analyze network motifs,
 use the following command</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLEvalaggregator</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">CONFIG</span><span class="o">/</span><span class="n">FILE</span> \
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLEvaluator</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">CONFIG</span><span class="o">/</span><span class="n">FILE</span> \
                            <span class="o">--</span><span class="n">auc</span> \ <span class="c1"># calls the computeAUC script</span>
                            <span class="o">--</span><span class="n">motifs</span> \ <span class="c1"># calls the computeNetMotifs script</span>
 </pre></div>
 </div>
 <p>For a full list of available evaluation functions and their corresponding options to
-be passed to <code class="docutils literal notranslate"><span class="pre">BLEvalAggregator.py</span></code>, see <a class="reference internal" href="beeline-developer.html#blevalguide"><span class="std std-ref">BLEval Details</span></a> .</p>
+be passed to <code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code>, see <a class="reference internal" href="#blevalguide"><span class="std std-ref">BLEval Details</span></a> .</p>
 </div>
 </div>
 <div class="section" id="details-of-supported-algorithms">
 <span id="algorithms"></span><h2>Details of supported algorithms<a class="headerlink" href="#details-of-supported-algorithms" title="Permalink to this headline">¶</a></h2>
 <p>The following table lists the  algorithms and the parameters they take as input, along with the default parameter values</p>
-<table border="1" class="docutils">
-<colgroup>
-<col width="15%" />
-<col width="85%" />
-</colgroup>
-<thead valign="bottom">
-<tr class="row-odd"><th class="head"><strong>Algorithms</strong></th>
-<th class="head"><strong>Input Parameters</strong></th>
-</tr>
-</thead>
-<tbody valign="top">
-<tr class="row-even"><td>SINCERITIES</td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">nBins</span></code> : (Default 10)</li>
-</ul>
-</td>
-</tr>
-<tr class="row-odd"><td>SCODE</td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">z</span></code> : (Default 10)</li>
-<li><code class="docutils literal notranslate"><span class="pre">nIter</span></code> : (Default 1000)</li>
-<li><code class="docutils literal notranslate"><span class="pre">nRep</span></code> : Default(6)</li>
-</ul>
-</td>
-</tr>
-<tr class="row-even"><td>SCNS</td>
-<td>None</td>
-</tr>
-<tr class="row-odd"><td>SCINGE</td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">lambda</span></code> : (Default 0.01)</li>
-<li><code class="docutils literal notranslate"><span class="pre">dT</span></code> : (Default 15)</li>
-<li><code class="docutils literal notranslate"><span class="pre">num_lags</span></code> : (Default 5)</li>
-<li><code class="docutils literal notranslate"><span class="pre">kernel_width</span></code> : (Default 0.5)</li>
-<li><code class="docutils literal notranslate"><span class="pre">prob_zero_removal</span></code> : (Default 0)</li>
-<li><code class="docutils literal notranslate"><span class="pre">prob_remove_samples</span></code> : (Default 0.0)</li>
-<li><code class="docutils literal notranslate"><span class="pre">family</span></code> : (Default <code class="docutils literal notranslate"><span class="pre">gaussian</span></code>)</li>
-<li><code class="docutils literal notranslate"><span class="pre">num_replicates</span></code> : (Default 6)</li>
-</ul>
-</td>
-</tr>
-<tr class="row-even"><td>PPCOR</td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">pVal</span></code> : p-value cutoff (Default=0.01)</li>
-</ul>
-</td>
-</tr>
-<tr class="row-odd"><td>PIDC</td>
-<td>None</td>
-</tr>
-<tr class="row-even"><td>LEAP</td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">maxLag</span></code> : (Default 0.33)</li>
-</ul>
-</td>
-</tr>
-<tr class="row-odd"><td>SCRIBE</td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">delay</span></code> :  (Default  5 )</li>
-<li><code class="docutils literal notranslate"><span class="pre">method</span></code> : Any of <code class="docutils literal notranslate"><span class="pre">RDI</span></code>, <code class="docutils literal notranslate"><span class="pre">uRDI</span></code>, <code class="docutils literal notranslate"><span class="pre">cRDI</span></code>, or <code class="docutils literal notranslate"><span class="pre">ucRDI</span></code> (Default <code class="docutils literal notranslate"><span class="pre">ucRDI</span></code>)</li>
-<li><code class="docutils literal notranslate"><span class="pre">lowerDetectionLimit</span></code> : (Default 0)</li>
-<li><code class="docutils literal notranslate"><span class="pre">expressionFamily</span></code> : If mRNA counts, use <code class="docutils literal notranslate"><span class="pre">negbinomial.size()</span></code> (Default <code class="docutils literal notranslate"><span class="pre">uninormal</span></code>)</li>
-<li><code class="docutils literal notranslate"><span class="pre">log</span></code> : Log transform expression values (Default False)</li>
-<li><code class="docutils literal notranslate"><span class="pre">ignorePT</span></code> : Ignore Pseudotime (Default True)</li>
-</ul>
-</td>
-</tr>
-<tr class="row-even"><td>GRNVBEM</td>
-<td>None</td>
-</tr>
-<tr class="row-odd"><td>GRISLI</td>
-<td><ul class="first last simple">
-<li><code class="docutils literal notranslate"><span class="pre">L</span></code> : (Default 10)</li>
-<li><code class="docutils literal notranslate"><span class="pre">R</span></code> : (Default 3000)</li>
-<li><code class="docutils literal notranslate"><span class="pre">alphaMin</span></code> : (Default 0.0)</li>
-</ul>
-</td>
-</tr>
-<tr class="row-even"><td>GENIE3</td>
-<td>None</td>
-</tr>
-<tr class="row-odd"><td>GRNBOOST2</td>
-<td>None</td>
-</tr>
-</tbody>
-</table>
 </div>
 <div class="section" id="developer-guide">
 <h2>Developer Guide<a class="headerlink" href="#developer-guide" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="blrun-details">
 <span id="blrunguide"></span><h3>BLRun Details<a class="headerlink" href="#blrun-details" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">BLRun.py</span></code> creates a <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object for each algorithm
+<p>The <code class="docutils literal notranslate"><span class="pre">BLRunner.py</span></code> creates a <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object for each algorithm
 specified in the config file. Each <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object should contain three
 modules</p>
 <ol class="arabic simple">
