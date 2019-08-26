@@ -1,4 +1,5 @@
 # :honeybee: BEELINE: Benchmarking gEnE reguLatory network Inference from siNgle-cEll transcriptomic data :honeybee:
+![Overview of BEELINE](docs/figs/overview-graphic.png )
 
 This is the main repository for BEELINE. The documentation is available at: [https://murali-group.github.io/Beeline/](https://murali-group.github.io/Beeline/).
 
