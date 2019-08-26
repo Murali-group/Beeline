@@ -35,14 +35,14 @@ def generateInputs(RunnerObj):
         ptDF.to_csv(RunnerObj.inputDir.joinpath(cellName),
                                  sep = ',', header  = True, index = True)
         
-    if not RunnerObj.inputDir.joinpath("SCRIBE/GeneData.csv").exists():
-        # required column!!
-        geneDict = {}
-        geneDict['gene_short_name'] = [gene.replace('x_', '') for gene in ExpressionData.index]
-        
-        geneDF = pd.DataFrame(geneDict, index = ExpressionData.index)
-        geneDF.to_csv(RunnerObj.inputDir.joinpath("SCRIBE/GeneData.csv"), 
-                      sep = ',', header = True)
+    #if not RunnerObj.inputDir.joinpath("SCRIBE/GeneData.csv").exists():
+    # required column!!
+    geneDict = {}
+    geneDict['gene_short_name'] = [gene.replace('x_', '') for gene in ExpressionData.index]
+    
+    geneDF = pd.DataFrame(geneDict, index = ExpressionData.index)
+    geneDF.to_csv(RunnerObj.inputDir.joinpath("SCRIBE/GeneData.csv"), 
+                  sep = ',', header = True)
     
     setupParams(RunnerObj)
 

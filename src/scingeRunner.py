@@ -51,10 +51,10 @@ def generateInputs(RunnerObj):
             newExpressionData.to_csv(RunnerObj.inputDir.joinpath(exprName),
                                  sep = ',', header  = True, index = False)
 
-    setup_params(RunnerObj)
+    setupParams(RunnerObj)
 
 
-def setup_params(RunnerObj):
+def setupParams(RunnerObj):
     # if the parameters aren't specified, then use default parameters
     # TODO allow passing in multiple sets of hyperparameters
     params = RunnerObj.params

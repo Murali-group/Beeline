@@ -19,6 +19,12 @@ from src.utils import baobab_utils
 
 # import local packages
 #import bench
+alg_params = {
+    "SCODE": "D",
+    "SINCERITIES": "nBins",
+    "LEAP": "maxLag",
+    "SCRIBE": "delay",
+    }
 
 
 def main(config_map, **kwargs):
@@ -30,8 +36,15 @@ def main(config_map, **kwargs):
     config_map = config_map.copy()
     print(algs)
     #print("algs: %s" % (', '.join(a['name'] for a in algs)))
-    # make the alg names lower so capitalization won't make a difference
-    kwargs['alg'] = [a.lower() for a in kwargs['alg']]
+    # if there aren't any algs specified by the command line (i.e., kwargs),
+    # then use whatever is in the config file
+    if kwargs['alg'] is None:
+        kwargs['alg'] = [a['name'].lower() for a in algs]
+        print("\nNo algs were specified. Using the algorithms in the yaml file:")
+        print(str(kwargs['alg']) + '\n')
+    else:
+        # make the alg names lower so capitalization won't make a difference
+        kwargs['alg'] = [a.lower() for a in kwargs['alg']]
 
     # setup the config file, and then 
     for i, alg in enumerate(algs):
@@ -55,14 +68,34 @@ def main(config_map, **kwargs):
             yaml_file = "%s/%s.yaml" % (yaml_base, alg['name'])
             cmd_file = os.path.abspath("%s/%s.sh" % (yaml_base, alg['name']))
             log_file = os.path.abspath("%s/%s.log" % (yaml_base, alg['name']))
-            write_yaml_file(yaml_file, config_map)
-            # now run it. Submit it to screen
-            name = "%s-%s" % (alg['name'], config_map['input_settings']['datasets'][0]['name'].split('/')[-1])
-            command = "python -u bench.py --config %s >> %s 2>&1" % (os.path.abspath(yaml_file), log_file)
-            jobs = ["cd %s" % (os.getcwd()), command]
-            # write the bash file
-            write_bash_file(cmd_file, jobs)
-            submit_to_screen(cmd_file, name, log_file, **kwargs)
+            params = alg['params']
+            if kwargs['param_per_job']:
+                params_list = []
+                param_name = alg_params[alg['name']]
+                # start a screen session for each parameter
+                for p in params[param_name]:
+                    params2 = params.copy()
+                    params2[param_name] = [p]
+                    params_list.append(params2)
+            else:
+                params_list = [params]
+            for curr_params in params_list:
+                print(curr_params)
+                alg['params'] = curr_params
+                write_yaml_file(yaml_file, config_map)
+                # now run it. Submit it to screen
+                name = "%s-%s" % (alg['name'], config_map['input_settings']['datasets'][0]['name'].split('/')[-1])
+                command = "python -u bench.py --config %s %s >> %s 2>&1" % (
+                    os.path.abspath(yaml_file), 
+                    "--eval-only" if kwargs.get("eval_only") is True else "",
+                    log_file,)
+                jobs = ["cd %s" % (os.getcwd()), command]
+                # write the bash file
+                write_bash_file(cmd_file, jobs)
+                submit_to_screen(cmd_file, name, log_file, **kwargs)
+                # wait a few seconds to make sure the correct yaml file is loaded
+                if not kwargs['eval_only']:
+                    time.sleep(3)
 
 
 def write_bash_file(cmd_file, jobs):
@@ -107,7 +140,9 @@ def run_grisli(alg_settings, config_map, yaml_base, **kwargs):
         qsub_file = os.path.abspath("%s/%d.qsub" % (out_dir, idx))
         name = "grisli-%s-%d" % (config_map['input_settings']['datasets'][0]['name'], idx)
         python = "/data/jeff-law/tools/anaconda3/bin/python"
-        command = "%s -u bench.py --config %s" % (python, os.path.abspath(yaml_file))
+        command = "%s -u bench.py --config %s %s" % (
+            python, os.path.abspath(yaml_file),
+            "--eval-only" if kwargs.get("eval_only") is True else "")
         jobs = ["cd %s" % (os.getcwd()), command]
         submit = not kwargs['test_run']
         baobab_utils.writeQsubFile(
@@ -118,7 +153,7 @@ def run_grisli(alg_settings, config_map, yaml_base, **kwargs):
             sys.exit()
 
         # wait for a bit after submitting the first job so it has time to submit the rest
-        if idx == 1:
+        if idx == 1 and kwargs.get("eval_only") is not True:
             print("waiting for 20 sec after submitting the first job to make sure inputs are setup")
             time.sleep(20)
         idx += 1
@@ -148,7 +183,9 @@ def run_scinge(alg_settings, config_map, yaml_base, **kwargs):
                 qsub_file = os.path.abspath("%s/%d.qsub" % (out_dir, idx))
                 name = "scinge-%s-%d" % (config_map['input_settings']['datasets'][0]['name'], idx)
                 python = "/data/jeff-law/tools/anaconda3/bin/python"
-                command = "%s -u bench.py --config %s" % (python, os.path.abspath(yaml_file))
+                command = "%s -u bench.py --config %s %s" % (
+                    python, os.path.abspath(yaml_file),
+                    "--eval-only" if kwargs.get("eval_only") is True else "")
                 jobs = ["cd %s" % (os.getcwd()), command]
                 submit = not kwargs['test_run']
                 baobab_utils.writeQsubFile(
@@ -159,7 +196,7 @@ def run_scinge(alg_settings, config_map, yaml_base, **kwargs):
                     sys.exit()
 
                 # wait for a bit after submitting the first job so it has time to submit the rest
-                if idx == 1:
+                if idx == 1 and kwargs.get("eval_only") is not True:
                     print("waiting for 20 sec after submitting the first job to make sure inputs are setup")
                     time.sleep(20)
                 idx += 1
@@ -182,11 +219,15 @@ def setup_opts():
     group.add_option('','--config', type='string', default="config-files/config.yaml",
                      help="Configuration file")
     group.add_option('','--alg', type='string', action="append", 
-                     help="Name of algorithm to run. May specify multiple. TODO Default is whatever is set to true in the config file")
+                     help="Name of algorithm to run. May specify multiple. Default is whatever is set to true in the config file")
     group.add_option('','--qsub', action='store_true', default=False,
                      help="submit the jobs to a PBS queue with qsub. Currently only setup for GRISLI and SCINGE")
     group.add_option('','--test-run', action='store_true', default=False,
                      help="Just print out the first command generated")
+    group.add_option('','--eval-only', action='store_true', default=False,
+                     help="Send the --eval-only option to bench.py to only re-evaluate the outputs")
+    group.add_option('','--param-per-job', action='store_true', default=False,
+                     help="Start a screen session for each parameter of an algorithm")
     parser.add_option_group(group)
 
     #group = OptionGroup(parser, 'SCINGE Options')

@@ -9,37 +9,48 @@ from pathlib import Path
 from sklearn.metrics import precision_recall_curve, roc_curve, auc, roc_auc_score
 from itertools import product, combinations_with_replacement, permutations, combinations
 from tqdm import tqdm
+# copied from the master branch
+#from src.BLEval.computeDGAUC import PRROC
+from rpy2.robjects.packages import importr
+from rpy2.robjects import FloatVector
 
 
 def Eval(dataDict, inputSettings, runners, plot_curves=False):
     outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
     # Read file for trueEdges
+    print("reading %s" % (str(inputSettings.datadir)+'/'+ dataDict['name'] +
+                                '/' +dataDict['trueEdges']))
     trueEdgesDF = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
                                 '/' +dataDict['trueEdges'],
                                 sep = ',', 
                                 header = 0, index_col = None)
     TrueEdgeDict = {'|'.join(p):0 for p in list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),r =2))}
-    for key in TrueEdgeDict.keys():
-        if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                           (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
-            TrueEdgeDict[key] = 1
+    trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
+    trueEdges = trueEdges[trueEdges.isin(TrueEdgeDict)]
+    # Compute TrueEdgeDict Dictionary
+    # 1 if edge is present in the ground-truth
+    # 0 if edge is not present in the ground-truth
+    for edge in trueEdges:
+        TrueEdgeDict[edge] = 1
     # part 2 - Compute PR and ROC curves
     # by treating edges in the reference network as undirected
-    uTrueEdgeDict = {'|'.join(p):0 for p in list(combinations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),r = 2))}
-    for key in uTrueEdgeDict.keys():
-        if len(trueEdgesDF.loc[((trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                           (trueEdgesDF['Gene2'] == key.split('|')[1])) |
-                              ((trueEdgesDF['Gene2'] == key.split('|')[0]) &
-                           (trueEdgesDF['Gene1'] == key.split('|')[1]))])>0:
-            uTrueEdgeDict[key] = 1
+    # skip undirected for now
+    #uTrueEdgeDict = {'|'.join(p):0 for p in list(combinations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),r = 2))}
+    #for key in uTrueEdgeDict.keys():
+    #    if len(trueEdgesDF.loc[((trueEdgesDF['Gene1'] == key.split('|')[0]) &
+    #                       (trueEdgesDF['Gene2'] == key.split('|')[1])) |
+    #                          ((trueEdgesDF['Gene2'] == key.split('|')[0]) &
+    #                       (trueEdgesDF['Gene1'] == key.split('|')[1]))])>0:
+    #        uTrueEdgeDict[key] = 1
 
     # Initialize data dictionaries
     AUPRC, AUROC, FMAX = {}, {}, {}
-    uAUPRC, uAUROC, uFMAX = {}, {}, {}
+    #uAUPRC, uAUROC, uFMAX = {}, {}, {}
+    ePrec, eRec = {}, {}
     # for now, just do undirected
     #ePrec, r0_1Prec, r0_15Prec, r0_2Prec = {}, {}, {}, {}
-    uePrec, ueRec = {}, {}
-    ur0_1Prec, ur0_15Prec, ur0_2Prec = {}, {}, {} 
+    #uePrec, ueRec = {}, {}
+    #ur0_1Prec, ur0_15Prec, ur0_2Prec = {}, {}, {} 
     num_edges = {}
     alg_name = {}
     recallDict, precisionDict, FPRDict, TPRDict = {}, {}, {}, {}
@@ -47,14 +58,25 @@ def Eval(dataDict, inputSettings, runners, plot_curves=False):
 
         # check if the output rankedEdges file exists
         if Path(runner.final_ranked_edges).exists():
-            tqdm.write("\tprocessing %s" % (runner.final_ranked_edges))
+            tqdm.write("processing %s" % (runner.final_ranked_edges))
             predDF = pd.read_csv(
                 runner.final_ranked_edges, sep='\t', header= 0, index_col=None)
+
+            # make sure there are no self edges, and no duplicates
+            predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
+            predDF.drop_duplicates(keep = 'first', inplace=True)
+            predDF.reset_index(drop=True, inplace=True)
+            # replace infinity with a high value
+            predDF.replace(float("inf"), 1000, inplace=True)
+            predDF.EdgeWeight = predDF.EdgeWeight.round(6)
+
             num_edges[runner.params_str] = len(predDF)
             alg_name[runner.params_str] = runner.name
             # if there are no edges, then give them all a value of 0
-            if num_edges == 0:
-                for d in [AUPRC, AUROC, FMAX, uAUPRC, uAUROC, uFMAX]:
+            if num_edges[runner.params_str] == 0:
+                print("\tno edges found. Setting everything to 0")
+                #for d in [AUPRC, AUROC, FMAX, uAUPRC, uAUROC, uFMAX, ePrec, eRec, uePrec, ueRec]:
+                for d in [AUPRC, AUROC, FMAX, ePrec, eRec]:
                     d[runner.params_str] = 0
                 continue
             key = runner.params_str
@@ -69,6 +91,7 @@ def Eval(dataDict, inputSettings, runners, plot_curves=False):
                 FPRDict[key] = fpr
                 TPRDict[key] = tpr
 
+            # directed
             auprc, auroc, fmax = compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=False)
             AUPRC[key] = auprc
             AUROC[key] = auroc
@@ -76,17 +99,28 @@ def Eval(dataDict, inputSettings, runners, plot_curves=False):
             #eauprc = compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True)
             #eAUPRC[runner.params_str] = eauprc
 
+            # undirected
+            #auprc, auroc, fmax = compute_eval_measures(trueEdgesDF, uTrueEdgeDict, predDF, directed=False)
+            #uAUPRC[key] = auprc
+            #uAUROC[key] = auroc
+            #uFMAX[key] = fmax
+
+            # directed early
             eprec, erec = compute_eval_measures(
-                trueEdgesDF, uTrueEdgeDict, predDF, directed=False, early=True)
-            uePrec[key], ueRec[key] = eprec, erec
+                trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True)
+            ePrec[key], eRec[key] = eprec, erec
             #eprec, (r0_1prec, r0_15prec, r0_2prec) = compute_eval_measures(
             #    trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True, recall_to_test=[0.1, 0.15, 0.2])
             #ePrec[key], r0_1Prec[key], r0_15Prec[key], r0_2Prec[key] = eprec, r0_1prec, r0_15prec, r0_2prec
 
-            auprc, auroc, fmax = compute_eval_measures(trueEdgesDF, uTrueEdgeDict, predDF, directed=False)
-            uAUPRC[key] = auprc
-            uAUROC[key] = auroc
-            uFMAX[key] = fmax
+            # undirected early
+            #eprec, erec = compute_eval_measures(
+            #    trueEdgesDF, uTrueEdgeDict, predDF, directed=False, early=True)
+            #uePrec[key], ueRec[key] = eprec, erec
+            #eprec, (r0_1prec, r0_15prec, r0_2prec) = compute_eval_measures(
+            #    trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True, recall_to_test=[0.1, 0.15, 0.2])
+            #ePrec[key], r0_1Prec[key], r0_15Prec[key], r0_2Prec[key] = eprec, r0_1prec, r0_15prec, r0_2prec
+
         else:
             print(runner.final_ranked_edges, ' does not exist. Skipping...')
 
@@ -94,12 +128,12 @@ def Eval(dataDict, inputSettings, runners, plot_curves=False):
         plot_alg_curves(outDir, recallDict, precisionDict, FPRDict, TPRDict, AUPRC, AUROC)
 
     #results = {'alg': alg_name, 'num_edges': num_edges, 'AUPRC': AUPRC, 'eAUPRC': eAUPRC, 'AUROC': AUROC, 'FMAX': FMAX,
-    results = {'alg': alg_name, 'num_edges': num_edges, 'AUPRC': AUPRC, 'AUROC': AUROC, 'FMAX': FMAX,
-    #results = {'alg': alg_name, 'num_edges': num_edges, 
-    'uePrec': uePrec, 'ueRec': ueRec,
+    results = {'alg': alg_name, 'num_edges': num_edges,
+               'AUPRC': AUPRC, 'AUROC': AUROC, 'FMAX': FMAX,
+               'ePrec': ePrec, 'eRec': eRec,
                 #'ePrec': ePrec, 'r0.1Prec': r0_1Prec, 'r0.15Prec': r0_15Prec, 'r0.2Prec': r0_2Prec}
-    #results = {'alg': alg_name, 'num_edges': num_edges, 'AUPRC': AUPRC, 'AUROC': AUROC, 'FMAX': FMAX,
-                'uAUPRC': uAUPRC, 'uAUROC': uAUROC, 'uFMAX': uFMAX
+               #'uAUPRC': uAUPRC, 'uAUROC': uAUROC, 'uFMAX': uFMAX,
+               #'uePrec': uePrec, 'ueRec': ueRec,
                 }
     return results
 
@@ -149,6 +183,8 @@ def get_subnetwork(trueEdgesDF, predDF, directed=True):
     predDF = predDF[predDF['Gene1'].isin(nodes) & predDF['Gene2'].isin(nodes)]
     # remove self edges
     predDF = predDF[predDF['Gene1'] != predDF['Gene2']]
+    # and drop rows with na
+    predDF.dropna(inplace=True)
     # take the absolute value of the prediction scores
     predDF['EdgeWeight'] = predDF['EdgeWeight'].apply(np.abs)
     predDF = predDF.sort_values('EdgeWeight', ascending=False)
@@ -160,8 +196,12 @@ def get_subnetwork(trueEdgesDF, predDF, directed=True):
     if directed is False:
         num_edges = len(trueEdgesDF)*2
     #print(num_edges)
-    score_at_num_edges = predDF.loc[num_edges-1]['EdgeWeight']
-    predDF = predDF[predDF['EdgeWeight'] >= score_at_num_edges]
+
+    # Use num True edges or the number of
+    # edges in the predicted dataframe, which ever is lower
+    maxk = min(predDF.shape[0], num_edges)
+    edgeWeightTopk = predDF.iloc[maxk-1]['EdgeWeight']
+    predDF = predDF[predDF['EdgeWeight'] >= edgeWeightTopk]
     # also, only get edges with a score > 0
     predDF = predDF[predDF['EdgeWeight'] > 0]
 
@@ -178,12 +218,17 @@ def compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True, earl
     #print(trueEdgesDF)
     if directed:
         PredEdgeDict = {'|'.join(p):0 for p in list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),r =2))}
-        for key in PredEdgeDict.keys():
-            subDF = predDF.loc[(predDF['Gene1'] == key.split('|')[0]) &
-                            (predDF['Gene2'] == key.split('|')[1])]
-            if len(subDF)>0:
-                PredEdgeDict[key] = np.abs(subDF.EdgeWeight.values[0])
-                num_recovered += 1 
+        predDF['Edges'] = predDF['Gene1'] + "|" + predDF['Gene2']
+        # limit the predicted edges to the genes that are in the ground truth
+        predDF = predDF[predDF['Edges'].isin(TrueEdgeDict)]
+        for edge, score in zip(predDF['Edges'], predDF['EdgeWeight']):
+            PredEdgeDict[edge] = np.abs(score)
+        #for key in PredEdgeDict.keys():
+        #    subDF = predDF.loc[(predDF['Gene1'] == key.split('|')[0]) &
+        #                    (predDF['Gene2'] == key.split('|')[1])]
+        #    if len(subDF)>0:
+        #        PredEdgeDict[key] = np.abs(subDF.EdgeWeight.values[0])
+        #        num_recovered += 1 
     else:
         PredEdgeDict = {'|'.join(p):0 for p in list(combinations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),r =2))}
         for key in PredEdgeDict.keys():
@@ -194,7 +239,8 @@ def compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True, earl
             if len(subDF)>0:
                 PredEdgeDict[key] = max(np.abs(subDF.EdgeWeight.values))
 
-    #print(len(PredEdgeDict))
+    # Combine into one dataframe
+    # to pass it to sklearn
     outDF = pd.DataFrame([TrueEdgeDict,PredEdgeDict]).T
     outDF.columns = ['TrueEdges','PredEdges']
     #fpr, tpr, thresholds = roc_curve(y_true=outDF['TrueEdges'],
@@ -219,12 +265,17 @@ def compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True, earl
             y_true=outDF['TrueEdges'], probas_pred=outDF['PredEdges'], pos_label=1)
         return tpr, fpr, prec, recall
     else:
-        auroc = roc_auc_score(y_true=outDF['TrueEdges'], y_score=outDF['PredEdges'])
+        # UPDATE 2019-08-10: use R for computing the AUPRC
+        prroc = importr('PRROC')
+        prCurve = prroc.pr_curve(scores_class0 = FloatVector(list(outDF['PredEdges'].values)), 
+                  weights_class0 = FloatVector(list(outDF['TrueEdges'].values)))
+        auprc = prCurve[2][0]
 
+        auroc = roc_auc_score(y_true=outDF['TrueEdges'], y_score=outDF['PredEdges'])
+        
         prec, recall, thresholds = precision_recall_curve(
             y_true=outDF['TrueEdges'], probas_pred=outDF['PredEdges'], pos_label=1)
-        auprc = auc(recall, prec)
-        #auroc = auc(fpr, tpr)
+        #auprc = auc(recall, prec)
         fmax = compute_fmax(prec, recall)
         return auprc, auroc, fmax
 

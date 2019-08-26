@@ -116,7 +116,7 @@ class Evaluation(object):
         '''
         for dataset in self.input_settings.datasets:              
             # need to limit the runners to those that share the input dataset
-            curr_runners = {i: r for i, r in evaluation.runners.items() if dataset['name'] in str(r.inputDir)}
+            curr_runners = {i: r for i, r in self.runners.items() if dataset['name'] in str(r.inputDir)}
             #EvalCurves(dataset, self.input_settings)
             results = Eval(dataset, self.input_settings, curr_runners)
             evalDF = pd.DataFrame(results)
@@ -152,8 +152,7 @@ class ConfigParser(object):
     of parameters for the pipeline
     '''
     @staticmethod
-    def parse(config_file_handle) -> Evaluation:
-        config_map = yaml.load(config_file_handle)
+    def parse(config_map) -> Evaluation:
         return Evaluation(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),
@@ -224,28 +223,35 @@ def parse_arguments():
     return opts
 
 # In[ ]:
-
-
-if __name__ == "__main__":
-    opts = parse_arguments()
-    with open(opts.config, 'r') as conf:
-        evaluation = ConfigParser.parse(conf)
+def main(config_map, opts):
+    evaluation = ConfigParser.parse(config_map)
     print("%d total runners" % (len(evaluation.runners)))
     #if len(evaluation.runners) > 500 and opts.eval_only is False:
     #    sys.exit("Too many runners. quitting")
     print('Started running methods')
 
-    for idx in range(len(evaluation.runners)):
-        evaluation.runners[idx].generateInputs()
-
     if opts.eval_only is False:
+        for idx in range(len(evaluation.runners)):
+            evaluation.runners[idx].generateInputs()
+
         for idx in range(len(evaluation.runners)):
             status = evaluation.runners[idx].run()
             if status != 'already_exists':
                 evaluation.runners[idx].parseOutput()
+    else:
+        for idx in range(len(evaluation.runners)):
+            evaluation.runners[idx].setupParams()
     print("Finished running")
 
     evaluation.evaluate_runners(postfix=opts.postfix, forced=opts.force_eval)
 
     print('Evaluation complete')
+
+
+if __name__ == "__main__":
+    opts = parse_arguments()
+    config_file = opts.config
+    with open(config_file, 'r') as conf:
+        config_map = yaml.load(conf)
+    main(config_map, opts)
 

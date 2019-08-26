@@ -15,54 +15,20 @@ import src.scribeRunner as SCRIBE
 from pathlib import Path
 
 
-InputMapper = {'SCODE':SCODE.generateInputs,
-               'SINCERITIES':SINCERITIES.generateInputs,
-               'SCNS':SCNS.generateInputs,
-               'PIDC':PIDC.generateInputs,
-               'GRNVBEM':GRNVBEM.generateInputs,
-               'GENIE3':GENIE3.generateInputs,
-               'GRNBOOST2':GRNBOOST2.generateInputs,
-               'LEAP':LEAP.generateInputs,
-               'JUMP3':JUMP3.generateInputs,
-               'PPCOR':PPCOR.generateInputs,
-               'GRISLI':GRISLI.generateInputs,
-               'SCINGE':SCINGE.generateInputs,
-               'SCRIBE':SCRIBE.generateInputs}
-
-
-
-
-
-AlgorithmMapper = {'SCODE':SCODE.run,
-            'SINCERITIES':SINCERITIES.run,
-            'SCNS':SCNS.run,
-            'PIDC':PIDC.run,
-            'GRNVBEM':GRNVBEM.run,
-            'GENIE3':GENIE3.run,
-            'GRNBOOST2':GRNBOOST2.run,
-            'LEAP':LEAP.run,
-            'JUMP3':JUMP3.run,
-            'PPCOR':PPCOR.run,
-            'GRISLI':GRISLI.run,
-            'SCINGE':SCINGE.run,
-            'SCRIBE':SCRIBE.run}
-
-
-
-
-OutputParser = {'SCODE':SCODE.parseOutput, 
-            'SINCERITIES':SINCERITIES.parseOutput,
-            'SCNS':SCNS.parseOutput,
-            'PIDC':PIDC.parseOutput,
-            'GRNVBEM':GRNVBEM.parseOutput,
-            'GENIE3':GENIE3.parseOutput,
-            'GRNBOOST2':GRNBOOST2.parseOutput,
-            'LEAP': LEAP.parseOutput,
-            'JUMP3': JUMP3.parseOutput,
-            'PPCOR':PPCOR.parseOutput,
-            'GRISLI':GRISLI.parseOutput,
-            'SCINGE':SCINGE.parseOutput,
-            'SCRIBE':SCRIBE.parseOutput}
+LibMapper = {
+    'SCODE':SCODE,
+    'SINCERITIES':SINCERITIES,
+    'SCNS':SCNS,
+    'PIDC':PIDC,
+    'GRNVBEM':GRNVBEM,
+    'GENIE3':GENIE3,
+    'GRNBOOST2':GRNBOOST2,
+    'LEAP':LEAP,
+    'JUMP3':JUMP3,
+    'PPCOR':PPCOR,
+    'GRISLI':GRISLI,
+    'SCINGE':SCINGE,
+    'SCRIBE':SCRIBE}
 
 
 
@@ -78,14 +44,15 @@ class Runner(object):
         self.params = params['params']
         self.exprData = params['exprData']
         self.cellData = params['cellData']
-        
-    def generateInputs(self):
-        InputMapper[self.name](self)
-        
-        
-    def run(self):
-        return AlgorithmMapper[self.name](self)
 
+    def generateInputs(self):
+        LibMapper[self.name].generateInputs(self)
+
+    def run(self):
+        return LibMapper[self.name].run(self)
 
     def parseOutput(self):
-        OutputParser[self.name](self)
+        LibMapper[self.name].parseOutput(self)
+
+    def setupParams(self):
+        LibMapper[self.name].setupParams(self)
