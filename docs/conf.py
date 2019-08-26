@@ -19,14 +19,15 @@ import sys
 
 sys.path.insert(0, os.path.abspath('./'))
 sys.path.insert(0, os.path.abspath('../'))
+sys.path.insert(0, os.path.abspath('../../'))
 # sys.path.insert(0, os.path.abspath('../BoolODE/'))
 # sys.path.insert(0, os.path.abspath('../BoolODE/src/'))
-sys.path.insert(0, os.path.abspath('/home/jamogh/Documents/Beeline/BLEval/'))
-sys.path.insert(0, os.path.abspath('/home/jamogh/Documents/Beeline/BLPlot/'))
-sys.path.insert(0, os.path.abspath('/home/jamogh/Documents/Beeline/BLRun/'))
-sys.path.insert(0, os.path.abspath('/home/jamogh/Documents/Beeline/'))
-sys.path.insert(0, os.path.abspath('/home/jamogh/Documents/Beeline-test/BoolODE/src/'))
-sys.path.insert(0, os.path.abspath('/home/jamogh/Documents/Beeline-test/BoolODE/'))
+sys.path.insert(0, os.path.abspath('/home/adyprat/Benchmarking/docs/master/BLEval/'))
+sys.path.insert(0, os.path.abspath('/home/adyprat/Benchmarking/docs/master/BLPlot/'))
+sys.path.insert(0, os.path.abspath('/home/adyprat/Benchmarking/docs/master/BLRun/'))
+sys.path.insert(0, os.path.abspath('/'))
+sys.path.insert(0, os.path.abspath('/home/adyprat/Benchmarking/docs/BoolODE/src/'))
+sys.path.insert(0, os.path.abspath('/home/adyprat/Benchmarking/docs/BoolODE/'))
 
 
 autodoc_mock_imports = ['_tkinter']

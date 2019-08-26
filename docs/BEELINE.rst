@@ -56,21 +56,21 @@ To compute ranked list of edges, run
 
 .. code:: python
 
-          python BLRun.py --config config-files/config.yaml
+          python BLRunner.py --config config-files/config.yaml
     
 To compute areas under the ROC and PR curves using the BEELINE's
 evaluation pipeline, run
 
 .. code:: bash
 
-          python BLEvalAggregator.py --config config-files/config.yaml --auc
+          python BLEvaluator.py --config config-files/config.yaml --auc
 
 To display the complete list of
 evaluation options, run
 
 .. code:: bash
           
-          python BLEvalAggregator.py --help
+          python BLEvaluator.py --help
 
 Tutorial
 --------

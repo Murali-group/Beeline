@@ -12,10 +12,12 @@ input_settings:
     #   name: Name of the dataset. May be used in logging or other
     #       messages written during execution
     #
-    #   ex_filename: scRNA-Seqexpression file name
-    #
-    #   pt_filename: a file containing pseudotime ordering
-    #
+    #   exprData: scRNA-Seq expression data file. Cells are along the
+    #            columns and genes are along the rows.
+    #   cellData: a file containing pseudotime ordering, or any other 
+    #             information about cells.
+    #   trueEdges: Name of the refrence network file in the
+    #              edge list format. Needed for evaluation.
     datasets:
         - name: "GSD"
           exprData: "ExpressionData.csv"

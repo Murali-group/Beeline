@@ -6,8 +6,11 @@ import numpy as np
 def generateInputs(RunnerObj):
     '''
     Function to generate desired inputs for GRNVBEM.
-    If the folder/files under RunnerObj.datadir exist, 
-    this function will not do anything.
+    It will create the input folder at RunnerObj.dataset.name/GRNVBEM/ if it
+    does not exist already. The input folder will contain an ExpressionData.csv with
+    cells ordered according to the pseudotime along the columns, and genes along
+    the rows. If the files already exist, this function will overwrite it.
+    
     '''
     if not RunnerObj.inputDir.joinpath("GRNVBEM").exists():
         print("Input folder for GRNVBEM does not exist, creating input folder...")
