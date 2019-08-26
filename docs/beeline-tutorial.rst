@@ -1,5 +1,5 @@
 
-This tutorial will first explain the structure of the Beeline repository,
+This tutorial will first explain the structure of the BEELINE repository,
 with a walkthrough of the different components that the user can customize.
 
 

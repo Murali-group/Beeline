@@ -51,15 +51,23 @@ terminal
           
 .. note:: This step will take a while!
 
-   
-To compute ranked list of edges, run
+We recommend using `Anaconda <https://www.anaconda.com>`_ for Python. Run the following command to automatically create an Anaconda virtual environment named BEELINE from requirements.txt and install necessary libraries required to run BEELINE
+
+.. code:: bash
+
+    . setupAnacondaVENV.sh
+    
+
+Alternatively, one can create a virtual environment in Python using venv from requirements.txt as detailed `here <https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/>`_.
+
+
+To compute proposed reconstructions using the 12 GRN algorithms on the example dataset, run 
 
 .. code:: python
 
           python BLRunner.py --config config-files/config.yaml
     
-To compute areas under the ROC and PR curves using the BEELINE's
-evaluation pipeline, run
+To compute areas under the ROC and PR curves for the proposed reconstructions, run
 
 .. code:: bash
 
