@@ -48,7 +48,14 @@ def main(config_map, opts):
         print("\t%d TFs, %d targets, %d edges"  % (num_tfs, num_targets, len(net_df)))
 
         expr_genes = set(expr_df.index.values)
+
         net_df = net_df[(net_df['Gene1'].isin(expr_genes) & net_df['Gene2'].isin(expr_genes))]
+        
+                
+        if (opts.tfs_only):
+            net_df = net_df[(net_df['Gene2'].isin(net_df['Gene1'].unique()))]            
+            
+            
         if len(net_df) == 0:
             print("No matching node names found. Please make sure the same namespace is used.")
             print("\tExample expr node: %s" % (list(expr_genes)[0]))
@@ -58,16 +65,24 @@ def main(config_map, opts):
             num_tfs, num_targets = net_df[['Gene1','Gene2']].nunique()
             print("\t# TFs\t# targets\t# edges")
             print("\t%s\t%s\t%d"  % (num_tfs, num_targets, len(net_df)))
+
+            outFile = open('stats-new.txt','a')
+            
             if opts.stats_only:
+                
+                outFile.write("\t%s\t%s\t%d\t%s\t%s\t%s\n"  % (num_tfs, num_targets, len(net_df), dataset['name'].split('/genecutoff-0.01_BF_')[0],dataset['name'].split('/genecutoff-0.01_BF_')[1], opts.ref_net_file))
                 continue
             # and write it to a file
+
             print("\nwriting %s" % (net_file))
             net_df.to_csv(net_file, index=False)
 
+            
             # don't need to write the yaml file
             # add an option to write it?
             # can simply pass it to BLEvalAggregator.py
             print("Running BLEvalAggregator.py")
+            print(opts)
             BLeval.main(config_map, opts)
 
             # after its done, need to move the evaluation file
@@ -75,14 +90,15 @@ def main(config_map, opts):
             # alternatively we could change the output directory in the config map
 
             net_name = opts.net_name if opts.net_name is not None else opts.ref_net_file.split('/')[-1].replace('.csv','')
-            out_file = "%s/eval.csv" % (input_dir.replace("inputs/","outputs/"))
+            out_file = input_dir.replace("inputs/","outputs/")+"/outStats/"+str(opts.net_name)+".csv"
+            print(out_file)
             all_df = pd.DataFrame()
             #for measure in ["AUPRC", "AUROC", "EPr", "Jaccard", "Times"]:
-            for measure in ["AUPRC", "AUROC", "EPr", "Times"]:
+            for measure in ["AUPRC", "EPr", "Times","trueEC","possibleEC","nodeCnt","TFCnt"]:
                 measure_file = "%s/%s-%s.csv" % (
                     input_dir.replace("inputs/","outputs/"), out_settings['output_prefix'], measure)
+                
                 df = pd.read_csv(measure_file, header=0)
-                print(df)
                 df.columns = ['algorithm', 'value']
                 df['measure'] = measure
                 df['dataset'] = dataset['name']
@@ -117,7 +133,7 @@ def main(config_map, opts):
                 #fcntl.flock(out, fcntl.LOCK_EX)
                 all_df.to_csv(out, header=header, index=False)
                 #fcntl.flock(out, fcntl.LOCK_UN)
-
+    #outFile.close()
     print("Finished")
 
 
@@ -139,13 +155,19 @@ def setup_parser():
     #    help='Run the methods using the generated config file')
     parser.add_argument('--alg', action="append", 
         help="Name of algorithm to run. Must match the output file path. May specify multiple. Default is whatever is set to true in the config file")
+    
     parser.add_argument('--ref-net-file', type=str, default="GeneOrdering.csv",
         help='Path to the ground truth refNetwork.csv file. A new file will be subset to the genes in the ExpressionData.csv and written.')
-    parser.add_argument('--net-name', 
+    
+    parser.add_argument('--net-name', type = str, 
         help='The name to give this network for evaluating. Default is the file name.')
+    
     parser.add_argument('--stats-only', action="store_true", default=False,
         help='Only print out the stats of the # edges and such')
 
+    
+    parser.add_argument('--tfs-only', action="store_true", default=False,
+        help='Only use TFs which have outgoing edges as nodes.')
     ## most variable genes options
     #parser.add_argument('--most-variable-genes', '-V', action="store_true", default=False,
     #    help='Select the most variable genes and subset the Expression Data.csv and refNetwork.csv to those genes')
@@ -167,6 +189,7 @@ def setup_parser():
 if __name__ == "__main__":
     parser = setup_parser()
     opts = parser.parse_args()
+    
     # BLEval takes the opts, so keep it as opts
     #kwargs = vars(opts)
     config_file = opts.config
@@ -174,3 +197,4 @@ if __name__ == "__main__":
         config_map = yaml.load(conf)
 
     main(config_map, opts)
+    
