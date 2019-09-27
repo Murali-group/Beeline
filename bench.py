@@ -110,7 +110,7 @@ class Evaluation(object):
                     runner.run(output_dir=base_output_dir)
 
 
-    def evaluate_runners(self, postfix='', forced=False):
+    def evaluate_runners(self, TFEdges=False, postfix='', forced=False):
         '''
         Write AUPRC and AUROC summary statistics for all algorithms
         '''
@@ -118,7 +118,7 @@ class Evaluation(object):
             # need to limit the runners to those that share the input dataset
             curr_runners = {i: r for i, r in self.runners.items() if dataset['name'] in str(r.inputDir)}
             #EvalCurves(dataset, self.input_settings)
-            results = Eval(dataset, self.input_settings, curr_runners)
+            results = Eval(dataset, self.input_settings, curr_runners, TFEdges=TFEdges)
             evalDF = pd.DataFrame(results)
             #print(evalDF.head())
 
@@ -202,6 +202,8 @@ def get_parser() -> argparse.ArgumentParser:
 
     parser.add_argument('--config', default='config.yaml',
         help='Configuration file')
+    parser.add_argument('--tfs', action="store_true", default=False,
+        help="Only consider edges from TF to gene.")
     parser.add_argument('--eval-only', action='store_true', default=False,
         help='Skip running the methods and only evaluate')
     parser.add_argument('--force-eval', action='store_true', default=False,
@@ -243,7 +245,7 @@ def main(config_map, opts):
             evaluation.runners[idx].setupParams()
     print("Finished running")
 
-    evaluation.evaluate_runners(postfix=opts.postfix, forced=opts.force_eval)
+    evaluation.evaluate_runners(TFEdges=opts.tfs, postfix=opts.postfix, forced=opts.force_eval)
 
     print('Evaluation complete')
 
