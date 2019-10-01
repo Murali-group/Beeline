@@ -184,6 +184,8 @@ def setup_parser():
         help="Name of algorithm to run. Must match the output file path. May specify multiple. Default is whatever is set to true in the config file")
     parser.add_argument('--ref-net-file', type=str, default="GeneOrdering.csv",
         help='Path to the ground truth refNetwork.csv file. A new file will be subset to the genes in the ExpressionData.csv and written.')
+    parser.add_argument('--tfs', action="store_true", default=False,
+        help="Only consider edges from TF to gene.")
     parser.add_argument('--net-name', 
         help='The name to give this network for evaluating. Default is the file name.')
     parser.add_argument('--stats-only', action="store_true", default=False,

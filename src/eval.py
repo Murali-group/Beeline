@@ -11,6 +11,7 @@ from itertools import product, combinations_with_replacement, permutations, comb
 from tqdm import tqdm
 from rpy2.robjects.packages import importr
 from rpy2.robjects import FloatVector
+from src.BLEval.computeEarlyPrec import computeEarlyPrec
 
 
 def Eval(dataDict, inputSettings, runners, plot_curves=False, TFEdges=False):
@@ -93,7 +94,7 @@ def Eval(dataDict, inputSettings, runners, plot_curves=False, TFEdges=False):
                 TPRDict[key] = tpr
 
             # directed
-            auprc, auroc, fmax = compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=False)
+            auprc, auroc, fmax = compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True)
             AUPRC[key] = auprc
             AUROC[key] = auroc
             FMAX[key] = fmax
@@ -106,21 +107,26 @@ def Eval(dataDict, inputSettings, runners, plot_curves=False, TFEdges=False):
             #uAUROC[key] = auroc
             #uFMAX[key] = fmax
 
-            # directed early
-            eprec, erec = compute_eval_measures(
-                trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True, TFEdges=TFEdges)
+            # directed early - now using the master branch's implementation
+            eprec, erec = computeEarlyPrec(trueEdgesDF, predDF, TFEdges=TFEdges)
             ePrec[key], eRec[key] = eprec, erec
-            #eprec, (r0_1prec, r0_15prec, r0_2prec) = compute_eval_measures(
-            #    trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True, recall_to_test=[0.1, 0.15, 0.2])
-            #ePrec[key], r0_1Prec[key], r0_15Prec[key], r0_2Prec[key] = eprec, r0_1prec, r0_15prec, r0_2prec
 
-            # undirected early
-            #eprec, erec = compute_eval_measures(
-            #    trueEdgesDF, uTrueEdgeDict, predDF, directed=False, early=True)
-            #uePrec[key], ueRec[key] = eprec, erec
-            #eprec, (r0_1prec, r0_15prec, r0_2prec) = compute_eval_measures(
-            #    trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True, recall_to_test=[0.1, 0.15, 0.2])
-            #ePrec[key], r0_1Prec[key], r0_15Prec[key], r0_2Prec[key] = eprec, r0_1prec, r0_15prec, r0_2prec
+#            # directed early
+#            eprec, erec = compute_eval_measures(
+#                trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True, TFEdges=TFEdges)
+#            ePrec[key], eRec[key] = eprec, erec
+#            #eprec, (r0_1prec, r0_15prec, r0_2prec) = compute_eval_measures(
+#            #    trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True, recall_to_test=[0.1, 0.15, 0.2])
+#            #ePrec[key], r0_1Prec[key], r0_15Prec[key], r0_2Prec[key] = eprec, r0_1prec, r0_15prec, r0_2prec
+#
+#            # undirected early
+#            #eprec, erec = compute_eval_measures(
+#            #    trueEdgesDF, uTrueEdgeDict, predDF, directed=False, early=True)
+#            #uePrec[key], ueRec[key] = eprec, erec
+#            #eprec, (r0_1prec, r0_15prec, r0_2prec) = compute_eval_measures(
+#            #    trueEdgesDF, TrueEdgeDict, predDF, directed=True, early=True, recall_to_test=[0.1, 0.15, 0.2])
+#            #ePrec[key], r0_1Prec[key], r0_15Prec[key], r0_2Prec[key] = eprec, r0_1prec, r0_15prec, r0_2prec
+            # just computing the early precision to save a little time
 
         else:
             print(runner.final_ranked_edges, ' does not exist. Skipping...')
@@ -180,89 +186,91 @@ def plot_alg_curves(outDir, recallDict, precisionDict, FPRDict, TPRDict, AUPRC, 
 
 #def get_subnetwork(trueEdgesDF, predDF, directed=True):
 #
-def compute_early_prec(trueEdgesDF, predDF, directed=True, TFEdges=False):
-    if TFEdges:
-        # Consider only edges going out of TFs
-
-        # Get a list of all possible TF to gene interactions 
-        uniqueNodes = np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']])
-        possibleEdges_TF = set(product(set(trueEdgesDF.Gene1),set(uniqueNodes)))
-
-        # Get a list of all possible interactions 
-        possibleEdges_noSelf = set(permutations(uniqueNodes, r = 2)) 
-
-        # Find intersection of above lists to ignore self edges
-        # TODO: is there a better way of doing this?
-        possibleEdges = possibleEdges_TF.intersection(possibleEdges_noSelf)
-
-        # get the True Edges
-        TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
-        trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
-        trueEdges = trueEdges[trueEdges.isin(TrueEdgeDict)]
-        trueEdges = set(list(trueEdges.values))
-        print("\nEdges considered ", len(trueEdges))
-        numEdges = len(trueEdges)
-
-        # limit the predicted edges to the genes that are in the ground truth
-        #predDF['Edges'] = predDF['Gene1'] + "|" + predDF['Gene2']
-        #predDF = predDF[predDF['Edges'].isin(TrueEdgeDict)]
-
-        all_tfs = set(u for u,v in possibleEdges)
-        all_target_nodes = set(v for u,v in possibleEdges)
-        predDF = predDF[predDF['Gene1'].isin(all_tfs) & predDF['Gene2'].isin(all_target_nodes)]
-
-    else:
-        trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
-        trueEdges = set(list(trueEdges.values))
-        numEdges = len(trueEdges)   
-
-        # first limit the edges in the predDF to those present in the trueEdgesDF
-        nodes = np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']])
-        predDF = predDF[predDF['Gene1'].isin(nodes) & predDF['Gene2'].isin(nodes)]
-    # remove self edges
-    predDF = predDF[predDF['Gene1'] != predDF['Gene2']]
-    # and drop rows with na
-    predDF.dropna(inplace=True)
-    # take the absolute value of the prediction scores
-    predDF['EdgeWeight'] = predDF['EdgeWeight'].apply(np.abs)
-    predDF = predDF.sort_values('EdgeWeight', ascending=False)
-    predDF = predDF.reset_index()
-    #print(len(predDF))
-    # limit the predDF to the same size as the trueEdgesDF
-    # keep ties
-    #num_edges = len(trueEdgesDF)
-    #if directed is False:
-    #    num_edges = len(trueEdgesDF)*2
-    #print(num_edges)
-
-    # Use num True edges or the number of
-    # edges in the predicted dataframe, which ever is lower
-    maxk = min(predDF.shape[0], numEdges)
-    if maxk == 0:
-        print("No predicted edges are in the trueEdges. Skipping")
-        return 0, 0
-    edgeWeightTopk = predDF.iloc[maxk-1]['EdgeWeight']
-    predDF = predDF[predDF['EdgeWeight'] >= edgeWeightTopk]
-    # also, only get edges with a score > 0
-    predDF = predDF[predDF['EdgeWeight'] > 0]
-
-    # now compute the early precision
-    rankedEdges = predDF['Gene1'] + "|" + predDF['Gene2']
-    rankedEdges = set(list(rankedEdges.values))
-    intersectionSet = rankedEdges & trueEdges
-    # fraction of correctly predicted edges
-    Eprec = len(intersectionSet) / float(len(rankedEdges))
-    # fraction of recovered edges
-    Erec = len(intersectionSet) / float(len(trueEdges))
-    #print(len(intersectionSet), len(rankedEdges), len(trueEdges), Eprec, Erec) 
-    return Eprec, Erec
+# now using the master branch's implementation
+#def compute_early_prec(trueEdgesDF, predDF, directed=True, TFEdges=False):
+#    if TFEdges:
+#        # Consider only edges going out of TFs
+#
+#        # Get a list of all possible TF to gene interactions 
+#        uniqueNodes = np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']])
+#        possibleEdges_TF = set(product(set(trueEdgesDF.Gene1),set(uniqueNodes)))
+#
+#        # Get a list of all possible interactions 
+#        possibleEdges_noSelf = set(permutations(uniqueNodes, r = 2)) 
+#
+#        # Find intersection of above lists to ignore self edges
+#        # TODO: is there a better way of doing this?
+#        possibleEdges = possibleEdges_TF.intersection(possibleEdges_noSelf)
+#
+#        # get the True Edges
+#        TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
+#        trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
+#        trueEdges = trueEdges[trueEdges.isin(TrueEdgeDict)]
+#        trueEdges = set(list(trueEdges.values))
+#        print("\nEdges considered ", len(trueEdges))
+#        numEdges = len(trueEdges)
+#
+#        # limit the predicted edges to the genes that are in the ground truth
+#        #predDF['Edges'] = predDF['Gene1'] + "|" + predDF['Gene2']
+#        #predDF = predDF[predDF['Edges'].isin(TrueEdgeDict)]
+#
+#        all_tfs = set(u for u,v in possibleEdges)
+#        all_target_nodes = set(v for u,v in possibleEdges)
+#        predDF = predDF[predDF['Gene1'].isin(all_tfs) & predDF['Gene2'].isin(all_target_nodes)]
+#
+#    else:
+#        trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
+#        trueEdges = set(list(trueEdges.values))
+#        numEdges = len(trueEdges)   
+#
+#        # first limit the edges in the predDF to those present in the trueEdgesDF
+#        nodes = np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']])
+#        predDF = predDF[predDF['Gene1'].isin(nodes) & predDF['Gene2'].isin(nodes)]
+#    # remove self edges
+#    predDF = predDF[predDF['Gene1'] != predDF['Gene2']]
+#    # and drop rows with na
+#    predDF.dropna(inplace=True)
+#    # take the absolute value of the prediction scores
+#    predDF['EdgeWeight'] = predDF['EdgeWeight'].apply(np.abs)
+#    predDF = predDF.sort_values('EdgeWeight', ascending=False)
+#    predDF = predDF.reset_index()
+#    #print(len(predDF))
+#    # limit the predDF to the same size as the trueEdgesDF
+#    # keep ties
+#    #num_edges = len(trueEdgesDF)
+#    #if directed is False:
+#    #    num_edges = len(trueEdgesDF)*2
+#    #print(num_edges)
+#
+#    # Use num True edges or the number of
+#    # edges in the predicted dataframe, which ever is lower
+#    maxk = min(predDF.shape[0], numEdges)
+#    if maxk == 0:
+#        print("No predicted edges are in the trueEdges. Skipping")
+#        return 0, 0
+#    edgeWeightTopk = predDF.iloc[maxk-1]['EdgeWeight']
+#    predDF = predDF[predDF['EdgeWeight'] >= edgeWeightTopk]
+#    # also, only get edges with a score > 0
+#    predDF = predDF[predDF['EdgeWeight'] > 0]
+#
+#    # now compute the early precision
+#    rankedEdges = predDF['Gene1'] + "|" + predDF['Gene2']
+#    rankedEdges = set(list(rankedEdges.values))
+#    intersectionSet = rankedEdges & trueEdges
+#    # fraction of correctly predicted edges
+#    Eprec = len(intersectionSet) / float(len(rankedEdges))
+#    # fraction of recovered edges
+#    Erec = len(intersectionSet) / float(len(trueEdges))
+#    #print(len(intersectionSet), len(rankedEdges), len(trueEdges), Eprec, Erec) 
+#    return Eprec, Erec
 
 
 def compute_eval_measures(trueEdgesDF, TrueEdgeDict, predDF, directed=True,
-                          early=False, curves=False, recall_to_test=None, TFEdges=False):
-    if early:
-        p, r = compute_early_prec(trueEdgesDF, predDF, directed=directed, TFEdges=TFEdges)
-        return p, r
+                          curves=False, recall_to_test=None):
+    # replaced by the master branch code
+    #if early:
+    #    p, r = compute_early_prec(trueEdgesDF, predDF, directed=directed, TFEdges=TFEdges)
+    #    return p, r
     num_recovered = 0
     #print("True:")
     #print(len(trueEdgesDF))
