@@ -307,7 +307,7 @@ specifying the inputs and the algorithms to run, passed using the
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLRunner</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">PATH</span><span class="o">/</span><span class="n">TO</span><span class="o">/</span><span class="n">CONFIG</span><span class="o">/</span><span class="n">FILE</span>
 </pre></div>
 </div>
-<p>For details about the implementation of <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a> , see <a class="reference internal" href="BEELINE.html#blrunguide"><span class="std std-ref">BLRun Details</span></a> .</p>
+<p>For details about the implementation of <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a> , see <span class="xref std std-ref">blrunguide</span> .</p>
 </div>
 <div class="section" id="running-the-evaluation-scripts">
 <h1>Running the evaluation scripts<a class="headerlink" href="#running-the-evaluation-scripts" title="Permalink to this headline">¶</a></h1>
@@ -325,8 +325,46 @@ use the following command</p>
                            <span class="o">--</span><span class="n">motifs</span> \ <span class="c1"># calls the computeNetMotifs script</span>
 </pre></div>
 </div>
-<p>For a full list of available evaluation functions and their corresponding options to
-be passed to <code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code>, see <a class="reference internal" href="BEELINE.html#blevalguide"><span class="std std-ref">BLEval Details</span></a> .</p>
+<p>The full list of available evaluation functions and their corresponding options to
+be passed to <code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code> are given below:</p>
+<table border="1" class="colwidths-given docutils">
+<colgroup>
+<col width="38%" />
+<col width="63%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>-h, –help</td>
+<td>show the help message and exit</td>
+</tr>
+<tr class="row-even"><td>-c, –config &lt;file-name&gt;</td>
+<td>Configuration file containing list of datasets, algorithms, and output specifications.</td>
+</tr>
+<tr class="row-odd"><td>-a, –auc</td>
+<td>Compute median of areas under Precision-Recall and ROC curves. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeAUC" title="BLEval.computeAUC"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeAUC</span></code></a>.</td>
+</tr>
+<tr class="row-even"><td>-j, –jaccard</td>
+<td>Compute median Jaccard index of predicted top-k networks
+for each algorithm for a given set of datasets generated from the same
+ground truth network. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeJaccard" title="BLEval.computeJaccard"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeJaccard</span></code></a>.</td>
+</tr>
+<tr class="row-odd"><td>-r, –spearman</td>
+<td>Compute median Spearman Corr. of predicted edges for each algorithm for a given set of datasets generated from the same ground truth network.  Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeSpearman" title="BLEval.computeSpearman"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeSpearman</span></code></a>.</td>
+</tr>
+<tr class="row-even"><td>-t, –time</td>
+<td>Analyze time taken by each algorithm for a. Calls <a class="reference internal" href="BLEval.html#module-BLEval.parseTime" title="BLEval.parseTime"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.parseTime</span></code></a>.</td>
+</tr>
+<tr class="row-odd"><td>-e, –epr</td>
+<td>Compute median early precision. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeEarlyPrec" title="BLEval.computeEarlyPrec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeEarlyPrec</span></code></a>.</td>
+</tr>
+<tr class="row-even"><td>-s, –sepr</td>
+<td>Analyze median (signed) early precision for activation and inhibitory edges. <a class="reference internal" href="BLEval.html#module-BLEval.computeSignedEPrec" title="BLEval.computeSignedEPrec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeSignedEPrec</span></code></a>.</td>
+</tr>
+<tr class="row-odd"><td>-m, –motifs</td>
+<td>Compute network motifs in the predicted top-k networks. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeNetMotifs" title="BLEval.computeNetMotifs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeNetMotifs</span></code></a></td>
+</tr>
+</tbody>
+</table>
+<p>For details about the implementation of <a class="reference internal" href="BLEval.html#module-BLEval" title="BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval</span></code></a> , see <a class="reference internal" href="beeline-developer.html#blevalguide"><span class="std std-ref">Adding a new evaluation technique</span></a> .</p>
 </div>
 
 

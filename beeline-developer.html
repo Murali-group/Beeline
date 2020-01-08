@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>BLRun Details &mdash; BEELINE  documentation</title>
+  <title>Adding a new GRN inference method &mdash; BEELINE  documentation</title>
   
 
   
@@ -129,7 +129,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>BLRun Details</li>
+      <li>Adding a new GRN inference method</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -148,83 +148,73 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="blrun-details">
-<span id="blrunguide"></span><h1>BLRun Details<a class="headerlink" href="#blrun-details" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">BLRunner.py</span></code> creates a <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object for each algorithm
-specified in the config file. Each <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object should contain three
-modules</p>
+  <p id="blrunguide">Please follow the following steps to add a new GRN inferenmence method to BEELINE.</p>
+<div class="section" id="adding-a-new-grn-inference-method">
+<h1>Adding a new GRN inference method<a class="headerlink" href="#adding-a-new-grn-inference-method" title="Permalink to this headline">¶</a></h1>
+<p>In order to ensure easy set-up and portability, all the GRN algorithms in BEELINE are provided within their own separate Docker instances. This also avoids conflicting libraries/software versions that may arise from the GRN algorithm implmentations. More resources on Docker can be found <a class="reference external" href="https://docs.docker.com/get-started/resources/">here</a>. In order to add a new GRN method to BEELINE, you will need the following components.</p>
 <ol class="arabic simple">
-<li><code class="docutils literal notranslate"><span class="pre">generateInputs()</span></code> : This function reads the three input data
-files, and processes them into the format required by the given
-algorithm</li>
-<li><code class="docutils literal notranslate"><span class="pre">run()</span></code> : A function to construct a system command with the
-appropriate command line parameters to be passed to the docker
-container in order to run a given algorithm</li>
-<li><code class="docutils literal notranslate"><span class="pre">parseOutput()</span></code> : A function to read the algorithm-specific
-output and reformat it into a standard format</li>
+<li><strong>Create a Dockerfile:</strong> To create a Docker image for your GRN algorithm locally, you will need to start with a “Dockerfile” that contains necessary software specifications and commands listed in a specific order from top to bottom. <a class="reference external" href="https://github.com/Murali-group/Beeline/tree/master/Algorithms/">BEELINE</a> currently provides Dockerfiles for GRN implementations in <a class="reference external" href="https://github.com/Murali-group/Beeline/tree/master/Algorithms/ARBORETO">Python</a>, <a class="reference external" href="https://github.com/Murali-group/Beeline/tree/master/Algorithms/PPCOR">R</a>, <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/Algorithms/GRISLI/Dockerfile">MATLAB</a>, and <a class="reference external" href="https://github.com/Murali-group/Beeline/tree/master/Algorithms/PIDC">Julia</a>. These Dockerfiles can be used as a template for adding other GRN algorithms. Note that in order to run MATLAB-based code, we recommend first builing a standalone MATLAB application for your GRN algorithm  <a class="reference external" href="https://www.mathworks.com/help/compiler/create-and-install-a-standalone-application-from-matlab-code.html">MATLAB Runtime</a> and then setting up your Dockerfile to simply execute the pre-compiled binaries. For example, the <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/Algorithms/PPCOR/Dockerfile">Dockerfile</a> using R which runs the script <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/Algorithms/PPCOR/runPPCOR.R">runPPCOR.R</a> within the Docker container is as follows:</li>
 </ol>
-<p>The evaluation scripts in the final step of the pipeline expect the
-inferred networks from each algorithm to be a comma-separated file
-with the following format:</p>
+<div class="code Dockerfile highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">FROM</span> <span class="n">r</span><span class="o">-</span><span class="n">base</span><span class="p">:</span><span class="mf">3.5</span><span class="o">.</span><span class="mi">3</span> <span class="c1">#This is the base image upon which necessary libraries are installed</span>
+
+<span class="n">LABEL</span> <span class="n">maintainer</span> <span class="o">=</span> <span class="s2">&quot;Aditya Pratapa &lt;adyprat@vt.edu&gt;&quot;</span> <span class="c1">#Additional information</span>
+
+<span class="n">RUN</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">update</span> <span class="o">&amp;&amp;</span> <span class="n">apt</span><span class="o">-</span><span class="n">get</span> <span class="n">install</span> <span class="n">time</span> <span class="c1">#Installl time command to compute time taken</span>
+
+<span class="n">USER</span> <span class="n">root</span> <span class="c1">#Set main user as root to avoid permission issues</span>
+
+<span class="n">WORKDIR</span> <span class="o">/</span> <span class="c1">#Sets current working directory</span>
+
+<span class="n">RUN</span> <span class="n">R</span> <span class="o">-</span><span class="n">e</span> <span class="s2">&quot;install.packages(&#39;https://cran.r-project.org/src/contrib/ppcor_1.1.tar.gz&#39;, type = &#39;source&#39;)&quot;</span> <span class="c1">#Installs a specific version of PPCOR package</span>
+
+<span class="n">COPY</span> <span class="n">runPPCOR</span><span class="o">.</span><span class="n">R</span> <span class="o">/</span> <span class="c1">#Copy the main R script which will perform necessary GRN computations</span>
+
+<span class="n">RUN</span> <span class="n">mkdir</span> <span class="n">data</span><span class="o">/</span> <span class="c1">#Make a directory to mount the folder containing input files</span>
+</pre></div>
+</div>
+<p>The Dockerfile must then be placed under the <a class="reference external" href="https://github.com/Murali-group/Beeline/tree/master/Algorithms/">Algorithms/&lt;algorithm-name&gt;</a> folder in BEELINE. Then the following lines must be added to the <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/initialize.sh">initialize.sh</a> script.</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span>cd $BASEDIR/Algorithms/&lt;algorithm-name&gt;/
+docker build -q -t &lt;algorithm-name&gt;:base .
+echo &quot;Docker container for &lt;algorithm-name&gt; is built and tagged as &lt;algorithm-name&gt;:base&quot;
+</pre></div>
+</div>
+<p>Replace &lt;algorithm-name&gt; with the name of the new algorithm that is being added to BEELINE.</p>
+<p>2. <strong>Create a &lt;algorithm-name&gt;Runner.py script:</strong> Once the Docker image is built locally using the above Dockerfile, we will then need to setup a <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object which will read necessary inputs, runs GRN algorithm inside the Docker image, and finally parses output so that evaluation can be performed using <a class="reference internal" href="BLEval.html#module-BLEval" title="BLEval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLEval</span></code></a>.
+Most of the GRN algorithms in BEELINE require a gene-by-cell matrix provided as input, along with a pesudotime ordering of cells, and any additional manually specified parameters. These details are specified as inputs to BEELINE using <a class="reference internal" href="BEELINE.html#configfiles"><span class="std std-ref">Config files</span></a> as mentioned earlier. In our current implementation, we provide a separate csv file for expression matrix and pseudotime files, whereas algorithm parameters are specified as command line arguments. However, this can be modified easily to specify even the parameters using a separate file by simply providing its path in the config file. Each &lt;algorithm-name&gt;Runner.py script should contain the following three functions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">generateInputs()</span></code> : This function reads the two input data files (i.e., expression data and the pseudotime), and processes them into the format required by the given algorithm. For example, the algorithm may only require the cells in the expression matrix to be ordered in pseudotime, instead of exact pesudotime values as input. Moreover, if the algorithm requires that you run the GRN inference on each trajectory separately, we can this function to write the separate expression matrices contianing only cells  of a particular trajectory.</li>
+<li><code class="docutils literal notranslate"><span class="pre">run()</span></code> : This function constructs a “docker run” system command with the appropriate command line parameters to be passed to the docker container in order to run a given algorithm. The docker run command also needs to mount the folder containing the input files using the “-v” flag and specify where the outputs are written. If the algorithm needs to be run separately on each trajectory, it can be simply called in a loop inside this function.</li>
+<li><code class="docutils literal notranslate"><span class="pre">parseOutput()</span></code> : This function reads the algorithm-specific outputs and formats it into a ranked edgelist comma-separated file in the following format which can be subsequently used by <a class="reference internal" href="BLEval.html#module-BLEval" title="BLEval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLEval</span></code></a></li>
+</ul>
+</div></blockquote>
 <div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Gene1</span><span class="p">,</span><span class="n">Gene2</span><span class="p">,</span><span class="n">EdgeWeight</span>
 <span class="n">reg1</span><span class="p">,</span><span class="n">targ1</span><span class="p">,</span><span class="n">edgeweight</span>
 </pre></div>
 </div>
-<p>where the first line are the column names, and the subsequent lines
-contain the edges predicted by the network. The Gene1 column should
-contain regulators, the Gene2 column the targets, and EdgeWeight
-column the absolute value of the weight predicted for edge (regulator,
-target).</p>
+<p>where the first line are the column names, and the subsequent lines contain the edges predicted by the network. The Gene1 column should contain regulators, the Gene2 column the targets, and EdgeWeight column the absolute value of the weight predicted for edge (regulator,target). Note that in cases where the algorithm requires that you run the GRN inference on each trajectory separately, a single output network is obtained by finding the maximum score for a given edge across the GRNs computed for each individual trajectory.  Please ensure that all of the above three functions in your script accept arguments of type <a class="reference internal" href="BLRun.html#BLRun.runner.Runner" title="BLRun.runner.Runner"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun.runner.Runner</span></code></a>. The &lt;algorithm-name&gt;Runner.py script must then be placed under the <a class="reference external" href="https://github.com/Murali-group/Beeline/tree/master/BLRun/">BLRun/</a>  folder in BEELINE.</p>
+<ol class="arabic simple" start="3">
+<li><strong>Add the new alorithm to runner.py:</strong> The next step is to integrate the new algorithm within <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLRun</span></code></a> object. This can be achieved by adding the above three modules from the above step, i.e, <code class="docutils literal notranslate"><span class="pre">generateInputs()</span></code>, <code class="docutils literal notranslate"><span class="pre">run()</span></code>, and <code class="docutils literal notranslate"><span class="pre">parseOutput()</span></code> to <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/BLRun/runner.py">runner.py</a>.</li>
+<li><strong>Add the new alorithm to config.yaml:</strong> The final step is to add the new algorithm and any necessary parameters to the cofig.yaml. Note that currently BEELINE can only handle one parameter set at a time eventhough multiple parameters can be passed onto the single parameter object.</li>
+</ol>
+<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">algorithms</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="o">&lt;</span><span class="n">algorithm</span><span class="o">-</span><span class="n">name</span><span class="o">&gt;</span>
+      <span class="n">params</span><span class="p">:</span>
+          <span class="c1"># Any parameters that can be passed to this algorithm</span>
+          <span class="n">paramX</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">]</span>
+          <span class="n">paramY</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;Text&#39;</span><span class="p">]</span>
+          <span class="n">should_run</span><span class="p">:</span> <span class="p">[</span><span class="kc">True</span><span class="p">]</span> <span class="c1"># or False</span>
+</pre></div>
 </div>
-<div class="section" id="bleval-details">
-<span id="blevalguide"></span><h1>BLEval Details<a class="headerlink" href="#bleval-details" title="Permalink to this headline">¶</a></h1>
-<p>This is the list of options of currently implemented evaluation functions</p>
-<dl class="docutils">
-<dt>Command line arguments:</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>show this help message and exit</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-c <var>CONFIG</var></span>, <span class="option">--config <var>CONFIG</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Configuration file containing list of datasets
-algorithms and output specifications.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-a</span>, <span class="option">--auc</span></kbd></td>
-<td>Compute median of areas under Precision-Recall and ROC
-curves. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeAUC" title="BLEval.computeAUC"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeAUC</span></code></a>.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-j</span>, <span class="option">--jaccard</span></kbd></td>
-<td>Compute median Jaccard index of predicted top-k
-networks for each algorithm for a given set of
-datasets generated from the same ground truth network. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeJaccard" title="BLEval.computeJaccard"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeJaccard</span></code></a>.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-r</span>, <span class="option">--spearman</span></kbd></td>
-<td>Compute median Spearman Corr. of predicted edges for
-each algorithm for a given set of datasets generated
-from the same ground truth network.  Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeSpearman" title="BLEval.computeSpearman"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeSpearman</span></code></a>.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-t</span>, <span class="option">--time</span></kbd></td>
-<td>Analyze time taken by each algorithm for a. Calls <a class="reference internal" href="BLEval.html#module-BLEval.parseTime" title="BLEval.parseTime"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.parseTime</span></code></a>.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-e</span>, <span class="option">--epr</span></kbd></td>
-<td>Compute median early precision. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeEarlyPrec" title="BLEval.computeEarlyPrec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeEarlyPrec</span></code></a>.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-s</span>, <span class="option">--sepr</span></kbd></td>
-<td>Analyze median (signed) early precision for activation
-and inhibitory edges. <a class="reference internal" href="BLEval.html#module-BLEval.computeSignedEPrec" title="BLEval.computeSignedEPrec"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeSignedEPrec</span></code></a>.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-m</span>, <span class="option">--motifs</span></kbd></td>
-<td>Compute network motifs in the predicted top-k
-networks. Calls <a class="reference internal" href="BLEval.html#module-BLEval.computeNetMotifs" title="BLEval.computeNetMotifs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.computeNetMotifs</span></code></a>.</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
+</div>
+<div class="section" id="adding-a-new-evaluation-technique">
+<span id="blevalguide"></span><h1>Adding a new evaluation technique<a class="headerlink" href="#adding-a-new-evaluation-technique" title="Permalink to this headline">¶</a></h1>
+<p>BEELINE currently supports several evaluation techniques, namely, area under ROC and PR curves, eary precision, early signed precision, time and memory consumption, network motifs, jaccard similarities, and spearman coefficients. A new evaluation technique can be easily added to BEELINE using the following procedure.</p>
+<ol class="arabic simple">
+<li>Add the script containing the new evaluation technique to the <a class="reference external" href="https://github.com/Murali-group/Beeline/tree/master/BLEval/">BLEval/</a> folder.</li>
+<li>The next step is to integrate the new technique into the <a class="reference internal" href="BLEval.html#module-BLEval" title="BLEval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLEval</span></code></a> object. This can be achieved by adding it as a new module under <a class="reference internal" href="BLEval.html#module-BLEval" title="BLEval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLEval</span></code></a> in the <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/BLEval/__init__.py">BLEval/__init__.py</a> script. Please ensure that your script can accept arguments of type <a class="reference internal" href="BLEval.html#module-BLEval" title="BLEval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BLEval</span></code></a>.</li>
+<li>The final step is to add a command line option to perform the evaluation to <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/BLEvaluator.py">BLEvaluator.py</a>.</li>
+</ol>
 </div>
 
 

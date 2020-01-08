@@ -158,19 +158,19 @@
 <span class="kn">import</span> <span class="nn">multiprocessing</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">concurrent.futures</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">permutations</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">product</span><span class="p">,</span> <span class="n">permutations</span>
 <span class="kn">from</span> <span class="nn">multiprocessing</span> <span class="k">import</span> <span class="n">Pool</span><span class="p">,</span> <span class="n">cpu_count</span>
 <span class="kn">from</span> <span class="nn">networkx.convert_matrix</span> <span class="k">import</span> <span class="n">from_pandas_adjacency</span>
 
-<div class="viewcode-block" id="EarlyPrec"><a class="viewcode-back" href="../../BLEval.html#BLEval.computeEarlyPrec.EarlyPrec">[docs]</a><span class="k">def</span> <span class="nf">EarlyPrec</span><span class="p">(</span><span class="n">evalObject</span><span class="p">,</span> <span class="n">algorithmName</span><span class="p">):</span>
+<div class="viewcode-block" id="EarlyPrec"><a class="viewcode-back" href="../../BLEval.html#BLEval.computeEarlyPrec.EarlyPrec">[docs]</a><span class="k">def</span> <span class="nf">EarlyPrec</span><span class="p">(</span><span class="n">evalObject</span><span class="p">,</span> <span class="n">algorithmName</span><span class="p">,</span> <span class="n">TFEdges</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>
 <span class="sd">    Computes early precision for a given algorithm for each dataset.</span>
 <span class="sd">    We define early precision as the fraction of true </span>
 <span class="sd">    positives in the top-k edges, where k is the number of</span>
 <span class="sd">    edges in the ground truth network (excluding self loops).</span>
 <span class="sd">    </span>
-
+<span class="sd">    </span>
 <span class="sd">    :param evalObject: An object of class :class:`BLEval.BLEval`.</span>
 <span class="sd">    :type evalObject: BLEval</span>
 <span class="sd">      </span>
@@ -181,32 +181,18 @@
 <span class="sd">    :returns:</span>
 <span class="sd">        A dataframe containing early precision values</span>
 <span class="sd">        for a given algorithm for each dataset.</span>
+
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">rankDict</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">sim_names</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">evalObject</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datasets</span><span class="p">):</span>
         <span class="n">trueEdgesDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">evalObject</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datadir</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span> \
                       <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span>\
                       <span class="n">dataset</span><span class="p">[</span><span class="s1">&#39;trueEdges&#39;</span><span class="p">],</span> <span class="n">sep</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="p">,</span>
                       <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">trueEdgesDF</span> <span class="o">=</span> <span class="n">trueEdgesDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">trueEdgesDF</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">trueEdgesDF</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">])]</span>
+        <span class="n">trueEdgesDF</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">keep</span> <span class="o">=</span> <span class="s1">&#39;first&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">trueEdgesDF</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-        <span class="n">possibleEdges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">permutations</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">trueEdgesDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">,</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]]),</span>
-                                     <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="p">))</span>
-
-        <span class="n">TrueEdgeDict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="p">):</span><span class="mi">0</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">possibleEdges</span><span class="p">}</span>
-        <span class="n">PredEdgeDict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="p">):</span><span class="mi">0</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">possibleEdges</span><span class="p">}</span>
-
-        <span class="c1"># Compute TrueEdgeDict Dictionary</span>
-        <span class="c1"># 1 if edge is present in the ground-truth</span>
-        <span class="c1"># 0 if edge is not present in the ground-truth</span>
-        <span class="n">numEdges</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">trueEdges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">TrueEdgeDict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueEdgesDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">trueEdgesDF</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span>
-                   <span class="p">(</span><span class="n">trueEdgesDF</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">key</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;|&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-                    <span class="n">TrueEdgeDict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-                    <span class="n">trueEdges</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
-                    <span class="n">numEdges</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="n">outDir</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">evalObject</span><span class="o">.</span><span class="n">output_settings</span><span class="o">.</span><span class="n">base_dir</span><span class="p">)</span> <span class="o">+</span> \
                  <span class="nb">str</span><span class="p">(</span><span class="n">evalObject</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datadir</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;inputs&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> \
@@ -226,7 +212,39 @@
 
         <span class="n">predDF</span> <span class="o">=</span> <span class="n">predDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">predDF</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">predDF</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">])]</span>
         <span class="n">predDF</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">keep</span> <span class="o">=</span> <span class="s1">&#39;first&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">predDF</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>  <span class="n">inplace</span><span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">predDF</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        
+        
+        <span class="k">if</span> <span class="n">TFEdges</span><span class="p">:</span>
+            <span class="c1"># Consider only edges going out of TFs</span>
+            
+            <span class="c1"># Get a list of all possible TF to gene interactions </span>
+            <span class="n">uniqueNodes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">trueEdgesDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">,</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]])</span>
+            <span class="n">possibleEdges_TF</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">product</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">trueEdgesDF</span><span class="o">.</span><span class="n">Gene1</span><span class="p">),</span><span class="nb">set</span><span class="p">(</span><span class="n">uniqueNodes</span><span class="p">)))</span>
+
+            <span class="c1"># Get a list of all possible interactions </span>
+            <span class="n">possibleEdges_noSelf</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">permutations</span><span class="p">(</span><span class="n">uniqueNodes</span><span class="p">,</span> <span class="n">r</span> <span class="o">=</span> <span class="mi">2</span><span class="p">))</span>
+            
+            <span class="c1"># Find intersection of above lists to ignore self edges</span>
+            <span class="c1"># TODO: is there a better way of doing this?</span>
+            <span class="n">possibleEdges</span> <span class="o">=</span> <span class="n">possibleEdges_TF</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">possibleEdges_noSelf</span><span class="p">)</span>
+            
+            <span class="n">TrueEdgeDict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="p">):</span><span class="mi">0</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">possibleEdges</span><span class="p">}</span>
+
+            <span class="n">trueEdges</span> <span class="o">=</span> <span class="n">trueEdgesDF</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">trueEdgesDF</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]</span>
+            <span class="n">trueEdges</span> <span class="o">=</span> <span class="n">trueEdges</span><span class="p">[</span><span class="n">trueEdges</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">TrueEdgeDict</span><span class="p">)]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Edges considered &quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueEdges</span><span class="p">))</span>
+            <span class="n">numEdges</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueEdges</span><span class="p">)</span>
+        
+            <span class="n">predDF</span><span class="p">[</span><span class="s1">&#39;Edges&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">predDF</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">predDF</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]</span>
+            <span class="c1"># limit the predicted edges to the genes that are in the ground truth</span>
+            <span class="n">predDF</span> <span class="o">=</span> <span class="n">predDF</span><span class="p">[</span><span class="n">predDF</span><span class="p">[</span><span class="s1">&#39;Edges&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">TrueEdgeDict</span><span class="p">)]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">trueEdges</span> <span class="o">=</span> <span class="n">trueEdgesDF</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;|&quot;</span> <span class="o">+</span> <span class="n">trueEdgesDF</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]</span>
+            <span class="n">trueEdges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">trueEdges</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
+            <span class="n">numEdges</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">trueEdges</span><span class="p">)</span>
+        
         <span class="c1"># check if ranked edges list is empty</span>
         <span class="c1"># if so, it is just set to an empty set</span>
 

@@ -176,22 +176,22 @@ simulated trajectory possesess a cluster ID.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>Model</strong> (<em>function</em>) – Function defining ODE model</li>
-<li><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary defining ODE model. See readBooleanRules()</li>
+<li><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Dictionary defining ODE model. See readBooleanRules()</li>
 <li><strong>tspan</strong> (<em>ndarray</em>) – Array of time points</li>
-<li><strong>num_cells</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of simulations to perform</li>
-<li><strong>sampleCells</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool that specifies if a random sample of size num_cells should be generated from the simulated output, where one cell is picked per simulation without replacement</li>
-<li><strong>varmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – </li>
-<li><strong>parmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – </li>
-<li><strong>genelist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of all gene names</li>
-<li><strong>proteinlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of all protein names</li>
-<li><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Name of output folder.</li>
+<li><strong>num_cells</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of simulations to perform</li>
+<li><strong>sampleCells</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Bool that specifies if a random sample of size num_cells should be generated from the simulated output, where one cell is picked per simulation without replacement</li>
+<li><strong>varmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – </li>
+<li><strong>parmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – </li>
+<li><strong>genelist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of all gene names</li>
+<li><strong>proteinlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of all protein names</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Name of output folder.</li>
 <li><strong>icsDF</strong> (<em>pandas DataFrame</em>) – Dataframe specifying initial condition for simulation</li>
-<li><strong>nClusters</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Number of expected trajectories. Used to perform k-means clustering</li>
-<li><strong>x_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – max value of gene. By default 2.0, will vary if parameters are sampled</li>
-<li><strong>doParallel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool specifying starting simulations in parallel</li>
-<li><strong>burnin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool specifying that initial fraction of simulation should be discarded. Obsolete</li>
-<li><strong>writeProtein</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool specifying if the protein values should be written to file. Default = False</li>
-<li><strong>normalizeTrajectory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Bool specifying if the gene expression values should be scaled between 0 and 1.</li>
+<li><strong>nClusters</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Number of expected trajectories. Used to perform k-means clustering</li>
+<li><strong>x_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – max value of gene. By default 2.0, will vary if parameters are sampled</li>
+<li><strong>doParallel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Bool specifying starting simulations in parallel</li>
+<li><strong>burnin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Bool specifying that initial fraction of simulation should be discarded. Obsolete</li>
+<li><strong>writeProtein</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Bool specifying if the protein values should be written to file. Default = False</li>
+<li><strong>normalizeTrajectory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Bool specifying if the gene expression values should be scaled between 0 and 1.</li>
 </ul>
 </td>
 </tr>
@@ -212,9 +212,9 @@ strengths</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>DF</strong> (<em>pandas DataFrame</em>) – Table of values with two columns, ‘Gene’ specifies target, ‘Rule’ specifies Boolean function</li>
-<li><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Passed to utils.getSaneNval to set identical parameters</li>
-<li><strong>samplePars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Sample kinetic parameters using a Gaussian distribution  centered around the default parameters</li>
-<li><strong>sampleStd</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Sample from a distribution of mean=par, sigma=sampleStd*par</li>
+<li><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Passed to utils.getSaneNval to set identical parameters</li>
+<li><strong>samplePars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Sample kinetic parameters using a Gaussian distribution  centered around the default parameters</li>
+<li><strong>sampleStd</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Sample from a distribution of mean=par, sigma=sampleStd*par</li>
 <li><strong>speciesTypeDF</strong> (<em>pandas DataFrame</em>) – Table defining type of each species. Takes values  ‘gene’ or ‘protein’</li>
 <li><strong>parameterInputsDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies parameter input values. Useful to specify experimental conditions.</li>
 <li><strong>parameterSetDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies a predefined parameter set.</li>
@@ -249,13 +249,13 @@ states of the protein variables based on the estimated values of their correspon
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>ss</strong> (<em>ndarray</em>) – Steady state array</li>
-<li><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Dictionary of dictionary specifying the ODE model, containing parameters, initial conditions and equations.</li>
-<li><strong>rnaIndex</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – list of indices of genes</li>
-<li><strong>proteinIndex</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of indices of proteins</li>
-<li><strong>genelist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of names of all genes in the model</li>
-<li><strong>proteinlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of names of all proteins in the model</li>
-<li><strong>varmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Mapper: {variable name : index}</li>
-<li><strong>revvarmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Mapper: {index : variable name}</li>
+<li><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Dictionary of dictionary specifying the ODE model, containing parameters, initial conditions and equations.</li>
+<li><strong>rnaIndex</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of indices of genes</li>
+<li><strong>proteinIndex</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of indices of proteins</li>
+<li><strong>genelist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of names of all genes in the model</li>
+<li><strong>proteinlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of names of all proteins in the model</li>
+<li><strong>varmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Mapper: {variable name : index}</li>
+<li><strong>revvarmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Mapper: {index : variable name}</li>
 </ul>
 </td>
 </tr>
@@ -281,8 +281,8 @@ for each variable.</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>DF</strong> (<em>pandas DataFrame</em>) – Table of values with two columns, ‘Gene’ specifies target, ‘Rule’ specifies Boolean function</li>
-<li><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Passed to utils.getSaneNval to set identical parameters</li>
-<li><strong>samplePars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Sample kinetic parameters using a Gaussian distribution  centered around the default parameters</li>
+<li><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Passed to utils.getSaneNval to set identical parameters</li>
+<li><strong>samplePars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Sample kinetic parameters using a Gaussian distribution  centered around the default parameters</li>
 <li><strong>parameterInputsDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies input parameter values. Useful to specify experimental conditions.</li>
 <li><strong>parameterSetDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies predefined parameter set.</li>
 <li><strong>interactionStrengthDF</strong> (<em>pandas DataFrame</em>) – Optional table that specifies interaction strengths. When not specified, default strength is set to 1.</li>
@@ -320,10 +320,10 @@ for each variable.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Path to Boolean Rule file</li>
-<li><strong>parameterInputsPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Path to file containing input parameters to the model</li>
-<li><strong>add_dummy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Experimental feature, adds dummy targets to each gene in the model. Useful to change the density of the network</li>
-<li><strong>max_parents</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – Experimental feature, specifies number of parent genes per dummy gene added</li>
+<li><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Path to Boolean Rule file</li>
+<li><strong>parameterInputsPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Path to file containing input parameters to the model</li>
+<li><strong>add_dummy</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Experimental feature, adds dummy targets to each gene in the model. Useful to change the density of the network</li>
+<li><strong>max_parents</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – Experimental feature, specifies number of parent genes per dummy gene added</li>
 </ul>
 </td>
 </tr>
@@ -356,10 +356,10 @@ carried out using simulator.eulersde.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>Model</strong> (<em>function</em>) – Function defining ODE model</li>
 <li><strong>y0</strong> (<em>array</em>) – array of initial values for each state variable</li>
-<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – list of parameter values to be used in simulations</li>
-<li><strong>isStochastic</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – User defined parameter. Default = True, can be turned off to perform ODE simulations.</li>
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of parameter values to be used in simulations</li>
+<li><strong>isStochastic</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – User defined parameter. Default = True, can be turned off to perform ODE simulations.</li>
 <li><strong>tspan</strong> (<em>ndarray</em>) – Time points to simulate</li>
-<li><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Seed to initialize random number generator</li>
+<li><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Seed to initialize random number generator</li>
 </ul>
 </td>
 </tr>
@@ -408,10 +408,10 @@ From the sdeint implementation</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
 <li><strong>f</strong> (<em>function</em>) – function defining ODE model. Should take vector of current state, current time, and list of parameter values as arguments.</li>
-<li><strong>pars</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of parameter values</li>
-<li><strong>y0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – list of initial values</li>
+<li><strong>pars</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of parameter values</li>
+<li><strong>y0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of initial values</li>
 <li><strong>tspan</strong> (<em>ndarray</em>) – Array of timepoints to simulate</li>
-<li><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Seed to initialize random number generator</li>
+<li><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Seed to initialize random number generator</li>
 </ul>
 </td>
 </tr>
@@ -443,11 +443,11 @@ From the sdeint implementation</p>
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
 <li><strong>resultDF</strong> (<em>pandas DataFrame</em>) – The simulation output, rows are genes, columns are “cells” or timepoints</li>
-<li><strong>outputfilenames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of filenames generated containing individual time courses</li>
+<li><strong>outputfilenames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of filenames generated containing individual time courses</li>
 <li><strong>BoolDF</strong> (<em>pandas DataFrame</em>) – Dataframe containing rules</li>
-<li><strong>withoutrules</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – List of nodes in input file without rules</li>
-<li><strong>parameterInputsPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Specifies if there are any inputs to the model</li>
-<li><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> (</em><em>Optional</em><em>)</em>) – Prefix specifying target directory</li>
+<li><strong>withoutrules</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of nodes in input file without rules</li>
+<li><strong>parameterInputsPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Specifies if there are any inputs to the model</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>Optional</em><em>)</em>) – Prefix specifying target directory</li>
 </ul>
 </td>
 </tr>
@@ -465,12 +465,12 @@ bounded by <cite>lo</cite> and <cite>hi</cite></p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.7)"><em>int</em></a>) – number of random numbers to generate</li>
-<li><strong>lo</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – lower bound of sample range</li>
-<li><strong>hi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – upper bound of sample range</li>
-<li><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Mean of Gaussian distribution to be sampled from</li>
-<li><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.7)"><em>float</em></a>) – Standard deviation of Gausssian distribution to be sampled from</li>
-<li><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.7)"><em>bool</em></a>) – Flag to sample single value and return a list of identical values</li>
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of random numbers to generate</li>
+<li><strong>lo</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – lower bound of sample range</li>
+<li><strong>hi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – upper bound of sample range</li>
+<li><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Mean of Gaussian distribution to be sampled from</li>
+<li><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Standard deviation of Gausssian distribution to be sampled from</li>
+<li><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Flag to sample single value and return a list of identical values</li>
 </ul>
 </td>
 </tr>
@@ -511,7 +511,7 @@ bounded by <cite>lo</cite> and <cite>hi</cite></p>
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.7)"><em>list</em></a>) – Input list of values to be scaled</td>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – Input list of values to be scaled</td>
 </tr>
 <tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
 <li>N : list of values scaled between min and max values in input list</li>
@@ -575,8 +575,8 @@ time points and rows corresponding to genes</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – ODE equations stored in a dictionary</li>
-<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Optional argument that specifies prefix to model filename</li>
+<li><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – ODE equations stored in a dictionary</li>
+<li><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Optional argument that specifies prefix to model filename</li>
 </ul>
 </td>
 </tr>
@@ -586,7 +586,7 @@ time points and rows corresponding to genes</p>
 </p>
 </td>
 </tr>
-<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)">str</a></p>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)">str</a></p>
 </td>
 </tr>
 </tbody>
@@ -602,9 +602,9 @@ time points and rows corresponding to genes</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.7)"><em>dict</em></a>) – Model definition dictionary containing the keys ‘ics’, ‘pars’, and ‘varspec’</li>
-<li><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a>) – Prefix to output folder name</li>
-<li><strong>outname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.7)"><em>str</em></a><em> (</em><em>Optional</em><em>)</em>) – User defined name for parameters file. Default is parameters.txt</li>
+<li><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Model definition dictionary containing the keys ‘ics’, ‘pars’, and ‘varspec’</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Prefix to output folder name</li>
+<li><strong>outname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>Optional</em><em>)</em>) – User defined name for parameters file. Default is parameters.txt</li>
 </ul>
 </td>
 </tr>

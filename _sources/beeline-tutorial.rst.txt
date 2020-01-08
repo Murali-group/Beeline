@@ -207,6 +207,23 @@ use the following command
                                      --motifs \ # calls the computeNetMotifs script
 
 
-For a full list of available evaluation functions and their corresponding options to
-be passed to ``BLEvaluator.py``, see :ref:`blevalguide` .
+The full list of available evaluation functions and their corresponding options to
+be passed to ``BLEvaluator.py`` are given below:
 
+
+.. csv-table::
+  :widths: 30, 50
+    
+  "-h, --help","show the help message and exit"
+  "-c, --config <file-name>","Configuration file containing list of datasets, algorithms, and output specifications."
+  "-a, --auc","Compute median of areas under Precision-Recall and ROC curves. Calls :mod:`BLEval.computeAUC`."
+  "-j, --jaccard","Compute median Jaccard index of predicted top-k networks
+  for each algorithm for a given set of datasets generated from the same 
+  ground truth network. Calls :mod:`BLEval.computeJaccard`."
+  "-r, --spearman","Compute median Spearman Corr. of predicted edges for each algorithm for a given set of datasets generated from the same ground truth network.  Calls :mod:`BLEval.computeSpearman`."
+  "-t, --time","Analyze time taken by each algorithm for a. Calls :mod:`BLEval.parseTime`."
+  "-e, --epr","Compute median early precision. Calls :mod:`BLEval.computeEarlyPrec`."
+  "-s, --sepr","Analyze median (signed) early precision for activation and inhibitory edges. :mod:`BLEval.computeSignedEPrec`."
+  "-m, --motifs","Compute network motifs in the predicted top-k networks. Calls :mod:`BLEval.computeNetMotifs`"
+
+For details about the implementation of :class:`BLEval` , see :ref:`blevalguide` .
