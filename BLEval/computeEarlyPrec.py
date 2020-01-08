@@ -7,19 +7,19 @@ from tqdm import tqdm
 import multiprocessing
 from pathlib import Path
 import concurrent.futures
-from itertools import permutations
 from collections import defaultdict
+from itertools import product, permutations
 from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
-def EarlyPrec(evalObject, algorithmName):
+def EarlyPrec(evalObject, algorithmName, TFEdges = False):
     '''
     Computes early precision for a given algorithm for each dataset.
     We define early precision as the fraction of true 
     positives in the top-k edges, where k is the number of
     edges in the ground truth network (excluding self loops).
     
-
+    
     :param evalObject: An object of class :class:`BLEval.BLEval`.
     :type evalObject: BLEval
       
@@ -30,32 +30,18 @@ def EarlyPrec(evalObject, algorithmName):
     :returns:
         A dataframe containing early precision values
         for a given algorithm for each dataset.
+
     '''
     rankDict = {}
-    sim_names = []
     for dataset in tqdm(evalObject.input_settings.datasets):
         trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
                       dataset['name'] + '/' +\
                       dataset['trueEdges'], sep = ',',
                       header = 0, index_col = None)
+        trueEdgesDF = trueEdgesDF.loc[(trueEdgesDF['Gene1'] != trueEdgesDF['Gene2'])]
+        trueEdgesDF.drop_duplicates(keep = 'first', inplace=True)
+        trueEdgesDF.reset_index(drop=True, inplace=True)
 
-        possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
-                                     r = 2))
-
-        TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
-        PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
-
-        # Compute TrueEdgeDict Dictionary
-        # 1 if edge is present in the ground-truth
-        # 0 if edge is not present in the ground-truth
-        numEdges = 0
-        trueEdges = set()
-        for key in TrueEdgeDict.keys():
-            if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                   (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
-                    TrueEdgeDict[key] = 1
-                    trueEdges.add(key)
-                    numEdges += 1
 
         outDir = str(evalObject.output_settings.base_dir) + \
                  str(evalObject.input_settings.datadir).split("inputs")[1] + \
@@ -75,7 +61,39 @@ def EarlyPrec(evalObject, algorithmName):
 
         predDF = predDF.loc[(predDF['Gene1'] != predDF['Gene2'])]
         predDF.drop_duplicates(keep = 'first', inplace=True)
-        predDF.reset_index(drop = True,  inplace= True)
+        predDF.reset_index(drop=True, inplace=True)
+        
+        
+        if TFEdges:
+            # Consider only edges going out of TFs
+            
+            # Get a list of all possible TF to gene interactions 
+            uniqueNodes = np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']])
+            possibleEdges_TF = set(product(set(trueEdgesDF.Gene1),set(uniqueNodes)))
+
+            # Get a list of all possible interactions 
+            possibleEdges_noSelf = set(permutations(uniqueNodes, r = 2))
+            
+            # Find intersection of above lists to ignore self edges
+            # TODO: is there a better way of doing this?
+            possibleEdges = possibleEdges_TF.intersection(possibleEdges_noSelf)
+            
+            TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
+
+            trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
+            trueEdges = trueEdges[trueEdges.isin(TrueEdgeDict)]
+            print("\nEdges considered ", len(trueEdges))
+            numEdges = len(trueEdges)
+        
+            predDF['Edges'] = predDF['Gene1'] + "|" + predDF['Gene2']
+            # limit the predicted edges to the genes that are in the ground truth
+            predDF = predDF[predDF['Edges'].isin(TrueEdgeDict)]
+
+        else:
+            trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
+            trueEdges = set(trueEdges.values)
+            numEdges = len(trueEdges)
+        
         # check if ranked edges list is empty
         # if so, it is just set to an empty set
 

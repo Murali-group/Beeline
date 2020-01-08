@@ -16,7 +16,7 @@ We provided an example dataset under inputs/example/GSD/ and a corresponding con
 
 If you use BEELINE in your research, please cite:
 
-Aditya Pratapa, Amogh Jalihal, Jeffrey Law, Aditya Bharadwaj, and T M Murali. [Benchmarking algorithms for gene regulatory network inference from single-cell transcriptomic data](https://doi.org/10.1101/642926), _bioRxiv_ (2019). doi.org/10.1101/642926
+Aditya Pratapa, Amogh Jalihal, Jeffrey Law, Aditya Bharadwaj, and T M Murali. Benchmarking algorithms for gene regulatory network inference from single-cell transcriptomic data, _Nature Methods (In Print)_. The preprint version of this article is available at: [https://doi.org/10.1101/642926](https://doi.org/10.1101/642926)
 
 The repository for BoolODE is located at: [https://github.com/Murali-group/BoolODE](https://github.com/Murali-group/BoolODE)
 
