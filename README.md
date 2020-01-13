@@ -20,4 +20,4 @@ Aditya Pratapa, Amogh Jalihal, Jeffrey Law, Aditya Bharadwaj, and T M Murali. Be
 
 The repository for BoolODE is located at: [https://github.com/Murali-group/BoolODE](https://github.com/Murali-group/BoolODE)
 
-The input datasets used in BEELINE are available at: [https://zenodo.org/record/3378976](https://zenodo.org/record/3378976)
+The input datasets used in BEELINE are available at: [https://doi.org/10.5281/zenodo.3378975](https://doi.org/10.5281/zenodo.3378975)
