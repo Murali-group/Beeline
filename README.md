@@ -13,10 +13,13 @@ We provided an example dataset under inputs/example/GSD/ and a corresponding con
 - To compute proposed reconstructions on the example dataset, run `python BLRunner.py --config config-files/config.yaml`
 - To compute areas under the ROC and PR curves for the proposed reconstructions, run `python BLEvaluator.py --config config-files/config.yaml --auc`. To display the complete list of evalutation options, run `python BLEvaluator.py --help`.
 
-
 If you use BEELINE in your research, please cite:
 
-Aditya Pratapa, Amogh Jalihal, Jeffrey Law, Aditya Bharadwaj, and T M Murali. Benchmarking algorithms for gene regulatory network inference from single-cell transcriptomic data, [_Nature Methods_](https://www.nature.com/articles/s41592-019-0690-6) _(In Print)_. The preprint version of this article is available at: [https://doi.org/10.1101/642926](https://doi.org/10.1101/642926)
+Pratapa, A., Jalihal, A.P., Law, J.N., Bharadwaj, A., Murali, T. M. (2020) "Benchmarking algorithms for gene regulatory network inference from single-cell transcriptomic data." _Nature Methods_, 17, 147–154.
+
+Link to the pubication: [https://www.nature.com/articles/s41592-019-0690-6](https://www.nature.com/articles/s41592-019-0690-6)
+
+The preprint version of this article is available at: [https://doi.org/10.1101/642926](https://doi.org/10.1101/642926)
 
 The repository for BoolODE is located at: [https://github.com/Murali-group/BoolODE](https://github.com/Murali-group/BoolODE)
 
