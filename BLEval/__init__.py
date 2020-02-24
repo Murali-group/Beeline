@@ -30,11 +30,12 @@ from networkx.convert_matrix import from_pandas_adjacency
 # local imports
 from BLEval.parseTime import getTime
 from BLEval.computeDGAUC import PRROC
+from BLEval.computeBorda import Borda
 from BLEval.computeJaccard import Jaccard
 from BLEval.computeSpearman import Spearman
 from BLEval.computeNetMotifs import Motifs
 from BLEval.computeEarlyPrec import EarlyPrec
-#from BLEval.computePathStats import pathAnalysis
+from BLEval.computePathStats import pathAnalysis
 from BLEval.computeSignedEPrec import signedEPrec
 
 
@@ -223,17 +224,17 @@ class BLEval(object):
         return FBL, FFL, MI
     
     
-    # def computePaths(self):
-    #     '''
-    #     For each algorithm-dataset combination, this function computes path lengths
-    #     through TP edges and FP edges, returns statistics on path lengths.
+    def computePaths(self):
+        '''
+        For each algorithm-dataset combination, this function computes path lengths
+        through TP edges and FP edges, returns statistics on path lengths.
 
-    #     :returns:
-    #         - pathStats: A dataframe path lengths in predicted network
-    #     '''
-    #     for dataset in tqdm(self.input_settings.datasets, 
-    #                         total = len(self.input_settings.datasets), unit = " Datasets"):
-    #         pathAnalysis(dataset, self.input_settings)
+        :returns:
+            - pathStats: A dataframe path lengths in predicted network
+        '''
+        for dataset in tqdm(self.input_settings.datasets, 
+                            total = len(self.input_settings.datasets), unit = " Datasets"):
+            pathAnalysis(dataset, self.input_settings)
 
                  
     def computeEarlyPrec(self):
@@ -281,6 +282,37 @@ class BLEval(object):
                 sEPRDict['EPrec Inhibition'][algo[0]] = sEPrecDF['-']
         return(pd.DataFrame(sEPRDict['EPrec Activation']).T, pd.DataFrame(sEPRDict['EPrec Inhibition']).T)
     
+    def computeBorda(self, selectedAlgorithms=None, aggregationMethod="average"):
+
+        '''
+        Computes edge ranked list using the Borda method for each dataset.
+        Parameters
+        ----------
+        selectedAlgorithms: [str]
+          List of algorithm names used to run borda method on selected
+          algorithms. If nothing is provided, the function runs borda on
+          all available algorithms.
+        aggregationMethod: str
+          Method used to aggregate rank in borda method. Available options are
+          {‘average’, ‘min’, ‘max’, ‘first’}, default ‘average’
+        :returns:
+            None
+        '''
+        feasibleAlgorithmOptions = [algorithmName for algorithmName, _ in self.input_settings.algorithms]
+        feasibleaggregationMethodOptions = ['average', 'min', 'max', 'first']
+
+        selectedAlgorithms = feasibleAlgorithmOptions if selectedAlgorithms is None else selectedAlgorithms
+
+        for a in selectedAlgorithms:
+            if a not in feasibleAlgorithmOptions:
+                print("\nERROR: No data available on algorithm %s. Please choose an algorithm from the following options: %s" % (a, feasibleAlgorithmOptions))
+                return
+
+        if aggregationMethod not in feasibleaggregationMethodOptions:
+                print("\nERROR: Please choose an aggregation method algorithm from following options: " % feasibleaggregationMethodOptions)
+                return
+
+        Borda(self, selectedAlgorithms, aggregationMethod)
 
 class ConfigParser(object):
     '''

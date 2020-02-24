@@ -56,8 +56,13 @@ def get_parser() -> argparse.ArgumentParser:
 
     parser.add_argument('-m','--motifs', action="store_true", default=False,
       help="Compute network motifs in the predicted top-k networks.")
+    
+    parser.add_argument('-p','--paths', action="store_true", default=False,
+      help="Compute path length statistics on the predicted top-k networks.")
 
-
+    parser.add_argument('-b','--borda', action="store_true", default=False,
+      help="Compute edge ranked list using the various Borda aggregatio methods.")
+        
     return parser
 
 def parse_arguments():
@@ -137,6 +142,17 @@ def main():
         FBL.to_csv(outDir+'NetworkMotifs-FBL.csv')
         FFL.to_csv(outDir+'NetworkMotifs-FFL.csv')
         MI.to_csv(outDir+'NetworkMotifs-MI.csv')
+        
+    # Compute path statistics such as number of TP, FP, 
+    # and path lengths among TP in the top-k networks.
+    if (opts.paths):
+        print('\n\nComputing path length statistics on predicted networks...')
+        evalSummarizer.computePaths()
+        
+   # Compute edge ranked list using the borda method
+    if (opts.borda):
+        print('\n\nComputing edge ranked list using the borda method')
+        evalSummarizer.computeBorda()
 
 
     print('\n\nEvaluation complete...\n')
