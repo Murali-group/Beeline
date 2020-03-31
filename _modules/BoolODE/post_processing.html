@@ -1,0 +1,486 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BoolODE.post_processing &mdash; BEELINE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> BEELINE
+          
+
+          
+            
+            <img src="../../_static/beeline.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../BEELINE.html">BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE-intro.html">BoolODE</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../BoolODE.html">BoolODE</a> &raquo;</li>
+        
+      <li>BoolODE.post_processing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for BoolODE.post_processing</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="k">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="k">import</span> <span class="n">KMeans</span>
+<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="k">import</span> <span class="n">TSNE</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<div class="viewcode-block" id="genSamples"><a class="viewcode-back" href="../../BoolODE.html#BoolODE.post_processing.genSamples">[docs]</a><span class="k">def</span> <span class="nf">genSamples</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate samples of cells from a given set of simulations. This sample</span>
+<span class="sd">    will then be used for other post processing steps. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">numclusters</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;nClusters&#39;</span><span class="p">]</span>
+    <span class="n">num_simulations</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;num_cells&#39;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">numclusters</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">clusterdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/ClusterIds.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">sample_size</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;sample_size&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;sample_size&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">num_simulations</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sample_size should be less than num of experiments&#39;</span><span class="p">)</span>
+        <span class="n">sample_size</span> <span class="o">=</span> <span class="n">num_simulations</span>
+        
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/simulations/E0.csv&#39;</span><span class="p">,</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">maxtime</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="n">generatedPaths</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">did</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;nDatasets&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># example:</span>
+        <span class="c1"># Beeline/inputs/DYN-LI-500-1/...</span>
+        <span class="n">outfpath</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sample_size</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">did</span><span class="p">)</span>
+        <span class="n">generatedPaths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">outfpath</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outfpath</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">outfpath</span><span class="p">,</span> <span class="s2">&quot;does not exist, creating it...&quot;</span><span class="p">)</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outfpath</span><span class="p">)</span>
+        <span class="c1"># Create cell ids</span>
+        <span class="n">simids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_simulations</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">sample_size</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">fids</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;E&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.csv&#39;</span> <span class="k">for</span> <span class="n">sid</span> <span class="ow">in</span> <span class="n">simids</span><span class="p">]</span>            
+        <span class="n">timepoints</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">maxtime</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="n">sample_size</span><span class="p">)</span>
+        <span class="n">min_t</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">timepoints</span><span class="p">)</span>
+        <span class="n">max_t</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">timepoints</span><span class="p">)</span>
+        <span class="n">pts</span> <span class="o">=</span> <span class="p">[(</span><span class="n">t</span> <span class="o">-</span> <span class="n">min_t</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">max_t</span> <span class="o">-</span> <span class="n">min_t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">timepoints</span><span class="p">]</span>
+        <span class="n">cellids</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;E&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">sid</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">sid</span><span class="p">,</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">simids</span><span class="p">,</span> <span class="n">timepoints</span><span class="p">)]</span> 
+        <span class="c1"># Read simulations from input dataset #psetid</span>
+        <span class="c1"># to build a sample</span>
+        <span class="n">sample</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">fid</span><span class="p">,</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">fids</span><span class="p">,</span> <span class="n">cellids</span><span class="p">)):</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/simulations/&#39;</span> <span class="o">+</span> <span class="n">fid</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">df</span><span class="o">.</span><span class="n">sort_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">sample</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">cid</span><span class="p">]</span><span class="o">.</span><span class="n">to_frame</span><span class="p">())</span>
+        <span class="n">sampledf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">sampledf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outfpath</span> <span class="o">+</span> <span class="s1">&#39;/ExpressionData.csv&#39;</span><span class="p">)</span>
+        <span class="c1">## Read refNetwork.csv</span>
+        <span class="n">refdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;/refNetwork.csv&#39;</span><span class="p">)</span>
+        <span class="n">refdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outfpath</span> <span class="o">+</span> <span class="s1">&#39;/refNetwork.csv&#39;</span><span class="p">,</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">numclusters</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">ptdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pts</span><span class="p">),</span>
+                            <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">cellids</span><span class="p">),</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PseudoTime&#39;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">subsetcluster</span> <span class="o">=</span> <span class="n">clusterdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="n">cid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">cellids</span><span class="p">]]</span>
+            <span class="n">ptdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">cellids</span><span class="p">),</span>
+                                <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PseudoTime&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numclusters</span><span class="p">)])</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">cid</span><span class="p">,</span> <span class="n">row</span><span class="p">),</span> <span class="n">pt</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ptdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">pts</span><span class="p">):</span>
+                <span class="n">ptdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cid</span><span class="p">][</span><span class="s1">&#39;PseudoTime&#39;</span> <span class="o">+</span>\
+                              <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">subsetcluster</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">cid</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]][</span><span class="s1">&#39;cl&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">pt</span><span class="p">,</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">ptdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outfpath</span> <span class="o">+</span> <span class="s1">&#39;/PseudoTime.csv&#39;</span><span class="p">,</span><span class="n">na_rep</span><span class="o">=</span><span class="s1">&#39;NA&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">generatedPaths</span></div>
+        
+
+<div class="viewcode-block" id="genDropouts"><a class="viewcode-back" href="../../BoolODE.html#BoolODE.post_processing.genDropouts">[docs]</a><span class="k">def</span> <span class="nf">genDropouts</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Induce drop out in the simulated scRNAseq datasets.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;dropout&#39;</span><span class="p">]:</span>
+        <span class="n">dropoutCutoffs</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;drop_cutoff&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dropoutCutoffs</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1">## Read the ExpressionData.csv file</span>
+    <span class="n">expDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1">## Read the PseudoTime.csv file</span>
+    <span class="n">PTDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;pseudo&#39;</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1">## Read the refNetwork.csv file</span>
+    <span class="n">refDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;refNet&#39;</span><span class="p">],</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c1">## Generate output path for the dropout datasets</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span>  <span class="c1">#+str(ncells)</span>
+    <span class="n">path</span> <span class="o">+=</span> <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mi">100</span><span class="o">*</span><span class="n">dropoutCutoffs</span><span class="p">))</span><span class="o">+</span>  <span class="s1">&#39;-&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;drop_prob&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        
+    <span class="c1"># Sample cells</span>
+    <span class="n">DropOutDF</span> <span class="o">=</span> <span class="n">expDF</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="c1">#DropOutDF = DropOutDF.sample(n=ncells, axis=&#39;columns&#39;)</span>
+    <span class="c1">#cellIDs = DropOutDF.columns</span>
+    
+    <span class="c1"># copy over PT and refNetwork files</span>
+    <span class="n">refDF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/refNetwork.csv&#39;</span><span class="p">)</span>
+    <span class="n">PTDF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="s1">&#39;/PseudoTime.csv&#39;</span><span class="p">)</span>        
+    
+    <span class="c1"># Drop-out genes if they are less than the </span>
+    <span class="c1"># percentile value @ &quot;dc&quot; with 50% chance</span>
+    <span class="k">if</span> <span class="n">dropoutCutoffs</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">quantileExp</span> <span class="o">=</span> <span class="n">expDF</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">q</span> <span class="o">=</span> <span class="n">dropoutCutoffs</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="s1">&#39;columns&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">expDF</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()):</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">expDF</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">quantileExp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">]:</span>
+                    <span class="n">cointoss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="n">cointoss</span> <span class="o">&lt;</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;drop_prob&#39;</span><span class="p">]:</span>
+                        <span class="n">DropOutDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="n">DropOutDF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s1">&#39;/ExpressionData.csv&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="doDimRed"><a class="viewcode-back" href="../../BoolODE.html#BoolODE.post_processing.doDimRed">[docs]</a><span class="k">def</span> <span class="nf">doDimRed</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Carry out dimensionality reduction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ExpDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">],</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">ptDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;pseudo&#39;</span><span class="p">],</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">perplexity</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;perplexity&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">perplexity</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Computing TSNE...&quot;</span><span class="p">)</span>
+    <span class="n">DimRedRes</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">(</span><span class="n">n_components</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">perplexity</span> <span class="o">=</span> <span class="n">perplexity</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">ExpDF</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    
+    <span class="n">DimRedDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">DimRedRes</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;dim1&#39;</span><span class="p">,</span><span class="s1">&#39;dim2&#39;</span><span class="p">],</span>
+                            <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">ExpDF</span><span class="o">.</span><span class="n">columns</span><span class="p">)))</span>
+    <span class="n">DimRedDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;pt&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ptDF</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)</span>    
+    <span class="n">DimRedDF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/tsne&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">perplexity</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;.tsv&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">DimRedDF</span><span class="o">.</span><span class="n">dim1</span><span class="p">,</span> <span class="n">DimRedDF</span><span class="o">.</span><span class="n">dim2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="n">DimRedDF</span><span class="o">.</span><span class="n">pt</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span><span class="o">+</span><span class="s1">&#39;/tsne&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">perplexity</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;.png&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+    
+<div class="viewcode-block" id="computeSSPT"><a class="viewcode-back" href="../../BoolODE.html#BoolODE.post_processing.computeSSPT">[docs]</a><span class="k">def</span> <span class="nf">computeSSPT</span><span class="p">(</span><span class="n">opts</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    *Author: Aditya Pratapa*</span>
+
+<span class="sd">    Compute PseudoTime using &#39;slingshot&#39;.</span>
+<span class="sd">    Needs the input Gene x Cells expression data frame.</span>
+<span class="sd">    Needs number of clusters to be expected in the </span>
+<span class="sd">    dataset. </span>
+<span class="sd">    E.g., Linear: k=1 (no PseudoTime inference is done)</span>
+<span class="sd">    E.g., Bifurcating: k=3 (1 initial and 2 terminal)</span>
+<span class="sd">    E.g., Trifurcating: k=4 (1 initial and 3 terminal)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">ExpDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">],</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">ptDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">opts</span><span class="p">[</span><span class="s1">&#39;pseudo&#39;</span><span class="p">],</span><span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">nClust</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;nClusters&#39;</span><span class="p">]</span>
+    <span class="n">outPath</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span>
+    <span class="n">perplexity</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;perplexity&#39;</span><span class="p">]</span>
+    <span class="n">noEnd</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="s1">&#39;noEnd&#39;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">nClust</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="c1"># Return simulation time as PseduoTime</span>
+        <span class="n">ptDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">ExpDF</span><span class="o">.</span><span class="n">columns</span><span class="p">]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPath</span><span class="o">+</span><span class="s2">&quot;/PseudoTime.csv&quot;</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span><span class="p">[</span><span class="s1">&#39;Time&#39;</span><span class="p">])</span>
+ 
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">### Compute PseudoTime ordering using slingshot</span>
+        
+        <span class="c1"># Step-1: Compute dimensionality reduction. This is done in doDimRed().</span>
+        <span class="c1"># Currently only does TSNE</span>
+        <span class="c1"># TODO: Add PCA</span>
+
+        <span class="c1"># Step-2: Read TSNE results to a dataframe</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;tsne.tsv&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+            <span class="c1"># First compute tSNE if this hasn&#39;t been done</span>
+            <span class="n">doDimRed</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+        <span class="n">DimRedDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">settings</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;tsne.tsv&#39;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        
+        <span class="c1"># Step-3: Compute kMeans clustering</span>
+        <span class="n">DimRedDF</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s1">&#39;cl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">KMeans</span><span class="p">(</span><span class="n">n_clusters</span> <span class="o">=</span> <span class="n">nClust</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">ExpDF</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">labels_</span>
+        <span class="c1"># Identify starting cluster</span>
+
+        
+        <span class="c1"># Step-4: Identify cells corresponding to initial and final states</span>
+        <span class="c1"># Cells in initial states are identified from cluster with smallest</span>
+        <span class="c1"># mean experimental time</span>
+        <span class="c1"># Cells in final states are rest of the clusters</span>
+        <span class="n">startClust</span> <span class="o">=</span> <span class="n">DimRedDF</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;cl&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="s1">&#39;pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">idxmin</span><span class="p">()</span>
+        <span class="n">endClust</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">ix</span><span class="p">)</span> <span class="k">for</span> <span class="n">ix</span> <span class="ow">in</span> <span class="n">DimRedDF</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;cl&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()[</span><span class="s1">&#39;pt&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">ix</span> <span class="o">!=</span> <span class="n">startClust</span><span class="p">])</span>
+        <span class="n">startClust</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">startClust</span><span class="p">)</span>
+        
+        <span class="c1"># Step-5: Create a temporary directory and write files necessary to run slingshot</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outPath</span><span class="p">,</span> <span class="n">exist_ok</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">DimRedDF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPath</span> <span class="o">+</span> <span class="s1">&#39;/rd.tsv&#39;</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;dim1&#39;</span><span class="p">,</span><span class="s1">&#39;dim2&#39;</span><span class="p">],</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">DimRedDF</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPath</span> <span class="o">+</span> <span class="s1">&#39;/cl.tsv&#39;</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;cl&#39;</span><span class="p">],</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">noEnd</span><span class="p">:</span>
+            <span class="n">cmdToRun</span><span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;docker run --rm -v&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span><span class="n">outPath</span> <span class="o">+</span><span class="s2">&quot;/:/data/temp&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;slingshot:base /bin/sh -c </span><span class="se">\&quot;</span><span class="s2">Rscript data/run_slingshot.R&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;--input=/data/temp/rd.tsv --input-type=matrix&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;--cluster-labels=/data/temp/cl.tsv&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;--start-clus=&quot;</span><span class="o">+</span><span class="n">startClust</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">])</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cmdToRun</span><span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;docker run --rm -v&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span><span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span><span class="n">outPath</span> <span class="o">+</span><span class="s2">&quot;/:/data/temp&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;slingshot:base /bin/sh -c </span><span class="se">\&quot;</span><span class="s2">Rscript data/run_slingshot.R&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;--input=/data/temp/rd.tsv --input-type=matrix&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;--cluster-labels=/data/temp/cl.tsv&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;--start-clus=&quot;</span><span class="o">+</span><span class="n">startClust</span><span class="p">,</span> <span class="s2">&quot;--end-clus=&quot;</span><span class="o">+</span><span class="n">endClust</span><span class="o">+</span><span class="s1">&#39;</span><span class="se">\&quot;</span><span class="s1">&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">cmdToRun</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="n">cmdToRun</span><span class="p">)</span>
+        <span class="c1"># Do this only for the first file</span>
+        <span class="n">tn</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outPath</span><span class="o">+</span><span class="s2">&quot;/rd.tsv&quot;</span><span class="p">,</span>
+             <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">cl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outPath</span><span class="o">+</span><span class="s2">&quot;/cl.tsv&quot;</span><span class="p">,</span>
+                         <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="n">curveFile</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">outPath</span><span class="o">+</span><span class="s2">&quot;/curves.csv&quot;</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+        <span class="n">curveLst</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">lneCnt</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">curveFile</span><span class="p">:</span>
+            <span class="n">curveLst</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">)])</span>
+            <span class="n">lneCnt</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">tn</span><span class="p">[</span><span class="s1">&#39;cl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cl</span><span class="o">.</span><span class="n">values</span>
+        <span class="n">tn</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CellID&#39;</span><span class="p">,</span><span class="s1">&#39;dim1&#39;</span><span class="p">,</span><span class="s1">&#39;dim2&#39;</span><span class="p">,</span><span class="s1">&#39;kMeans&#39;</span><span class="p">]</span>
+        <span class="n">tn</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">tn</span><span class="o">.</span><span class="n">CellID</span>
+
+        <span class="n">f</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">7.5</span><span class="p">,</span> <span class="mf">7.5</span><span class="p">))</span>
+
+        <span class="c1"># Plot slingshot pseudotime </span>
+        <span class="c1"># and original clusters</span>
+        <span class="n">detPT</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outPath</span><span class="o">+</span><span class="s2">&quot;/SlingshotPT.csv&quot;</span><span class="p">,</span>
+             <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">()</span>
+        <span class="n">colNames</span> <span class="o">=</span> <span class="n">detPT</span><span class="o">.</span><span class="n">columns</span>
+        <span class="k">for</span> <span class="n">colName</span> <span class="ow">in</span> <span class="n">colNames</span><span class="p">:</span>
+            <span class="c1"># Select cells belonging to each pseudotime trajectory</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">detPT</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">detPT</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span>
+            <span class="n">tn</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span><span class="n">colName</span><span class="p">]</span> <span class="o">=</span> <span class="n">detPT</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span><span class="n">colName</span><span class="p">]</span>
+
+
+            <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;dim1&#39;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;dim2&#39;</span><span class="p">,</span> 
+                            <span class="n">data</span> <span class="o">=</span> <span class="n">tn</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>  <span class="n">hue</span> <span class="o">=</span> <span class="n">colName</span><span class="p">,</span>
+                            <span class="n">palette</span> <span class="o">=</span> <span class="s2">&quot;viridis&quot;</span><span class="p">,</span> 
+                            <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">([])</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">lneCnt</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">sns</span><span class="o">.</span><span class="n">lineplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span> <span class="n">curveLst</span><span class="p">[</span><span class="n">line</span><span class="o">+</span><span class="mi">1</span><span class="p">],</span><span class="n">y</span><span class="o">=</span><span class="n">curveLst</span><span class="p">[</span><span class="n">line</span><span class="p">],</span>
+                            <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;dim1&#39;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;dim2&#39;</span><span class="p">,</span> 
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">tn</span><span class="p">,</span>  <span class="n">hue</span> <span class="o">=</span> <span class="s1">&#39;kMeans&#39;</span><span class="p">,</span>
+                        <span class="n">palette</span> <span class="o">=</span> <span class="s2">&quot;Set1&quot;</span><span class="p">,</span> 
+                        <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Plot deterministic pseduotime </span>
+        <span class="c1"># and original clusters</span>
+        <span class="n">detPT</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outPath</span><span class="o">+</span><span class="s2">&quot;/PseudoTime.csv&quot;</span><span class="p">,</span>
+             <span class="n">header</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">colNames</span> <span class="o">=</span> <span class="n">detPT</span><span class="o">.</span><span class="n">columns</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">colNames</span><span class="p">)):</span>
+            <span class="c1"># Select cells belonging to each pseudotime trajectory</span>
+            <span class="n">colName</span> <span class="o">=</span> <span class="n">colNames</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">detPT</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="n">detPT</span><span class="p">[</span><span class="n">colName</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()]</span>
+            <span class="n">tn</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index</span><span class="p">,</span><span class="s1">&#39;Original&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+
+        <span class="n">tn</span><span class="p">[</span><span class="s1">&#39;ExpTime&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">detPT</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;columns&#39;</span><span class="p">)</span>
+
+        <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;dim1&#39;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;dim2&#39;</span><span class="p">,</span> 
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">tn</span><span class="p">,</span>  <span class="n">hue</span> <span class="o">=</span> <span class="s1">&#39;ExpTime&#39;</span><span class="p">,</span>
+                        <span class="n">palette</span> <span class="o">=</span> <span class="s2">&quot;viridis&quot;</span><span class="p">,</span> 
+                        <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="n">sns</span><span class="o">.</span><span class="n">scatterplot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s1">&#39;dim1&#39;</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="s1">&#39;dim2&#39;</span><span class="p">,</span> 
+        <span class="n">data</span> <span class="o">=</span> <span class="n">tn</span><span class="p">,</span>  <span class="n">hue</span> <span class="o">=</span> <span class="s1">&#39;Original&#39;</span><span class="p">,</span>
+        <span class="n">palette</span> <span class="o">=</span> <span class="s2">&quot;Set1&quot;</span><span class="p">,</span> 
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;Experiment Time&#39;</span><span class="p">)</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;Original Trajectories&#39;</span><span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;Slingshot Pseudotime&#39;</span><span class="p">)</span>
+
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend</span><span class="p">()</span><span class="o">.</span><span class="n">remove</span><span class="p">()</span>
+        <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">title</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="s1">&#39;kMeans Clustering&#39;</span><span class="p">)</span>
+
+        <span class="n">f</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+
+        <span class="n">tn</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">outPath</span><span class="o">+</span><span class="s2">&quot;/Updated_rd.tsv&quot;</span><span class="p">,</span>
+                  <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">outPath</span><span class="o">+</span><span class="s2">&quot;/SlingshotOutput.png&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s2">&quot;rm -rf temp/&quot;</span><span class="p">)</span>    </div>
+        
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Aditya Pratapa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

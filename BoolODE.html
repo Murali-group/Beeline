@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>BoolODE &mdash; BEELINE  documentation</title>
+  <title>BoolODE package &mdash; BEELINE  documentation</title>
   
 
   
@@ -35,8 +35,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="src package" href="src.html" />
-    <link rel="prev" title="BLPlot package" href="BLPlot.html" /> 
+    <link rel="prev" title="BoolODE" href="BoolODE-intro.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,28 +82,9 @@
               
             
             
-              <ul class="current">
+              <ul>
 <li class="toctree-l1"><a class="reference internal" href="BEELINE.html">BEELINE</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">BoolODE</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#defining-an-input-model">Defining an input model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#running-boolode">Running BoolODE</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#working-with-boolode-output">Working with BoolODE output</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#generating-inputs-for-beeline">Generating inputs for BEELINE</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#compute-pseudotime-using-slingshot">Compute Pseudotime using Slingshot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#generate-dropouts-from-expression-data">Generate dropouts from expression data</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#command-line-options">Command Line Options</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#api-reference">API Reference</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="src.html">src package</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE-intro.html">BoolODE</a></li>
 </ul>
 
             
@@ -150,7 +130,9 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>BoolODE</li>
+          <li><a href="BoolODE-intro.html">BoolODE</a> &raquo;</li>
+        
+      <li>BoolODE package</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -169,408 +151,630 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="boolode">
-<span id="id1"></span><h1>BoolODE<a class="headerlink" href="#boolode" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>The BoolODE package converts a Boolean model to an ODE model and carries out stochastic
-simulations. It reads a model definition file, and outputs the simulated expression data
-for a given model.</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">BoolODE</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="n">data</span><span class="o">/</span><span class="n">test_vars</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">time</span><span class="o">=</span><span class="mi">5</span> <span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">cells</span> <span class="mi">10</span>
-</pre></div>
+  <div class="section" id="module-BoolODE">
+<span id="boolode-package"></span><span id="boolode"></span><h1>BoolODE package<a class="headerlink" href="#module-BoolODE" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="BoolODE.BoolODE">
+<em class="property">class </em><code class="descclassname">BoolODE.</code><code class="descname">BoolODE</code><span class="sig-paren">(</span><em>job_settings: BoolODE.JobSettings</em>, <em>global_settings: BoolODE.GlobalSettings</em>, <em>postproc_settings: BoolODE.PostProcSettings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE.html#BoolODE"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.BoolODE" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>The BoolODE object is created by parsing a user-provided configuration
+file. It then calls the correct functions for executing the user defined
+experiment.</p>
+<dl class="method">
+<dt id="BoolODE.BoolODE.do_post_processing">
+<code class="descname">do_post_processing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE.html#BoolODE.do_post_processing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.BoolODE.do_post_processing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call genSamples() first. Then run DimRed runSlingShot,  
+generateDropouts, if specified by the user.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="BoolODE.BoolODE.execute_jobs">
+<code class="descname">execute_jobs</code><span class="sig-paren">(</span><em>parallel=False</em>, <em>num_threads=1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE.html#BoolODE.execute_jobs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.BoolODE.execute_jobs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run each user specified job. 
+BoolODE runs two types of functions
+1. If <cite>do_simulation == TRUE</cite>, perform SDE simulations of model specified as Boolean rules. 
+2. If <cite>do_post_processing == TRUE</cite> perform the list of post processing operations specified.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This function automatically creates folders for each job name 
+as specified in the config file, if the folder doesn’t already exist.
+Contents of existing folders will be rewritten!</p>
 </div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="BoolODE.ConfigParser">
+<em class="property">class </em><code class="descclassname">BoolODE.</code><code class="descname">ConfigParser</code><a class="reference internal" href="_modules/BoolODE.html#ConfigParser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.ConfigParser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Define static methods for parsing a config file that sets a large number
+of parameters for the pipeline</p>
+<dl class="staticmethod">
+<dt id="BoolODE.ConfigParser.parse">
+<em class="property">static </em><code class="descname">parse</code><span class="sig-paren">(</span><em>config_file_handle</em><span class="sig-paren">)</span> &#x2192; BoolODE.BoolODE<a class="reference internal" href="_modules/BoolODE.html#ConfigParser.parse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.ConfigParser.parse" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="BoolODE.GlobalSettings">
+<em class="property">class </em><code class="descclassname">BoolODE.</code><code class="descname">GlobalSettings</code><span class="sig-paren">(</span><em>model_dir</em>, <em>output_dir</em>, <em>do_simulations</em>, <em>do_post_processing</em>, <em>modeltype</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE.html#GlobalSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.GlobalSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="BoolODE.JobSettings">
+<em class="property">class </em><code class="descclassname">BoolODE.</code><code class="descname">JobSettings</code><span class="sig-paren">(</span><em>jobs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE.html#JobSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.JobSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Store user defined job settings</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="BoolODE.PostProcSettings">
+<em class="property">class </em><code class="descclassname">BoolODE.</code><code class="descname">PostProcSettings</code><span class="sig-paren">(</span><em>dropout_jobs</em>, <em>dimred_jobs</em>, <em>slingshot_jobs</em>, <em>gensample_jobs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE.html#PostProcSettings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.PostProcSettings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="tutorial">
-<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="defining-an-input-model">
-<h3>Defining an input model<a class="headerlink" href="#defining-an-input-model" title="Permalink to this headline">¶</a></h3>
-<p>Consider a toy gene regulatory network with a series of mutual
-inhibition motifs as illustrated below:</p>
-<div class="figure align-center" id="id2">
-<img alt="_images/boolode-example.png" src="_images/boolode-example.png" />
-<p class="caption"><span class="caption-text">If there is an equal probabiliy of taking either the left hand branch
-or the right hand branch starting at (g1=high,g2=high), this network will
-result in 8 distinct steady states, with one of the eight extreme genes being
-active in each steady state.</span></p>
-</div>
-<p>BoolODE can be used to generate gene expression data of a sample of cells undergoing
-a developmental process controlled by a gene regulatory network with a wiring diagram
-as shown above.</p>
-<p>The above network diagram can be represented as a Boolean model as follows:</p>
-<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Gene</span>  <span class="n">Rule</span>
-<span class="n">g1</span>    <span class="p">(</span> <span class="n">g1</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g2</span> <span class="p">)</span>
-<span class="n">g2</span>    <span class="p">(</span> <span class="n">g2</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g1</span> <span class="p">)</span>
-<span class="n">g11</span>   <span class="p">(</span> <span class="n">g1</span> <span class="ow">or</span> <span class="n">g11</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g12</span> <span class="p">)</span>
-<span class="n">g12</span>   <span class="p">(</span> <span class="n">g1</span> <span class="ow">or</span> <span class="n">g12</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g11</span> <span class="p">)</span>
-<span class="n">g21</span>   <span class="p">(</span> <span class="n">g2</span> <span class="ow">or</span> <span class="n">g21</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g22</span> <span class="p">)</span>
-<span class="n">g22</span>   <span class="p">(</span> <span class="n">g2</span> <span class="ow">or</span> <span class="n">g22</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g21</span> <span class="p">)</span>
-<span class="n">g111</span>  <span class="p">(</span> <span class="n">g11</span> <span class="ow">or</span> <span class="n">g111</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g112</span> <span class="p">)</span>
-<span class="n">g112</span>  <span class="p">(</span> <span class="n">g11</span> <span class="ow">or</span> <span class="n">g112</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g111</span> <span class="p">)</span>
-<span class="n">g121</span>  <span class="p">(</span> <span class="n">g12</span> <span class="ow">or</span> <span class="n">g121</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g122</span> <span class="p">)</span>
-<span class="n">g122</span>  <span class="p">(</span> <span class="n">g12</span> <span class="ow">or</span> <span class="n">g122</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g121</span> <span class="p">)</span>
-<span class="n">g211</span>  <span class="p">(</span> <span class="n">g21</span> <span class="ow">or</span> <span class="n">g211</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g212</span> <span class="p">)</span>
-<span class="n">g212</span>  <span class="p">(</span> <span class="n">g21</span> <span class="ow">or</span> <span class="n">g212</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g211</span> <span class="p">)</span>
-<span class="n">g221</span>  <span class="p">(</span> <span class="n">g22</span> <span class="ow">or</span> <span class="n">g221</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g222</span> <span class="p">)</span>
-<span class="n">g222</span>  <span class="p">(</span> <span class="n">g22</span> <span class="ow">or</span> <span class="n">g222</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g221</span> <span class="p">)</span>
-</pre></div>
-</div>
-<p>In order to test BoolODE, copy the rules  above into a file, say <code class="docutils literal notranslate"><span class="pre">multistate.txt</span></code>,
-in the <code class="docutils literal notranslate"><span class="pre">/data</span></code> folder in the BoolODE folder.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">BoolODE expects a tab separated rule file! Make sure the
-input file has tabs between the <code class="docutils literal notranslate"><span class="pre">Gene</span></code> and <code class="docutils literal notranslate"><span class="pre">Rule</span></code> column.</p>
-</div>
-<p>Notice that the <code class="docutils literal notranslate"><span class="pre">g1&lt;-&gt;g2</span></code> interaction is central to the behavior of
-the model.  Let us choose an initial condition such that these genes
-have a medium/high value. Biologically, this can be interpreted as the
-initial undifferentiated cells have genes <code class="docutils literal notranslate"><span class="pre">g1</span></code> and <code class="docutils literal notranslate"><span class="pre">g2</span></code> ‘ON’, and
-all other genes ‘OFF’.  We can specify this initial state by creating a file with the
-following lines:</p>
-<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Genes</span> <span class="n">Values</span>
-<span class="p">[</span><span class="s1">&#39;g1&#39;</span><span class="p">,</span><span class="s1">&#39;g2&#39;</span><span class="p">]</span>   <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>The first column takes a list of genes formatted like a python list of
-strings. The second column takes a list of values to assign to the
-list of genes, again formatted as a python list of values. <strong>Any gene not
-listed in this file will be assigned an initial value of 0 by default.</strong></p>
-<p>Let us save the initial condition specification in
-<code class="docutils literal notranslate"><span class="pre">/data/multistate_ics.txt</span></code>.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The initial condition file should also be tab
-separated. Also, pay attention to the capitalization
-of the column names.</p>
-</div>
-<div class="admonition tip">
-<p class="first admonition-title">Tip</p>
-<p class="last">We recommend starting off with initial condition values
-between 0 and 2, since larger values might cause numerical
-instability.</p>
-</div>
-</div>
-<div class="section" id="running-boolode">
-<h3>Running BoolODE<a class="headerlink" href="#running-boolode" title="Permalink to this headline">¶</a></h3>
-<p>A few more decisions before we get our simulated dataset of gene expression
-values:</p>
+<div class="section" id="module-BoolODE.model_generator">
+<span id="boolode-model-generator-module"></span><h2>BoolODE.model_generator module<a class="headerlink" href="#module-BoolODE.model_generator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="BoolODE.model_generator.GenerateModel">
+<em class="property">class </em><code class="descclassname">BoolODE.model_generator.</code><code class="descname">GenerateModel</code><span class="sig-paren">(</span><em>settings</em>, <em>parameterInputsDF</em>, <em>parameterSetDF</em>, <em>interactionStrengthDF</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.8)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Class that holds model attributes. Provides helper functions to convert a Boolean model
+to an ODE model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>settings</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – User defined job settings. This is created in boolode.do_post_processing()</li>
+<li><strong>parameterInputsDF</strong> (<em>pandas DataFrame</em>) – User specified parmeter inputs. Specified in config YAML as a path.</li>
+<li><strong>parameterSetDF</strong> (<em>pandas DataFrame</em>) – User specified kinetic parameters. Specified in config YAML as a path.</li>
+<li><strong>interactionStrengthDF</strong> (<em>pandas DataFrame</em>) – User specified interaction strengths. Specified in config YAML as a path</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This class is initialized with the job_settings dictionary created 
+by the BoolODE class. Additionally, three dataframe objects are required:</p>
 <ol class="arabic simple">
-<li>How long do you want to simulate this model? Let’s choose 8 time units</li>
-<li>How many cells do you want to simulate? 2000 seems like a good number.</li>
-<li>Where would you like to store the simulation output? Say, <code class="docutils literal notranslate"><span class="pre">./test/</span></code>. BoolODE will create any folders that don’t already exist.</li>
-<li>Do you want to speed up the simulations by running simulations in parallel? Yes!</li>
+<li>parameterInputsDF - specifies parameter inputs</li>
+<li>parameterSetDF - specifies pregenerated python file containing kinetic parameter values</li>
+<li>interactionStrengthDF - specifies interactions strengths</li>
 </ol>
-<p>One last option that we will add is <code class="docutils literal notranslate"><span class="pre">--sample-cells</span></code>, which will instruct BoolODE
-to sample one cell from each simulated trajectory.</p>
-<p>This is all we need to call BoolODE on this model! The following
-directive puts together all the information collected so far</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">BoolODE</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">path</span> <span class="n">data</span><span class="o">/</span><span class="n">multistate</span><span class="o">.</span><span class="n">txt</span> \    <span class="c1"># path to the Boolean rules file</span>
-                      <span class="o">--</span><span class="n">ics</span> <span class="n">data</span><span class="o">/</span><span class="n">multistate_ics</span><span class="o">.</span><span class="n">txt</span> \ <span class="c1"># path to initial condition specification</span>
-                      <span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">time</span> <span class="mi">8</span> \                  <span class="c1"># maximum time of simulation</span>
-                      <span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">cells</span> <span class="mi">2000</span> \              <span class="c1"># number of cells/simulations to perform</span>
-                      <span class="o">--</span><span class="n">outPrefix</span> <span class="n">test</span><span class="o">/</span> \             <span class="c1"># relative path to destination</span>
-                      <span class="o">--</span><span class="n">do</span><span class="o">-</span><span class="n">parallel</span> \                 <span class="c1"># do parallel simulations</span>
-                      <span class="o">--</span><span class="n">sample</span><span class="o">-</span><span class="n">cells</span>                  <span class="c1"># sample one cell from each simulation</span>
-</pre></div>
+<p>By default, if these aren’t specified by the user, BoolODE stores empty pandas DataFrame objects.</p>
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.addDummyGenes">
+<code class="descname">addDummyGenes</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.addDummyGenes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.addDummyGenes" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add dummy genes. 
+Starts with the user specified Boolean model, and grows the
+network by adding new ‘dummy’ nodes to each existing node.
+In the current configuration, the user can specify <cite>max_parents</cite>
+which specifies the number of parent nodes of every dummy node.
+Currently, twice as many dummy nodes as nodes in the original graph
+are added.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This feature is experimental.</p>
 </div>
-<p>For a full list of available options, see <a class="reference internal" href="#boolodeoptions"><span class="std std-ref">Command Line Options</span></a></p>
-</div>
-<div class="section" id="working-with-boolode-output">
-<h3>Working with BoolODE output<a class="headerlink" href="#working-with-boolode-output" title="Permalink to this headline">¶</a></h3>
-<p>The simulations will take about 5 minutes to complete. At the end of a successful run, the
-output directory should like this:</p>
-<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span>test/                      # User specified destination
-|-- parameters.txt         # Parameter names and values generated for input model
-|-- ExpressionData.csv     # Gene expression dataset
-|-- PseudoTime.csv         # Simulation time of each sample time point/cell
-|-- refNetwork.csv         # Boolean network represented as an edge list, the ground truth network
-`-- simulations/
-    |-- E1.csv
-    |-- E2.csv
-    ...
-</pre></div>
-</div>
-<p>Where <code class="docutils literal notranslate"><span class="pre">E1.csv,</span> <span class="pre">E2.csv,</span> <span class="pre">...</span></code> are individual simulations. Each column in these
-files, the cell IDs, has the form <code class="docutils literal notranslate"><span class="pre">E&lt;simulation</span> <span class="pre">number&gt;_&lt;timepoint&gt;</span></code>.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">By default BoolODE will store the entire simulated time
-course for every simulation. Specifying the <code class="docutils literal notranslate"><span class="pre">--sample-cells</span></code>
-option will result in BoolODE sampling cells and creating an
-<code class="docutils literal notranslate"><span class="pre">ExpressionData.csv</span></code> file with genes as rows, and cells as columns.
-If the option is not specified, you can write a custom script to
-sample cells from each simulation</p>
-</div>
-<p>In order to visualize the entire dataset, we can carry out dimensionality reduction using
-t-SNE. A script like the one below is a good starting point for this.</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="k">import</span> <span class="n">TSNE</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+</dd></dl>
 
-<span class="k">def</span> <span class="nf">vis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-    <span class="n">tsne</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">perplexity</span><span class="o">=</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">tdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tsne</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;t-SNE 1&#39;</span><span class="p">,</span> <span class="s1">&#39;t-SNE 2&#39;</span><span class="p">],</span><span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">tdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;test/tsne.csv&#39;</span><span class="p">)</span>
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tsne</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">tsne</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;test/tree.png&#39;</span><span class="p">)</span>
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.addInteractionStrengths">
+<code class="descname">addInteractionStrengths</code><span class="sig-paren">(</span><em>hillThreshold</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.addInteractionStrengths"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.addInteractionStrengths" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if interaction strengths are specified.
+Create a new parameter specifying the strength
+of a given interaction. For all other equations in
+which “regulator” appears in, its hillThreshold value
+will remain the default value.</p>
+</dd></dl>
 
-<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;test/ExpressionData.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">vis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Here, the time point of each cell is inferred from the cell ID, and this information
-is used to color each cell in the scatter plot. Darker colors imply early time points in the
-simulation. The output should look like the following</p>
-<div class="figure align-center" id="id3">
-<img alt="_images/tree.png" src="_images/tree.png" />
-<p class="caption"><span class="caption-text">t-SNE visualization of BoolODE output</span></p>
-</div>
-<p>Notice the eight steady state clusters! This dataset can now be
-processed further using the tools described in  <a class="reference internal" href="#geninputs"><span class="std std-ref">Generating inputs for BEELINE</span></a> to produce
-input datasets for the BEELINE pipeline.</p>
-</div>
-</div>
-<div class="section" id="generating-inputs-for-beeline">
-<span id="geninputs"></span><h2>Generating inputs for BEELINE<a class="headerlink" href="#generating-inputs-for-beeline" title="Permalink to this headline">¶</a></h2>
-<p>BoolODE provides additional scripts, located in <code class="docutils literal notranslate"><span class="pre">scripts/</span></code> to
-process simulation output to be used by BEELINE.</p>
-<div class="section" id="compute-pseudotime-using-slingshot">
-<h3>Compute Pseudotime using Slingshot<a class="headerlink" href="#compute-pseudotime-using-slingshot" title="Permalink to this headline">¶</a></h3>
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.addParameterInputs">
+<code class="descname">addParameterInputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.addParameterInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.addParameterInputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for user specified input parameters.
+If a parameter input file is specified,
+Every row in parameterInputsDF contains two
+columns:</p>
+<ol class="arabic simple">
+<li>‘Input’ specifies the name of input parameter</li>
+<li>‘Value’ specified the input state, typically 1 or 0, but for HIGH and LOW inputs respectively, but any float between 0 and 1 is valid input.</li>
+</ol>
+<p>Now, we create a fake hill term for this input, even
+though there is no equation corresponding to it. Thus,
+we create a hillThreshold and hillCoefficient 
+term for it. This is useful so we can treat this input
+parameter as a “regulator” and leave the structure of
+the logic term unchanged.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.assignDefaultParameterValues">
+<code class="descname">assignDefaultParameterValues</code><span class="sig-paren">(</span><em>parameterNamePrefixAndDefaultsAll</em>, <em>parameterNamePrefixAndDefaultsGenes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.assignDefaultParameterValues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.assignDefaultParameterValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set each kinetic parameter to its default value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.assignSampledParameterValues">
+<code class="descname">assignSampledParameterValues</code><span class="sig-paren">(</span><em>parameterNamePrefixAndDefaultsAll</em>, <em>parameterNamePrefixAndDefaultsGenes</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.assignSampledParameterValues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.assignSampledParameterValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample kinetic parameters from a truncated normal distribution with mean=default
+parameter value, and standard deviation = sample_std, in a range +- 10% of 
+the default value.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.createRegulatoryTerms">
+<code class="descname">createRegulatoryTerms</code><span class="sig-paren">(</span><em>currgene</em>, <em>combinationOfRegulators</em>, <em>regSpecies</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.createRegulatoryTerms"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.createRegulatoryTerms" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the terms in the activation function which governs
+the transcriptional state of the gene. 
+If modeltype is ‘hill’, each term is composed of products of Hill functions, ranging over
+all possible combinations of regulators. 
+Similarly, if modeltype is ‘heaviside’, each term is simply a
+product of the activities of the combinations of regulators, for all combinations.
+Here, the form of a single term is generated for a single combination of regulators.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>currgene</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Name of the current gene</li>
+<li><strong>combinationOfRegulators</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – a list of all combinations of regulators of currgene</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.generateModelDict">
+<code class="descname">generateModelDict</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.generateModelDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.generateModelDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take a DataFrame object with Boolean rules,
+construct ODE equations for each variable.
+This is the core function in BoolODE.
+In a nutshell, a temporary namespace called boolodespace
+is created. In this namespace, the nodes  in the Boolean network
+are first initialized to 0, or OFF. Then, for each gene/node,
+its corresponding rule is evaluated by setting its regulators to
+all combinations binary states. The outcome of each of these Boolean
+rule evaluations is used to decide the value of the activation strength
+parameter ‘a’ in Hill functions, or the interaction parameter ‘w’ in 
+the Heaviside functions. 
+Each step of this conversion is documented in the code directly.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.getParameters">
+<code class="descname">getParameters</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.getParameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.getParameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create and assigns the kinetic parameters for each equations the
+corresponding parameter value.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">runSlingshot.py requires the SlingShot docker file! Please make sure
-docker has been setup and the container built.</p>
+<p class="last">Default kinetic parameter values are stored in ./parameters.yaml. This
+is provided to make it easy for users to define different defaults, but it 
+other parameter values have not been tested extensively, and might not
+yield the expected results.</p>
 </div>
-<p>Slingshot computes pseudotime trajectories for a given dataset by
-first carrying out dimensionality reduction, then carrying out
-<em>k</em>-means clustering on the low dimensional embedding in order to
-compute trajectories. The number of clusters expected depend on the
-features of the dataset. For instance, a dataset with two steady state
-clusters should be specified with <code class="docutils literal notranslate"><span class="pre">--nClusters</span> <span class="pre">3</span></code>, specifying an
-additional initial state cluster.</p>
-<dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">runSlingshot.py</span></code> takes the following command line arguments</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
+</dd></dl>
+
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.readBooleanRules">
+<code class="descname">readBooleanRules</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.readBooleanRules"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.readBooleanRules" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reads a rule file from path and stores the rules in a dictionary.
+Performs the following transformations:</p>
+<ol class="arabic simple">
+<li>Parses each Boolean rule to extract nodes in the model</li>
+<li>Identifies nodes without corresponding rules: (a) If a parameterInput file is specified and the node under consideration
+is present in the file, the node is treated as an input parameter
+(b) Else, a self-edge is added to the node</li>
+<li>Adds dummy genes - <em>This is experimental</em></li>
+<li>Finally, create a gene (x_) and protein (p_)  variable corresponding to 
+each node in the network, taking into consideration user defined types.</li>
+</ol>
+</dd></dl>
+
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.writeModelToFile">
+<code class="descname">writeModelToFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.writeModelToFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.writeModelToFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes model to file as a python function.
+The ODE model generated using generateModelDict() is defined as 
+a python ODE function called Model(). Model() takes 3 arguments:</p>
+<ol class="arabic simple">
+<li>The current model state vector Y</li>
+<li>The current time t</li>
+<li>A list of parameters pars</li>
+</ol>
+<p>The function returns a vector of time derivatives computed from the ODEs.
+Model() is written model.py in the directory of the current job</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="BoolODE.model_generator.GenerateModel.writeParametersToFile">
+<code class="descname">writeParametersToFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/model_generator.html#GenerateModel.writeParametersToFile"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.model_generator.GenerateModel.writeParametersToFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes dictionary of parameters to file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-BoolODE.post_processing">
+<span id="boolode-post-processing-module"></span><h2>BoolODE.post_processing module<a class="headerlink" href="#module-BoolODE.post_processing" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="BoolODE.post_processing.computeSSPT">
+<code class="descclassname">BoolODE.post_processing.</code><code class="descname">computeSSPT</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/post_processing.html#computeSSPT"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.post_processing.computeSSPT" title="Permalink to this definition">¶</a></dt>
+<dd><p><em>Author: Aditya Pratapa</em></p>
+<p>Compute PseudoTime using ‘slingshot’.
+Needs the input Gene x Cells expression data frame.
+Needs number of clusters to be expected in the 
+dataset. 
+E.g., Linear: k=1 (no PseudoTime inference is done)
+E.g., Bifurcating: k=3 (1 initial and 2 terminal)
+E.g., Trifurcating: k=4 (1 initial and 3 terminal)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.post_processing.doDimRed">
+<code class="descclassname">BoolODE.post_processing.</code><code class="descname">doDimRed</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/post_processing.html#doDimRed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.post_processing.doDimRed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Carry out dimensionality reduction</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.post_processing.genDropouts">
+<code class="descclassname">BoolODE.post_processing.</code><code class="descname">genDropouts</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/post_processing.html#genDropouts"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.post_processing.genDropouts" title="Permalink to this definition">¶</a></dt>
+<dd><p>Induce drop out in the simulated scRNAseq datasets.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.post_processing.genSamples">
+<code class="descclassname">BoolODE.post_processing.</code><code class="descname">genSamples</code><span class="sig-paren">(</span><em>opts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/post_processing.html#genSamples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.post_processing.genSamples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate samples of cells from a given set of simulations. This sample
+will then be used for other post processing steps.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-BoolODE.run_experiment">
+<span id="boolode-run-experiment-module"></span><h2>BoolODE.run_experiment module<a class="headerlink" href="#module-BoolODE.run_experiment" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="BoolODE.run_experiment.Experiment">
+<code class="descclassname">BoolODE.run_experiment.</code><code class="descname">Experiment</code><span class="sig-paren">(</span><em>mg</em>, <em>Model</em>, <em>tspan</em>, <em>settings</em>, <em>icsDF</em>, <em>writeProtein=False</em>, <em>normalizeTrajectory=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/run_experiment.html#Experiment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.run_experiment.Experiment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Carry out an <cite>in-silico</cite> experiment. This function takes as input 
+an ODE model defined as a python function and carries out stochastic
+simulations. BoolODE defines a _cell_ as a single time point from 
+a simulated time course. Thus, in order to obtain 50 single cells,
+BoolODE carries out 50 simulations, which are stored in ./simulations/.
+Further, if it is known that the resulting single cell dataset will
+exhibit multiple trajectories, the user can specify  the number of clusters in
+<cite>nClusters</cite>; BoolODE will then cluster the entire simulation, such that each
+simulated trajectory possesess a cluster ID.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
 <tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>show this help message and exit</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Prefix for output files.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-e <var>EXPR</var></span>, <span class="option">--expr=<var>EXPR</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to expression data file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-p <var>PSEUDO</var></span>, <span class="option">--pseudo=<var>PSEUDO</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to ‘pseudotime’ file generated by BoolODE</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-c <var>NCLUSTERS</var></span>, <span class="option">--nClusters=<var>NCLUSTERS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of expected clusters in the dataset.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--noEnd</span></kbd></td>
-<td>Do not force SlingShot to have an end state.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-r <var>PERPLEXITY</var></span>, <span class="option">--perplexity=<var>PERPLEXITY</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Perplexity for tSNE.</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><code class="docutils literal notranslate"><span class="pre">runslingshot.py</span></code> requires a ‘pseudotime’ file passed
-using the <code class="docutils literal notranslate"><span class="pre">--pseudo</span></code> option. This file should contain the
-actual simulation time from BoolODE, which can then be used
-to compare the quality of the inferred trajectory with the
-actual simulation time values. This file is NOT required by
-Slingshot itself.</p>
-</div>
-</div>
-<div class="section" id="generate-dropouts-from-expression-data">
-<h3>Generate dropouts from expression data<a class="headerlink" href="#generate-dropouts-from-expression-data" title="Permalink to this headline">¶</a></h3>
-<p>In order to mimic real single-cell expression datasets, BoolODE
-includes <code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> which implements dropouts as described in
-the paper, by dropping expression values below <code class="docutils literal notranslate"><span class="pre">DROP_CUTOFF</span></code> using a
-probability of <code class="docutils literal notranslate"><span class="pre">DROP_PROB</span></code>. This script samples <code class="docutils literal notranslate"><span class="pre">NCELLS</span></code> from the
-columns in the expression dataset <code class="docutils literal notranslate"><span class="pre">EXPR</span></code>, and will throw an error if
-the number is greater than the number of columns.</p>
-<dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> takes the following command line arguments</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>show this help message and exit</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Prefix for output files.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-e <var>EXPR</var></span>, <span class="option">--expr=<var>EXPR</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to expression data file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-p <var>PSEUDO</var></span>, <span class="option">--pseudo=<var>PSEUDO</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to pseudotime file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-r <var>REFNET</var></span>, <span class="option">--refNet=<var>REFNET</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to reference network file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-n <var>NCELLS</var></span>, <span class="option">--nCells=<var>NCELLS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of cells to sample.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-d</span>, <span class="option">--dropout</span></kbd></td>
-<td>Carry out dropout analysis? [Optional]</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--drop-cutoff=<var>DROP_CUTOFF</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Specify percentile cutoff on gene expression</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--drop-prob=<var>DROP_PROB</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Specify the probability of dropping a gene below
-quantile q. Ensure 0 &lt; DROP_PROB &lt; 1.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-i <var>SAMPLENUM</var></span>, <span class="option">--samplenum=<var>SAMPLENUM</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Sample Number</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
-<div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">Ensure the <code class="docutils literal notranslate"><span class="pre">--dropout</span></code> option is passed. If not, <code class="docutils literal notranslate"><span class="pre">genDropouts</span></code>
-will still randomly sample cells but not dropout any values.</p>
-</div>
-</div>
-</div>
-<div class="section" id="command-line-options">
-<span id="boolodeoptions"></span><h2>Command Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><table class="docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>show this help message and exit</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--max-time=<var>MAX_TIME</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Total time of simulation. (Default = 20)</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--num-cells=<var>NUM_CELLS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of cells sample. (Default = 100)</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--sample-cells</span></kbd></td>
-<td>Sample a single cell from each trajectory? By default
-will store full trajectory of each simulation (Default
-= False)</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--add-dummy</span></kbd></td>
-<td>Add dummy genes</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-n</span>, <span class="option">--normalize-trajectory</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Min-Max normalize genes across all experiments</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-i</span>, <span class="option">--identical-pars</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Set single value to similar parameters NOTE: Consider
-setting this if you are using –sample-pars.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-s</span>, <span class="option">--sample-pars</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Sample rate parameters around the hardcoded means ,
-using 10% stand. dev.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--std=<var>STD</var></span></kbd></td>
-<td>If sampling parameters, specify standard deviation.
-(Default 0.1)</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--write-protein</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Write both protein and RNA values to file. Useful for
-debugging.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-b</span>, <span class="option">--burn-in</span></kbd></td>
-<td>Treats the first 25% of the time course as burnin ,
-samples from the rest.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Prefix for output files.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--path=<var>PATH</var></span></kbd></td>
-<td>Path to boolean model file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--inputs=<var>INPUTS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to input parameter files. This is different from
-specifying a parameter set!</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--pset=<var>PSET</var></span></kbd></td>
-<td>Path to pre-generated parameter set.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--ics=<var>ICS</var></span></kbd></td>
-<td>Path to list of initial conditions</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--strengths=<var>STRENGTHS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to list of interaction strengths</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--species-type=<var>SPECIES_TYPE</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to list of molecular species type file.Useful to
-specify proteins/genes</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-c <var>NCLUSTERS</var></span>, <span class="option">--nClusters=<var>NCLUSTERS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of expected clusters in the dataset. (Default =1)</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--max-parents=<var>MAX_PARENTS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of parents to add to dummy genes. (Default = 1)</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--do-parallel</span></kbd></td>
-<td>Run simulations in parallel. Recommended for &gt; 50
-simulations</td></tr>
-</tbody>
-</table>
-</div></blockquote>
-</div>
-<div class="section" id="api-reference">
-<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
-<div class="toctree-wrapper compound">
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="src.html">src package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.BoolODE">src.BoolODE module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.simulator">src.simulator module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.utils">src.utils module</a></li>
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>mg</strong> (<em>BoolODE.GenerateModel</em>) – Model details obtained by instantiating an object of GenerateModel</li>
+<li><strong>Model</strong> (<em>function</em>) – Function defining ODE model</li>
+<li><strong>tspan</strong> (<em>ndarray</em>) – Array of time points</li>
+<li><strong>settings</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – The job settings dictionary</li>
+<li><strong>icsDF</strong> (<em>pandas DataFrame</em>) – Dataframe specifying initial condition for simulation</li>
+<li><strong>writeProtein</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Bool specifying if the protein values should be written to file. Default = False</li>
+<li><strong>normalizeTrajectory</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Bool specifying if the gene expression values should be scaled between 0 and 1.</li>
 </ul>
-</li>
-</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.run_experiment.simulateAndSample">
+<code class="descclassname">BoolODE.run_experiment.</code><code class="descname">simulateAndSample</code><span class="sig-paren">(</span><em>argdict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/run_experiment.html#simulateAndSample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.run_experiment.simulateAndSample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles parallelization of ODE simulations.
+Calls the simulator with simulation settings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.run_experiment.startRun">
+<code class="descclassname">BoolODE.run_experiment.</code><code class="descname">startRun</code><span class="sig-paren">(</span><em>settings</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/run_experiment.html#startRun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.run_experiment.startRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a simulation run. Loads model file, starts an Experiment(),
+and generates the appropriate input files</p>
+</dd></dl>
+
 </div>
+<div class="section" id="module-BoolODE.simulator">
+<span id="boolode-simulator-module"></span><h2>BoolODE.simulator module<a class="headerlink" href="#module-BoolODE.simulator" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="BoolODE.simulator.deltaW">
+<code class="descclassname">BoolODE.simulator.</code><code class="descname">deltaW</code><span class="sig-paren">(</span><em>N</em>, <em>m</em>, <em>h</em>, <em>seed=0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/simulator.html#deltaW"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.simulator.deltaW" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate sequence of Wiener increments for m independent Wiener
+processes W_j(t) j=0..m-1 for each of N time intervals of length h.    
+From the sdeint implementation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li>dW : The [n, j] element has the value W_j((n+1)*h) - W_j(n*h) ( has shape (N, m) )</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.simulator.eulersde">
+<code class="descclassname">BoolODE.simulator.</code><code class="descname">eulersde</code><span class="sig-paren">(</span><em>f</em>, <em>G</em>, <em>y0</em>, <em>tspan</em>, <em>pars</em>, <em>seed=0.0</em>, <em>dW=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/simulator.html#eulersde"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.simulator.eulersde" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adapted from sdeint implementation <a class="reference external" href="https://github.com/mattja/sdeint/">https://github.com/mattja/sdeint/</a></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>f</strong> (<em>function</em>) – function defining ODE model. Should take vector of current state, current time, and list of parameter values as arguments.</li>
+<li><strong>pars</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of parameter values</li>
+<li><strong>y0</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of initial values</li>
+<li><strong>tspan</strong> (<em>ndarray</em>) – Array of timepoints to simulate</li>
+<li><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Seed to initialize random number generator</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li>y: Array containing the time course of state variables</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.simulator.getInitialCondition">
+<code class="descclassname">BoolODE.simulator.</code><code class="descname">getInitialCondition</code><span class="sig-paren">(</span><em>ss</em>, <em>ModelSpec</em>, <em>rnaIndex</em>, <em>proteinIndex</em>, <em>genelist</em>, <em>proteinlist</em>, <em>varmapper</em>, <em>revvarmapper</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/simulator.html#getInitialCondition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.simulator.getInitialCondition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the initial values of all state variables. 
+Takes into consideration user defined initial conditions, and computes the steady 
+states of the protein variables based on the estimated values of their corresponding genes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>ss</strong> (<em>ndarray</em>) – Steady state array</li>
+<li><strong>ModelSpec</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Dictionary of dictionary specifying the ODE model, containing parameters, initial conditions and equations.</li>
+<li><strong>rnaIndex</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of indices of genes</li>
+<li><strong>proteinIndex</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of indices of proteins</li>
+<li><strong>genelist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of names of all genes in the model</li>
+<li><strong>proteinlist</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of names of all proteins in the model</li>
+<li><strong>varmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Mapper: {variable name : index}</li>
+<li><strong>revvarmapper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.8)"><em>dict</em></a>) – Mapper: {index : variable name}</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li>newics: List containing new initial conditions</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.simulator.noise">
+<code class="descclassname">BoolODE.simulator.</code><code class="descname">noise</code><span class="sig-paren">(</span><em>x</em>, <em>t</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/simulator.html#noise"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.simulator.noise" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.simulator.simulateModel">
+<code class="descclassname">BoolODE.simulator.</code><code class="descname">simulateModel</code><span class="sig-paren">(</span><em>Model</em>, <em>y0</em>, <em>parameters</em>, <em>isStochastic</em>, <em>tspan</em>, <em>seed</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/simulator.html#simulateModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.simulator.simulateModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Call numerical integration functions, either odeint() from Scipy,
+or simulator.eulersde() defined in simulator.py. By default, stochastic simulations are
+carried out using simulator.eulersde.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>Model</strong> (<em>function</em>) – Function defining ODE model</li>
+<li><strong>y0</strong> (<em>array</em>) – array of initial values for each state variable</li>
+<li><strong>parameters</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – list of parameter values to be used in simulations</li>
+<li><strong>isStochastic</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – User defined parameter. Default = True, can be turned off to perform ODE simulations.</li>
+<li><strong>tspan</strong> (<em>ndarray</em>) – Time points to simulate</li>
+<li><strong>seed</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Seed to initialize random number generator</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><ul class="simple">
+<li>P: Time course from numerical integration</li>
+</ul>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">ndarray</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="module-BoolODE.utils">
+<span id="boolode-utils-module"></span><h2>BoolODE.utils module<a class="headerlink" href="#module-BoolODE.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="BoolODE.utils.checkValidInputPath">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">checkValidInputPath</code><span class="sig-paren">(</span><em>path</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#checkValidInputPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.checkValidInputPath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns dataframe of file at path.
+If path is not valid, returns empty dataframe.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.checkValidModelDefinitionPath">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">checkValidModelDefinitionPath</code><span class="sig-paren">(</span><em>path</em>, <em>name</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#checkValidModelDefinitionPath"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.checkValidModelDefinitionPath" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.generateInputFiles">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">generateInputFiles</code><span class="sig-paren">(</span><em>resultDF</em>, <em>BoolDF</em>, <em>withoutRules</em>, <em>parameterInputsDF</em>, <em>tmax</em>, <em>numcells</em>, <em>outPrefix=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#generateInputFiles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.generateInputFiles" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates input files required from the Beeline pipeline</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>resultDF</strong> (<em>pandas DataFrame</em>) – The simulation output, rows are genes, columns are “cells” or timepoints</li>
+<li><strong>outputfilenames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of filenames generated containing individual time courses</li>
+<li><strong>BoolDF</strong> (<em>pandas DataFrame</em>) – Dataframe containing rules</li>
+<li><strong>withoutrules</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – List of nodes in input file without rules</li>
+<li><strong>parameterInputsPath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a>) – Specifies if there are any inputs to the model</li>
+<li><strong>outPrefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.8)"><em>str</em></a><em> (</em><em>Optional</em><em>)</em>) – Prefix specifying target directory</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.getRegulatorsInRule">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">getRegulatorsInRule</code><span class="sig-paren">(</span><em>rule</em>, <em>species</em>, <em>inputs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#getRegulatorsInRule"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.getRegulatorsInRule" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function to tokenize a rule into regulators.
+Returns three lists of regulator names.
+1. allreg is the list of all valid regulators
+2. regulatorySpecies are other model variables that are regulators
+3. inputreg are the regulators that are model inputs</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.getSaneNval">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">getSaneNval</code><span class="sig-paren">(</span><em>size</em>, <em>lo=1.0</em>, <em>hi=10.0</em>, <em>mu=2.0</em>, <em>sig=2.0</em>, <em>identicalPars=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#getSaneNval"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.getSaneNval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a gaussian random number which is
+bounded by <cite>lo</cite> and <cite>hi</cite></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.8)"><em>int</em></a>) – number of random numbers to generate</li>
+<li><strong>lo</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – lower bound of sample range</li>
+<li><strong>hi</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – upper bound of sample range</li>
+<li><strong>mu</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Mean of Gaussian distribution to be sampled from</li>
+<li><strong>sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.8)"><em>float</em></a>) – Standard deviation of Gausssian distribution to be sampled from</li>
+<li><strong>identicalPars</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.8)"><em>bool</em></a>) – Flag to sample single value and return a list of identical values</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><ul class="simple">
+<li>K: list of sampled values</li>
+</ul>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.get_ss">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">get_ss</code><span class="sig-paren">(</span><em>P</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#get_ss"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.get_ss" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the final time point of the simulated time course</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>P</strong> (<em>np.array</em>) – 2-D array containing time course of the model</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li>ss : np.array containing the last entry in each time series list</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.heavisideThreshold">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">heavisideThreshold</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#heavisideThreshold"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.heavisideThreshold" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decides whether the basal parameter omega_0 should 
+be 1 (basal expression) or -1 (basal repression)</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.loadParameterValues">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">loadParameterValues</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#loadParameterValues"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.loadParameterValues" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks for valid parameters in parameters.yaml file</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.minmaxnorm">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">minmaxnorm</code><span class="sig-paren">(</span><em>X</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#minmaxnorm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.minmaxnorm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scales the values in X</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>X</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.8)"><em>list</em></a>) – Input list of values to be scaled</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><ul class="simple">
+<li>N : list of values scaled between min and max values in input list</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.normalizeData">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">normalizeData</code><span class="sig-paren">(</span><em>P</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#normalizeData"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.normalizeData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls minmaxnorm() for each time series</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Pnorm : list of scaled values</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.normalizeExp">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">normalizeExp</code><span class="sig-paren">(</span><em>DF</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#normalizeExp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.normalizeExp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls minmaxnorm() for each gene across all experiments</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>DF</strong> (<em>pd.DataFrame</em>) – Dataframe containing gene expression values as rows, time points as columns</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">newDF : DataFrame with values of DF scaled between min and max of DF</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.sampleCellFromTraj">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">sampleCellFromTraj</code><span class="sig-paren">(</span><em>cellid</em>, <em>tspan</em>, <em>P</em>, <em>varmapper</em>, <em>sampleAt</em>, <em>genelist</em>, <em>proteinlist</em>, <em>header</em>, <em>writeProtein=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#sampleCellFromTraj"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.sampleCellFromTraj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns pandas DataFrame with columns corresponding to 
+time points and rows corresponding to genes</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="BoolODE.utils.sampleTimeSeries">
+<code class="descclassname">BoolODE.utils.</code><code class="descname">sampleTimeSeries</code><span class="sig-paren">(</span><em>num_timepoints</em>, <em>expnum</em>, <em>tspan</em>, <em>P</em>, <em>varmapper</em>, <em>timeIndex</em>, <em>genelist</em>, <em>proteinlist</em>, <em>header</em>, <em>writeProtein=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/BoolODE/utils.html#sampleTimeSeries"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#BoolODE.utils.sampleTimeSeries" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns pandas DataFrame with columns corresponding to 
+time points and rows corresponding to genes</p>
+</dd></dl>
+
 </div>
 </div>
 
@@ -582,10 +786,8 @@ simulations</td></tr>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="src.html" class="btn btn-neutral float-right" title="src package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="BLPlot.html" class="btn btn-neutral float-left" title="BLPlot package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="BoolODE-intro.html" class="btn btn-neutral float-left" title="BoolODE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
