@@ -83,29 +83,43 @@ A few more decisions before we get our simulated dataset of gene expression
 values:
 
 1. How long do you want to simulate this model? Let's choose 8 time units
-2. How many cells do you want to simulate? 2000 seems like a good number.
+2. How many cells do you want to simulate? 1000 seems like a good number.
 3. Where would you like to store the simulation output? Say, ``./test/``. BoolODE will create any folders that don't already exist.   
 4. Do you want to speed up the simulations by running simulations in parallel? Yes!
+5. Finally, we can process the output from BoolODE and generate a sample of single cells
+   by specifying.
 
-One last option that we will add is ``--sample-cells``, which will instruct BoolODE
-to sample one cell from each simulated trajectory.
+Users can specify simulation settings using a YAML file. Such a file should have
+three sections:
+1. ``global_settings`` defines the paths that BoolODE needs to read inputs and write outputs, as well as model type to generate
+2. ``jobs`` specifies the list of models to simulate. Right now we have one model, for which we have defined the parameters for simulation.
+3. ``post_processing``  specifies how BoolODE will process the output simulations in order to serve as input files to BEELINE
 
-This is all we need to call BoolODE on this model! The following
-directive puts together all the information collected so far
+A sample config file with the settings above would look something like the following.
 
-
-.. code:: bash
-
-   python src/BoolODE.py --path data/multistate.txt \    # path to the Boolean rules file
-                         --ics data/multistate_ics.txt \ # path to initial condition specification
-                         --max-time 8 \                  # maximum time of simulation
-                         --num-cells 2000 \              # number of cells/simulations to perform
-                         --outPrefix test/ \             # relative path to destination
-                         --do-parallel \                 # do parallel simulations
-                         --sample-cells                  # sample one cell from each simulation
-
-
-For a full list of available options, see :ref:`boolodeoptions`
+.. code:: yaml
+          
+          global_settings:                                  
+            model_dir: "data"                               
+            output_dir: "test"                              
+            do_simulations: True                       
+            do_post_processing: False
+            modeltype: 'hill'                               
+          jobs:                                             
+            - name: "multistate-1"                          
+              model_definition: "multistate.txt"            
+              model_initial_conditions: "multistate_ics.txt"
+              num_cells: 500                                
+              simulation_time: 8                            
+              do_parallel: True                             
+          post_processing:                                  
+            genSamples:                                     
+              - sample_size: 400                            
+                nDataSets: 1                                
+            DimRed:                                         
+              - perplexity: 100                             
+          
+ For a full list of available options, see `example-config.yaml`
 
 Working with BoolODE output
 ###########################
@@ -128,49 +142,12 @@ output directory should like this:
 Where ``E1.csv, E2.csv, ...`` are individual simulations. Each column in these
 files, the cell IDs, has the form ``E<simulation number>_<timepoint>``.
           
-.. note:: By default BoolODE will store the entire simulated time
-          course for every simulation. Specifying the ``--sample-cells``
-          option will result in BoolODE sampling cells and creating an
-          ``ExpressionData.csv`` file with genes as rows, and cells as columns.
-          If the option is not specified, you can write a custom script to
-          sample cells from each simulation
+The above run has generated a series of simulation files. In the next step, we
+can use the same config file to carry out post processing on the simulation output,
+as described in :ref:`geninputs`.
 
-
-
-In order to visualize the entire dataset, we can carry out dimensionality reduction using
-t-SNE. A script like the one below is a good starting point for this.
-
-
-.. code:: python
-
-          import pandas as pd
-          from sklearn.manifold import TSNE
-          import matplotlib
-          import matplotlib.pyplot as plt
-          
-          def vis(df, p):
-              tsne = TSNE(n_components=2,perplexity=p).fit_transform(df.T.values)
-              tdf = pd.DataFrame(tsne, columns=['t-SNE 1', 't-SNE 2'],index=df.columns)
-              tdf.to_csv('test/tsne.csv')
-              fig, ax = plt.subplots(1,1,figsize=(5,5))
-              ax.scatter(tsne[:,0], tsne[:,1], c = [float(col.split('_')[1]) for col in df.columns])
-              ax.axis('off')
-              plt.tight_layout()
-              plt.savefig('test/tree.png')
-              
-          df=pd.read_csv('test/ExpressionData.csv', index_col=0)
-          vis(df, 400)
-          
-Here, the time point of each cell is inferred from the cell ID, and this information
-is used to color each cell in the scatter plot. Darker colors imply early time points in the
-simulation. The output should look like the following
-
-.. figure:: figs/tree.png
-   :align: center
-
-   t-SNE visualization of BoolODE output
-           
-Notice the eight steady state clusters! This dataset can now be
-processed further using the tools described in  :ref:`geninputs` to produce
-input datasets for the BEELINE pipeline.
+..
+   Notice the eight steady state clusters! This dataset can now be
+   processed further using the tools described in  :ref:`geninputs` to produce
+   input datasets for the BEELINE pipeline.
             
