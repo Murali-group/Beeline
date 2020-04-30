@@ -49,7 +49,7 @@ def run(RunnerObj):
     params_order = [
         'lambda', 'dT', 'num_lags', 'kernel_width',
         'prob_zero_removal', 'prob_remove_samples',
-        'family', 'replicate', 'ID'
+        'family'
     ]
     default_params = {
         'lambda': '0.01',
@@ -59,15 +59,19 @@ def run(RunnerObj):
         'prob_zero_removal': '0',
         'prob_remove_samples': '0.2',
         'family': 'gaussian',
-        'replicate': '2',
-        'ID': '0'
+        'num_replicates': '2',
     }
     params = RunnerObj.params
     for param, val in default_params.items():
         if param not in params:
             params[param] = val
-    params_str = ' '.join('--' + p.replace('_', '-') + ' ' + str(params[p]) for p in params_order) 
     
+    num_replicates = params['num_replicates']
+    replicates = []
+    for replicate in range(num_replicates):
+       replicates.append(' '.join('--' + p.replace('_', '-') + ' ' + str(params[p]) for p in params_order) + ' '.join(['', '--replicate', str(replicate), '--ID', str(replicate)]))
+    params_str = '\n'.join(replicates)    
+
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
 
@@ -86,8 +90,7 @@ def run(RunnerObj):
         This is a workaround for https://github.com/gitter-lab/SINGE/blob/master/code/parseParams.m#L39
         not allowing '/' characters in the outDir parameter.
         '''
-        symlink_out_file = ' '.join(['ln -s', outFile, outFileSymlink]) 
-        
+        symlink_out_file = ' '.join(['ln -s', outFile, outFileSymlink])
 
         '''
         See https://github.com/gitter-lab/SINGE/blob/master/README.md.  SINGE expects a data matfile with variables "X" and "ptime",

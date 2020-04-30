@@ -109,7 +109,7 @@ input_settings:
               prob_zero_removal: [0]
               prob_remove_samples: [0.0]
               family: ["gaussian"]
-              replicate: [6]
+              num_replicates: [6]
 
 
         - name: "SCRIBE"
