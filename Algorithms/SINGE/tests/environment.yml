@@ -1,0 +1,8 @@
+name: singe-test
+dependencies:
+  - numpy=1.16.3
+  - pip=19.1
+  - scipy=1.2.1
+  - pip:
+    - csvdiff==0.3.3
+    - hdf5storage==0.1.15

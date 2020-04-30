@@ -40,9 +40,9 @@ cd $BASEDIR/Algorithms/PPCOR/
 docker build -q -t ppcor:base .
 echo "Docker container for PPCOR is built and tagged as ppcor:base"
 
-cd $BASEDIR/Algorithms/SCINGE/
-docker build -q -t scinge:base .
-echo "Docker container for SCINGE is built and tagged as scinge:base"
+cd $BASEDIR/Algorithms/SINGE/
+docker build -q -t singe:base .
+echo "Docker container for SINGE is built and tagged as singe:base"
 
 cd $BASEDIR/Algorithms/SCNS/
 docker build -q -t scns:base .

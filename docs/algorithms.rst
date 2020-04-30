@@ -12,7 +12,7 @@ The following table lists the  algorithms and the parameters they take as input,
 +----------------+--------------------------------------------------------------------------------------------+
 | SCNS           |   None                                                                                     |
 +----------------+--------------------------------------------------------------------------------------------+
-| SCINGE         | - ``lambda`` : (Default = 0.01)                                                            |
+| SINGE          | - ``lambda`` : (Default = 0.01)                                                            |
 |                | - ``dT`` : (Default = 15)                                                                  |
 |                | - ``num_lags`` : (Default = 5)                                                             |
 |                | - ``kernel_width`` : (Default = 0.5)                                                       |

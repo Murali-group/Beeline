@@ -9,7 +9,7 @@ import BLRun.leapRunner as LEAP
 import BLRun.jump3Runner as JUMP3
 import BLRun.ppcorRunner as PPCOR
 import BLRun.grisliRunner as GRISLI
-import BLRun.scingeRunner as SCINGE
+import BLRun.singeRunner as SINGE
 import BLRun.scribeRunner as SCRIBE
 
 from pathlib import Path
@@ -26,7 +26,7 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'JUMP3':JUMP3.generateInputs,
                'PPCOR':PPCOR.generateInputs,
                'GRISLI':GRISLI.generateInputs,
-               'SCINGE':SCINGE.generateInputs,
+               'SINGE':SINGE.generateInputs,
                'SCRIBE':SCRIBE.generateInputs}
 
 
@@ -44,7 +44,7 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'JUMP3':JUMP3.run,
             'PPCOR':PPCOR.run,
             'GRISLI':GRISLI.run,
-            'SCINGE':SCINGE.run,
+            'SINGE':SINGE.run,
             'SCRIBE':SCRIBE.run}
 
 
@@ -61,7 +61,7 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'JUMP3': JUMP3.parseOutput,
             'PPCOR':PPCOR.parseOutput,
             'GRISLI':GRISLI.parseOutput,
-            'SCINGE':SCINGE.parseOutput,
+            'SINGE':SINGE.parseOutput,
             'SCRIBE':SCRIBE.parseOutput}
 
 
