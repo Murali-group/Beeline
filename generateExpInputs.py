@@ -12,7 +12,7 @@ def get_parser() -> argparse.ArgumentParser:
     :return: an argparse ArgumentParser object for parsing command
         line parameters
     '''
-    parser = argparse.ArgumentParser(description='Generate experimental scRNA-seq inputs for BEELINE.', epilog = 'Example usage to generate dataset with TFs+500 genes: python generateInputs.py -e=ExpressionData.csv -g=GeneOrdering.csv -f=STRING-network.csv -i=human-tfs.csv -p=0.01 -c -t -n=500 -o=temp')
+    parser = argparse.ArgumentParser(description='Generate experimental scRNA-seq inputs for BEELINE.', epilog = 'Example usage to generate dataset with all TFs and 500 genes (TFs+500): python generateInputs.py -e=ExpressionData.csv -g=GeneOrdering.csv -f=STRING-network.csv -i=human-tfs.csv -p=0.01 -c -t -n=500 -o=temp')
 
     parser.add_argument('-e','--expFile', type = str,
                         default = 'ExpressionData.csv',
