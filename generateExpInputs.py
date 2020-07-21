@@ -159,6 +159,7 @@ if opts.netFile != 'None':
     netDF = netDF[netDF.Gene1 != netDF.Gene2]
     # Remove duplicates (there are some repeated lines in the ground-truth networks!!!). 
     netDF.drop_duplicates(keep = 'first', inplace=True)
+    netDF.to_csv(opts.outPrefix+'-network.csv', index=False)
     allNodes = set(netDF.Gene1.unique()).union(set(netDF.Gene2.unique()))
     nTFs = expr_df[expr_df.index.isin(netDF.Gene1.unique())].shape[0]
     nGenes = expr_df[expr_df.index.isin(allNodes)].shape[0]
