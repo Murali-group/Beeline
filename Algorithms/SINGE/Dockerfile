@@ -35,21 +35,21 @@ COPY tests/run_SINGE_Test.sh tests/
 ENV SINGE_RUNNING_IN_DOCKER 1
 
 # Download the compiled SINGE executables from the stable release
-# md5sum of v0.4.0 SINGE_GLG_Test is fc1ffba71d68b09cb65fc35d1bf05222
-#RUN tag=v0.4.0 && \
-#    wget --quiet https://github.com/gitter-lab/SINGE/releases/download/$tag/SINGE_Test && \
-#    wget --quiet https://github.com/gitter-lab/SINGE/releases/download/$tag/SINGE_GLG_Test && \
-#    wget --quiet https://github.com/gitter-lab/SINGE/releases/download/$tag/SINGE_Aggregate && \
-#    wget --quiet https://github.com/gitter-lab/SINGE/releases/download/$tag/code.md5 && \
-#    chmod u+x SINGE_* && \
-#    mv SINGE_Test tests/SINGE_Test
+# md5sum of v0.4.1 SINGE_GLG_Test is c50ec7bc13e287eca340c9d19d8bc27d/
+RUN tag=v0.4.1 && \
+    wget --quiet https://github.com/gitter-lab/SINGE/releases/download/$tag/SINGE_Test && \
+    wget --quiet https://github.com/gitter-lab/SINGE/releases/download/$tag/SINGE_GLG_Test && \
+    wget --quiet https://github.com/gitter-lab/SINGE/releases/download/$tag/SINGE_Aggregate && \
+    wget --quiet https://github.com/gitter-lab/SINGE/releases/download/$tag/code.md5 && \
+    chmod u+x SINGE_* && \
+    mv SINGE_Test tests/SINGE_Test
 
 # Download an intermediate version of the compiled SINGE executables for testing
 # Download the md5sums of the source .m files and binaries
-RUN md5=c50ec7bc13e287eca340c9d19d8bc27d && \
-    wget --quiet https://www.biostat.wisc.edu/~gitter/tmp/$md5/SINGE_Test && \
-    wget --quiet https://www.biostat.wisc.edu/~gitter/tmp/$md5/SINGE_GLG_Test && \
-    wget --quiet https://www.biostat.wisc.edu/~gitter/tmp/$md5/SINGE_Aggregate && \
-    wget --quiet https://www.biostat.wisc.edu/~gitter/tmp/$md5/code.md5 && \
-    chmod u+x SINGE_* && \
-    mv SINGE_Test tests/SINGE_Test
+#RUN md5=c50ec7bc13e287eca340c9d19d8bc27d && \
+#    wget --quiet https://www.biostat.wisc.edu/~gitter/tmp/$md5/SINGE_Test && \
+#    wget --quiet https://www.biostat.wisc.edu/~gitter/tmp/$md5/SINGE_GLG_Test && \
+#    wget --quiet https://www.biostat.wisc.edu/~gitter/tmp/$md5/SINGE_Aggregate && \
+#    wget --quiet https://www.biostat.wisc.edu/~gitter/tmp/$md5/code.md5 && \
+#    chmod u+x SINGE_* && \
+#    mv SINGE_Test tests/SINGE_Test
