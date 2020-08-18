@@ -119,6 +119,7 @@ CDS <- newCellDataSet(as(as.matrix(exprMatrix), "sparseMatrix"),
 CDS <- estimateSizeFactors(CDS)
 CDS <- estimateDispersions(CDS)
 disp_table <- dispersionTable(CDS)
+ordering_genes <- disp_table$gene_id
 CDS <- setOrderingFilter(CDS, ordering_genes)
 }
 
