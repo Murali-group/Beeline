@@ -1,7 +1,9 @@
 # :honeybee: BEELINE: Benchmarking gEnE reguLatory network Inference from siNgle-cEll transcriptomic data :honeybee:
 ![Overview of BEELINE](docs/figs/overview-graphic.png )
 
-This is the main repository for BEELINE. The documentation is available at: [https://murali-group.github.io/Beeline/](https://murali-group.github.io/Beeline/).
+This fork uses Singularity instead of Docker to run the containers. Check the main repository for further details.
+
+The documentation is available at: [https://murali-group.github.io/Beeline/](https://murali-group.github.io/Beeline/).
 
 Quick setup:
 - To install docker on Ubuntu 18.04, follow the steps mentioned [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04)
