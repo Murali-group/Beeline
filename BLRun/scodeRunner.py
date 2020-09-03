@@ -69,13 +69,26 @@ def run(RunnerObj):
 
         os.makedirs(outDir+str(idx), exist_ok = True)
 
-        cmdToRun = ' '.join(['docker run --rm -v', 
-                             str(Path.cwd())+':/SCODE/data/  scode:base /bin/sh -c \"time -v -o',
-                             "data/" + str(outDir) + 'time'+str(idx)+'.txt', 'ruby run_R.rb',
-                            inputPath +'ExpressionData'+str(idx)+'.csv', 
-                            inputPath + 'PseudoTime'+str(idx)+'.csv', 
-                            'data/'+outDir+str(idx),
-                             nGenes, z, nCells, nIter, nRep, '\"'])
+        # cmdToRun = ' '.join(['docker run --rm -v',
+        #                      str(Path.cwd())+':/SCODE/data/  scode:base /bin/sh -c \"time -v -o',
+        #                      "data/" + str(outDir) + 'time'+str(idx)+'.txt', 'ruby run_R.rb',
+        #                     inputPath +'ExpressionData'+str(idx)+'.csv',
+        #                     inputPath + 'PseudoTime'+str(idx)+'.csv',
+        #                     'data/'+outDir+str(idx),
+        #                      nGenes, z, nCells, nIter, nRep, '\"'])
+
+        cmdToRun = ' '.join([
+            'singularity exec --writable --no-home',
+            '-B ' + str(Path.cwd()) + ':/SCODE/data/',
+            str(RunnerObj.singularityImage),
+            '/bin/sh -c \"cd /SCODE/data ; time -v -o',
+            "data/" + str(outDir) + 'time' + str(idx) + '.txt', 'ruby run_R.rb',
+            inputPath + 'ExpressionData' + str(idx) + '.csv',
+            inputPath + 'PseudoTime' + str(idx) + '.csv',
+            'data/' + outDir + str(idx),
+            nGenes, z, nCells, nIter, nRep, '\"'])
+
+
         print(cmdToRun)
         os.system(cmdToRun)
 

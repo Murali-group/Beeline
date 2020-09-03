@@ -77,6 +77,7 @@ class Runner(object):
         self.params = params['params']
         self.exprData = params['exprData']
         self.cellData = params['cellData']
+        self.singularityImage = params['singularityImage']
         
     def generateInputs(self):
         InputMapper[self.name](self)

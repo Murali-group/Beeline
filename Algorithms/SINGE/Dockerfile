@@ -20,6 +20,9 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.6.14-Linux-x86
 
 ENV SINGE_ROOT /usr/local/SINGE
 WORKDIR /usr/local/SINGE
+
+RUN mkdir data/
+
 ENTRYPOINT ["/usr/local/SINGE/SINGE.sh", "/usr/local/MATLAB/MATLAB_Runtime/v94"]
 
 # Install conda test environment

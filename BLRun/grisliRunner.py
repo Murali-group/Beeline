@@ -60,7 +60,22 @@ def run(RunnerObj):
 
         outFile = "data/" +  str(outDir) +str(idx)+"/outFile.txt"
 
-        cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/runGRISLI/data/ grisli:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time'+str(idx)+'.txt', './GRISLI ',inputPath, outFile, L, R, alphaMin,'\"'])
+#        cmdToRun = ' '.join(
+#            ['docker run --rm -v',
+#             str(Path.cwd())+':/runGRISLI/data/ grisli:base /bin/sh -c \"time -v -o',
+#             "data/" + str(outDir) + 'time'+str(idx)+'.txt',
+#             './GRISLI ',inputPath,
+#             outFile, L, R, alphaMin,'\"'])
+
+        cmdToRun = ' '.join([
+            'singularity exec ',
+            '-B ' + str(Path.cwd())+':/runGRISLI/data/',
+            '--pwd /runGRISLI/',
+            str(RunnerObj.singularityImage),
+            '/bin/sh -c \"time -v -o',
+            "data/" + str(outDir) + 'time'+str(idx)+'.txt',
+                   './GRISLI ', inputPath,
+            outFile, L, R, alphaMin, '\"'])
     
         print(cmdToRun)
         os.system(cmdToRun)

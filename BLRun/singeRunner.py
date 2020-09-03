@@ -107,12 +107,23 @@ def run(RunnerObj):
                              'f = fopen(\'' + inputFile + '\'); gene_list = strsplit(fgetl(f), \',\')(1:end-1).\'; fclose(f); ' + \
                              'save(\'-v7\',\'' + geneListMat + '\', \'gene_list\')\\"'
 
-        cmdToRun = ' '.join(['docker run --rm --entrypoint /bin/sh -v', 
-                             str(Path.cwd())+':/usr/local/SINGE/data/ singe:base -c \"echo \\"',
-                             params_str, '\\" >', paramsFile, '&&', symlink_out_file, '&&', convert_input_to_matfile,
-                             '&& time -v -o', "data/" + str(outDir) + 'time'+str(idx)+'.txt',
-                             '/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
-                             inputMat, geneListMat, outFileSymlink, paramsFile, '\"'])
+        # cmdToRun = ' '.join(['docker run --rm --entrypoint /bin/sh -v',
+        #                      str(Path.cwd())+':/usr/local/SINGE/data/ singe:base -c \"echo \\"',
+        #                      params_str, '\\" >', paramsFile, '&&', symlink_out_file, '&&', convert_input_to_matfile,
+        #                      '&& time -v -o', "data/" + str(outDir) + 'time'+str(idx)+'.txt',
+        #                      '/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
+        #                      inputMat, geneListMat, outFileSymlink, paramsFile, '\"'])
+
+        cmdToRun = ' '.join([
+            'singularity exec --writable --no-home',
+            '-B ' + str(Path.cwd()) + ':/usr/local/SINGE/data/',
+            str(RunnerObj.singularityImage),
+            '/bin/sh -vc \" cd /usr/local/SINGE/ ; echo \\"',
+            params_str, '\\" >', paramsFile, '&&', symlink_out_file, '&&', convert_input_to_matfile,
+            '&& time -v -o', "data/" + str(outDir) + 'time' + str(idx) + '.txt',
+            '/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
+            inputMat, geneListMat, outFileSymlink, paramsFile, '\"'])
+
         print(cmdToRun)
         # also print the parameters
         print("\tParameters: %s" % (', '.join("%s: %s" % (p, str(params[p])) for p in params_order)))

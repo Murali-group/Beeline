@@ -58,10 +58,20 @@ def run(RunnerObj):
     for idx in range(len(colNames)):
         inFile = "ExpressionData"+str(idx)+".csv"
         outPath = 'data/' + str(outDir) + 'outFile'+str(idx)+'.txt'
-        cmdToRun = ' '.join(['docker run --rm -v', 
-                             str(Path.cwd())+':/SINCERITIES/data/ sincerities:base /bin/sh -c \"time -v -o', 
-                             "data/" + str(outDir) + 'time'+str(idx)+'.txt', 'Rscript MAIN.R',
-                             inputPath+inFile, outPath, '\"'])
+        # cmdToRun = ' '.join(['docker run --rm -v',
+        #                      str(Path.cwd())+':/SINCERITIES/data/ sincerities:base /bin/sh -c \"time -v -o',
+        #                      "data/" + str(outDir) + 'time'+str(idx)+'.txt', 'Rscript MAIN.R',
+        #                      inputPath+inFile, outPath, '\"'])
+
+        cmdToRun = ' '.join([
+            'singularity exec --writable --no-home',
+            '-B ' + str(Path.cwd()) + ':/SINCERITIES/data/',
+            str(RunnerObj.singularityImage),
+            '/bin/sh -c \"cd /SINCERITIES ; time -v -o',
+            "data/" + str(outDir) + 'time' + str(idx) + '.txt', 'Rscript MAIN.R',
+            inputPath + inFile, outPath, '\"'])
+
+
         print(cmdToRun)
         os.system(cmdToRun)
 

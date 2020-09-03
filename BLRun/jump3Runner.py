@@ -50,8 +50,19 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/JUMP3/data/ jump3:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', './runJump3',
-                         inputPath, outPath, '\"'])
+    # cmdToRun = ' '.join(['docker run --rm -v',
+    #                      str(Path.cwd())+':/JUMP3/data/ jump3:base /bin/sh -c \"time -v -o', "data/" +
+    #                      str(outDir) + 'time.txt', './runJump3',
+    #                      inputPath, outPath, '\"'])
+
+    cmdToRun = ' '.join([
+        'singularity exec --writable --no-home',
+        '-B ' + str(Path.cwd())+':/JUMP3/data/',
+        str(RunnerObj.singularityImage),
+        '/bin/sh -c \"cd /JUMP3 ; time -v -o', "data/" +
+        str(outDir) + 'time.txt', './runJump3',
+        inputPath, outPath, '\"'])
+
     print(cmdToRun)
     os.system(cmdToRun)
 

@@ -34,11 +34,11 @@ import pandas as pd
 
 class InputSettings(object):
     def __init__(self,
-            datadir, datasets, algorithms) -> None:
-
+            datadir, datasets, algorithms, sifdir) -> None:
         self.datadir = datadir
         self.datasets = datasets
         self.algorithms = algorithms
+        self.sifdir = sifdir
 
 
 class OutputSettings(object):
@@ -83,6 +83,7 @@ class BLRun(object):
                 data['name'] = runner[0]
                 data['params'] = runner[1]
                 data['inputDir'] = Path.cwd().joinpath(self.input_settings.datadir.joinpath(dataset['name']))
+                data['singularityImage'] = str(self.input_settings.sifdir) + '/' + data['name'] + '.sif'
                 data['exprData'] = dataset['exprData']
                 data['cellData'] = dataset['cellData']
                 data['trueEdges'] = dataset['trueEdges']
@@ -141,12 +142,15 @@ class ConfigParser(object):
         input_dir = input_settings_map['input_dir']
         dataset_dir = input_settings_map['dataset_dir']
         datasets = input_settings_map['datasets']
+        sif_dir = input_settings_map['sif_dir']
 
         return InputSettings(
                 Path(input_dir, dataset_dir),
                 datasets,
                 ConfigParser.__parse_algorithms(
-                input_settings_map['algorithms']))
+                input_settings_map['algorithms']),
+                Path(sif_dir)
+        )
 
 
     @staticmethod

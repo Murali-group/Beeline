@@ -5,6 +5,9 @@ LABEL maintainer="Aditya Pratapa <adyprat@vt.edu>"
 USER root
 
 WORKDIR /
+
+RUN mkdir data/
+
 COPY installPackages.jl /
 
 # Julia libs we want
