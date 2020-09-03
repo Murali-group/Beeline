@@ -6,10 +6,11 @@ This fork uses Singularity instead of Docker to run the containers. Check the ma
 The documentation is available at: [https://murali-group.github.io/Beeline/](https://murali-group.github.io/Beeline/).
 
 Quick setup:
+- Initial creation of the Singularity images requires Docker, subsequent runs do not.
 - To install docker on Ubuntu 18.04, follow the steps mentioned [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04)
 - Setup docker to run docker without sudo using ` sudo usermod -aG docker $USER`, if you haven't already. See more details [here](https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo)
-- To create the docker containers for each of the algorithms run `. initialize.sh` (this step will take a while)
-- We recommend using [Anaconda](https://www.anaconda.com/) for Python. Run the `. setupAnacondaVENV.sh` command to automatically create an Anaconda virtual environment named BEELINE from requirements.txt and install necessary libraries required to run BEELINE. Alternatively, you can create virtual environment for python using vnev from requirements.txt as detailed [here](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
+- To create the Singularity containers for each of the algorithms run `. initialize.sh` (this step will take a while). It first creates a Docker container, then converts it to a Singularity SIF image.
+- We recommend using [Anaconda](https://www.anaconda.com/) for Python. Run the `. setupAnacondaVENV.sh` command to automatically create an Anaconda virtual environment named BEELINE from requirements.txt and install necessary libraries required to run BEELINE.
 
 We provided an example dataset under inputs/example/GSD/ and a corresponding configuration file necessary for running GRN inference using 12 methods described in BEELINE. 
 - To compute proposed reconstructions on the example dataset, run `python BLRunner.py --config config-files/config.yaml`
