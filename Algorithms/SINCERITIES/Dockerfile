@@ -7,7 +7,7 @@ USER root
 WORKDIR /
 
 RUN R -e "install.packages('https://cran.r-project.org/src/contrib/versions_0.3.tar.gz', type='source')"
-RUN R -e "require(versions); install.versions('glmnet', version='3.0')"
+RUN R -e "require(versions); install.versions('glmnet', version='2.0-13')"
 RUN R -e "require(versions); install.versions('kSamples', version='1.2-9')"	
 RUN R -e "require(versions); install.versions('ppcor', version='1.1')"	
 RUN R -e "require(versions); install.versions('pracma', version='2.2.9')"	
