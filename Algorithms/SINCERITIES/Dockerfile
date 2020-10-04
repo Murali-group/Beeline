@@ -6,12 +6,14 @@ USER root
 
 WORKDIR /
 
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/glmnet/glmnet_3.0.tar.gz',type='source')"
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/kSamples_1.2-9.tar.gz', type='source')"
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/ppcor_1.1.tar.gz', type='source')"
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/pracma_2.2.9.tar.gz',type='source')"
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/R.matlab_3.6.2.tar.gz', type='source')"
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/cvTools_0.3.2.tar.gz', type='source')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/versions_0.3.tar.gz', type='source')"
+RUN R -e "require(versions); install.versions('glmnet', version='3.0')"
+RUN R -e "require(versions); install.versions('kSamples', version='1.2.9')"	
+RUN R -e "require(versions); install.versions('ppcor', version='1.1')"	
+RUN R -e "require(versions); install.versions('pracma', version='2.2.9')"	
+RUN R -e "require(versions); install.versions('R.matlab', version='3.6.2')"	
+RUN R -e "require(versions); install.versions('cvTools', version='0.3.2')"	
+
 
 RUN ls
 
