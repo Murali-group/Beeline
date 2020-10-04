@@ -6,12 +6,12 @@ USER root
 
 WORKDIR /
 
-RUN R -e "install.packages('glmnet')"
-RUN R -e "install.packages('kSamples')"
-RUN R -e "install.packages('ppcor')"
-RUN R -e "install.packages('pracma')"
-RUN R -e "install.packages('R.matlab')"
-RUN R -e "install.packages('cvTools')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/glmnet/glmnet_3.0.tar.gz',type='source')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/kSamples_1.2-9.tar.gz', type='source')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/ppcor_1.1.tar.gz', type='source')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/pracma_2.2.9.tar.gz',type='source')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/R.matlab_3.6.2.tar.gz', type='source')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/cvTools_0.3.2.tar.gz', type='source')"
 
 RUN ls
 
