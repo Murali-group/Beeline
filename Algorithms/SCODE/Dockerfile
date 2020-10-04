@@ -6,7 +6,9 @@ USER root
 
 WORKDIR /
 
-RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y gcc-8-base
+
+RUN apt-get install -y git
 
 RUN apt-get install -y ruby
 
@@ -23,3 +25,4 @@ RUN R -e "install.packages('https://cran.r-project.org/src/contrib/MASS_7.3-51.3
 
 
 RUN apt-get install time
+

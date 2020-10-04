@@ -80,10 +80,19 @@ def run(RunnerObj):
         outFile = "outFile"+str(idx)+".csv"
         timeFile = 'time'+str(idx)+".txt"
         
-        cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ scribe:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + timeFile, 'Rscript runScribe.R',
-                       '-e',inputPath +exprName, '-c',inputPath + cellName, 
-                       '-g',inputPath + 'GeneData.csv', '-o data/'+outDir, '-d',delay, '-l', low,
-                       '-m', method, '-x',fam, '--outFile '+outFile])
+        # cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ scribe:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + timeFile, 'Rscript runScribe.R',
+        #                '-e',inputPath +exprName, '-c',inputPath + cellName,
+        #                '-g',inputPath + 'GeneData.csv', '-o data/'+outDir, '-d',delay, '-l', low,
+        #                '-m', method, '-x',fam, '--outFile '+outFile])
+
+        cmdToRun = ' '.join([
+            'singularity exec --writable --no-home',
+            '-B ' + str(Path.cwd()) + ':/data/',
+            str(RunnerObj.singularityImage),
+            '/bin/sh -c \"cd / ; time -v -o', "data/" + str(outDir) + timeFile, 'Rscript runScribe.R',
+            '-e', inputPath + exprName, '-c', inputPath + cellName,
+            '-g', inputPath + 'GeneData.csv', '-o data/' + outDir, '-d', delay, '-l', low,
+            '-m', method, '-x', fam, '--outFile ' + outFile])
 
         if str(RunnerObj.params['log']) == 'True':
             cmdToRun += ' --log'

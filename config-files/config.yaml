@@ -2,6 +2,9 @@
 # dataset collections, and algorithms to run over
 input_settings:
 
+    # Directory for singularity images, absolute path
+    sif_dir: "/tmp/global2/abt6_software/conda/regulatory_networks/beeline_cbf3e43/Beeline/images_singularity/"
+
     # Base input directory
     input_dir : "inputs"
 
@@ -93,7 +96,7 @@ input_settings:
               
         - name: "GRISLI"
           params: 
-              should_run: [True]
+              should_run: [False]
               L: [10]
               R: [3000]
               alphaMin: [0.0]

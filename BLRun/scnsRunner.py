@@ -96,12 +96,22 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir)
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/SCNS-Toolkit/SynthesisEngine/data/', 
-                         'scns:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt',
-                         'mono SynthesisEngine.exe', inputPath+'ExpressionData.csv',
-                          inputPath+'Edges.csv',  inputPath+'Parameters.csv',
-                          inputPath+'initial.txt',  inputPath+'target.txt',
-                          outPath, '\"'])
+    # cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/SCNS-Toolkit/SynthesisEngine/data/',
+    #                      'scns:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt',
+    #                      'mono SynthesisEngine.exe', inputPath+'ExpressionData.csv',
+    #                       inputPath+'Edges.csv',  inputPath+'Parameters.csv',
+    #                       inputPath+'initial.txt',  inputPath+'target.txt',
+    #                       outPath, '\"'])
+
+    cmdToRun = ' '.join([
+        'singularity exec --writable --no-home',
+        '-B ' + str(Path.cwd())+':/SCNS-Toolkit/SynthesisEngine/data/',
+        str(RunnerObj.singularityImage),
+        '/bin/sh -c \"cd /SCNS-Toolkit/SynthesisEngine/ ; time -v -o', "data/" + str(outDir) + 'time.txt',
+        'mono SynthesisEngine.exe', inputPath + 'ExpressionData.csv',
+        inputPath + 'Edges.csv', inputPath + 'Parameters.csv',
+        inputPath + 'initial.txt', inputPath + 'target.txt',
+        outPath, '\"'])
 
     print(cmdToRun)
     os.system(cmdToRun)

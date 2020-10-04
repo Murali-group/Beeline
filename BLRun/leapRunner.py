@@ -65,6 +65,15 @@ def run(RunnerObj):
                              str(Path.cwd())+':/data/ leap:base /bin/sh -c \"time -v -o', 
                              'data/' + str(outDir) + 'time'+str(idx)+'.txt', 'Rscript runLeap.R',
                              inputPath+exprName, maxLag, outPath, '\"'])
+
+        cmdToRun = ' '.join([
+            'singularity exec --writable --no-home',
+            '-B ' + str(Path.cwd()) + ':/data/',
+            str(RunnerObj.singularityImage),
+            '/bin/sh -c \" cd / ; time -v -o',
+            'data/' + str(outDir) + 'time' + str(idx) + '.txt', 'Rscript runLeap.R',
+            inputPath + exprName, maxLag, outPath, '\"'])
+
         print(cmdToRun)
         os.system(cmdToRun)
 

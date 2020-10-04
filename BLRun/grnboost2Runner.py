@@ -37,6 +37,15 @@ def run(RunnerObj):
                          'arboreto:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 
                          'python runArboreto.py --algo=GRNBoost2',
                          '--inFile='+inputPath, '--outFile='+outPath, '\"'])
+
+    cmdToRun = ' '.join([
+        'singularity exec --writable --no-home',
+        '-B ' + str(Path.cwd())+':/data/',
+        str(RunnerObj.singularityImage),
+        '/bin/sh -c \" cd / ; time -v -o', "data/" + str(outDir) + 'time.txt',
+        'python runArboreto.py --algo=GRNBoost2',
+        '--inFile=' + inputPath, '--outFile=' + outPath, '\"'])
+
     print(cmdToRun)
     os.system(cmdToRun)
 
