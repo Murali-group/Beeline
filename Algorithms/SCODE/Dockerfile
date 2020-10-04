@@ -6,7 +6,10 @@ USER root
 
 WORKDIR /
 
-RUN apt-get update && apt-get install -y git
+
+RUN apt-get update && apt-get install -y  gcc-8-base 
+
+RUN apt-get install -y git
 
 RUN apt-get install -y ruby
 
