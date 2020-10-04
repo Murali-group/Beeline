@@ -33,7 +33,7 @@ def main(args):
         network.to_csv(opts.outFile, index = False, sep = '\t')
 
     elif opts.algo == 'GRNBoost2':
-        network = grnboost2(inDF, client_or_address = client, gene_names = inDF.columns)
+        network = grnboost2(inDF.to_numpy(), client_or_address = client, gene_names = inDF.columns)
         network.to_csv(opts.outFile, index = False, sep = '\t')
 
     else:
