@@ -2,6 +2,7 @@ FROM ubuntu:18.04
 
 LABEL Maintainer = "Aditya Pratapa <adyprat@vt.edu>"
 
+USER root
 
 RUN apt-get -qq update && apt-get -qq install -y unzip xorg wget curl libstdc++6
 
