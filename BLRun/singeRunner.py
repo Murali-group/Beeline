@@ -108,7 +108,7 @@ def run(RunnerObj):
                              'save(\'-v7\',\'' + geneListMat + '\', \'gene_list\')\\"'
 
         cmdToRun = ' '.join(['docker run --rm --entrypoint /bin/sh -v', 
-                             str(Path.cwd())+':/usr/local/SINGE/data/ singe:base -c \"echo \\"',
+                             str(Path.cwd())+':/usr/local/SINGE/data/ grnbeeline/singe:0.4.1 -c \"echo \\"',
                              params_str, '\\" >', paramsFile, '&&', symlink_out_file, '&&', convert_input_to_matfile,
                              '&& time -v -o', "data/" + str(outDir) + 'time'+str(idx)+'.txt',
                              '/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',

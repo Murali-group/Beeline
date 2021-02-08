@@ -59,7 +59,7 @@ def run(RunnerObj):
         inFile = "ExpressionData"+str(idx)+".csv"
         outPath = 'data/' + str(outDir) + 'outFile'+str(idx)+'.txt'
         cmdToRun = ' '.join(['docker run --rm -v', 
-                             str(Path.cwd())+':/SINCERITIES/data/ sincerities:base /bin/sh -c \"time -v -o', 
+                             str(Path.cwd())+':/SINCERITIES/data/ grnbeeline/sincerities:base /bin/sh -c \"time -v -o', 
                              "data/" + str(outDir) + 'time'+str(idx)+'.txt', 'Rscript MAIN.R',
                              inputPath+inFile, outPath, '\"'])
         print(cmdToRun)

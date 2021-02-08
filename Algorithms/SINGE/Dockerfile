@@ -1,6 +1,8 @@
 # MATLAB R2018a in a Debian environment
 FROM amarburg/matlab-runtime:R2018a
 
+USER root
+
 RUN apt-get update && \
     apt-get -y install libxt6 bzip2 time octave && \
     rm -rf /var/lib/apt/lists/*

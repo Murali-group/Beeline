@@ -62,7 +62,7 @@ def run(RunnerObj):
 
        
         cmdToRun = ' '.join(['docker run --rm -v', 
-                             str(Path.cwd())+':/data/ leap:base /bin/sh -c \"time -v -o', 
+                             str(Path.cwd())+':/data/ grnbeeline/leap:base /bin/sh -c \"time -v -o', 
                              'data/' + str(outDir) + 'time'+str(idx)+'.txt', 'Rscript runLeap.R',
                              inputPath+exprName, maxLag, outPath, '\"'])
         print(cmdToRun)

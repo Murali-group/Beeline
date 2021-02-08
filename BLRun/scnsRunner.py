@@ -97,7 +97,7 @@ def run(RunnerObj):
     
     outPath = "data/" +  str(outDir)
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/SCNS-Toolkit/SynthesisEngine/data/', 
-                         'scns:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt',
+                         'grnbeeline/scns:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt',
                          'mono SynthesisEngine.exe', inputPath+'ExpressionData.csv',
                           inputPath+'Edges.csv',  inputPath+'Parameters.csv',
                           inputPath+'initial.txt',  inputPath+'target.txt',
