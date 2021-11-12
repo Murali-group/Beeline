@@ -1,0 +1,122 @@
+---
+title: "Preprocessing script for Nestorowa 2017"
+author: "Aditya Pratapa"
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    toc: true
+vignette: >
+---
+Load necesdsary libraries
+```{r warning=FALSE,message=FALSE}
+library(destiny)
+library(slingshot)
+library(plotly)
+library(gam)
+library(RColorBrewer)
+```
+Read input files. Both the input .txt files are from http://blood.stemcells.cam.ac.uk/data/
+
+```{r warning=FALSE}
+Nestorowa2017 <- read.table('normalisedCountsVariableGenes.txt', header = T, row.names = 1)
+NestorowaCellTypes <- read.table('all_cell_types.txt', header = T, row.names = 1)
+dim(Nestorowa2017)
+head(NestorowaCellTypes)
+```
+Compute diffusion map projection of the cells
+```{r warning=FALSE, fig.height=10}
+logExpression <- log2(Nestorowa2017 + 1)
+dm <- DiffusionMap(t(logExpression), distance = "cosine", sigma = .16)
+rd2 <- cbind(DC1 = dm$DC1, DC2 = dm$DC2, DC3 = dm$DC3)
+
+plot_ly(as.data.frame(rd2), type='scatter3d', x= ~DC1, y= ~DC2, z= ~DC3, size = 5, color = "grey")
+```
+
+Map the cell types identified using narrow gating in the original publication to the lower dimenstional representation.
+```{r warning=False}
+# Process the cell type file, use only the following columns instead of all the broad categories
+cellTypes <- NestorowaCellTypes[,c('ESLAM','LTHSC_broad','LMPP_broad','MPP_broad','CMP_broad','MEP_broad','GMP_broad','MPP1_broad','MPP2_broad','MPP3_broad','STHSC_broad')]
+# assign a cluster label to each cell type
+cellTypeDict <- DataFrame()
+for(cellName in colnames(Nestorowa2017)){
+ cTypeName <- colnames(cellTypes)[which(cellTypes[cellName[1],] == 1)][1]
+ if(is.na(cTypeName)){
+   cTypeName <- 'Unknown'
+}
+  cellTypeDict[cellName,'Type'] <- cTypeName
+}
+plot_ly(as.data.frame(rd2), type='scatter3d', x= ~DC1, y= ~DC2, z= ~DC3, size = 5, color = cellTypeDict$Type, colors = 'Set2')
+
+```
+Run slingshot
+```{r}
+slingshotPT <- slingshot(rd2, reducedDim = rd2,clusterLabels =  cellTypeDict$Type,  start.clus = 'ESLAM', end.clus = c('MEP_broad','GMP_broad','LMPP_broad'))
+```
+```{r}
+ssPT <- slingPseudotime(slingshotPT)
+ssPT <- as.data.frame(ssPT)
+plot_ly(as.data.frame(rd2), type='scatter3d', x= ~DC1, y= ~DC2, z= ~DC3, size = 5, color = ssPT$curve1)
+plot_ly(as.data.frame(rd2), type='scatter3d', x= ~DC1, y= ~DC2, z= ~DC3, size = 5, color = ssPT$curve2)
+plot_ly(as.data.frame(rd2), type='scatter3d', x= ~DC1, y= ~DC2, z= ~DC3, size = 5, color = ssPT$curve3)
+
+```
+According to the paper the three lineages above are as follows: curve1 is Granulocyte-Macrophage (GM), curve2 is Erythroid (E), and curve3 is Lymphoid (L). 
+
+Find variable genes along the GM trajectory
+
+```{r}
+lineages <- c('GM','E','L')
+count <- 1
+for (col in colnames(ssPT)){
+t <- ssPT[,col]
+Y <- logExpression
+var1K <- names(sort(apply(Y,1,var),decreasing = TRUE))
+Y <- Y[var1K,]
+# fit a GAM with a loess term for pseudotime
+gam.pval <- apply(Y,1,function(z){
+    d <- data.frame(z=z, t=t)
+    suppressWarnings({
+      tmp <- gam(z ~ lo(t), data=d)
+    })
+    p <- summary(tmp)[4][[1]][1,5]
+    p
+})
+
+topgenes <- names(sort(gam.pval, decreasing = FALSE))[1:10]
+heatdata <- logExpression[topgenes, order(t, na.last = NA)]
+heatclus <- as.factor(cellTypeDict[order(t, na.last = NA),])
+heatmap(as.matrix(heatdata), Colv = NA,
+        ColSideColors = brewer.pal(9,"Set1")[heatclus], labCol = FALSE)
+
+
+exprData <- logExpression[,which(!is.na(t))]
+colnames(exprData) <- gsub(pattern = "[.]", replacement = '_', colnames(exprData))
+ptData <- data.frame(ssPT[which(!is.na(t)), col])
+rownames(ptData) <- colnames(exprData)
+colnames(ptData) <- 'PseudoTime'
+
+geneData <- data.frame(sort(gam.pval, decreasing = FALSE))
+colnames(geneData) <- 'VGAMpValue'
+geneData[,'Variance'] <- apply(exprData[rownames(geneData),],1,var)
+
+
+write.csv(x = exprData, file = paste0('ExpressionData-',lineages[count],'.csv'), quote = FALSE)
+write.csv(x = ptData, file = paste0('PseudoTime-',lineages[count],'.csv'), quote = FALSE)
+write.csv(x = geneData, file = paste0('GeneOrdering-',lineages[count],'.csv'), quote = FALSE)
+count <- count +1
+}
+
+```
+
+Sanity check
+```{r}
+rdDF <- as.data.frame(rd2)
+rdDF <- rdDF[which(!is.na(ssPT$curve3)),]
+
+
+plot_ly(rdDF, type='scatter3d',  x= ~DC1, y= ~DC2,  z= ~DC3,color = ptData$PseudoTime)
+
+plot_ly(as.data.frame(rd2), type='scatter3d', x= ~DC1, y= ~DC2, z= ~DC3, size = 5, color = ssPT$curve3)
+
+
+```

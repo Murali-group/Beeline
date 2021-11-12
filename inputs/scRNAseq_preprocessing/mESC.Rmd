@@ -1,0 +1,213 @@
+---
+title: "Preprocessing script for Hayashi 2018"
+author: "Aditya Pratapa"
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    toc: true
+vignette: >
+---
+Load necesdsary libraries
+```{r warning=FALSE,message=FALSE}
+library(destiny)
+library(slingshot)
+library(plotly)
+library(gam)
+library(RColorBrewer)
+library(biomaRt)
+
+```
+Read input files. The input file is from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE98664
+```{r warning=FALSE}
+Hayashi2018 <- read.table('GSE98664_tpm_sailfish_mergedGTF_RamDA_mESC_differentiation_time_course.txt', sep = '\t', header = T, row.names = 1)
+```
+
+Identify cell types
+```{r}
+HayashiCellTypes <- data.frame()
+for (col in colnames(Hayashi2018)){
+HayashiCellTypes[col,'Type'] <- strsplit(col,"_")[[1]][3]
+}
+tail(HayashiCellTypes)
+
+```
+
+
+```{r}
+mouse = useMart("ensembl", dataset = "mmusculus_gene_ensembl")
+
+```
+```{r}
+annot <- getBM(c("ensembl_gene_id", "mgi_symbol", "ensembl_transcript_id"), mart=mouse)
+transcriptNames <- rownames(Hayashi2018)
+
+```
+
+https://www.biostars.org/p/329625/
+http://bioconductor.org/packages/devel/bioc/vignettes/tximport/inst/doc/tximport.html
+
+```{r}
+Hayashi2018Copy <- Hayashi2018
+transcriptNamesVersion <- do.call(rbind, strsplit(rownames(Hayashi2018), '[.]'))
+rownames(Hayashi2018Copy) <- transcriptNamesVersion[,1]
+
+pb = txtProgressBar(min = 0, max = length(transcriptNamesVersion[,1]), initial = 1) 
+
+count  = 1
+for (rowName in transcriptNamesVersion[,1]){
+  setTxtProgressBar(pb,count, label=paste( round(count/length(transcriptNamesVersion[,1])*100, 0),
+                                        "% done"))
+  count = count + 1
+  if (dim(annot[which(annot$ensembl_transcript_id == rowName),])[1] == 0){
+      Hayashi2018Copy[rowName,'mgi_symbol'] <- NA
+  }else{
+    subDF <- annot[which(annot$ensembl_transcript_id == rowName),]
+  Hayashi2018Copy[rowName,'mgi_symbol'] <- subDF$mgi_symbol
+  }
+}
+```
+
+
+Alernative: gene_tpm <- Hayashi2018Temp %>% group_by(ensembl_transcript_id, mgi_symbol) %>% summarize(Hayashi2018Temp = sum(Hayashi2018Temp))
+
+```{r}
+Hayashi2018Final <- aggregate(Hayashi2018[,rownames(HayashiCellTypes)], by=list(geneID=Hayashi2018Copy$mgi_symbol), FUN=sum)
+write.csv(Hayashi2018Final, file = 'Hayashi2018_gene_TPM.csv', quote = FALSE)
+```
+
+http://cole-trapnell-lab.github.io/monocle-release/docs/#converting-tpm-fpkm-values-into-mrna-counts-alternative
+```{r warning=FALSE, fig.height=10}
+# The data is TPM
+cd <- new("AnnotatedDataFrame", data = HayashiCellTypes)
+# ignore NA gene_ID
+gd <- data.frame(Hayashi2018Final[2:dim(Hayashi2018Final)[1],1])
+rownames(gd) <- Hayashi2018Final[2:dim(Hayashi2018Final)[1],1]
+gd <- new("AnnotatedDataFrame", data =gd)
+HayashiDF <- Hayashi2018Final[2:dim(Hayashi2018Final)[1],2:dim(Hayashi2018Final)[2]]
+rownames(HayashiDF) <-  Hayashi2018Final[2:dim(Hayashi2018Final)[1],1]
+
+CDS <- newCellDataSet(as(as.matrix(HayashiDF), "sparseMatrix"), phenoData = cd,
+                 featureData = gd,
+                 lowerDetectionLimit = 0.1,
+                 expressionFamily = tobit(Lower = 0.1))
+  
+# Next, use it to estimate RNA counts
+rpc_matrix <- relative2abs(CDS, method = "num_genes")
+
+# Now, make a new CellDataSet using the RNA counts
+CDS <- newCellDataSet(as(as.matrix(rpc_matrix), "sparseMatrix"),
+                phenoData =  cd,
+                featureData = gd,
+                lowerDetectionLimit = 0.5,
+                expressionFamily = negbinomial.size())
+```
+
+
+```{r}
+CDS <- estimateSizeFactors(CDS)
+CDS <- estimateDispersions(CDS)
+
+CDS <- detectGenes(CDS, min_expr = 0.1)
+print(head(fData(CDS)))
+CDS <- detectGenes(CDS, min_expr = 0.1)
+print(head(fData(CDS)))
+expressed_genes <- row.names(subset(fData(CDS),
+    num_cells_expressed >= 0.1*dim(cd)[1]))
+```
+
+
+```{r}
+logExpressionFiltered <- log2(as.matrix(exprs(CDS[expressed_genes,])+1))
+
+# Compute PCA
+pcaRes <- prcomp(t(logExpressionFiltered), scale. = FALSE)
+#dmapRes <- DiffusionMap(t(logExpressionFiltered), distance = "cosine", sigma = .25, k = 100)
+```
+
+```{r}
+#rd2 <- as.data.frame(cbind(DC1 = dmapRes$DC1, DC2 = dmapRes$DC2, DC3 = dmapRes$DC3))
+rd1 <- as.data.frame(cbind(PC1 = pcaRes$x[,1], PC2 = pcaRes$x[,2], PC3 = pcaRes$x[,3]))
+
+plot_ly(as.data.frame(pcaRes$x), x=~PC1, y= ~PC2,  color = HayashiCellTypes$Type, colors = brewer.pal(6,"Set1"))
+#plot_ly(rd2, x=~DC1, y= ~DC2,  color = CampCellTypes, colors =brewer.pal(6,"Set1"))
+
+```
+
+Run slingshot
+```{r}
+slingshotPT <- slingshot(rd1, reducedDim = rd1, 
+                         clusterLabels =  HayashiCellTypes$Type,  start.clus = '00h', end.clus = '72h')
+```
+
+```{r}
+ssPT <- slingPseudotime(slingshotPT)
+ssPT <- as.data.frame(ssPT)
+#plot_ly(rd2, x=~DC1, y= ~DC2,  color = ssPT$curve1)
+plot_ly(rd1, x=~PC1, y= ~PC2,  color = ssPT$curve1)
+
+```
+
+Find variable genes along the trajectory
+```{r}
+t <- ssPT$curve1
+
+
+Y <- logExpressionFiltered
+var1K <- names(sort(apply(Y,1,var),decreasing = TRUE))
+Y <- Y[var1K,]
+
+# fit a GAM with a loess term for pseudotime
+gam.pval <- apply(Y,1,function(z){
+    d <- data.frame(z=z, t=t)
+    suppressWarnings({
+      tmp <- gam(z ~ lo(t), data=d)
+    })
+    p <- summary(tmp)[4][[1]][1,5]
+    p
+})
+```
+
+
+```{r}
+topgenes <- names(sort(gam.pval, decreasing = FALSE))[1:15]
+heatdata <- logExpressionFiltered[topgenes, order(t, na.last = NA)]
+#cTypes <- as.data.frame(HayashiCellTypes$Type)
+#rownames(cTypes) <- rownames(Camp2017)
+heatclus <- as.factor(HayashiCellTypes[order(t, na.last = NA),])
+
+heatmap(as.matrix(heatdata), Colv = NA,
+        ColSideColors = brewer.pal(6,"Set1")[heatclus], labCol = FALSE)
+```
+
+
+```{r}
+
+exprData <- logExpressionFiltered
+colnames(exprData) <- gsub(pattern = "[.]", replacement = '_', colnames(exprData))
+ptData <- data.frame(ssPT$curve1)
+
+rownames(ptData) <- colnames(exprData)
+colnames(ptData) <- 'PseudoTime'
+
+
+geneData <- data.frame(sort(gam.pval, decreasing = FALSE))
+colnames(geneData) <- 'VGAMpValue'
+
+geneData[,'Variance'] <- apply(logExpressionFiltered[rownames(geneData),],1,var)
+
+print(head(geneData))
+
+write.csv(x = exprData, file = 'ExpressionData.csv', quote = FALSE)
+write.csv(x = ptData, file = 'PseudoTime.csv', quote = FALSE)
+write.csv(x = geneData, file = 'GeneOrdering.csv', quote = FALSE)
+
+```
+
+Sanity check
+```{r}
+rdDF <- as.data.frame(rd1)
+
+plot_ly(rdDF,  x= ~PC1, y= ~PC2,color = ptData$PseudoTime)
+plot_ly(as.data.frame(rd1), x=~PC1, y= ~PC2, color = ssPT$curve1) 
+
+```

@@ -1,0 +1,157 @@
+---
+title: "Preprocessing script for Camp 2017"
+author: "Aditya Pratapa"
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    toc: true
+vignette: >
+---
+Load necesdsary libraries
+```{r warning=FALSE,message=FALSE}
+library(destiny)
+library(slingshot)
+library(plotly)
+library(gam)
+library(RColorBrewer)
+```
+Read input files. The input csv file is from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE81252
+```{r warning=FALSE}
+Camp2017 <- read.table('GSE81252_data.cast.log2.lineage.csv', sep = ',', header = T, row.names = 1)
+CampCellTypes <- Camp2017$experiment
+# Merge 'HE1' and 'HE2' cell types into 'HE' and same for 'MH'
+# Rename cell types
+CampCellTypes <- gsub("he1", "he", CampCellTypes)
+CampCellTypes <- gsub("he2", "he", CampCellTypes)
+CampCellTypes <- gsub("mh1", "mh", CampCellTypes)
+CampCellTypes <- gsub("mh2", "mh", CampCellTypes)
+CampCellTypesDF <- data.frame(CampCellTypes)
+rownames(CampCellTypesDF) <- rownames(Camp2017)
+Camp2017 <- t(Camp2017[,2:dim(Camp2017)[2]])
+head(Camp2017)
+
+head(CampCellTypesDF)
+```
+```{r warning=FALSE, fig.height=10}
+# The data is log2FPKM
+
+cd <- new("AnnotatedDataFrame", data = CampCellTypesDF)
+gd <- data.frame((rownames(Camp2017)))
+rownames(gd) <- rownames(Camp2017)
+gd <- new("AnnotatedDataFrame", data =gd)
+CDS <- newCellDataSet(as(as.matrix(Camp2017), "sparseMatrix"),
+                       phenoData = cd,
+                       featureData = gd,
+                       lowerDetectionLimit = 0.1,
+                       expressionFamily = gaussianff())
+  
+```
+Filtering genes and cells
+
+```{r}
+CDS <- estimateSizeFactors(CDS)
+
+CDS <- detectGenes(CDS, min_expr = 0.1)
+print(head(fData(CDS)))
+CDS <- detectGenes(CDS, min_expr = 0.1)
+print(head(fData(CDS)))
+expressed_genes <- row.names(subset(fData(CDS),
+    num_cells_expressed >= 0.1*dim(cd)[1]))
+```
+
+
+
+Compute diffusion map projection of the cells
+```{r warning=FALSE, fig.height=10}
+# The data is already log2FPKM
+logExpressionFiltered <- as.matrix(exprs(CDS[expressed_genes,]))
+
+
+# First compute PCA to identify informative genes
+pcaRes <- prcomp(t(logExpressionFiltered), scale. = FALSE)
+dmapRes <- DiffusionMap(t(logExpressionFiltered), distance = "cosine", sigma = .25, k = 100)
+```
+
+```{r}
+rd2 <- as.data.frame(cbind(DC1 = dmapRes$DC1, DC2 = dmapRes$DC2, DC3 = dmapRes$DC3))
+rd1 <- as.data.frame(cbind(PC1 = pcaRes$x[,1], PC2 = pcaRes$x[,2], PC3 = pcaRes$x[,3]))
+
+plot_ly(as.data.frame(pcaRes$x), x=~PC1, y= ~PC2,  color = CampCellTypes, colors = brewer.pal(6,"Set1"))
+plot_ly(rd2, x=~DC1, y= ~DC2,  color = CampCellTypes, colors =brewer.pal(6,"Set1"))
+
+```
+
+Run slingshot
+```{r}
+slingshotPT <- slingshot(rd2, reducedDim = rd2, 
+                         clusterLabels =  CampCellTypes,  start.clus = 'ipsc', end.clus = 'mh')
+```
+
+```{r}
+ssPT <- slingPseudotime(slingshotPT)
+ssPT <- as.data.frame(ssPT)
+plot_ly(rd2, x=~DC1, y= ~DC2,  color = ssPT$curve1)
+plot_ly(rd1, x=~PC1, y= ~PC2,  color = ssPT$curve1)
+
+```
+
+Find variable genes along the trajectory
+```{r}
+t <- ssPT$curve1
+
+# for the time being, only look at the 1000 most variable genes
+Y <- logExpressionFiltered
+var1K <- names(sort(apply(Y,1,var),decreasing = TRUE))
+Y <- Y[var1K,]
+
+# fit a GAM with a loess term for pseudotime
+gam.pval <- apply(Y,1,function(z){
+    d <- data.frame(z=z, t=t)
+    suppressWarnings({
+      tmp <- gam(z ~ lo(t), data=d)
+    })
+    p <- summary(tmp)[4][[1]][1,5]
+    p
+})
+```
+
+
+```{r}
+topgenes <- names(sort(gam.pval, decreasing = FALSE))[1:15]
+heatdata <- logExpressionFiltered[topgenes, order(t, na.last = NA)]
+
+heatclus <- as.factor(CampCellTypesDF[order(t, na.last = NA),])
+
+heatmap(as.matrix(heatdata), Colv = NA,
+        ColSideColors = brewer.pal(6,"Set1")[heatclus], labCol = FALSE)
+```
+```{r}
+
+exprData <- logExpressionFiltered
+colnames(exprData) <- gsub(pattern = "[.]", replacement = '_', colnames(exprData))
+ptData <- data.frame(ssPT$curve1)
+
+rownames(ptData) <- colnames(exprData)
+colnames(ptData) <- 'PseudoTime'
+
+
+geneData <- data.frame(sort(gam.pval, decreasing = FALSE))
+colnames(geneData) <- 'VGAMpValue'
+
+geneData[,'Variance'] <- apply(logExpressionFiltered[rownames(geneData),],1,var)
+
+print(head(geneData))
+write.csv(x = exprData, file = 'ExpressionData.csv', quote = FALSE)
+write.csv(x = ptData, file = 'PseudoTime.csv', quote = FALSE)
+write.csv(x = geneData, file = 'GeneOrdering.csv', quote = FALSE)
+
+```
+
+Sanity check
+```{r}
+rdDF <- as.data.frame(rd2)
+
+plot_ly(rdDF,  x= ~DC1, y= ~DC2,color = ptData$PseudoTime)
+plot_ly(as.data.frame(rd2), x=~DC1, y= ~DC2, color = ssPT$curve1) 
+
+```

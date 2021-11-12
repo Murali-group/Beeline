@@ -1,0 +1,168 @@
+---
+title: "Preprocessing script for Shalek 2014"
+author: "Aditya Pratapa"
+date: "`r Sys.Date()`"
+output: 
+  BiocStyle::html_document:
+    toc: true
+vignette: >
+---
+Load necesdsary libraries
+```{r warning=FALSE,message=FALSE}
+library(destiny)
+library(slingshot)
+library(plotly)
+library(gam)
+library(RColorBrewer)
+library(monocle)
+```
+Read input files. The input files are from https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE48968
+```{r warning=FALSE}
+Shalek2014 <- read.table('GSE48968_allgenesTPM_GSM1189042_GSM1190902.txt', sep = '\t', header = T, row.names = 1)
+```
+
+Use only WT cell types
+```{r}
+cellTypes <- colnames(Shalek2014)
+#print(cellTypes)
+ShalekcellTypes <- cellTypes[which(!grepl(pattern = "PIC|Control|PAM|KO|IFNB|Chip|Unstimulated|Replicate" , cellTypes))]
+Shalek2014Subset <- Shalek2014[,ShalekcellTypes]
+ShalekcellTypeDF <- data.frame()
+for (cType in ShalekcellTypes){
+  expName <- strsplit(cType,"_")[[1]][2]
+  if (!(expName %in% c('1h','2h','4h','6h'))){
+    expName <- strsplit(cType,"_")[[1]][1]
+  }
+  ShalekcellTypeDF[cType,'Type'] <- expName
+}
+ShalekcellTypeDF
+```
+http://cole-trapnell-lab.github.io/monocle-release/docs/#converting-tpm-fpkm-values-into-mrna-counts-alternative
+```{r warning=FALSE, fig.height=10}
+# The data is TPM
+ cd <- new("AnnotatedDataFrame", data = ShalekcellTypeDF)
+gd <- data.frame((rownames(Shalek2014Subset)))
+rownames(gd) <- rownames(Shalek2014Subset)
+gd <- new("AnnotatedDataFrame", data =gd)
+CDS <- newCellDataSet(as(as.matrix(Shalek2014Subset), "sparseMatrix"),
+                       phenoData = cd,
+                       featureData = gd,
+                       lowerDetectionLimit = 0.1,
+                       expressionFamily = tobit(Lower = 0.1))
+  
+# Next, use it to estimate RNA counts
+rpc_matrix <- relative2abs(CDS, method = "num_genes")
+
+# Now, make a new CellDataSet using the RNA counts
+CDS <- newCellDataSet(as(as.matrix(rpc_matrix), "sparseMatrix"),
+                phenoData =  cd,
+                featureData = gd,
+                lowerDetectionLimit = 0.5,
+                expressionFamily = negbinomial.size())
+```
+Filtering genes and cells
+
+```{r}
+CDS <- estimateSizeFactors(CDS)
+CDS <- estimateDispersions(CDS)
+
+CDS <- detectGenes(CDS, min_expr = 0.1)
+print(head(fData(CDS)))
+CDS <- detectGenes(CDS, min_expr = 0.1)
+print(head(fData(CDS)))
+expressed_genes <- row.names(subset(fData(CDS),
+    num_cells_expressed >= 0.1*dim(cd)[1]))
+```
+
+
+```{r}
+logExpressionFiltered <- log2(as.matrix(exprs(CDS[expressed_genes,])+1))
+
+# First compute PCA to identify informative genes
+pcaRes <- prcomp(t(logExpressionFiltered), scale. = FALSE)
+dmapRes <- DiffusionMap(t(logExpressionFiltered), distance = "cosine", sigma = .25, k = 100)
+```
+
+```{r}
+rd2 <- as.data.frame(cbind(DC1 = dmapRes$DC1, DC2 = dmapRes$DC2, DC3 = dmapRes$DC3))
+rd1 <- as.data.frame(cbind(PC1 = pcaRes$x[,1], PC2 = pcaRes$x[,2], PC3 = pcaRes$x[,3]))
+
+plot_ly(as.data.frame(pcaRes$x), x=~PC1, y= ~PC2,  color = ShalekcellTypeDF$Type, colors = brewer.pal(6,"Set1"))
+plot_ly(rd2, x=~DC1, y= ~DC2,  color = ShalekcellTypeDF$Type, colors =brewer.pal(6,"Set1"))
+
+```
+
+Run slingshot
+```{r}
+slingshotPT <- slingshot(rd1, reducedDim = rd1, 
+                         clusterLabels =   ShalekcellTypeDF$Type,  start.clus = '1h', end.clus = '6h')
+```
+
+```{r}
+ssPT <- slingPseudotime(slingshotPT)
+ssPT <- as.data.frame(ssPT)
+plot_ly(rd1, x=~PC1, y= ~PC2,  color = ssPT$curve1)
+
+```
+
+Find variable genes along the trajectory
+```{r}
+t <- ssPT$curve1
+
+# for time, only look at the 100 most variable genes
+Y <- logExpressionFiltered
+var1K <- names(sort(apply(Y,1,var),decreasing = TRUE))
+Y <- Y[var1K,]
+
+# fit a GAM with a loess term for pseudotime
+gam.pval <- apply(Y,1,function(z){
+    d <- data.frame(z=z, t=t)
+    suppressWarnings({
+      tmp <- gam(z ~ lo(t), data=d)
+    })
+    p <- summary(tmp)[4][[1]][1,5]
+    p
+})
+```
+
+
+```{r}
+topgenes <- names(sort(gam.pval, decreasing = FALSE))[75:95]
+heatdata <- logExpressionFiltered[topgenes, order(t, na.last = NA)]
+
+heatclus <- as.factor(ShalekcellTypeDF[order(t, na.last = NA),'Type'])
+
+heatmap(as.matrix(heatdata), Colv = NA,
+        ColSideColors = brewer.pal(6,"Set1")[heatclus], labCol = FALSE)
+```
+
+```{r}
+
+exprData <- logExpressionFiltered
+colnames(exprData) <- gsub(pattern = "[.]", replacement = '_', colnames(exprData))
+ptData <- data.frame(ssPT$curve1)
+
+rownames(ptData) <- colnames(exprData)
+colnames(ptData) <- 'PseudoTime'
+
+
+geneData <- data.frame(sort(gam.pval, decreasing = FALSE))
+colnames(geneData) <- 'VGAMpValue'
+
+geneData[,'Variance'] <- apply(logExpressionFiltered[rownames(geneData),],1,var)
+
+print(head(geneData))
+write.csv(x = exprData, file = 'ExpressionData.csv', quote = FALSE)
+write.csv(x = ptData, file = 'PseudoTime.csv', quote = FALSE)
+write.csv(x = geneData, file = 'GeneOrdering.csv', quote = FALSE)
+
+```
+
+Sanity check
+```{r}
+rdDF <- as.data.frame(rd2)
+
+plot_ly(rdDF,  x= ~DC1, y= ~DC2,color = ptData$PseudoTime)
+plot_ly(as.data.frame(rd2), x=~DC1, y= ~DC2, color = ssPT$curve1) 
+
+```
