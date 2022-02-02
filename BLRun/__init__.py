@@ -129,7 +129,7 @@ class ConfigParser(object):
     '''
     @staticmethod
     def parse(config_file_handle) -> BLRun:
-        config_map = yaml.load(config_file_handle)
+        config_map = yaml.full_load(config_file_handle)
         return BLRun(
             ConfigParser.__parse_input_settings(
                 config_map['input_settings']),
