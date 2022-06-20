@@ -470,7 +470,7 @@ def main():
         plt.rcParams["font.size"] = 14
         pale5 = sns.cubehelix_palette(rot=-0.3,n_colors = 11)
         pale5 = sns.color_palette('cividis_r', n_colors = 12)[:-1]
-        COplot(overviewDF, width = 5, height = 7, randValues = [1, 0, 0, 0], 
+        COplot(overviewDF, width = 3*len(evalConfigs) + 1, height = 7, randValues = [1, 0, 0, 0], 
                 refValues = [1,0,0,0], rangeValues = [(1,1.001),(1.00,1.00),(0,0),(1,3)], 
                 shape = ['hm','hm','hm','arrow'], palettes = [pale3, pale3h, pale5 ,pale3r],
                 text = [False, False, False, True], 
