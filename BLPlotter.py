@@ -75,7 +75,9 @@ def boxplot(evalConfigs, datasets, randValue, resTypeFile, resTypeName):
         evalConfig = evalConfigs[i]
         
         # Read output file containing AUROC values
-        DF = pd.read_csv(str(evalConfig.output_settings.base_dir) + '/' + dataset + '/' + str(evalConfig.output_settings.output_prefix) \
+        DF = pd.read_csv(str(evalConfig.output_settings.base_dir) + '/' \
+                           + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
+                           + str(evalConfig.output_settings.output_prefix) \
                            + '-' + resTypeFile + '.csv', header = 0, index_col = 0)
         
         DF = DF.T
@@ -109,7 +111,9 @@ def boxplot(evalConfigs, datasets, randValue, resTypeFile, resTypeName):
     
     subax.set_xlabel('Algorithm', fontsize = 18)
                
-    plt.savefig(str(evalConfig.output_settings.base_dir) + '/' + dataset+ '/' + str(evalConfig.output_settings.output_prefix) \
+    plt.savefig(str(evalConfig.output_settings.base_dir) + '/' \
+                 + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
+                 + str(evalConfig.output_settings.output_prefix) \
                  + '-boxplot-' + resTypeFile + '.pdf', dpi = 300)
 
 def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], rangeValues = [], shape = [], 
@@ -426,7 +430,9 @@ def main():
             for dataset in datasets:
                 multIndTuple.append((res,dataset))
                 
-        ResDF = pd.read_csv(str(evalConfigs[0].output_settings.base_dir) + '/' + datasets[0] + '/' + str(evalConfigs[0].output_settings.output_prefix) \
+        ResDF = pd.read_csv(str(evalConfigs[0].output_settings.base_dir) + '/' \
+                              + str(evalConfigs[0].input_settings.datadir).split("inputs")[1] + '/' \
+                              + str(evalConfigs[0].output_settings.output_prefix) \
                               + '-' + resTypeFileName[0] + '.csv', header = 0, index_col = 0)
         algs = ResDF.index
 
@@ -436,7 +442,9 @@ def main():
             for j, dataset in enumerate(datasets):
                 evalConfig = evalConfigs[j]
                 
-                ResDF = pd.read_csv(str(evalConfig.output_settings.base_dir) + '/' + dataset + '/' + str(evalConfig.output_settings.output_prefix) \
+                ResDF = pd.read_csv(str(evalConfig.output_settings.base_dir) + '/' \
+                                    + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
+                                    + str(evalConfig.output_settings.output_prefix) \
                                     + '-' + resTypeFileName[i] + '.csv', header = 0, index_col = 0)
                 
                 ResDF = ResDF.T
@@ -471,7 +479,9 @@ def main():
                 switch = [False, False, True, False], txtRange = (0,1))
         
         plt.tight_layout()
-        plt.savefig(str(evalConfig.output_settings.base_dir) + '/' + dataset + '/' + str(evalConfig.output_settings.output_prefix) + '-overview.pdf')
+        plt.savefig(str(evalConfig.output_settings.base_dir) + '/' \
+                        + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
+                        + str(evalConfig.output_settings.output_prefix) + '-overview.pdf')
 
 if __name__ == '__main__':
   main()
