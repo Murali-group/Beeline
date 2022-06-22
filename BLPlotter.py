@@ -47,8 +47,11 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('-e', '--epr', action="store_true", default=False,
         help="Generate box plot of early precision values for evaluated algorithms.\n")
 
-    parser.add_argument('-o', '--overview', action="store_true", default=False,
+    parser.add_argument('-v', '--overview', action="store_true", default=False,
       help="Generate plot of AUPRC and early precision ratios relative to a random predictor.\n")
+    
+    parser.add_argument('-o', '--output', action="store_true", default='.',
+      help="Output directory for generated plots.\n")
 
     return parser
 
@@ -63,14 +66,12 @@ def parse_arguments():
 
     return opts
 
-def boxplot(evalConfigs, datasets, randValue, resTypeFile, resTypeName):
+def boxplot(opts, evalConfigs, datasets, randValue, resTypeFile, resTypeName):
     
     # Set plot variables
     plt.rcParams.update({'font.size': 14})
     
-    # Initialize plot window
-    f, axes = plt.subplots(len(datasets), 1, figsize=(10, 7*len(datasets)))
-    
+    DFs = []
     for i, dataset in enumerate(datasets):
         evalConfig = evalConfigs[i]
         
@@ -81,6 +82,13 @@ def boxplot(evalConfigs, datasets, randValue, resTypeFile, resTypeName):
                            + '-' + resTypeFile + '.csv', header = 0, index_col = 0)
         
         DF = DF.T
+        DFs.append(DF)    
+    
+    # Initialize plot window
+    f, axes = plt.subplots(len(datasets), 1, figsize=(1.5*max([len(DF.columns) for DF in DFs]), 5*len(datasets)))
+     
+    for i, dataset in enumerate(datasets):
+        DF = DFs[i]
         modifiedDF = pd.melt(DF, id_vars=DF.index, value_vars=DF.columns)
               
         if len(datasets) > 1:
@@ -111,15 +119,14 @@ def boxplot(evalConfigs, datasets, randValue, resTypeFile, resTypeName):
     
     subax.set_xlabel('Algorithm', fontsize = 18)
                
-    plt.savefig(str(evalConfig.output_settings.base_dir) + '/' \
-                 + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
-                 + str(evalConfig.output_settings.output_prefix) \
-                 + '-boxplot-' + resTypeFile + '.pdf', dpi = 300)
+    file = opts.output + '/' \
+            + '-'.join([str(c.output_settings.output_prefix) for c in evalConfigs]) \
+            + '-boxplot-' + resTypeFile + '.pdf'
+    print("Boxplot saved to " + file)
+    plt.savefig(file, dpi = 300)
 
-def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], rangeValues = [], shape = [], 
-            palettes = [], text = [], levels = [], rotation = [], dispValues = [], switch = [], txtRange = (0,1)):
-
-    plt.rcParams.update({'font.size': 12})
+def COplot(inputDF, width = 12, height = 7, randValues = [], shape = [], 
+            palettes = [], levels = [], rotation = [], switch = []):
 
     levls = levels
     rowNames = inputDF.index
@@ -131,19 +138,20 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], ran
     f = plt.figure(figsize=fSize)
 
     
-    ax = plt.gca()
+    ax = plt.subplot2grid((2*maxRows + 3, len(levls)), (0, 0), colspan = 2, rowspan = 2*maxRows + 2)
     ax.set_yticks(np.arange(0,maxRows+pad))
     ax.set_xticks(np.arange(0,maxCols+pad))
     
 
     Indices = [""] + list(rowNames)  +  [""]
-    ax.set_yticklabels(Indices)
+    ax.set_yticklabels(Indices, fontsize=18)
 
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
     ax.spines['bottom'].set_visible(False)
     ax.spines['left'].set_visible(False)
 
+    # Alternate gray and white row background colors
     alt = False
     for rowIdx in range(len(rowNames)):
         if alt:
@@ -165,10 +173,10 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], ran
     colCnt = 0
     for levlIdx in range(len(levls)):
         randValue = randValues[levlIdx]
-        refValue = refValues[levlIdx]
-        ranges = rangeValues[levlIdx]
 
         colStart = colCnt
+        
+        # Plot metric column headers
         plt.text(colStart+2, maxRows + 2, 
                         levls[levlIdx], fontsize=18, rotation=0,
                         ha="center", va="center",
@@ -180,6 +188,7 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], ran
         for colIdx in range(len(colNames)):
                 colCnt += 1
 
+                # Plot dataset column headers
                 plt.text(colStart + colIdx + 1, maxRows + 1, colNames[colIdx],
                          fontsize=18, rotation=rotation[levlIdx],
                          ha="center", va="center",
@@ -190,59 +199,61 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], ran
                 for rowIdx in range(len(rowNames)):
 
                     value = inputDF.loc[rowNames[rowIdx],levls[levlIdx]][colNames[colIdx]]
-                    if text[levlIdx]:
-                        if shape[levlIdx] == 'arrow':                    
+                    
+                    if shape[levlIdx] == 'arrow':                    
 
-                            valList = ['\u2197','\u2198','\u003d']
+                        valList = ['\u2197','\u2198','\u003d']
 
-                            if value > 1:
-                                txt = valList[0]
-                                col = '#4CAF50'
-                                fSize = 24
+                        # Configure arrow direction and color for arrow shape cells
+                        if value > 1:
+                            txt = valList[0]
+                            col = '#4CAF50'
+                            fSize = 24
 
-                            elif value < 1:
-                                txt = valList[1]
-                                col = '#E53935'
-                                fSize = 24
+                        elif value < 1:
+                            txt = valList[1]
+                            col = '#E53935'
+                            fSize = 24
 
-                            elif value == 1:
-                                txt = valList[2]
-                                col = '#2E4053'
-                                fSize = 24
-
-                            else:
-                                # Missing values?
-                                txt = '-'
-                                col = '#2E4053'
-                                fSize = 24
-
-                            plt.text(colStart+colIdx+1, rowIdx+1, 
-                                txt, fontsize= fSize, rotation=0,
-                                ha="center", va="center", color = col,
-                                bbox=dict(boxstyle="round", 
-                                ec=(1,1,1,0), fc=(1,1,1,0)))
+                        elif value == 1:
+                            txt = valList[2]
+                            col = '#2E4053'
+                            fSize = 24
 
                         else:
-                            fSize = 23
-
-                            if value < 1:
-                                txt = round(value,2)
-                            else:
-                                txt = int(value)
-
+                            # Missing values?
+                            txt = '-'
                             col = '#2E4053'
-                            fSize = 11
-                            plt.text(colStart+colIdx+1, rowIdx+1, 
-                                txt, fontsize= fSize, rotation=0,
-                                ha="center", va="center", color = col,
-                                bbox=dict(boxstyle="round", 
-                                ec=(1,1,1,0), fc=(1,1,1,0)))              
+                            fSize = 24
+
+                        plt.text(colStart+colIdx+1, rowIdx+1, 
+                            txt, fontsize= fSize, rotation=0,
+                            ha="center", va="center", color = col,
+                            bbox=dict(boxstyle="round", 
+                            ec=(1,1,1,0), fc=(1,1,1,0)))
+
+                    if shape[levlIdx] == 'text': 
+                        fSize = 23
+
+                        if value < 1:
+                            txt = round(value,2)
+                        else:
+                            txt = int(value)
+
+                        # Plot value as text in text cells
+                        col = '#2E4053'
+                        fSize = 11
+                        plt.text(colStart+colIdx+1, rowIdx+1, 
+                            txt, fontsize= fSize, rotation=0,
+                            ha="center", va="center", color = col,
+                            bbox=dict(boxstyle="round", 
+                            ec=(1,1,1,0), fc=(1,1,1,0)))              
                     
                     if shape[levlIdx] not in ['text','arrow']:
-                        Oldvalue = value
-                        value1 = value
+                        txt = value
                         
                         if np.isnan(value):
+                            # Plot '-' text and gray cell color for a missing value
                             txt = '-'
                             col = '#2E4053'
                             fSize = 24
@@ -254,59 +265,53 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], ran
                             ec=(1,1,1,0), fc=(1,1,1,0)))
                             continue
                         elif value < randValue:
+                            # Plot a gray cell color for a values worse than random 
                             col = '#2E4053'
-                        elif value >= ranges[1]:
-                            if ranges[1] > 0:
-                                value = round(value,1)
-                                rangesD = (round(inputDF[levls[levlIdx]][colNames[colIdx]].min(),1), 
-                                          round(inputDF[levls[levlIdx]][colNames[colIdx]].max(),1))
-
-                                value1 = (value-rangesD[0])/(rangesD[1]-rangesD[0])
-                                col = palettes[levlIdx][int(np.floor((value1)*10))]
-                                value = 1
-                            else:
-                                value = round(value,3)
-                                
-                                rangesD = (round(inputDF[levls[levlIdx]][colNames[colIdx]].min(),3), 
-                                          round(inputDF[levls[levlIdx]][colNames[colIdx]].max(),3))
-
-                                value1 = (value-rangesD[0])/(rangesD[1]-rangesD[0])
-                                col = palettes[levlIdx][int(np.floor((value1)*10))]
-                                value = 1
                         else:
+                            # Plot a cell color based on the range of cell values and column palette
+                            value = round(value,3)
+                            
+                            rangesD = (round(inputDF[levls[levlIdx]][colNames[colIdx]].min(),3), 
+                                      round(inputDF[levls[levlIdx]][colNames[colIdx]].max(),3))
+
+                            value = (value-rangesD[0])/(rangesD[1]-rangesD[0])
                             col = palettes[levlIdx][int(np.floor((value)*10))]
 
 
                         if shape[levlIdx] == 'c':
+                            # Plot a circle sized by the cell value
                             circle1=patches.Circle((colStart+colIdx+1,rowIdx+1),
                                                radius = np.sqrt(value)/2.5,
                                                facecolor=col,
                                                edgecolor = 'k',)
 
                         elif shape[levlIdx] == 's':
-                            value = value*0.8
-                            circle1=patches.Rectangle((colStart+colIdx+1-(value/2),rowIdx+1-(value)/2),
-                                       width = value,
-                                       height = value,    
+                            # Plot a fixed size square with a black border
+                            size = value*0.8
+                            circle1=patches.Rectangle((colStart+colIdx+1-(size/2),rowIdx+1-(size)/2),
+                                       width = size,
+                                       height = size,    
                                        facecolor=col,
                                        edgecolor = 'k',)
                             
                         
                         elif shape[levlIdx] == 'hm':
-                            value = 1
-                            circle1=patches.Rectangle((colStart+colIdx+1-(value/2),rowIdx+1-(value)/2),
-                                       width = value-0.1,
-                                       height = value,    
+                            # Plot a fixed size square with no border
+                            size = 1
+                            circle1=patches.Rectangle((colStart+colIdx+1-(size/2),rowIdx+1-(size)/2),
+                                       width = size-0.1,
+                                       height = size,    
                                        facecolor = col,
                                        edgecolor = col,)
                             
 
                         elif shape[levlIdx] == 'rs':
-                            value = value*0.8
-                            if value <= 0.15:
-                                value = 0.15
+                            # Plot a rounded square sized by the cell value
+                            size = size*0.8
+                            if size <= 0.15:
+                                size = 0.15
                             boxPad = 0.075
-                            newVal = value - boxPad*2
+                            newVal = size - boxPad*2
                             circle1=patches.FancyBboxPatch((colStart+colIdx+1-(newVal/2),rowIdx+1-(newVal)/2),
                                        width = newVal,
                                        height = newVal,    
@@ -315,6 +320,7 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], ran
                                        boxstyle=patches.BoxStyle("Round", pad=boxPad))
                                 
                         elif shape[levlIdx] == 'w':
+                            # Plot a sector of a circle sized by the cell value
                             circle1=patches.Wedge((colStart+colIdx+1,rowIdx+1),
                                        r = 0.4,
                                        theta1 = 0,
@@ -322,6 +328,7 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], ran
                                        facecolor = col,
                                        edgecolor = 'k',)
                         elif shape[levlIdx] == 'b':
+                            # Plot a bar with height sized by the cell value
                             circle1=patches.Rectangle((colStart+colIdx+0.6,rowIdx+0.65),
                                        width = 0.75,
                                        height = value,    
@@ -329,7 +336,7 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], ran
                                        edgecolor = 'k',)
                             
                         elif shape[levlIdx] == 'f':
-                            # flat color
+                            # Plot fixed size flat color square
                             circle1=patches.Rectangle((colStart+colIdx+1,rowIdx+0.6),
                                        width = 1,
                                        height = 1,    
@@ -344,22 +351,37 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], refValues = [], ran
                             textCol[0] = 'white'
                             textCol[1] = 'black'
 
-                        if value1 >= txtRange[1]:
+                        # Plot the cell value as text in the maximum and minimum value cells
+                        if value >= 1:
                             plt.text(colStart+colIdx+1, rowIdx+1, 
-                            round(Oldvalue,1), fontsize= 13, rotation=0,
+                            round(txt,1), fontsize= 18, rotation=0,
                             ha="center", va="center", color = textCol[0],
                             bbox=dict(boxstyle="round", 
                             ec=(1,1,1,0), fc=(1,1,1,0)))
-                        if value1 <= txtRange[0]:
+                        if value <= 0:
                             plt.text(colStart+colIdx+1, rowIdx+1, 
-                            round(Oldvalue,1), fontsize= 13, rotation=0,
+                            round(txt,1), fontsize= 18, rotation=0,
                             ha="center", va="center", color = textCol[1],
                             bbox=dict(boxstyle="round", 
                             ec=(1,1,1,0), fc=(1,1,1,0)))
-
+        
     ax.yaxis.set_ticks_position('none') 
     ax.xaxis.set_ticks_position('none') 
     ax.set_xticklabels([])
+    
+    
+    for levlIdx in range(len(levls)):
+        # Add color range legend
+        ax = plt.subplot2grid((2*maxRows + 3, len(levls)), (2*maxRows + 2, levlIdx))
+        plt.subplots_adjust(left=0.4, right=0.6)
+        ax.imshow(np.arange(len(palettes[levlIdx])).reshape(1, len(palettes[levlIdx])),
+              cmap=mpl.colors.ListedColormap(list(palettes[levlIdx])),
+              interpolation="nearest", aspect="auto")
+        ax.yaxis.set_ticks_position('none') 
+        ax.xaxis.set_ticks_position('none')
+        ax.set_yticklabels([]) 
+        ax.set_xticks([0.5, len(palettes[levlIdx]) - 2])
+        ax.set_xticklabels(['Low/Poor', 'High/Good'], fontsize=16)  
 
 def main():
     opts = parse_arguments()
@@ -398,17 +420,17 @@ def main():
     # Generate AUPRC boxplot     
     if (opts.auprc):
         print('\n\nGenerating AUPRC boxplot...')
-        boxplot(evalConfigs, datasets, randPredictor[dataset], 'AUPRC', 'AUPRC')
+        boxplot(opts, evalConfigs, datasets, randPredictor[dataset], 'AUPRC', 'AUPRC')
 
     # Generate AUPRC boxplot     
     if (opts.auroc):
         print('\n\nGenerating AUROC boxplot...')
-        boxplot(evalConfigs, datasets, 0.5, 'AUROC', 'AUROC')
+        boxplot(opts, evalConfigs, datasets, 0.5, 'AUROC', 'AUROC')
         
     # Generate AUPRC boxplot     
     if (opts.epr):
         print('\n\nGenerating Early Precision boxplot...')
-        boxplot(evalConfigs, datasets, randPredictor[dataset], 'EPr', 'Early Precision')
+        boxplot(opts, evalConfigs, datasets, randPredictor[dataset], 'EPr', 'Early Precision')
 
     # Generate overview plot     
     if (opts.overview):
@@ -434,6 +456,7 @@ def main():
                               + str(evalConfigs[0].input_settings.datadir).split("inputs")[1] + '/' \
                               + str(evalConfigs[0].output_settings.output_prefix) \
                               + '-' + resTypeFileName[0] + '.csv', header = 0, index_col = 0)
+        
         algs = ResDF.index
 
         overviewDF = pd.DataFrame(index = algs, columns = pd.MultiIndex.from_tuples(multIndTuple))
@@ -467,21 +490,19 @@ def main():
         pale3h = sns.cubehelix_palette(11, reverse = True)#[2:]
         pale3r = sns.color_palette("magma",11)
         pale4 = sns.color_palette("magma_r",13)[:-2]
-        plt.rcParams["font.size"] = 14
         pale5 = sns.cubehelix_palette(rot=-0.3,n_colors = 11)
         pale5 = sns.color_palette('cividis_r', n_colors = 12)[:-1]
-        COplot(overviewDF, width = 3*len(evalConfigs) + 1, height = 7, randValues = [1, 0, 0, 0], 
-                refValues = [1,0,0,0], rangeValues = [(1,1.001),(1.00,1.00),(0,0),(1,3)], 
+        COplot(overviewDF, width = 3*len(evalConfigs) + 1, height = len(algs) + 3, randValues = [1, 0, 0, 0],
                 shape = ['hm','hm','hm','arrow'], palettes = [pale3, pale3h, pale5 ,pale3r],
-                text = [False, False, False, True], 
-                levels = resType,
-                rotation = [0,0,0,0], dispValues =  [True, False, True, False], 
-                switch = [False, False, True, False], txtRange = (0,1))
+                levels = resType,  rotation = [0,0,0,0],
+                switch = [False, False, True, False])
         
         plt.tight_layout()
-        plt.savefig(str(evalConfig.output_settings.base_dir) + '/' \
-                        + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
-                        + str(evalConfig.output_settings.output_prefix) + '-overview.pdf')
+        
+        file = opts.output + '/' \
+                + '-'.join([str(c.output_settings.output_prefix) for c in evalConfigs]) + '-overview.pdf'
+        print("Overview plot saved to " + file)
+        plt.savefig(file)
 
 if __name__ == '__main__':
   main()
