@@ -50,7 +50,7 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('-v', '--overview', action="store_true", default=False,
       help="Generate plot of AUPRC and early precision ratios relative to a random predictor.\n")
     
-    parser.add_argument('-o', '--output', action="store_true", default='.',
+    parser.add_argument('-o', '--output', default='.',
       help="Output directory for generated plots.\n")
 
     return parser
