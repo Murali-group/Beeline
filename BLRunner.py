@@ -22,6 +22,7 @@ from typing import Dict, List
 from BLRun.runner import Runner
 import os
 import pandas as pd
+import time
 
 import BLRun as br
 yaml.warnings({'YAMLLoadWarning': False})
@@ -57,8 +58,9 @@ def main():
 
     with open(config_file, 'r') as conf:
         evaluation = br.ConfigParser.parse(conf)
-    print(evaluation)
-    print('Evaluation started')
+    # print(evaluation)
+    start_time = time.process_time()
+    print('Execution of algorithms started')
 
 
     for idx in range(len(evaluation.runners)):
@@ -70,7 +72,8 @@ def main():
     for idx in range(len(evaluation.runners)):
         evaluation.runners[idx].parseOutput()
 
-    print('Evaluation complete')
+    end_time = time.process_time()
+    print(f'Execution of algorithms completed in {end_time-start_time:0.2f} seconds')
 
 
 if __name__ == '__main__':

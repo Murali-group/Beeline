@@ -54,7 +54,7 @@ echo "Docker container for SCODE is built and tagged as scode:base"
 
 cd $BASEDIR/Algorithms/SCRIBE/
 docker build -q -t scribe:base .
-echo "Docker container for SCRIBE is built and tagged as sincerities:base"
+echo "Docker container for SCRIBE is built and tagged as scribe:base"
 
 cd $BASEDIR/Algorithms/SINCERITIES/
 docker build -q -t sincerities:base .
