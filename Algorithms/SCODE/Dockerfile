@@ -25,4 +25,4 @@ RUN R -e "install.packages('https://cran.r-project.org/src/contrib/MASS_7.3-51.3
 
 
 
-RUN apt-get install time
+RUN apt-get install -y time
