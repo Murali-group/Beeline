@@ -12,4 +12,4 @@ COPY runPPCOR.R /
 
 RUN mkdir data/
 
-RUN apt-get update && apt-get install time
+RUN apt-get update && apt-get install -y time

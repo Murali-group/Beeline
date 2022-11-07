@@ -64,4 +64,4 @@ RUN mkdir data/
 
 COPY runScribe.R /
 
-RUN apt-get install time
+RUN apt-get install -y time
