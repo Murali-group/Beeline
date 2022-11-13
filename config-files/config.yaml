@@ -18,7 +18,7 @@ input_settings:
     #             information about cells.
     #   trueEdges: Name of the refrence network file in the
     #              edge list format. Needed for evaluation.
-    datasets:
+    datasets:    
         - name: "GSD"
           exprData: "ExpressionData.csv"
           cellData: "PseudoTime.csv"

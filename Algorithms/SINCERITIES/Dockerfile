@@ -1,4 +1,4 @@
-FROM r-base
+FROM r-base:4.2.2
 
 LABEL maintainer = "Aditya Pratapa <adyprat@vt.edu>"
 
