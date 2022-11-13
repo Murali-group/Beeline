@@ -7,7 +7,7 @@ USER root
 WORKDIR /
 
 
-RUN apt-get update && apt-get install -y  gcc-8-base 
+RUN apt-get update && apt-get install -y  gcc
 
 RUN apt-get install -y git
 
