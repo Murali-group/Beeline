@@ -133,6 +133,11 @@ input_settings:
               # time points instead), recommended True for synthetic data
               # False for real mRNA data
               ignorePT: [True]
+              
+         -name: "TENET"
+         params: 
+              should_run: [True]
+         
 
 
 # Output Settings: initialize base output folder names
