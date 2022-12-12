@@ -139,6 +139,14 @@ input_settings:
               ignorePT: [True]
 
 
+        - name: "SCSGL"
+          params:
+              should_run: [True]
+              pos_density: [0.45]
+              neg_density: [0.45]
+              assoc: ["correlation"]
+
+
 # Output Settings: initialize base output folder names
 output_settings:
 

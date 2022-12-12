@@ -123,4 +123,12 @@ else
 fi
 
 
+cd $BASEDIR/Algorithms/SCSGL/
+docker build -q -t scsgl:base .
+if ([[ "$(docker images -q scsgl:base 2> /dev/null)" != "" ]]); then
+    echo "Docker container for SCSGL is built and tagged as scsgl:base"
+else
+    echo "Oops! Unable to build Docker container for SCSGL"
+fi
+
 cd $BASEDIR
