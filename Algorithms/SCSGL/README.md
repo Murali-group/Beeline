@@ -1,7 +1,7 @@
 *This README.md file was generated on 12/10/2022 by Yiqi Su (yiqisu@vt.edu)*
 <!-- remove all comments (like this) before final save  -->
 
-# scSGL: Kernelized Signed Graph Learning forSingle-Cell Gene Regulatory Network Inference
+# scSGL: Kernelized Signed Graph Learning for Single-Cell Gene Regulatory Network Inference
 
 This is the instruction on how to integrate the new GRN method scSGL ([[Paper](https://doi.org/10.1093/bioinformatics/btac288)] [[GitHub](https://github.com/Single-Cell-Graph-Learning/scSGL)]) to BEELINE. Please follow the following steps:
 
