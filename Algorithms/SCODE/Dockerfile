@@ -1,4 +1,4 @@
-FROM r-base:3.5.3
+FROM r-base:4.2.2
 
 LABEL maintainer = "Aditya Pratapa <adyprat@vt.edu>"
 
@@ -7,7 +7,7 @@ USER root
 WORKDIR /
 
 
-RUN apt-get update && apt-get install -y  gcc-8-base 
+RUN apt-get update && apt-get install -y  gcc
 
 RUN apt-get install -y git
 

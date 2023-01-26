@@ -11,9 +11,9 @@ import BLRun.ppcorRunner as PPCOR
 import BLRun.grisliRunner as GRISLI
 import BLRun.singeRunner as SINGE
 import BLRun.scribeRunner as SCRIBE
+import BLRun.scsglRunner as SCSGL
 
 from pathlib import Path
-
 
 InputMapper = {'SCODE':SCODE.generateInputs,
                'SINCERITIES':SINCERITIES.generateInputs,
@@ -27,8 +27,8 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'PPCOR':PPCOR.generateInputs,
                'GRISLI':GRISLI.generateInputs,
                'SINGE':SINGE.generateInputs,
-               'SCRIBE':SCRIBE.generateInputs}
-
+               'SCRIBE':SCRIBE.generateInputs,
+               'SCSGL':SCSGL.generateInputs}
 
 
 
@@ -45,8 +45,8 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'PPCOR':PPCOR.run,
             'GRISLI':GRISLI.run,
             'SINGE':SINGE.run,
-            'SCRIBE':SCRIBE.run}
-
+            'SCRIBE':SCRIBE.run,
+            'SCSGL':SCSGL.run}
 
 
 
@@ -62,8 +62,8 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'PPCOR':PPCOR.parseOutput,
             'GRISLI':GRISLI.parseOutput,
             'SINGE':SINGE.parseOutput,
-            'SCRIBE':SCRIBE.parseOutput}
-
+            'SCRIBE':SCRIBE.parseOutput,
+            'SCSGL':SCSGL.parseOutput}
 
 
 class Runner(object):
@@ -77,6 +77,7 @@ class Runner(object):
         self.params = params['params']
         self.exprData = params['exprData']
         self.cellData = params['cellData']
+        self.trueEdges = params['trueEdges'] #used for evaluation
         
     def generateInputs(self):
         InputMapper[self.name](self)
@@ -84,7 +85,6 @@ class Runner(object):
         
     def run(self):
         AlgorithmMapper[self.name](self)
-
 
     def parseOutput(self):
         OutputParser[self.name](self)
