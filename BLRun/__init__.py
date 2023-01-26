@@ -13,6 +13,8 @@ import yaml
 import argparse
 import itertools
 from collections import defaultdict
+from glob import glob
+import pathlib
 from pathlib import Path
 import multiprocessing
 from multiprocessing import Pool, cpu_count
@@ -140,7 +142,26 @@ class ConfigParser(object):
     def __parse_input_settings(input_settings_map) -> InputSettings:
         input_dir = input_settings_map['input_dir']
         dataset_dir = input_settings_map['dataset_dir']
-        datasets = input_settings_map['datasets']
+        # Check if datasets have been specified or not
+        if 'datasets' in input_settings_map: 
+            datasets_specified = True
+        else:
+            datasets_specified = False
+
+        # If no datasets specified, run all datasets in dataset_dir
+        if datasets_specified is False: 
+             subfolder_dir = glob(os.path.join(input_dir, dataset_dir, "*/"), recursive = True)
+             datasets = []
+             for x in subfolder_dir:
+                datasets.append({"name": pathlib.Path(x).name, 
+                                 "exprData": "ExpressionData.csv", 
+                                 "cellData": "PseudoTime.csv", 
+                                 "trueEdges": "refNetwork.csv"})
+        # If datasets specified, run the corresponding datasets
+        else:
+            datasets = input_settings_map['datasets']
+            if datasets is None:
+                print("Please specify input datasets!")
 
         return InputSettings(
                 Path(input_dir, dataset_dir),
@@ -170,9 +191,3 @@ class ConfigParser(object):
 
         return OutputSettings(output_dir,
                              output_prefix)
-
-
-
-
-
-                    
