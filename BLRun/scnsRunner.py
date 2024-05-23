@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 import pandas as pd
 from itertools import permutations
-from BLRun.out_path_generator import get_output_path, separator
+from BLRun.out_path_generator import get_output_path
 from collections import Counter
 import re
 
@@ -89,7 +89,7 @@ def run(RunnerObj):
     Function to run SCNS algorithm
     '''
 
-    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator())) + "/SCNS/"
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + "/SCNS/"
                     
     
     # make output dirs if they do not exist:

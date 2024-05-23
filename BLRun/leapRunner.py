@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
-from BLRun.out_path_generator import get_output_path, separator
+from BLRun.out_path_generator import get_output_path
 
 def generateInputs(RunnerObj):
     '''
@@ -45,7 +45,7 @@ def run(RunnerObj):
     Requires the maxLag parameter
     '''
     
-    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator()))
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep))
     
     maxLag = str(RunnerObj.params['maxLag'])
     

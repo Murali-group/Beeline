@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
-from BLRun.out_path_generator import get_output_path, separator
+from BLRun.out_path_generator import get_output_path
 
 def generateInputs(RunnerObj):
     '''
@@ -56,7 +56,7 @@ def run(RunnerObj):
 
     colNames = PTData.columns
     for idx in range(len(colNames)):
-        inputPath = "data"+"/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator()))+"/GRISLI/"+str(idx)+"/"
+        inputPath = "data"+"/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep))+"/GRISLI/"+str(idx)+"/"
         os.makedirs(outDir+str(idx), exist_ok = True)
 
         outFile = "data/" +  str(outDir) +str(idx)+"/outFile.txt"

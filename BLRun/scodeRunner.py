@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
-from BLRun.out_path_generator import get_output_path, separator
+from BLRun.out_path_generator import get_output_path
 
 def generateInputs(RunnerObj):
     '''
@@ -42,7 +42,7 @@ def run(RunnerObj):
     '''
     Function to run SCODE algorithm
     '''
-    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator())) + "/SCODE/"
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + "/SCODE/"
     # make output dirs if they do not exist:
     outDir = get_output_path(RunnerObj, "/SCODE/")
     os.makedirs(outDir, exist_ok = True)

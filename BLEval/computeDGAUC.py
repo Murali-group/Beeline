@@ -1,10 +1,10 @@
+import os
 import pandas as pd
 import numpy as np
 import seaborn as sns
 from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sns
-from BLRun.out_path_generator import separator
 sns.set(rc={"lines.linewidth": 2}, palette  = "deep", style = "ticks")
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
 from itertools import product, permutations, combinations, combinations_with_replacement
@@ -46,7 +46,7 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
     AUROC = {}
     
     # set-up outDir that stores output directory name
-    outDir = "outputs/"+"/".join(str(inputSettings.datadir).split("inputs" + separator())[1].split(separator()))+ '/' +dataDict['name']
+    outDir = "outputs/"+"/".join(str(inputSettings.datadir).split("inputs" + os.sep)[1].split(os.sep))+ '/' +dataDict['name']
     
     if directed:
         for algo in tqdm(inputSettings.algorithms, 

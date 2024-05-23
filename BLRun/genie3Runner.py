@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
-from BLRun.out_path_generator import get_output_path, separator
+from BLRun.out_path_generator import get_output_path
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -31,7 +31,7 @@ def run(RunnerObj):
 
     :param RunnerObj: An instance of the :class:`BLRun`
     '''
-    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator())) + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/GENIE3/ExpressionData.csv"
     # make output dirs if they do not exist:
     outDir = get_output_path(RunnerObj, "/GENIE3/")

@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
-from BLRun.out_path_generator import get_output_path, separator
+from BLRun.out_path_generator import get_output_path
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -52,7 +52,7 @@ def run(RunnerObj):
     docker run scribe:base /bin/sh -c "Rscript runScribe.R -h"
     '''
     
-    inputPath = "data"+"/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator()))+"/SCRIBE/"
+    inputPath = "data"+"/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep))+"/SCRIBE/"
 
     
     # required inputs

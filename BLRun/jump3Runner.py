@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
-from BLRun.out_path_generator import get_output_path, separator
+from BLRun.out_path_generator import get_output_path
 from sklearn import preprocessing
 
 def generateInputs(RunnerObj):
@@ -43,7 +43,7 @@ def run(RunnerObj):
     '''
     Function to run GRN-VBEM algorithm
     '''
-    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator())) + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/JUMP3/ExpressionData.csv"
     
     # make output dirs if they do not exist:
