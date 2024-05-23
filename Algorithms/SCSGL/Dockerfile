@@ -1,19 +1,29 @@
-FROM python:3.8  #This is the base image upon which necessary libraries are installed
+#This is the base image upon which necessary libraries are installed
+FROM python:3.8
 
-LABEL Maintainer="Yiqi Su <yiqisu@vt.edu>" #Additional information
+#Additional information
+LABEL Maintainer="Yiqi Su <yiqisu@vt.edu>"
 
-USER root #Set main user as root to avoid permission issues
+#Set main user as root to avoid permission issues
+USER root
 
-WORKDIR / #Sets current working directory
+#Sets current working directory
+WORKDIR /
 
-COPY run_scSGL.py /  #Copy the main Python script which will perform necessary GRN computations
+#Copy the main Python script which will perform necessary GRN computations
+COPY run_scSGL.py /
 
-COPY scSGL /scSGL  #Copy the original scSGL repo files stored in SCSGL folder 
+#Copy the original scSGL repo files stored in SCSGL folder
+COPY scSGL /scSGL
 
-RUN apt-get update && apt-get install -y r-base time  #Installl time command to compute time taken
+#Installl time command to compute time taken
+RUN apt-get update && apt-get install -y r-base time
 
-RUN pip install -r /scSGL/requirements.txt #Install the requirments and install R to conda environment
+#Install the requirments and install R to conda environment
+RUN pip install -r /scSGL/requirements.txt
 
-RUN Rscript -e "install.packages('pcaPP')" #Install pcaPP to use zero inflated Kendall tau as a kernel
+#Install pcaPP to use zero inflated Kendall tau as a kernel
+RUN Rscript -e "install.packages('pcaPP')"
 
-RUN mkdir data/ #Make a directory to mount the folder containing input files
+#Make a directory to mount the folder containing input files
+RUN mkdir data/

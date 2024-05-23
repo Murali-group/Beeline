@@ -2,6 +2,7 @@ import os
 import subprocess
 import pandas as pd
 from pathlib import Path
+from BLRun.out_path_generator import get_output_path, separator
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -35,12 +36,12 @@ def run(RunnerObj):
     '''
     Function to run SINGE algorithm
     '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator())) + \
                     "/SINGE/"
     
 
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINGE/"
+    outDir = get_output_path(RunnerObj, "/SINGE/")
     os.makedirs(outDir, exist_ok = True)
 
     # if the parameters aren't specified, then use default parameters
@@ -123,7 +124,7 @@ def parseOutput(RunnerObj):
     '''
     Function to parse outputs from SINGE.
     '''
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINGE/"
+    outDir = get_output_path(RunnerObj, "/SINGE/")
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
 

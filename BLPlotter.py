@@ -25,6 +25,7 @@ import matplotlib.patches as patches
 
 # local imports
 import BLEval as ev
+from BLRun.out_path_generator import separator
 
 def get_parser() -> argparse.ArgumentParser:
     '''
@@ -76,8 +77,8 @@ def boxplot(opts, evalConfigs, datasets, randValue, resTypeFile, resTypeName):
         evalConfig = evalConfigs[i]
         
         # Read output file containing AUROC values
-        DF = pd.read_csv(str(evalConfig.output_settings.base_dir) + '/' \
-                           + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
+        DF = pd.read_csv(str(evalConfig.output_settings.base_dir) \
+                           + "/".join(str(evalConfig.input_settings.datadir).split("inputs")[1].split(separator())) + '/' \
                            + str(evalConfig.output_settings.output_prefix) \
                            + '-' + resTypeFile + '.csv', header = 0, index_col = 0)
         
@@ -465,8 +466,8 @@ def main():
             for j, dataset in enumerate(datasets):
                 evalConfig = evalConfigs[j]
                 
-                ResDF = pd.read_csv(str(evalConfig.output_settings.base_dir) + '/' \
-                                    + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
+                ResDF = pd.read_csv(str(evalConfig.output_settings.base_dir) \
+                                    + "/".join(str(evalConfig.input_settings.datadir).split("inputs")[1].split(separator())) + '/' \
                                     + str(evalConfig.output_settings.output_prefix) \
                                     + '-' + resTypeFileName[i] + '.csv', header = 0, index_col = 0)
                 

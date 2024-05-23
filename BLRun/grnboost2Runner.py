@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
+from BLRun.out_path_generator import get_output_path, separator
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -25,10 +26,10 @@ def run(RunnerObj):
     '''
     Function to run GRNBOOST2 algorithm
     '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator())) + \
                     "/GRNBOOST2/ExpressionData.csv"
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNBOOST2/"
+    outDir = get_output_path(RunnerObj, "/GRNBOOST2/")
     os.makedirs(outDir, exist_ok = True)
 
     
@@ -46,7 +47,7 @@ def parseOutput(RunnerObj):
     Function to parse outputs from GRNBOOST2.
     '''
     # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNBOOST2/"
+    outDir = get_output_path(RunnerObj, "/GRNBOOST2/")
     
     if not Path(outDir+'outFile.txt').exists():
         print(outDir+'outFile.txt'+'does not exist, skipping...')

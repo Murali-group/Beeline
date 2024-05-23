@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 import pandas as pd
 from itertools import permutations
+from BLRun.out_path_generator import get_output_path, separator
 from collections import Counter
 import re
 
@@ -88,11 +89,11 @@ def run(RunnerObj):
     Function to run SCNS algorithm
     '''
 
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + "/SCNS/"
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator())) + "/SCNS/"
                     
     
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCNS/"
+    outDir = get_output_path(RunnerObj, "/SCNS/")
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir)
@@ -112,7 +113,7 @@ def parseOutput(RunnerObj):
     '''
     # Get list of input genes
     ExprDF = pd.read_csv(RunnerObj.inputDir.joinpath("SCNS/ExpressionData.csv"), index_col = 0, header = 0)
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCNS/"
+    outDir = get_output_path(RunnerObj, "/SCNS/")
     geneList = list(ExprDF.columns)
     
     # Initialize ranked egdes file 

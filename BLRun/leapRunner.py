@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
+from BLRun.out_path_generator import get_output_path, separator
 
 def generateInputs(RunnerObj):
     '''
@@ -44,12 +45,12 @@ def run(RunnerObj):
     Requires the maxLag parameter
     '''
     
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1]
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator()))
     
     maxLag = str(RunnerObj.params['maxLag'])
     
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/LEAP/"
+    outDir = get_output_path(RunnerObj, "/LEAP/")
     os.makedirs(outDir, exist_ok = True)
     
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
@@ -74,7 +75,7 @@ def parseOutput(RunnerObj):
     '''
     Function to parse outputs from LEAP.
     '''
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/LEAP/"
+    outDir = get_output_path(RunnerObj, "/LEAP/")
 
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)

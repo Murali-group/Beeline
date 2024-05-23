@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
+from BLRun.out_path_generator import get_output_path, separator
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -30,10 +31,10 @@ def run(RunnerObj):
 
     :param RunnerObj: An instance of the :class:`BLRun`
     '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator())) + \
                     "/GENIE3/ExpressionData.csv"
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GENIE3/"
+    outDir = get_output_path(RunnerObj, "/GENIE3/")
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
@@ -53,7 +54,7 @@ def parseOutput(RunnerObj):
     :param RunnerObj: An instance of the :class:`BLRun`
     '''
     # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GENIE3/"
+    outDir = get_output_path(RunnerObj, "/GENIE3/")
 
         
     # Read output

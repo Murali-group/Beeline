@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
+from BLRun.out_path_generator import get_output_path, separator
 
 def generateInputs(RunnerObj):
     '''
@@ -41,12 +42,10 @@ def run(RunnerObj):
     '''
     Function to run SCODE algorithm
     '''
-    
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator())) + "/SCODE/"
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCODE/"
+    outDir = get_output_path(RunnerObj, "/SCODE/")
     os.makedirs(outDir, exist_ok = True)
-    
-    inputPath = "data"+str(RunnerObj.inputDir).split(str(Path.cwd()))[1]+"/SCODE/"
 
     z = str(RunnerObj.params['z'])
     nIter = str(RunnerObj.params['nIter'])
@@ -60,8 +59,7 @@ def run(RunnerObj):
     
 
     for idx in range(len(colNames)):
-
-        ExpressionData = pd.read_csv(str(RunnerObj.inputDir).split(str(Path.cwd())+'/')[1]+"/SCODE/"+\
+        ExpressionData = pd.read_csv("/".join(str(RunnerObj.inputDir).split(str(Path.cwd()) + separator())[1].split(separator()))+"/SCODE/"+\
                                      "ExpressionData"+str(idx)+".csv",
                                      header = None, index_col = None, sep ='\t')
         nCells = str(ExpressionData.shape[1])
@@ -85,7 +83,7 @@ def parseOutput(RunnerObj):
     '''
     Function to parse outputs from SCODE.
     '''
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCODE/"
+    outDir = get_output_path(RunnerObj, "/SCODE/")
 
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)

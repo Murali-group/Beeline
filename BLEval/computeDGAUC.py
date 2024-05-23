@@ -4,6 +4,7 @@ import seaborn as sns
 from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sns
+from BLRun.out_path_generator import separator
 sns.set(rc={"lines.linewidth": 2}, palette  = "deep", style = "ticks")
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
 from itertools import product, permutations, combinations, combinations_with_replacement
@@ -45,7 +46,7 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
     AUROC = {}
     
     # set-up outDir that stores output directory name
-    outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
+    outDir = "outputs/"+"/".join(str(inputSettings.datadir).split("inputs" + separator())[1].split(separator()))+ '/' +dataDict['name']
     
     if directed:
         for algo in tqdm(inputSettings.algorithms, 
@@ -214,6 +215,9 @@ def computeScores(trueEdgesDF, predEdgeDF,
     # to pass it to sklearn
     outDF = pd.DataFrame([TrueEdgeDict,PredEdgeDict]).T
     outDF.columns = ['TrueEdges','PredEdges']
+    utils = importr('utils')
+    utils.chooseCRANmirror(ind=1)
+    utils.install_packages('PRROC')
     prroc = importr('PRROC')
     prCurve = prroc.pr_curve(scores_class0 = FloatVector(list(outDF['PredEdges'].values)), 
               weights_class0 = FloatVector(list(outDF['TrueEdges'].values)))

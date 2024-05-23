@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
+from BLRun.out_path_generator import get_output_path, separator
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -51,7 +52,7 @@ def run(RunnerObj):
     docker run scribe:base /bin/sh -c "Rscript runScribe.R -h"
     '''
     
-    inputPath = "data"+str(RunnerObj.inputDir).split(str(Path.cwd()))[1]+"/SCRIBE/"
+    inputPath = "data"+"/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(separator()))+"/SCRIBE/"
 
     
     # required inputs
@@ -65,7 +66,7 @@ def run(RunnerObj):
     ignorePT = str(RunnerObj.params['ignorePT'])
     
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCRIBE/"
+    outDir = get_output_path(RunnerObj, "/SCRIBE/")
     os.makedirs(outDir, exist_ok = True)
 
     # Build the command to run Scribe
@@ -102,7 +103,7 @@ def parseOutput(RunnerObj):
     '''
     Function to parse outputs from SCRIBE.
     '''
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCRIBE/"
+    outDir = get_output_path(RunnerObj, "/SCRIBE/")
 
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
