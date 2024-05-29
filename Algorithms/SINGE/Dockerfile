@@ -3,6 +3,7 @@ FROM amarburg/matlab-runtime:R2018a
 
 USER root
 
+RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
 RUN apt-get update && \
     apt-get -y install libxt6 bzip2 time octave && \
     rm -rf /var/lib/apt/lists/*
@@ -11,7 +12,10 @@ RUN apt-get update && \
 # Python is only needed for testing SINGE and could be removed from the base
 # to reduce the image size
 ENV PATH /opt/conda/bin:$PATH
-RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh -O ~/miniconda.sh && \
+
+RUN apt-get install --only-upgrade ca-certificates
+RUN update-ca-certificates
+RUN wget https://repo.anaconda.com/miniconda/Miniconda3-4.6.14-Linux-x86_64.sh --no-check-certificate -O ~/miniconda.sh && \
     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     /opt/conda/bin/conda clean --all && \
@@ -26,6 +30,7 @@ ENTRYPOINT ["/usr/local/SINGE/SINGE.sh", "/usr/local/MATLAB/MATLAB_Runtime/v94"]
 
 # Install conda test environment
 COPY tests/environment.yml tests/
+# RUN apt-get install -y pkg-config
 RUN conda env create -f tests/environment.yml
 
 # Copy wrapper scripts for compiled MATLAB executables
