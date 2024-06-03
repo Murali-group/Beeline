@@ -59,7 +59,7 @@ def run(RunnerObj):
     
 
     for idx in range(len(colNames)):
-        ExpressionData = pd.read_csv("/".join(str(RunnerObj.inputDir).split(str(Path.cwd()) + separator())[1].split(separator()))+"/SCODE/"+\
+        ExpressionData = pd.read_csv("/".join(str(RunnerObj.inputDir).split(str(Path.cwd()) + os.sep)[1].split(os.sep))+"/SCODE/"+\
                                      "ExpressionData"+str(idx)+".csv",
                                      header = None, index_col = None, sep ='\t')
         nCells = str(ExpressionData.shape[1])
