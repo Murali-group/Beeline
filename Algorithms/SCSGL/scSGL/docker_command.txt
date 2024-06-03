@@ -1,0 +1,7 @@
+Run this in project root folder:
+
+
+docker run --rm -v /home/yiqisu/Projects/BEELINE/Beeline:/data/ --expose=41269 scsgl:base /bin/sh -c "python runScsgl.py --expression_file=data/inputs/example/GSD/SCSGL/ExpressionData.csv --ref_net_file=data/inputs/example/GSD/SCSGL/refNetwork.csv --out_file=data/outFile.txt"
+
+
+A file outFile.txt is produced
