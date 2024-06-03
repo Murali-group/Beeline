@@ -1,0 +1,6 @@
+numba==0.53.1
+scipy==1.6.3
+pandas==1.2.4
+rpy2==3.4.4
+numpy==1.20.2
+scikit-learn==0.24.1
