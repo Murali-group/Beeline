@@ -217,7 +217,7 @@ def computeScores(trueEdgesDF, predEdgeDF,
     outDF.columns = ['TrueEdges','PredEdges']
     utils = importr('utils')
     utils.chooseCRANmirror(ind=1)
-    utils.install_packages('PRROC')
+    # utils.install_packages('PRROC')
     prroc = importr('PRROC')
     prCurve = prroc.pr_curve(scores_class0 = FloatVector(list(outDF['PredEdges'].values)), 
               weights_class0 = FloatVector(list(outDF['TrueEdges'].values)))
