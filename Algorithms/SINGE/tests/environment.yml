@@ -3,6 +3,8 @@ dependencies:
   - numpy=1.16.3
   - pip=19.1
   - scipy=1.2.1
+  - pkg-config=0.29.2
+  - h5py
   - pip:
     - csvdiff==0.3.3
     - hdf5storage==0.1.15
