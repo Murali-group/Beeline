@@ -6,7 +6,7 @@ input_settings:
     input_dir : "inputs"
 
     # Subdirectory of inputs that datasets are placed in
-    dataset_dir: "GSD"
+    dataset_dir: "example"
 
     # Denotes a list of datasets, each with the following parameters:
     #   name: Name of the dataset. May be used in logging or other

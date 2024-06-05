@@ -466,7 +466,7 @@ def main():
                 evalConfig = evalConfigs[j]
                 
                 ResDF = pd.read_csv(str(evalConfig.output_settings.base_dir) \
-                                    + "/".join(str(evalConfig.input_settings.datadir).split("inputs")[1].split(separator())) + '/' \
+                                    + "/".join(str(evalConfig.input_settings.datadir).split("inputs")[1].split(os.sep)) + '/' \
                                     + str(evalConfig.output_settings.output_prefix) \
                                     + '-' + resTypeFileName[i] + '.csv', header = 0, index_col = 0)
                 
