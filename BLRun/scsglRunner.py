@@ -55,7 +55,7 @@ def run(RunnerObj):
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
-                         'scsgl:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'python runScsgl.py',
+                         'scsgl:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'python run_scSGL.py',
                          '--expression_file='+expressionDataPath, '--ref_net_file='+refNetworkPath, '--out_file='+outPath, 
                          '--pos_density='+pos_density, '--neg_density='+neg_density, '--assoc='+assoc,
                          '\"'])
