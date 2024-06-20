@@ -135,4 +135,8 @@ def parse_time_files(path):
         print("Algorithm running failed, setting time value to -1\n")
         time_val = -1
 
+    except IndexError:
+        print(f"Time output {path} file found but not populated, setting time value to -1\n")
+        time_val = -1
+
     return time_val
