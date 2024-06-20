@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
+from BLRun.out_path_generator import get_output_path
 from sklearn import preprocessing
 
 def generateInputs(RunnerObj):
@@ -42,11 +43,11 @@ def run(RunnerObj):
     '''
     Function to run GRN-VBEM algorithm
     '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/JUMP3/ExpressionData.csv"
     
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/JUMP3/"
+    outDir = get_output_path(RunnerObj, "/JUMP3/")
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
@@ -62,7 +63,7 @@ def parseOutput(RunnerObj):
     Function to parse outputs from JUMP3.
     '''
     # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/JUMP3/"
+    outDir = get_output_path(RunnerObj, "/JUMP3/")
     if not Path(outDir+'outFile.txt').exists():
         print(outDir+'outFile.txt'+'does not exist, skipping...')
         return
