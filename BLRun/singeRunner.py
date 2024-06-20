@@ -39,7 +39,7 @@ def run(RunnerObj):
     '''
     inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/SINGE/"
-    
+
 
     # make output dirs if they do not exist:
     outDir = get_output_path(RunnerObj, "/SINGE/")
@@ -74,6 +74,18 @@ def run(RunnerObj):
        replicates.append(' '.join('--' + p.replace('_', '-') + ' ' + str(params[p]) for p in params_order) + ' '.join(['', '--replicate', str(replicate), '--ID', str(replicate)]))
     params_str = '\n'.join(replicates)
 
+    '''
+    Workaround for Windows/Linux incompatibility for using shell to echo hyperparameters
+    into a file due to differences in parsing quotes in the terminal.
+    
+    Note: this works because the same hyperparameter.txt file is used for both
+          ExpressionData0 and ExpressionData1, and the docker command sees this file
+          as it is created before the command starts.
+    '''
+    hyperParamsFilePath = inputPath.split("data/")[1] + "hyperparameters.txt"
+    with open(hyperParamsFilePath, 'w') as hyperParamFile:
+        print(params_str, file=hyperParamFile)
+
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
 
@@ -86,7 +98,7 @@ def run(RunnerObj):
         inputFile = inputPath + "ExpressionData"+str(idx)+".csv"
         inputMat = inputPath + "ExpressionData"+str(idx)+".mat"
         geneListMat = inputPath + "GeneList"+str(idx)+".mat"
-        paramsFile = inputPath + "hyperparameters.txt"       
+        paramsFile = inputPath + "hyperparameters.txt"
 
         '''
         This is a workaround for https://github.com/gitter-lab/SINGE/blob/master/code/parseParams.m#L39
@@ -118,26 +130,11 @@ def run(RunnerObj):
 
         cmdToRun = ' '.join(
             [f'docker run --rm --entrypoint /bin/sh -v {Path.cwd()}:/usr/local/SINGE/data/',
-             f'grnbeeline/singe:0.4.1 -c \"echo \\"{params_str}\\" > {paramsFile} &&',
-             f'{symlink_out_file} && {convert_input_to_matfile} && time -v -o data/{outDir}time{idx}.txt',
-             f'/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
+             f'grnbeeline/singe:0.4.1 -c "{symlink_out_file} && {convert_input_to_matfile} &&',
+             f'time -v -o data/{outDir}time{idx}.txt /usr/local/SINGE/SINGE.sh',
+             f'/usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
              f'{inputMat} {geneListMat} {outFileSymlink} {paramsFile}"']
         )
-
-        '''
-        This is a workaround for Windows encountering an "unterminated quote string
-        error" due to Powershell interpreting newlines and quotes in a different manner
-        compared to Linux's bash terminal.
-        '''
-        if sys.platform.startswith("win"):
-            subprocess.check_call(f'echo "{params_str}" > {paramsFile}', shell=True)
-            cmdToRun = ' '.join(
-                [f'docker run --rm --entrypoint /bin/sh -v {Path.cwd()}:/usr/local/SINGE/data/',
-                 f'grnbeeline/singe:0.4.1 -c "{symlink_out_file} && {convert_input_to_matfile} &&',
-                 f'time -v -o data/{outDir}time{idx}.txt /usr/local/SINGE/SINGE.sh',
-                 f'/usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
-                 f'{inputMat} {geneListMat} {outFileSymlink} {paramsFile}"']
-            )
 
         print(cmdToRun)
         # also print the parameters
