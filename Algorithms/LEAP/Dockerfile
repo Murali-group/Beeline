@@ -6,7 +6,7 @@ USER root
 
 WORKDIR /
 
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/LEAP_0.2.tar.gz', type = 'source')"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/LEAP/LEAP_0.2.tar.gz', type = 'source')"
 
 COPY runLeap.R /
 
