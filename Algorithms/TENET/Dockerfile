@@ -18,8 +18,10 @@ RUN apt-get update && apt-get install -y time && \
     # ./configure --prefix=/configure
     
 
-RUN pip install jpype1
+RUN pip install jpype1 statsmodels numpy
 
 COPY TENET /TENET
 
 RUN mkdir /data
+
+WORKDIR /TENET
