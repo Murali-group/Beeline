@@ -1,0 +1,2 @@
+module load shared torque
+qstat -f $PBS_JOBID
