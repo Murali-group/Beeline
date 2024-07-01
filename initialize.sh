@@ -159,4 +159,14 @@ else
     echo "Oops! Unable to build Docker container for SCSGL"
 fi
 
+cd $BASEDIR/Algorithms/TENET/
+docker build -q -t tenet:base .
+if ([ $? = 0 ] && [[ "$(docker images -q tenet:base 2> /dev/null)" != "" ]]); then
+    echo "Docker container for TENET is built and tagged as tenet:base"
+elif [ "$(docker images -q tenet:base 2> /dev/null)" != "" ]; then
+    echo "Docker container failed to build, but an existing image exists at tenet:base"
+else
+    echo "Oops! Unable to build Docker container for TENET"
+fi
+
 cd $BASEDIR
