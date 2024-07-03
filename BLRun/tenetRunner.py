@@ -43,11 +43,7 @@ def generateInputs(RunnerObj):
         with open(RunnerObj.inputDir.joinpath(f"TENET/{idx}/CellSelection.txt"), 'w') as selectionFile:
             print(("1\n" * len(index)), end = '', file=selectionFile)
         # RefNetwork File
-        if not RunnerObj.inputDir.joinpath(refNetworkName).exists():
-            refNetworkData = pd.read_csv(RunnerObj.inputDir.joinpath("refNetwork.csv"),
-                                        header = 0, index_col = 0)
-            refNetworkData.to_csv(RunnerObj.inputDir.joinpath(refNetworkName),
-                                sep = ',', header = True)
+
 
 
 def run(RunnerObj):
@@ -119,9 +115,9 @@ def parseOutput(RunnerObj):
             return
         OutDF = pd.read_csv(outDir+outFile, sep = ',', header = None)
         parsedGRN = outDir + str(indx) + os.sep + "parsedGRN.sif"
-        os.system(' '.join("python Algorithms/TENET/TENET/makeGRNBeeline.py", 0.01, parsedGRN))
+        os.system(' '.join(["python Algorithms/TENET/TENET/makeGRNBeeline.py", str(0.01), parsedGRN]))
         parsedGRNFinal = outDir + str(indx) + os.sep + "parsedGRNFinal.sif"
-        os.system(' '.join("python Algorithms/TENET/TENET/trim_indirect.py", parsedGRN, 0, parsedGRNFinal))
+        os.system(' '.join(["python Algorithms/TENET/TENET/trim_indirect.py", parsedGRN, str(0), parsedGRNFinal]))
         GRN = pd.read_csv(parsedGRNFinal, sep="\t", header=None)
         GRN.rename("Gene1", "EdgeWeight", "Gene2")
         columnOrder = ["Gene1", "Gene2", "EdgeWeight"]
