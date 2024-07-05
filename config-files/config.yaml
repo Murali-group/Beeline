@@ -145,6 +145,15 @@ input_settings:
               pos_density: [0.45]
               neg_density: [0.45]
               assoc: ["correlation"]
+        
+
+        - name: "TENET"
+          params:
+            should_run: [True]
+            # recommended value 1
+            historyLength: [1]
+            # change depending on your system's capabilities
+            threads: [10]
 
 
 # Output Settings: initialize base output folder names
