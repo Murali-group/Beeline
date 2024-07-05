@@ -28,7 +28,7 @@ for i in range(len(TF)):
                     if TFtargetTE[i][k]<min(TFtargetTE[i][j],TFtargetTE[indexTemp][TFtarget[indexTemp].index(TFtarget[i][k])])+threshold:
                         TFtargetIndirect[i][k]=1
 
-ofile = open(file_name.replace(".sif",".trimIndirect"+str(threshold)+".sif"),"w")
+ofile = open(sys.argv[3],"w")
 for i in range(len(TF)):
     for j in range(len(TFtarget[i])):
         if TFtargetIndirect[i][j]==0:
