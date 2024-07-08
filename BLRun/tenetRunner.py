@@ -129,11 +129,11 @@ def parseOutput(RunnerObj):
         parsedGRNFinal = Path(f'{outDir}/{idx}/parsedGRNFinal.sif')
         os.system(f'python Algorithms/TENET/TENET/trim_indirect.py {parsedGRN} 0 {parsedGRNFinal}')
         
-        OutSubDF[indx] = pd.read_csv(parsedGRNFinal, sep="\t", header=None)
+        OutSubDF[idx] = pd.read_csv(parsedGRNFinal, sep="\t", header=None)
 
     # Process and finalize output
     GRN = pd.concat(OutSubDF)
     GRN.rename(columns={0: "Gene1", 1: "EdgeWeight", 2: "Gene2"}, inplace=True)
     GRN = GRN[['Gene1', 'Gene2', 'EdgeWeight']]
     GRN.sort_values('EdgeWeight', ascending=False, inplace=True)
-    GRN.to_csv(outDir + 'rankedEdges.csv', sep="\t", index=False)
+    GRN.to_csv(f'{outDir}/rankedEdges.csv', sep="\t", index=False)
