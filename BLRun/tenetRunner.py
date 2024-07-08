@@ -42,9 +42,7 @@ def generateInputs(RunnerObj):
         # Cell Selection File
         with open(RunnerObj.inputDir.joinpath(f"TENET/{idx}/CellSelection.txt"), 'w') as selectionFile:
             print(("1\n" * len(index)), end = '', file=selectionFile)
-        # RefNetwork File
-
-
+            
 
 def run(RunnerObj):
     # # tenet wants info as gene columns and cell rows, opposite of how info is provided through pipeline
@@ -109,35 +107,33 @@ def run(RunnerObj):
         subprocess.check_call(cmdToRun, shell = True)
 
 def parseOutput(RunnerObj):
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/TENET/"
-    # print(outDir)
+    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs" + os.sep)[1]+"/TENET"
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0, sep=",")
-    print(PTData)
+    
     colNames = PTData.columns
-    print ("Column names:" + str(colNames))
     OutSubDF = [0]*len(colNames)
 
-    for indx in range(len(colNames)):
+    for idx in range(len(colNames)):
         # Read output
-        outFile = str(indx)+'/outFile.txt'
-        if not Path(outDir+outFile).exists():
+        outFile = f'{outDir}/{idx}/outFile.txt'
+        
+        if not Path(outFile).exists():
             # Quit if output file does not exist
-            print(outDir+outFile+' does not exist, skipping...')
+            print(f'{outFile} does not exist, skipping...')
             return
-        parsedGRN = Path(outDir + str(indx) + os.sep + "parsedGRN.sif")
-        print("parsed a grn")
-        os.system(' '.join(["python Algorithms/TENET/TENET/makeGRNBeeline.py", str(1), outDir+outFile, str(parsedGRN)]))
-        parsedGRNFinal = Path(outDir + str(indx) + os.sep + "parsedGRNFinal.sif")
-        os.system(' '.join(["python Algorithms/TENET/TENET/trim_indirect.py", str(parsedGRN), str(0), str(parsedGRNFinal)]))
+        
+        # Parse output
+        parsedGRN = Path(f'{outDir}/{idx}/parsedGRN.sif')
+        os.system(f'python Algorithms/TENET/TENET/makeGRNBeeline.py 1 {outFile} {parsedGRN}')
+        parsedGRNFinal = Path(f'{outDir}/{idx}/parsedGRNFinal.sif')
+        os.system(f'python Algorithms/TENET/TENET/trim_indirect.py {parsedGRN} 0 {parsedGRNFinal}')
         
         OutSubDF[indx] = pd.read_csv(parsedGRNFinal, sep="\t", header=None)
-    #print(GRN.columns)\
+
+    # Process and finalize output
     GRN = pd.concat(OutSubDF)
-    GRN.rename(columns={0: "Gene1",1: "EdgeWeight",2: "Gene2"}, inplace=True)
-    #print(GRN)
+    GRN.rename(columns={0: "Gene1", 1: "EdgeWeight", 2: "Gene2"}, inplace=True)
     GRN = GRN[['Gene1', 'Gene2', 'EdgeWeight']]
     GRN.sort_values('EdgeWeight', ascending=False, inplace=True)
-    print(GRN)
-    # GRN['Gene2'], GRN['EdgeWeight'] = GRN.pop('Gene2'), GRN.pop('EdgeWeight')
     GRN.to_csv(outDir + 'rankedEdges.csv', sep="\t", index=False)
