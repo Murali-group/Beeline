@@ -159,4 +159,15 @@ else
     echo "Oops! Unable to build Docker container for SCSGL"
 fi
 
+
+cd $BASEDIR/Algorithms/NG-SEM/
+docker build --no-cache -t ng-sem:base .
+if ([ $? = 0 ] && [[ "$(docker images -q ng-sem:base 2> /dev/null)" != "" ]]); then
+    echo "Docker container for NG-SEM is built and tagged as ng-sem:base"
+elif [ "$(docker images -q ng-sem:base 2> /dev/null)" != "" ]; then
+    echo "Docker container failed to build, but an existing image exists at ng-sem:base"
+else
+    echo "Oops! Unable to build Docker container for ng-sem"
+fi
+
 cd $BASEDIR
