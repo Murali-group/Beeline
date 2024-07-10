@@ -12,6 +12,7 @@ import BLRun.grisliRunner as GRISLI
 import BLRun.singeRunner as SINGE
 import BLRun.scribeRunner as SCRIBE
 import BLRun.scsglRunner as SCSGL
+import BLRun.ngsemrunner as NGSEM
 
 from pathlib import Path
 
@@ -28,7 +29,8 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'GRISLI':GRISLI.generateInputs,
                'SINGE':SINGE.generateInputs,
                'SCRIBE':SCRIBE.generateInputs,
-               'SCSGL':SCSGL.generateInputs}
+               'SCSGL':SCSGL.generateInputs,
+               'NGSEM':NGSEM.generateInputs}
 
 
 
@@ -46,7 +48,8 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'GRISLI':GRISLI.run,
             'SINGE':SINGE.run,
             'SCRIBE':SCRIBE.run,
-            'SCSGL':SCSGL.run}
+            'SCSGL':SCSGL.run,
+            'NGSEM':NGSEM.run}
 
 
 
@@ -63,7 +66,8 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'GRISLI':GRISLI.parseOutput,
             'SINGE':SINGE.parseOutput,
             'SCRIBE':SCRIBE.parseOutput,
-            'SCSGL':SCSGL.parseOutput}
+            'SCSGL':SCSGL.parseOutput,
+            'NGSEM':NGSEM.parseOuput}
 
 
 class Runner(object):

@@ -160,14 +160,14 @@ else
 fi
 
 
-cd $BASEDIR/Algorithms/NG-SEM/
-docker build --no-cache -t ng-sem:base .
-if ([ $? = 0 ] && [[ "$(docker images -q ng-sem:base 2> /dev/null)" != "" ]]); then
-    echo "Docker container for NG-SEM is built and tagged as ng-sem:base"
-elif [ "$(docker images -q ng-sem:base 2> /dev/null)" != "" ]; then
-    echo "Docker container failed to build, but an existing image exists at ng-sem:base"
+cd $BASEDIR/Algorithms/NGSEM/
+docker build --no-cache -t ngsem:base .
+if ([ $? = 0 ] && [[ "$(docker images -q ngsem:base 2> /dev/null)" != "" ]]); then
+    echo "Docker container for NGSEM is built and tagged as ngsem:base"
+elif [ "$(docker images -q ngsem:base 2> /dev/null)" != "" ]; then
+    echo "Docker container failed to build, but an existing image exists at ngsem:base"
 else
-    echo "Oops! Unable to build Docker container for ng-sem"
+    echo "Oops! Unable to build Docker container for ngsem"
 fi
 
 cd $BASEDIR
