@@ -14,3 +14,8 @@ rownames(inputExpr) <- c(geneNames)
 
 results = ng_sem(as.matrix(inputExpr), nk, miter, error, cores, NULL)
 
+DF = data.frame(Gene1 = geneNames[c(row(results$w.mat))], Gene2 = geneNames[c(col(results$w.mat))]
+                , weight = c(results$w.mat), likelihood =  c(results$likelihood))
+outDF <- DF[order(DF$weight, decreasing=TRUE), ]
+write.table(outDF, outFile, sep = "\t", quote = FALSE, row.names = FALSE)
+
