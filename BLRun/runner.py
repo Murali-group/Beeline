@@ -67,7 +67,7 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'SINGE':SINGE.parseOutput,
             'SCRIBE':SCRIBE.parseOutput,
             'SCSGL':SCSGL.parseOutput,
-            'NGSEM':NGSEM.parseOuput}
+            'NGSEM':NGSEM.parseOutput}
 
 
 class Runner(object):

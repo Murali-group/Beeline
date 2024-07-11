@@ -30,13 +30,24 @@ def run(RunnerObj):
     inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
                     "/NGSEM/ExpressionData.csv"
     
+    nk = RunnerObj.params["nk"]
+    miter = RunnerObj.params["miter"]
+    error = RunnerObj.params["error"]
+    cores = RunnerObj.params["cores"]
+
     # make output dirs if they do not exist:
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/NGSEM/"
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ grnbeeline/NGSEM:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'Rscript runNGSEM.R',
-                         inputPath, outPath, '\"'])
+    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ ngsem:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'Rscript runNGSEM.R',
+                         inputPath, 
+                         outPath, 
+                         str(nk),
+                         str(miter),
+                         str(error),
+                         str(cores),
+                         '\"'])
     print(cmdToRun)
     os.system(cmdToRun)
 
@@ -55,18 +66,18 @@ def parseOutput(RunnerObj):
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
     # edges with significant p-value
-    part1 = OutDF.loc[OutDF['pValue'] <= float(RunnerObj.params['pVal'])]
-    part1 = part1.assign(absCorVal = part1['corVal'].abs())
+    #part1 = OutDF.loc[OutDF['pValue'] <= float(RunnerObj.params['pVal'])]
+    #part1 = part1.assign(absCorVal = part1['corVal'].abs())
     # edges without significant p-value
-    part2 = OutDF.loc[OutDF['pValue'] > float(RunnerObj.params['pVal'])]
+    #part2 = OutDF.loc[OutDF['pValue'] > float(RunnerObj.params['pVal'])]
     
     outFile = open(outDir + 'rankedEdges.csv','w')
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 
-    for idx, row in part1.sort_values('absCorVal', ascending = False).iterrows():
+    for idx, row in OutDF.sort_values('absCorVal', ascending = False).iterrows():
         outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(row['corVal'])])+'\n')
     
-    for idx, row in part2.iterrows():
-        outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(0)])+'\n')
+    # for idx, row in part2.iterrows():
+    #     outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(0)])+'\n')
     outFile.close()
     
