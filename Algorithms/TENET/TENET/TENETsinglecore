@@ -43,7 +43,6 @@ trajectory1SortIndex=numpy.argsort(trajectory1)
 ifile = open(sys.argv[1])
 ##ifile = open("expression_data.csv")
 line=ifile.readline()
-# print(line)
 gene_name=line.replace('\n','').split(',')[1:]
 cell_gene_all = []
 for line in ifile:
