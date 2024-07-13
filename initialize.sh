@@ -160,3 +160,16 @@ else
 fi
 
 cd $BASEDIR
+
+
+cd $BASEDIR/Algorithms/MICA/
+docker build -q -t mica:base .
+if ([ $? = 0 ] && [[ "$(docker images -q mica:base 2> /dev/null)" != "" ]]); then
+  echo "Docker container for MICA is built and tagged as mica:base"
+elif [ "$(docker images -q mica:base 2> /dev/null)" != "" ]; then
+    echo "Docker container failed to build, but an existing image exists at mica:base"
+else
+    echo "Oops! Unable to build Docker container for MICA"
+fi
+
+
