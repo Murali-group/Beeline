@@ -58,6 +58,7 @@ if (length(arguments$expressionFile) == 0){
 exprMatr <- read.delim(arguments$expressionFile,  row.names = 1, sep = ',', check.names=FALSE)
 exprMatr <- exprMatr[rowSums(exprMatr) > 0, ]
 
+# If Chromatin Accessibility data is not provided, only expression file is used to build GRN
 if (length(arguments$atacFile) != 0){
   atac <- read.delim(arguments$atacFile, row.names = 1, sep = ',', check.names = FALSE)
   atac <- atac %>%
@@ -68,6 +69,7 @@ if (length(arguments$atacFile) != 0){
                                  union(atac$regulatoryGene, atac$targetGene)), ]
 
 }
+# If regulators file is not provided, all genes are taken as regulators by the respective algorithm
 regulators = NULL
 if (length(arguments$regFile) != 0){
   regulators <- read.delim(arguments$regFile, row.names = 1, sep = ',', check.names = FALSE)
