@@ -58,6 +58,7 @@ The Dockerfile will run the script runMICA.R within the Docker container.
 
 4. **Add the Dockerfile to initialize.sh script:** Once the Dockerfile is ready, add the following lines to 'initialize.sh' script to create Docker image for MICA.
 
+```
 cd $BASEDIR/Algorithms/MICA/
 docker build -q -t mica:base .
 if ([ $? = 0 ] && [[ "$(docker images -q mica:base 2> /dev/null)" != "" ]]); then
@@ -68,6 +69,7 @@ else
     echo "Oops! Unable to build Docker container for MICA"
 fi
 
+```
 5. **Create micaRunner.py scripts:** After building the Docker image, create Python scripts called micaRunner.py in Beeline/BLRun folder to set up BLRun objects to read inputs and run MICA inside the Docker image, and also parse the output for evaluation. Specifically, they contain three functions:
 
    - ``generateInputs()`` : This function reads the expression data file, and processes it into the format required by the corresponding algorithm. 
@@ -90,3 +92,4 @@ fi
         - name: "MICA"
           params: 
               should_run: [True]
+              method: [mica] 
