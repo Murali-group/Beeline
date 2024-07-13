@@ -16,6 +16,7 @@ It uses four methods for the same : Spearman Correlation, GENIE3, Mutual Informa
 
 
 MICA ([[Paper](https://doi.org/10.1101/2023.02.03.527081)] [[GitHub](https://github.com/SydneyBioX/scTIE)]) 
+
 This is the instruction on how to integrate MICA to BEELINE. Please follow the following steps:
 
 1. **Create MICA folder:** Create a folder called MICA under Beeline/Algorithms for the new method to ensure easy set-up and portability and avoid conflicting libraries/software versions that may arise from the GRN algorithm implementations.
