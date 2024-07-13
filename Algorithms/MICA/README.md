@@ -29,8 +29,9 @@ This is the instruction on how to integrate MICA to BEELINE. Please follow the f
    - ``--regFile`` : path to file with information about regulators 
 
 
-3. **Create a Dockerfile:** Create a "Dockerfile" that contains necessary software specifications and commands listed in a specific order from top to bottom. 
+3. **Create a Dockerfile:** Create a "Dockerfile" that contains necessary software specifications and commands listed in a specific order from top to bottom.
 
+```
 FROM r-base:4.3.1
 
 RUN apt-get update && apt-get install -y
@@ -52,7 +53,7 @@ COPY mutual_info.R /
 LABEL maintainer="Vishnu Madhav <vm.ibab@gmail.com>"
 LABEL version="1.0"
 LABEL description="Mutual Information Chromatin Accessibility : Gene Regulatory network building"
-
+```
 The Dockerfile will run the script runMICA.R within the Docker container.
 
 4. **Add the Dockerfile to initialize.sh script:** Once the Dockerfile is ready, add the following lines to 'initialize.sh' script to create Docker image for MICA.
