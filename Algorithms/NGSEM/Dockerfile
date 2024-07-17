@@ -22,13 +22,3 @@ COPY NGSEM ng-sem/
 COPY runNGSEM.R /ng-sem/
 
 RUN mkdir data/
-
-# RUN mkdir R/
-
-# RUN mv NG-SEM/R/* R/
-
-# RUN mkdir man/
-
-# RUN mv NG-SEM/man/* man/
-
-# RUN mv NG-SEM/NAMESPACE /
