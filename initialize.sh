@@ -159,4 +159,14 @@ else
     echo "Oops! Unable to build Docker container for SCSGL"
 fi
 
+cd $BASEDIR/Algorithms/DEEPSEM/
+docker build --no-cache -q -t deepsem:base .
+if ([ $? = 0 ] && [[ "$(docker images -q deepsem:base 2> /dev/null)" != "" ]]); then
+    echo "Docker container for DEEPSEM is built and tagged as deepsem:base"
+elif [ "$(docker images -q deepsem:base 2> /dev/null)" != "" ]; then
+    echo "Docker container failed to build, but an existing image exists at deepsem:base"
+else
+    echo "Oops! Unable to build Docker container for DEEPSEM"
+fi
+
 cd $BASEDIR
