@@ -1,0 +1,3 @@
+# NG-SEM: an effective non-Gaussian structural equation modeling framework for gene regulatory network inference from single-cell RNA-seq data
+
+Jiaying Zhao, Chi-Wing Wong, Wai-Ki Ching, Xiaoqing Cheng, NG-SEM: an effective non-Gaussian structural equation modeling framework for gene regulatory network inference from single-cell RNA-seq data, Briefings in Bioinformatics, Volume 24, Issue 6, November 2023, bbad369, https://doi.org/10.1093/bib/bbad369
