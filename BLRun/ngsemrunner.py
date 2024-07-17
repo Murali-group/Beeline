@@ -27,7 +27,7 @@ def run(RunnerObj):
     '''
     Function to run NGSEM algorithm
     '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/NGSEM/ExpressionData.csv"
     
     nk = RunnerObj.params["nk"]
@@ -36,7 +36,7 @@ def run(RunnerObj):
     cores = RunnerObj.params["cores"]
 
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/NGSEM/"
+    outDir = "outputs/"+'/'.join(str(RunnerObj.inputDir).split("inputs" + os.sep)[1].split(os.sep))+"/NGSEM/"
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
@@ -55,26 +55,19 @@ def parseOutput(RunnerObj):
     Function to parse outputs from NGSEM.
     '''
     # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs" + os.sep)[1]+"/NGSEM/"
+    outDir = "outputs/"+'/'.join(str(RunnerObj.inputDir).split("inputs" + os.sep)[1].split(os.sep))+"/NGSEM/"
     if not Path(outDir+'outFile.txt').exists():
         print(outDir+'outFile.txt'+'does not exist, skipping...')
         return
         
     # Read output
     OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
-    # edges with significant p-value
-    #part1 = OutDF.loc[OutDF['pValue'] <= float(RunnerObj.params['pVal'])]
-    #part1 = part1.assign(absCorVal = part1['corVal'].abs())
-    # edges without significant p-value
-    #part2 = OutDF.loc[OutDF['pValue'] > float(RunnerObj.params['pVal'])]
     
     outFile = open(outDir + 'rankedEdges.csv','w')
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 
     for idx, row in OutDF.sort_values('weight', ascending = False).iterrows():
         outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(row['weight'])])+'\n')
-    
-    # for idx, row in part2.iterrows():
-    #     outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(0)])+'\n')
+
     outFile.close()
     
