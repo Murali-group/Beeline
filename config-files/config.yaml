@@ -146,6 +146,20 @@ input_settings:
               neg_density: [0.45]
               assoc: ["correlation"]
 
+        - name: "TENET"
+          params:
+              should_run: [True]
+              historyLength: [1]
+              threads: [10]
+
+        - name: "NGSEM"
+          params:
+            should_run: [True]
+            nk: [3]
+            miter: [500]
+            error: [0.000001]
+            cores: [24]
+
 
 # Output Settings: initialize base output folder names
 output_settings:
