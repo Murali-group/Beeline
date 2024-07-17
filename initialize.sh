@@ -159,4 +159,15 @@ else
     echo "Oops! Unable to build Docker container for SCSGL"
 fi
 
+
+cd $BASEDIR/Algorithms/NGSEM/
+docker build -q -t ngsem:base .
+if ([ $? = 0 ] && [[ "$(docker images -q ngsem:base 2> /dev/null)" != "" ]]); then
+    echo "Docker container for NGSEM is built and tagged as ngsem:base"
+elif [ "$(docker images -q ngsem:base 2> /dev/null)" != "" ]; then
+    echo "Docker container failed to build, but an existing image exists at ngsem:base"
+else
+    echo "Oops! Unable to build Docker container for ngsem"
+fi
+
 cd $BASEDIR
