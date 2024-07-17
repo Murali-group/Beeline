@@ -28,6 +28,8 @@
 #'  \item{time} CPU time in seconds
 #'  }
 #'
+library("foreach")
+library("MASS")
 ng_sem <- function(dat,
                      nk=3,
                      param.miter=5000,
@@ -35,9 +37,8 @@ ng_sem <- function(dat,
                      n.cores = 24,
                      seed_list = NULL
                      ){
-
-  clusters <- parallel::makeCluster(n.cores)
-  doParallel::registerDoParallel(clusters)
+  # clusters <- parallel::makeCluster(n.cores)
+  # doParallel::registerDoParallel(clusters)
 
   if((length(grep("matrix",class(dat)))==0)){
     dat <- as.matrix(dat)
@@ -60,8 +61,7 @@ ng_sem <- function(dat,
   params=list(n.K=n.K,n.N=n.N,Data.Y=Data.Y,param.error=param.error,param.miter=param.miter)
 
   start = Sys.time()
-
-  res <- foreach(g=1:n.G, .inorder=TRUE)  %dopar%  {
+  res <- foreach(g=1:n.G, .inorder=TRUE)  %do%  {
     ng_sem_estimation(X=X,g=g,params=params,g.seed=seed_list[g])
   }
   end = Sys.time()
@@ -91,8 +91,7 @@ ng_sem <- function(dat,
     time=time
   )
 
-  parallel::stopCluster(clusters)
-
+  # parallel::stopCluster(clusters)
   return(res)
 }
 

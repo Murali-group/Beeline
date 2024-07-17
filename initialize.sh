@@ -161,7 +161,7 @@ fi
 
 
 cd $BASEDIR/Algorithms/NGSEM/
-docker build --no-cache -t ngsem:base .
+docker build -q -t ngsem:base .
 if ([ $? = 0 ] && [[ "$(docker images -q ngsem:base 2> /dev/null)" != "" ]]); then
     echo "Docker container for NGSEM is built and tagged as ngsem:base"
 elif [ "$(docker images -q ngsem:base 2> /dev/null)" != "" ]; then

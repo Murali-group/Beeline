@@ -40,14 +40,11 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ ngsem:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'Rscript runNGSEM.R',
-                         inputPath, 
-                         outPath, 
-                         str(nk),
-                         str(miter),
-                         str(error),
-                         str(cores),
-                         '\"'])
+    cmdToRun = ' '.join([
+        f'docker run --rm -v {Path.cwd()}:/ng-sem/data/ ngsem:base /bin/sh -c',
+        f'"time -v -o data/{outDir}time.txt Rscript runNGSEM.R {inputPath} {outPath} {nk} {miter} {error} {cores}"'
+    ])
+
     print(cmdToRun)
     os.system(cmdToRun)
 
@@ -58,7 +55,7 @@ def parseOutput(RunnerObj):
     Function to parse outputs from NGSEM.
     '''
     # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/NGSEM/"
+    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs" + os.sep)[1]+"/NGSEM/"
     if not Path(outDir+'outFile.txt').exists():
         print(outDir+'outFile.txt'+'does not exist, skipping...')
         return
@@ -74,8 +71,8 @@ def parseOutput(RunnerObj):
     outFile = open(outDir + 'rankedEdges.csv','w')
     outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 
-    for idx, row in OutDF.sort_values('absCorVal', ascending = False).iterrows():
-        outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(row['corVal'])])+'\n')
+    for idx, row in OutDF.sort_values('weight', ascending = False).iterrows():
+        outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(row['weight'])])+'\n')
     
     # for idx, row in part2.iterrows():
     #     outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(0)])+'\n')

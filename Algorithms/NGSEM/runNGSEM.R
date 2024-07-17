@@ -1,4 +1,8 @@
-library(NGSEM)
+source("ng-sem/R/loggaussian.R")
+source("ng-sem/R/ng_sem_estimation.R")
+source("ng-sem/R/ng_sem_expectation.R")
+source("ng-sem/R/ng_sem_maximization.R")
+source("ng-sem/R/ng_sem.R")
 
 args = commandArgs(trailingOnly = T)
 inFile <- args[1]
@@ -15,7 +19,7 @@ rownames(inputExpr) <- c(geneNames)
 results = ng_sem(as.matrix(inputExpr), nk, miter, error, cores, NULL)
 
 DF = data.frame(Gene1 = geneNames[c(row(results$w.mat))], Gene2 = geneNames[c(col(results$w.mat))]
-                , weight = c(results$w.mat), likelihood =  c(results$likelihood))
+                , weight = c(results$w.mat))
 outDF <- DF[order(DF$weight, decreasing=TRUE), ]
 write.table(outDF, outFile, sep = "\t", quote = FALSE, row.names = FALSE)
 

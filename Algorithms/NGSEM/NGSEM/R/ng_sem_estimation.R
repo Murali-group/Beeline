@@ -58,12 +58,12 @@ ng_sem_estimation <- function(X,g,params,g.seed){
 
   m1 <- matrix(unlist(lapply(m, function(x){
     x*res_y_ax
-  })),nrow = n.K,byrow = T)
+  })),nrow = as.integer(n.K),byrow = T)
   m2 <- sweep(m1,1,m*m/2,FUN = "-")
   idx.comp <- unlist(apply(m2,2,function(x){
     which(x==max(x))
   }))
-  Gamma <- matrix(0,nrow=n.N,ncol=n.K)
+  Gamma <- matrix(0,nrow=n.N,ncol=as.integer(n.K))
   for(i in seq_len(n.N)){
     Gamma[i,idx.comp[i]] <- 1
   }
@@ -94,8 +94,7 @@ ng_sem_estimation <- function(X,g,params,g.seed){
       prod.a.x[i] <-sum(model$a*Data.Y[,i])
     }
     res_y_ax <- Data.y-prod.a.x
-
-    converged <- ((liklih.now-liklih.pre) < param.error*abs(liklih.now))
+    converged <- ((liklih.now-liklih.pre) < as.numeric(param.error)*abs(liklih.now))
     liklih.pre <- liklih.now
   }
 
@@ -106,5 +105,4 @@ ng_sem_estimation <- function(X,g,params,g.seed){
 
   res_for_gene <- list(Lik_list=liklih,Iter_num=iter,Comp_w=model$w,Comp_sig2=model$Sigma2,grn_w_g=as.numeric(model$a))
   res_for_gene
-
 }
