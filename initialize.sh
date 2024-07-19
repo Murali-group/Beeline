@@ -159,14 +159,24 @@ else
     echo "Oops! Unable to build Docker container for SCSGL"
 fi
 
-cd $BASEDIR/Algorithms/DEEPSEM/
-docker build --no-cache -q -t deepsem:base .
-if ([ $? = 0 ] && [[ "$(docker images -q deepsem:base 2> /dev/null)" != "" ]]); then
-    echo "Docker container for DEEPSEM is built and tagged as deepsem:base"
-elif [ "$(docker images -q deepsem:base 2> /dev/null)" != "" ]; then
-    echo "Docker container failed to build, but an existing image exists at deepsem:base"
+cd $BASEDIR/Algorithms/TENET/
+docker build -q -t tenet:base .
+if ([ $? = 0 ] && [[ "$(docker images -q tenet:base 2> /dev/null)" != "" ]]); then
+    echo "Docker container for TENET is built and tagged as tenet:base"
+elif [ "$(docker images -q tenet:base 2> /dev/null)" != "" ]; then
+    echo "Docker container failed to build, but an existing image exists at tenet:base"
 else
-    echo "Oops! Unable to build Docker container for DEEPSEM"
+    echo "Oops! Unable to build Docker container for TENET"
+fi
+
+cd $BASEDIR/Algorithms/NGSEM/
+docker build -q -t ngsem:base .
+if ([ $? = 0 ] && [[ "$(docker images -q ngsem:base 2> /dev/null)" != "" ]]); then
+    echo "Docker container for NGSEM is built and tagged as ngsem:base"
+elif [ "$(docker images -q ngsem:base 2> /dev/null)" != "" ]; then
+    echo "Docker container failed to build, but an existing image exists at ngsem:base"
+else
+    echo "Oops! Unable to build Docker container for NGSEM"
 fi
 
 cd $BASEDIR
