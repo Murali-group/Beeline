@@ -97,7 +97,7 @@ def boxplot(opts, evalConfigs, datasets, randValue, resTypeFile, resTypeName):
     for i, dataset in enumerate(datasets):
         DF = DFs[i]
         modifiedDF = pd.melt(DF, id_vars=['dataset'], 
-        value_vars=['SINCERITIES', 'SCRIBE', 'SINGE', 'PPCOR', 'PIDC', 'GENIE3', 'LEAP', 'GRNBOOST2', 'GRISLI', 'GRNVBEM', 'SCNS', 'SCODE', 'SCSGL'])
+        value_vars=['SINCERITIES', 'SCRIBE', 'SINGE', 'PPCOR', 'PIDC', 'GENIE3', 'LEAP', 'GRNBOOST2', 'GRISLI', 'GRNVBEM', 'SCNS', 'SCODE', 'SCSGL','TENET','NGSEM'])
         
         conditions = [
             modifiedDF['dataset'].str.contains('-100-'),
