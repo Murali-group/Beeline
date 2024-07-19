@@ -1,0 +1,14 @@
+Package: NGSEM
+Title: NG-SEM: An Effective Non-Gaussian Structural Equation Modelling Framework for Gene Regulatory Network Inference from Temporal Single Cell RNA-seq Data
+Version: 0.0.1
+Authors@R: 
+    person("Jiaying", "Zhao", , "jyzhao@connect.hku.hk", role = c("aut", "cre"))
+Description: The package implements a straightforward, effective and robust computational method for Gene Regulatory Network (GRN) inference from time series scRNA-seq data, which is coined as scEM-SEM. The framework is based on Structural Equation Model (SEM) and extended to non-Gaussian situation to accommadate the tremendous technical and biological noises.
+License: GPL (>= 3)
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Imports: MASS, foreach, parallel, doParallel, knitr, rmarkdown
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
