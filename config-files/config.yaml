@@ -156,11 +156,11 @@ input_settings:
         
         - name: "NGSEM"
           params:
-            should_run: [True]
-            nk: [3]
-            miter: [500]
-            error: [0.000001]
-            cores: [24]
+              should_run: [True]
+              nk: [3]
+              miter: [500]
+              error: [0.000001]
+              cores: [24]
 
 
 # Output Settings: initialize base output folder names
