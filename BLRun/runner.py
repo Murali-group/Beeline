@@ -12,6 +12,8 @@ import BLRun.grisliRunner as GRISLI
 import BLRun.singeRunner as SINGE
 import BLRun.scribeRunner as SCRIBE
 import BLRun.scsglRunner as SCSGL
+import BLRun.tenetRunner as TENET
+import BLRun.ngsemRunner as NGSEM
 import BLRun.deepsemRunner as DEEPSEM
 
 from pathlib import Path
@@ -30,6 +32,8 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'SINGE':SINGE.generateInputs,
                'SCRIBE':SCRIBE.generateInputs,
                'SCSGL':SCSGL.generateInputs,
+               'TENET':TENET.generateInputs,
+               'NGSEM':NGSEM.generateInputs,
                'DEEPSEM':DEEPSEM.generateInputs}
 
 
@@ -49,6 +53,8 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'SINGE':SINGE.run,
             'SCRIBE':SCRIBE.run,
             'SCSGL':SCSGL.run,
+            'TENET':TENET.run,
+            'NGSEM':NGSEM.run,
             'DEEPSEM':DEEPSEM.run}
 
 
@@ -67,6 +73,8 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'SINGE':SINGE.parseOutput,
             'SCRIBE':SCRIBE.parseOutput,
             'SCSGL':SCSGL.parseOutput,
+            'TENET':TENET.parseOutput,
+            'NGSEM':NGSEM.parseOutput,
             'DEEPSEM':DEEPSEM.parseOutput}
 
 
