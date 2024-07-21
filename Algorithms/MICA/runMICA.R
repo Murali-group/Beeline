@@ -57,7 +57,8 @@ if (length(arguments$expressionFile) == 0){
 
 exprMatr <- read.delim(arguments$expressionFile,  row.names = 1, sep = ',', check.names=FALSE)
 exprMatr <- exprMatr[rowSums(exprMatr) > 0, ]
-
+tfs = NULL
+# If Chromatin Accessibility data is not provided, only expression file is used to build GRN
 if (length(arguments$atacFile) != 0){
   atac <- read.delim(arguments$atacFile, row.names = 1, sep = ',', check.names = FALSE)
   atac <- atac %>%
@@ -66,12 +67,16 @@ if (length(arguments$atacFile) != 0){
 
   exprMatr <- exprMatr[intersect(rownames(exprMatr),
                                  union(atac$regulatoryGene, atac$targetGene)), ]
+  tfs = atac
+  
 
 }
-regulators = NULL
+# If regulators file is not provided, all genes are taken as regulators by the respective algorithm
+reg = NULL
+
 if (length(arguments$regFile) != 0){
-  regulators <- read.delim(arguments$regFile, row.names = 1, sep = ',', check.names = FALSE)
-  regulators <- regulators[regulators %in% rownames(exprMatr)]
+  reg <- read.delim(arguments$regFile, row.names = 1, sep = ',', check.names = FALSE)
+  reg <- regulators[regulators %in% rownames(exprMatr)]
 
 }
 
@@ -79,20 +84,20 @@ cat("Computing",arguments$method,"\n")
 
 if (arguments$method == 'mica'){
     source('mutual_info.R')
-    net = mutual_info(exprMatr, regulators, 1)
+    net = refined_mi(exprMatr, regulators =reg , tf_binding = tfs, nCores=1)
 
 } else if (arguments$method == 'l0l2'){
     source('l0l2.R')
-    net = l0l2(exprMatr, regulators, 1)
+    net = refined_l0l2(exprMatr, regulators = reg, tf_binding = tfs, nCores=1)
 
 
 } else if (arguments$method == 'spearman'){
     source('spearman.R')
-    net = spearman(exprMatr, regulators, 1)
+    net = refined_spearman(exprMatr, regulators = reg ,tf_binding = tfs, nCores=1)
 
 } else if (arguments$method == 'genie3'){
     source('genie3.R')
-    net = refined_genie3(exprMatr)
+    net = refined_genie3(exprMatr, regulators =reg ,tf_binding = tfs, nCores = 1)
 
 } else{
   stop("Method must be one of mica, l0l2, spearman or genie3.

@@ -16,6 +16,7 @@ It uses four methods for the same : Spearman Correlation, GENIE3, Mutual Informa
 
 
 MICA ([[Paper](https://doi.org/10.1101/2023.02.03.527081)] [[GitHub](https://github.com/SydneyBioX/scTIE)]) 
+
 This is the instruction on how to integrate MICA to BEELINE. Please follow the following steps:
 
 1. **Create MICA folder:** Create a folder called MICA under Beeline/Algorithms for the new method to ensure easy set-up and portability and avoid conflicting libraries/software versions that may arise from the GRN algorithm implementations.
@@ -29,8 +30,9 @@ This is the instruction on how to integrate MICA to BEELINE. Please follow the f
    - ``--regFile`` : path to file with information about regulators 
 
 
-3. **Create a Dockerfile:** Create a "Dockerfile" that contains necessary software specifications and commands listed in a specific order from top to bottom. 
+3. **Create a Dockerfile:** Create a "Dockerfile" that contains necessary software specifications and commands listed in a specific order from top to bottom.
 
+```
 FROM r-base:4.3.1
 
 RUN apt-get update && apt-get install -y
@@ -52,11 +54,12 @@ COPY mutual_info.R /
 LABEL maintainer="Vishnu Madhav <vm.ibab@gmail.com>"
 LABEL version="1.0"
 LABEL description="Mutual Information Chromatin Accessibility : Gene Regulatory network building"
-
+```
 The Dockerfile will run the script runMICA.R within the Docker container.
 
 4. **Add the Dockerfile to initialize.sh script:** Once the Dockerfile is ready, add the following lines to 'initialize.sh' script to create Docker image for MICA.
 
+```
 cd $BASEDIR/Algorithms/MICA/
 docker build -q -t mica:base .
 if ([ $? = 0 ] && [[ "$(docker images -q mica:base 2> /dev/null)" != "" ]]); then
@@ -67,6 +70,7 @@ else
     echo "Oops! Unable to build Docker container for MICA"
 fi
 
+```
 5. **Create micaRunner.py scripts:** After building the Docker image, create Python scripts called micaRunner.py in Beeline/BLRun folder to set up BLRun objects to read inputs and run MICA inside the Docker image, and also parse the output for evaluation. Specifically, they contain three functions:
 
    - ``generateInputs()`` : This function reads the expression data file, and processes it into the format required by the corresponding algorithm. 
@@ -89,3 +93,4 @@ fi
         - name: "MICA"
           params: 
               should_run: [True]
+              method: [mica] 

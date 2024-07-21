@@ -145,7 +145,12 @@ input_settings:
               pos_density: [0.45]
               neg_density: [0.45]
               assoc: ["correlation"]
-
+              
+        - name: "MICA"
+          params:
+              should_run: [True]
+              # any of 'mica', 'spearman', 'l0l2', or 'genie3'
+              method : ['mica']
 
 # Output Settings: initialize base output folder names
 output_settings:
