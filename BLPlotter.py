@@ -22,6 +22,9 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.lines as line
 import matplotlib.patches as patches
+import igraph as ig
+import matplotlib.patches as mpatches
+from matplotlib.table import Table
 
 # local imports
 import BLEval as ev
@@ -49,7 +52,10 @@ def get_parser() -> argparse.ArgumentParser:
 
     parser.add_argument('-v', '--overview', action="store_true", default=False,
       help="Generate plot of AUPRC and early precision ratios relative to a random predictor.\n")
-    
+
+    parser.add_argument('-g', '--grn', default=None, type=str,
+                help="Generate plot of top interactions in GRN inferred.\n")
+
     parser.add_argument('-o', '--output', default='.',
       help="Output directory for generated plots.\n")
 
@@ -383,6 +389,101 @@ def COplot(inputDF, width = 12, height = 7, randValues = [], shape = [],
         ax.set_xticks([0.5, len(palettes[levlIdx]) - 2])
         ax.set_xticklabels(['Low/Poor', 'High/Good'], fontsize=16)  
 
+
+def grnvis(opts, evalConfigs, datasets, resTypeFile):
+    DFs = []
+    for i, dataset in enumerate(datasets):
+        evalConfig = evalConfigs[i]
+
+        # Read output file containing edge weights for chosen algorithm
+        DF = pd.read_csv(str(evalConfig.output_settings.base_dir) + '/' \
+                         + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
+                         + str(evalConfig.output_settings.output_prefix)  + '/' \
+                         + str(opts.grn) + '/'  + resTypeFile + '.csv', header=0, sep='\t')
+
+        DFs.append(DF)
+    for i, dataset in enumerate(datasets):
+        DF = DFs[i]
+    df = pd.DataFrame(DF.head(30))
+
+    df['EdgeWeight'] = ((df['EdgeWeight'] - min(df['EdgeWeight'])) + 1) / (
+                max(df['EdgeWeight']) - min(df['EdgeWeight']) + 1)
+
+
+    # Create a directed graph
+    g = ig.Graph(directed=True)
+
+    tfs = ['geneA', 'geneB']  # Example list of transcription factors
+
+    # Define colors for TFs and genes
+    # Replace these dictionaries with actual mappings you want
+    tf_colour = {'default': 'red'}  # Example: all TFs are red
+    gn_colour = {'default': 'cyan'}
+
+    # Add vertices
+    all_nodes = pd.concat([df['Gene1'], df['Gene2']]).unique()
+    g.add_vertices(all_nodes)
+
+    # Add edges with weights
+    edges = list(zip(df['Gene1'], df['Gene2']))
+    weights = df['EdgeWeight'].tolist()
+    g.add_edges(edges)
+    g.es['weight'] = weights
+    #
+    # # Add attributes to vertices
+    is_tf = {node: (node in tfs) for node in all_nodes}
+    g.vs['isTF'] = [is_tf[node] for node in g.vs['name']]
+    g.vs['shape'] = ['diamond' if is_tf[node] else 'circle' for node in g.vs['name']]
+    g.vs['color'] = [tf_colour['default'] if is_tf[node] else gn_colour['default'] for node in g.vs['name']]
+    #
+    # Add attributes to edges
+    g.es['value'] = g.es['weight']
+
+    # Create a custom legend
+    legend_elements = [
+        mpatches.Patch(color=tf_colour['default'], label='Transcription Factor'),
+        mpatches.Patch(color=gn_colour['default'], label='Gene'),
+        mpatches.Patch(color='black', label='Edge')
+    ]
+
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(54,30))
+
+    # Plot the graph
+    layout = g.layout('fr')  # Fruchterman-Reingold layout
+    ig.plot(
+        g,
+        target=ax,
+        layout=layout,
+        vertex_size=0.5,
+        vertex_color=g.vs['color'],
+        vertex_shape=g.vs['shape'],
+        vertex_label=g.vs['name'],
+        edge_width=[w * 5 for w in weights],
+        edge_color='black',
+        loc='top'
+    )
+    ax.set_position([0.4, 0.4, 0.5, 0.6])
+    DF = DF.head(10)
+    DF['EdgeWeight'] = DF['EdgeWeight'].round(5)
+    # Add a table for edge weights
+    the_table = ax.table(
+        cellText=DF[['Gene1', 'Gene2', 'EdgeWeight']].values,
+        colLabels=['Gene1', 'Gene2', 'Edge Weight'],
+        loc='center',
+        cellLoc='center',
+        bbox=[1.02, 0.3, 0.2, 0.5]
+    )
+    the_table.scale(0.7, 1)
+
+    # Set the plot title
+    plt.title('Top 30 Gene Regulatory Network')
+    plt.tight_layout()
+    file = opts.output + '/' + 'GRN-' + str(opts.grn) + '.pdf'
+    print("GRN plot saved to " + file)
+    plt.savefig(file, dpi=300)
+
+
 def main():
     opts = parse_arguments()
     config_files = opts.config.split(',')
@@ -503,6 +604,10 @@ def main():
                 + '-'.join([str(c.output_settings.output_prefix) for c in evalConfigs]) + '-overview.pdf'
         print("Overview plot saved to " + file)
         plt.savefig(file)
+
+    if(opts.grn!=None):
+       print('\n\nVisualizing Gene Regulatory Network ...')
+       grnvis(opts, evalConfigs, datasets, resTypeFile='rankedEdges')
 
 if __name__ == '__main__':
   main()
