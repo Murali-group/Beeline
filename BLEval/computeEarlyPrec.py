@@ -12,7 +12,7 @@ from itertools import product, permutations
 from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
-def EarlyPrec(evalObject, algorithmName, TFEdges = False):
+def EarlyPrec(evalObject, algorithmName, TFEdges = True):
     '''
     Computes early precision for a given algorithm for each dataset.
     We define early precision as the fraction of true 
@@ -25,6 +25,10 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = False):
       
     :param algorithmName: Name of the algorithm for which the early precision is computed.
     :type algorithmName: str
+
+    :param TFEdges: Whether edges going out of TFs.
+    :type algorithmName: boolean
+    # Set TFEdges parameter to True for experimental scRNA-seq data evaluation and False for simulated datasets
       
             
     :returns:
@@ -117,18 +121,32 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = False):
 
             newDF = predDF.loc[(predDF['EdgeWeight'] >= bestVal)]
             rankDict[dataset["name"]] = set(newDF['Gene1'] + "|" + newDF['Gene2'])
+            # # Assuming newDF['Gene1'] and newDF['Gene2'] might not be strings
+            # newDF['Gene1'] = newDF['Gene1'].astype(str)
+            # newDF['Gene2'] = newDF['Gene2'].astype(str)
+
+            # # Use the vectorized string concatenation
+            # newDF['GeneCombo'] = newDF['Gene1'] + "|" + newDF['Gene2']
+
+            # # Now you can create a set of these combined gene names
+            # rankDict[dataset["name"]] = set(newDF['GeneCombo'])
+
         else:
             print("\nSkipping early precision computation for on path ", rank_path,"due to lack of predictions.")
             rankDict[dataset["name"]] = set([])
     Eprec = {}
     Erec = {}
+    EPR = {}
     for dataset in tqdm(evalObject.input_settings.datasets):
         if len(rankDict[dataset["name"]]) != 0:
             intersectionSet = rankDict[dataset["name"]].intersection(trueEdges)
             Eprec[dataset["name"]] = len(intersectionSet)/len(rankDict[dataset["name"]])
             Erec[dataset["name"]] = len(intersectionSet)/len(trueEdges)
+            randomEprc = len(trueEdges) / len(possibleEdges) 
+            EPR[dataset["name"]] = Eprec[dataset["name"]]/randomEprc
         else:
             Eprec[dataset["name"]] = 0
             Erec[dataset["name"]] = 0
+            EPR[dataset["name"]] = 0
 
-    return(Eprec)
+    return(EPR)
