@@ -77,8 +77,8 @@ def boxplot(opts, evalConfigs, datasets, randValue, resTypeFile, resTypeName):
         evalConfig = evalConfigs[i]
         
         # Read output file containing evaluated values
-        DF = pd.read_csv(str(evalConfig.output_settings.base_dir) + '/' \
-                           + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
+        DF = pd.read_csv(str(evalConfig.output_settings.base_dir) + \
+                           str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
                            + str(evalConfig.output_settings.output_prefix) \
                            + '-' + resTypeFile + '.csv', header = 0, index_col = 0)
         
