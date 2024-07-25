@@ -76,12 +76,13 @@ reg = NULL
 
 if (length(arguments$regFile) != 0){
   reg <- read.delim(arguments$regFile, row.names = 1, sep = ',', check.names = FALSE)
+  regulators =  as.vector(reg$Regulators)
   reg <- regulators[regulators %in% rownames(exprMatr)]
 
 }
 
 cat("Computing",arguments$method,"\n")
-
+net = NULL
 if (arguments$method == 'mica'){
     source('mutual_info.R')
     net = refined_mi(exprMatr, regulators =reg , tf_binding = tfs, nCores=1)

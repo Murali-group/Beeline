@@ -25,6 +25,23 @@ def generateInputs(RunnerObj):
         ExpressionData.to_csv(RunnerObj.inputDir.joinpath("MICA/ExpressionData.csv"),
                                 sep='\t', header=True, index=True)
 
+    if not RunnerObj.inputDir.joinpath("MICA/regulators.csv").exists():
+        # input data
+        reg = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.regData),
+                                     header=0, index_col=0)
+
+        # Write .csv file
+        reg.to_csv(RunnerObj.inputDir.joinpath("MICA/regulators.csv"),
+                                sep='\t', header=True, index=True)
+    if not RunnerObj.inputDir.joinpath("MICA/atacData.csv").exists():
+        # input data
+        atacData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.atacData),
+                                     header=0, index_col=0)
+
+        # Write .csv file
+        atacData.to_csv(RunnerObj.inputDir.joinpath("MICA/atacData.csv"),
+                                sep='\t', header=True, index=True)
+
 
 def run(RunnerObj):
     '''
@@ -42,12 +59,16 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok=True)
 
     exprName = "ExpressionData.csv"
+    if "atacData.csv" :
+        atacData = "atacData.csv"
+    if "regulators.csv":
+        regulators = "regulators.csv"
     outFile = "outFile.csv"
     timeFile = "time.txt"
 
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd()) + ':/data/grnbeeline/mica:latest /bin/sh -c \"time -v -o',
                          "data/" + str(outDir) + timeFile,
-                         'Rscript --vanilla runMICA.R',
+                         'Rscript --vanilla runMICA.R', '-r', inputPath + regulators, "-a", inputPath + atacData,
                          '-e', inputPath + exprName, '-o data/' + outDir, "-m", method, '--outFile ' + outFile])
 
     cmdToRun += '\"'
