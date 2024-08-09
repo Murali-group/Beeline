@@ -25,6 +25,11 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = False):
       
     :param algorithmName: Name of the algorithm for which the early precision is computed.
     :type algorithmName: str
+
+    :param TFEdges: Whether to include self-edges (TFEdges = False) or 
+    include only TF-gene edges (TFEdges = True) for evaluation.
+    :type algorithmName: boolean
+    # Set TFEdges parameter to True for experimental scRNA-seq data evaluation and False for simulated datasets
       
             
     :returns:
@@ -82,7 +87,7 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = False):
 
             trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
             trueEdges = trueEdges[trueEdges.isin(TrueEdgeDict)]
-            print("\nEdges considered ", len(trueEdges))
+            # print("\nEdges considered ", len(trueEdges))
             numEdges = len(trueEdges)
         
             predDF['Edges'] = predDF['Gene1'] + "|" + predDF['Gene2']
@@ -90,9 +95,12 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = False):
             predDF = predDF[predDF['Edges'].isin(TrueEdgeDict)]
 
         else:
+            uniqueNodes = np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']])
+            possibleEdges = set(permutations(uniqueNodes, r = 2))
             trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
             trueEdges = set(trueEdges.values)
             numEdges = len(trueEdges)
+            
         
         # check if ranked edges list is empty
         # if so, it is just set to an empty set
@@ -120,15 +128,20 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = False):
         else:
             print("\nSkipping early precision computation for on path ", rank_path,"due to lack of predictions.")
             rankDict[dataset["name"]] = set([])
+            
     Eprec = {}
     Erec = {}
+    EPR = {}
     for dataset in tqdm(evalObject.input_settings.datasets):
         if len(rankDict[dataset["name"]]) != 0:
             intersectionSet = rankDict[dataset["name"]].intersection(trueEdges)
             Eprec[dataset["name"]] = len(intersectionSet)/len(rankDict[dataset["name"]])
             Erec[dataset["name"]] = len(intersectionSet)/len(trueEdges)
+            randomEprc = len(trueEdges) / len(possibleEdges) 
+            EPR[dataset["name"]] = Eprec[dataset["name"]]/randomEprc
         else:
             Eprec[dataset["name"]] = 0
             Erec[dataset["name"]] = 0
+            EPR[dataset["name"]] = 0
 
-    return(Eprec)
+    return Eprec, Erec, EPR
