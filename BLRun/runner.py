@@ -12,10 +12,16 @@ import BLRun.grisliRunner as GRISLI
 import BLRun.singeRunner as SINGE
 import BLRun.scribeRunner as SCRIBE
 import BLRun.scsglRunner as SCSGL
+import BLRun.scorpionRunner as SCORPION
+import BLRun.sctenifoldnetRunner as SCTENIFOLDNET
+import BLRun.ngsemRunner as NGSEM
+import BLRun.tenetRunner as TENET
+import BLRun.micaRunner as MICA
 
 from pathlib import Path
 
-InputMapper = {'SCODE':SCODE.generateInputs,
+InputMapper = {
+               'SCODE':SCODE.generateInputs,
                'SINCERITIES':SINCERITIES.generateInputs,
                'SCNS':SCNS.generateInputs,
                'PIDC':PIDC.generateInputs,
@@ -28,12 +34,19 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'GRISLI':GRISLI.generateInputs,
                'SINGE':SINGE.generateInputs,
                'SCRIBE':SCRIBE.generateInputs,
-               'SCSGL':SCSGL.generateInputs}
+               'SCSGL':SCSGL.generateInputs, 
+               'SCORPION': SCORPION.generateInputs,
+               'SCTENIFOLDNET':SCTENIFOLDNET.generateInputs,
+               'TENET':TENET.generateInputs,
+               'NGSEM':NGSEM.generateInputs,
+               'MICA':MICA.generateInputs
+               }
 
 
 
 
-AlgorithmMapper = {'SCODE':SCODE.run,
+AlgorithmMapper = {
+            'SCODE':SCODE.run,
             'SINCERITIES':SINCERITIES.run,
             'SCNS':SCNS.run,
             'PIDC':PIDC.run,
@@ -46,11 +59,18 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'GRISLI':GRISLI.run,
             'SINGE':SINGE.run,
             'SCRIBE':SCRIBE.run,
-            'SCSGL':SCSGL.run}
+            'SCSGL':SCSGL.run, 
+            'SCORPION': SCORPION.run,
+            'SCTENIFOLDNET':SCTENIFOLDNET.run,
+            'TENET':TENET.run,
+            'NGSEM':NGSEM.run,
+            'MICA':MICA.run
+            }
 
 
 
-OutputParser = {'SCODE':SCODE.parseOutput, 
+OutputParser = {
+            'SCODE':SCODE.parseOutput, 
             'SINCERITIES':SINCERITIES.parseOutput,
             'SCNS':SCNS.parseOutput,
             'PIDC':PIDC.parseOutput,
@@ -63,7 +83,13 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'GRISLI':GRISLI.parseOutput,
             'SINGE':SINGE.parseOutput,
             'SCRIBE':SCRIBE.parseOutput,
-            'SCSGL':SCSGL.parseOutput}
+            'SCSGL':SCSGL.parseOutput, 
+            'SCORPION': SCORPION.parseOutput,
+            'SCTENIFOLDNET':SCTENIFOLDNET.parseOutput,
+            'TENET':TENET.parseOutput,
+            'NGSEM':NGSEM.parseOutput,
+            'MICA':MICA.parseOutput
+            }
 
 
 class Runner(object):
