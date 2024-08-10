@@ -81,3 +81,13 @@ BEELINE currently supports several evaluation techniques, namely, area under ROC
 3. The final step is to add a command line option to perform the evaluation to `BLEvaluator.py <https://github.com/Murali-group/Beeline/blob/master/BLEvaluator.py>`_.
 
 
+.. _blevalguide:
+
+Adding a new experimental scRNA-seq data from sfaira
+#################################
+
+BEELINE provides seven experimental scRNA-seq datasets for evaluation. Sfaira is a standardized framework for sharing and accessing scRNA-seq datasets from various species, tissues, and experimental conditions. To extend BEELINE to analyze additional datasets, we further integrated sfaira to enable the automatic downloading of datasets according to prespecified features from sfaira. You can specify the desired features including year, organism, organ, and assay_sc in config-files/sfaira/sfaira-config.yaml. Then run the following code to download experimental scRNA-seq datasets into the existing pipeline.
+
+.. code:: python
+
+          python BLDataloader.py --config config-files/sfaira/sfaira-config.yaml
