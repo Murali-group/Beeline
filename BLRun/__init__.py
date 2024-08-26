@@ -91,6 +91,10 @@ class BLRun(object):
                     data['regData'] = dataset['regData']
                 if 'atacData' in dataset:
                     data['atacData'] = dataset['atacData']
+                if 'rna_peaks' in dataset:
+                    data['rna_peaks'] = dataset['rna_peaks']
+                if 'velo' in dataset:
+                    data['velo'] = dataset['velo']
                 if 'cellData' in dataset:
                     data['cellData'] = dataset['cellData']
                 if 'trueEdges' in dataset:

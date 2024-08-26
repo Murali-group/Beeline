@@ -30,8 +30,8 @@ input_settings:
            trueEdges: "refNetwork.csv"
          - name: 'Multiomics'
            exprData: "ExpressionData.csv"
-           regDile: "regulators.csv"
-           atacDile: "atacData.csv"
+           regFile: "regulators.csv"
+           atacFile: "atacData.csv"
 
 
     # Denotes a list of algorithms to run. Each has the following parameters:
@@ -153,6 +153,10 @@ input_settings:
               should_run: [True]
               # any of 'mica', 'spearman', 'l0l2', or 'genie3'
               method : ['mica']
+
+        - name: "DEEPMAPS"
+          params:
+              should_run: [True]
 
 # Output Settings: initialize base output folder names
 output_settings:
