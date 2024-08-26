@@ -85,9 +85,20 @@ class BLRun(object):
                 data['name'] = runner[0]
                 data['params'] = runner[1]
                 data['inputDir'] = Path.cwd().joinpath(self.input_settings.datadir.joinpath(dataset['name']))
-                data['exprData'] = dataset['exprData']
-                data['cellData'] = dataset['cellData']
-                data['trueEdges'] = dataset['trueEdges']
+                if 'exprData' in dataset:
+                    data['exprData'] = dataset['exprData']
+                if 'regData' in dataset:
+                    data['regData'] = dataset['regData']
+                if 'atacData' in dataset:
+                    data['atacData'] = dataset['atacData']
+                if 'rna_peaks' in dataset:
+                    data['rna_peaks'] = dataset['rna_peaks']
+                if 'velo' in dataset:
+                    data['velo'] = dataset['velo']
+                if 'cellData' in dataset:
+                    data['cellData'] = dataset['cellData']
+                if 'trueEdges' in dataset:
+                    data['trueEdges'] = dataset['trueEdges']
 
                 if 'should_run' in data['params'] and \
                         data['params']['should_run'] is False:
@@ -187,7 +198,9 @@ class ConfigParser(object):
     @staticmethod
     def __parse_output_settings(output_settings_map) -> OutputSettings:
         output_dir = Path(output_settings_map['output_dir'])
+
         output_prefix = Path(output_settings_map['output_prefix'])
+
 
         return OutputSettings(output_dir,
                              output_prefix)
