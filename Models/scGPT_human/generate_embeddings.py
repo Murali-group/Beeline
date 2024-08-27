@@ -94,4 +94,3 @@ if __name__ == "__main__":
         print(f"Error: {e}")
         print("Please ensure that the model files (args.json, best_model.pt, vocab.json) are in the correct directory.")
         print(f"Current model directory: {args.model_dir}")
-        exit(1)

@@ -20,7 +20,6 @@ if [ $? -eq 0 ]; then
     echo "The scGPT Docker image is now ready for use with the local tag '$LOCAL_IMAGE_TAG'"
 else
     echo "Failed to pull scGPT image from DockerHub"
-    exit 1
 fi
 
 
