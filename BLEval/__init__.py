@@ -278,9 +278,11 @@ class BLEval(object):
 
         '''
         Eprec = {}
+        outDir = str(self.output_settings.base_dir) + \
+                 str(self.input_settings.datadir).split("inputs")[1] + "/"
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
-                Eprec[algo[0]] = EarlyPrec(self, self.input_settings, algo[0])
+                Eprec[algo[0]] = EarlyPrec(self, algo[0])
         return pd.DataFrame(Eprec).T
         
     def computeSignedEPrec(self):
