@@ -143,14 +143,7 @@ def main():
     if (opts.epr):
         print('\n\nComputing early precision values...')
         ePRDF = evalSummarizer.computeEarlyPrec()
-        dataset_name = str(evalSummarizer.output_settings.output_prefix)
-        if opts.use_embeddings:
-            # Use the processed path if embeddings are used
-            outDir = Path("outputs") / evalSummarizer.input_settings.datadir.relative_to("inputs") / dataset_name / "processed_ExpressionData"
-        else:
-            # Use the regular path structure
-            outDir = Path("outputs") / evalSummarizer.input_settings.datadir.relative_to("inputs") / dataset_name
-        ePRDF.to_csv(outDir / "EPr.csv")
+        ePRDF.to_csv(outDir + "EPr.csv")
                         
     # Compute early precision for activation and inhibitory edges
     if (opts.sepr):
