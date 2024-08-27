@@ -58,33 +58,58 @@ class InputSettings(object):
     :type algorithms: list
     '''
 
-    def __init__(self,
-            datadir, datasets, algorithms) -> None:
-
-        self.datadir = datadir
+    def __init__(self, datadir, datasets, algorithms, use_embeddings=False) -> None:
+        self.datadir = Path(datadir)
         self.datasets = datasets
         self.algorithms = algorithms
+        self.use_embeddings = use_embeddings
 
-
+        if use_embeddings:
+            self.adjust_paths_for_embeddings()
+    
+    def adjust_paths_for_embeddings(self):
+        for dataset in self.datasets:
+            processed_path = 'processed_ExpressionData'
+            dataset['exprData'] = str(Path(processed_path) / 'EmbeddingsData.csv')
+            dataset['refNetwork'] = str(Path(processed_path) / 'refNetwork.csv')
+    
+    def get_true_edges_path(self, dataset_name):
+        dataset = next((d for d in self.datasets if d['name'] == dataset_name), None)
+        if dataset is None:
+            raise ValueError(f"Dataset with name {dataset_name} not found in datasets list.")
+        return self.datadir / dataset_name / 'processed_ExpressionData' / dataset['trueEdges']
+        
 class OutputSettings(object):
     '''    
     The class for storing the names of directories that output should
-    be written to. This initilizes an OutputSettings object based on the
+    be written to. This initializes an OutputSettings object based on the
     following two parameters.
     
-
     :param base_dir: output root directory, typically 'outputs/'
     :type base_dir: str
     :param output_prefix: A prefix added to the final output files.
     :type str:
     '''
 
-    def __init__(self, base_dir, output_prefix: Path) -> None:
-        self.base_dir = base_dir
+    def __init__(self, base_dir, output_prefix: Path, datasets, use_embeddings=False) -> None:
+        self.base_dir = Path(base_dir)
         self.output_prefix = output_prefix
+        self.datasets = datasets
 
+        if use_embeddings:
+            self.adjust_paths_for_embeddings()
 
+    def adjust_paths_for_embeddings(self):
+        self.base_dir = self.base_dir / 'processed_ExpressionData'
 
+    def get_output_path(self, dataset_name, file_name):
+        dataset = next((d for d in self.datasets if d['name'] == dataset_name), None)
+        if dataset is None:
+            raise ValueError(f"Dataset with name {dataset_name} not found in datasets list.")
+        
+        # Construct the output path based on the required structure
+        output_path = self.base_dir / dataset_name / 'processed_ExpressionData' / f"{dataset_name}-{file_name}"
+        return output_path
 
 class BLEval(object):
     '''
@@ -102,7 +127,6 @@ class BLEval(object):
 
 
     def computeAUC(self, directed = True):
-
         '''
         Computes areas under the precision-recall (PR) and
         and ROC plots for each algorithm-dataset combination.
@@ -122,12 +146,15 @@ class BLEval(object):
         AUROCDict = {}
 
         for dataset in tqdm(self.input_settings.datasets, 
-                            total = len(self.input_settings.datasets), unit = " Datasets"):
-            
+                            total=len(self.input_settings.datasets), unit=" Datasets"):
+            if self.input_settings.use_embeddings == True:
+                true_edges_path = self.input_settings.get_true_edges_path(dataset['name'])        
+
             AUPRC, AUROC = PRROC(dataset, self.input_settings, 
-                                    directed = directed, selfEdges = False, plotFlag = False)
+                                directed=directed, selfEdges=False, plotFlag=False)
             AUPRCDict[dataset['name']] = AUPRC
             AUROCDict[dataset['name']] = AUROC
+              
         AUPRC = pd.DataFrame(AUPRCDict)
         AUROC = pd.DataFrame(AUROCDict)
         return AUPRC, AUROC
@@ -151,7 +178,6 @@ class BLEval(object):
         return TimeDict
 
     def computeJaccard(self):
-
         '''
         Computes Jaccard Index between top-k edge predictions
         of the same algorithm.
@@ -252,15 +278,11 @@ class BLEval(object):
 
         '''
         Eprec = {}
-        outDir = str(self.output_settings.base_dir) + \
-                 str(self.input_settings.datadir).split("inputs")[1] + "/"
         for algo in tqdm(self.input_settings.algorithms, unit = " Algorithms"):
             if algo[1]['should_run'] == True:
-                Eprec[algo[0]] = EarlyPrec(self, algo[0])
+                Eprec[algo[0]] = EarlyPrec(self, self.input_settings, algo[0])
         return pd.DataFrame(Eprec).T
-
-
-    
+        
     def computeSignedEPrec(self):
 
         '''
@@ -323,7 +345,7 @@ class ConfigParser(object):
     used in the BLEval.
     '''
     @staticmethod
-    def parse(config_file_handle) -> BLEval:
+    def parse(config_file_handle, use_embeddings=False) -> BLEval:
         '''
         A method for parsing the input .yaml file.
         
@@ -334,48 +356,27 @@ class ConfigParser(object):
             An object of class :class:`BLEval.BLEval`.
 
         '''
-        config_map = yaml.load(config_file_handle)
-        return BLEval(
-            ConfigParser.__parse_input_settings(
-                config_map['input_settings']),
-            ConfigParser.__parse_output_settings(
-                config_map['output_settings']))
+        config_map = yaml.load(config_file_handle, Loader=yaml.SafeLoader)
+        input_settings = ConfigParser.__parse_input_settings(config_map['input_settings'], use_embeddings)
+        output_settings = ConfigParser.__parse_output_settings(config_map['output_settings'], input_settings.datasets, use_embeddings)
+        return BLEval(input_settings, output_settings)
     
     @staticmethod
-    def __parse_input_settings(input_settings_map) -> InputSettings:
+    def __parse_input_settings(input_settings_map, use_embeddings=False) -> InputSettings:
         '''
         A method for parsing and initializing 
         InputSettings object.
         '''
-        input_dir = input_settings_map['input_dir']
-        dataset_dir = input_settings_map['dataset_dir']
-        # Check if datasets have been specified or not
+        input_dir = input_settings_map['input_dir']  # e.g., 'inputs'
+        dataset_dir = input_settings_map['dataset_dir']  # e.g., 'example'
+
         if 'datasets' in input_settings_map: 
-            datasets_specified = True
-        else:
-            datasets_specified = False
-
-        # If no datasets specified, run all datasets in dataset_dir
-        if datasets_specified is False: 
-             subfolder_dir = glob(os.path.join(input_dir, dataset_dir, "*/"), recursive = True)
-             datasets = []
-             for x in subfolder_dir:
-                datasets.append({"name": pathlib.Path(x).name, 
-                                 "exprData": "ExpressionData.csv", 
-                                 "cellData": "PseudoTime.csv", 
-                                 "trueEdges": "refNetwork.csv"})
-        # If datasets specified, run the corresponding datasets
-        else:
             datasets = input_settings_map['datasets']
-            if datasets is None:
-                print("Please specify input datasets!")
+        else:
+            datasets = ConfigParser.__gather_all_datasets(input_dir, dataset_dir)
 
-        return InputSettings(
-                Path(input_dir, dataset_dir),
-                datasets,
-                ConfigParser.__parse_algorithms(
-                input_settings_map['algorithms']))
-
+        datadir = Path(input_dir) / dataset_dir  # e.g., 'inputs/example'
+        return InputSettings(datadir, datasets, ConfigParser.__parse_algorithms(input_settings_map['algorithms']), use_embeddings)
 
     @staticmethod
     def __parse_algorithms(algorithms_list):
@@ -405,13 +406,11 @@ class ConfigParser(object):
         return algorithms
 
     @staticmethod
-    def __parse_output_settings(output_settings_map) -> OutputSettings:
+    def __parse_output_settings(output_settings_map,datasets,use_embeddings=False) -> OutputSettings:
         '''
         A method for parsing and initializing 
         Output object.
         '''
         output_dir = Path(output_settings_map['output_dir'])
         output_prefix = Path(output_settings_map['output_prefix'])
-
-        return OutputSettings(output_dir,
-                             output_prefix)
+        return OutputSettings(output_dir, output_prefix, datasets, use_embeddings)

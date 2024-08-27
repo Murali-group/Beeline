@@ -12,7 +12,7 @@ from itertools import product, permutations
 from multiprocessing import Pool, cpu_count
 from networkx.convert_matrix import from_pandas_adjacency
 
-def EarlyPrec(evalObject, algorithmName, TFEdges = False):
+def EarlyPrec(evalObject, inputSettings, algorithmName, TFEdges = False):
     '''
     Computes early precision for a given algorithm for each dataset.
     We define early precision as the fraction of true 
@@ -32,23 +32,31 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = False):
         for a given algorithm for each dataset.
 
     '''
+    
     rankDict = {}
     for dataset in tqdm(evalObject.input_settings.datasets):
-        trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
-                      dataset['name'] + '/' +\
-                      dataset['trueEdges'], sep = ',',
-                      header = 0, index_col = None)
+        
+        if inputSettings.use_embeddings == True:
+            true_edges_path = inputSettings.get_true_edges_path(dataset['name'])
+            trueEdgesDF = pd.read_csv(true_edges_path, sep=',', header=0, index_col=None)
+            outDir = Path("outputs") / inputSettings.datadir.relative_to("inputs") / dataset['name'] / 'processed_ExpressionData' / algorithmName
+            rank_path = outDir / "rankedEdges.csv"
+            
+        else:    
+            trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
+                        dataset['name'] + '/' +\
+                        dataset['trueEdges'], sep = ',',
+                        header = 0, index_col = None)
+            outDir = str(evalObject.output_settings.base_dir) + \
+                 str(evalObject.input_settings.datadir).split("inputs")[1] + \
+                 "/" + dataset["name"] + "/" + algorithmName
+            rank_path = outDir + "/rankedEdges.csv"
+        
         trueEdgesDF = trueEdgesDF.loc[(trueEdgesDF['Gene1'] != trueEdgesDF['Gene2'])]
         trueEdgesDF.drop_duplicates(keep = 'first', inplace=True)
         trueEdgesDF.reset_index(drop=True, inplace=True)
 
-
-        outDir = str(evalObject.output_settings.base_dir) + \
-                 str(evalObject.input_settings.datadir).split("inputs")[1] + \
-                 "/" + dataset["name"] + "/" + algorithmName
-
         #algos = evalObject.input_settings.algorithms
-        rank_path = outDir + "/rankedEdges.csv"
         if not os.path.isdir(outDir):
             rankDict[dataset["name"]] = set([])
             continue
