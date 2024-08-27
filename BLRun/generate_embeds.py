@@ -4,7 +4,6 @@ import argparse
 
 def generate_embeddings(input_file):
     input_dir = os.path.dirname(os.path.abspath(input_file))
-    print("------>",input_dir)
     input_filename = os.path.basename(input_file)
     
     output_file = os.path.join(input_dir, "EmbeddingsData.csv")
