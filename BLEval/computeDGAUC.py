@@ -50,13 +50,6 @@ def PRROC(dataDict, inputSettings, directed=True, selfEdges=False, plotFlag=Fals
     AUROC = {}
     
     
-    # set-up outDir that stores output directory name
-    outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
-    
-
-    # set-up outDir that stores output directory name
-    outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
-    
     if directed:
         for algo in tqdm(inputSettings.algorithms, 
                          total=len(inputSettings.algorithms), unit=" Algorithms"):
