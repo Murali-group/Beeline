@@ -369,8 +369,28 @@ class ConfigParser(object):
         '''
         input_dir = input_settings_map['input_dir']  # e.g., 'inputs'
         dataset_dir = input_settings_map['dataset_dir']  # e.g., 'example'
+        
+        if 'datasets' in input_settings_map: 
+            datasets_specified = True
+        else:
+            datasets_specified = False
 
-        datasets = input_settings_map['datasets']
+        if datasets_specified is False: 
+             subfolder_dir = glob(os.path.join(input_dir, dataset_dir, "*/"), recursive = True)
+             datasets = []
+             for x in subfolder_dir:
+                datasets.append({"name": pathlib.Path(x).name, 
+                                 "exprData": "ExpressionData.csv", 
+                                 "cellData": "PseudoTime.csv", 
+                                 "trueEdges": "refNetwork.csv"})
+        # If datasets specified, run the corresponding datasets
+        else:
+            datasets = input_settings_map['datasets']
+            if datasets is None:
+                print("Please specify input datasets!")
+        
+
+        # datasets = input_settings_map['datasets']
 
         datadir = Path(input_dir) / dataset_dir  # e.g., 'inputs/example'
         return InputSettings(datadir, datasets, ConfigParser.__parse_algorithms(input_settings_map['algorithms']), use_embeddings)

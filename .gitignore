@@ -5,3 +5,5 @@ src/.*
 *.ipynb_checkpoints*
 .DS_Store
 .idea/
+Miniconda3-latest-Linux-x86_64.sh
+image.webp
