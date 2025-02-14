@@ -4,7 +4,7 @@
 This is the main repository for BEELINE. The documentation is available at: [https://murali-group.github.io/Beeline/](https://murali-group.github.io/Beeline/).
 
 Quick setup:
-- To install docker on Ubuntu 18.04, follow the steps mentioned [here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04)
+- BEELINE can be run on Windows or Linux distributions. To install Docker Desktop, you can find it here (https://www.docker.com/). If running BEELINE on a server such that you require a CLI, see Docker Engine (https://docs.docker.com/engine/install/).
 - Setup docker to run docker without sudo using ` sudo usermod -aG docker $USER`, if you haven't already. See more details [here](https://askubuntu.com/questions/477551/how-can-i-use-docker-without-sudo)
 - The Docker images of 12 algorithms tested in BEELINE are available at [https://hub.docker.com/u/grnbeeline](https://hub.docker.com/u/grnbeeline). Alternatively, to build the docker containers from scratch (instead of using pre-built versions) for each of the algorithms run `. initialize.sh` (this step will take a while)
 - We recommend using [Anaconda](https://www.anaconda.com/) for Python. Run the `. setupAnacondaVENV.sh` command to automatically create an Anaconda virtual environment named BEELINE from requirements.txt and install necessary libraries required to run BEELINE. Alternatively, you can create virtual environment for python using vnev from requirements.txt as detailed [here](https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/)
