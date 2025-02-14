@@ -12,7 +12,9 @@ Quick setup:
 
 We provided an example dataset under inputs/example/GSD/ and a corresponding configuration file necessary for running GRN inference using 12 methods described in BEELINE. 
 - To compute proposed reconstructions on the example dataset, run `python BLRunner.py --config config-files/config.yaml`. Running this script for the first time can be slow as it involves downloading the contianers from Docker hub.
+- To compute proposed reconstructions using Embeddings data on the example dataset, run `python BLRunner.py --config config-files/config.yaml --use_embeddings`.
 - To compute areas under the ROC and PR curves for the proposed reconstructions, run `python BLEvaluator.py --config config-files/config.yaml --auc`. To display the complete list of evalutation options, run `python BLEvaluator.py --help`.
+- To compute areas under the ROC and PR curves for the proposed reconstructions generated using Embeddings data, run `python BLEvaluator.py --config config-files/config.yaml --auc --use_embeddings`.
 
 If you use BEELINE in your research, please cite:
 

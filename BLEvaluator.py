@@ -62,6 +62,9 @@ def get_parser() -> argparse.ArgumentParser:
 
     parser.add_argument('-b','--borda', action="store_true", default=False,
       help="Compute edge ranked list using the various Borda aggregatio methods.")
+    
+    parser.add_argument('--use_embeddings', action="store_true", default=False,
+    help="Use processed expression data embeddings for evaluation.")
         
     return parser
 
@@ -82,7 +85,7 @@ def main():
     evalConfig = None
 
     with open(config_file, 'r') as conf:
-        evalConfig = ev.ConfigParser.parse(conf)
+       evalConfig = ev.ConfigParser.parse(conf, use_embeddings=opts.use_embeddings)
         
     print('\nPost-run evaluation started...')
     evalSummarizer = ev.BLEval(evalConfig.input_settings, evalConfig.output_settings)
@@ -92,12 +95,28 @@ def main():
             str(evalSummarizer.output_settings.output_prefix) + "-"
     
     # Compute and plot ROC, PRC and report median AUROC, AUPRC    
-    if (opts.auc):
+    if opts.auc:
         print('\n\nComputing areas under ROC and PR curves...')
 
         AUPRC, AUROC = evalSummarizer.computeAUC()
-        AUPRC.to_csv(outDir+'AUPRC.csv')
-        AUROC.to_csv(outDir+'AUROC.csv')
+
+        # Construct the output directory based on InputSettings
+        # This ensures that the path mirrors the structure used in InputSettings
+        dataset_name = str(evalSummarizer.output_settings.output_prefix)  # Assuming this holds the dataset name, e.g., 'GSD'
+        if opts.use_embeddings:
+            # Use the processed path if embeddings are used
+            outDir = Path("outputs") / evalSummarizer.input_settings.datadir.relative_to("inputs") / dataset_name / "processed_ExpressionData"
+            # Ensure that outDir exists
+            outDir.mkdir(parents=True, exist_ok=True)
+        else:
+            # Use the regular path structure
+            outDir = Path("outputs") / evalSummarizer.input_settings.datadir.relative_to("inputs") / dataset_name
+            # Ensure that outDir exists
+            outDir.mkdir(parents=True, exist_ok=True) 
+        # Save the output files in the correct directory
+        AUPRC.to_csv(outDir / "AUPRC.csv")
+        AUROC.to_csv(outDir / "AUROC.csv")
+
     
     # Compute Jaccard index    
     if (opts.jaccard):
@@ -124,7 +143,14 @@ def main():
     if (opts.epr):
         print('\n\nComputing early precision values...')
         ePRDF = evalSummarizer.computeEarlyPrec()
-        ePRDF.to_csv(outDir + "EPr.csv")
+        dataset_name = str(evalSummarizer.output_settings.output_prefix)
+        if opts.use_embeddings:
+            # Use the processed path if embeddings are used
+            outDir = Path("outputs") / evalSummarizer.input_settings.datadir.relative_to("inputs") / dataset_name / "processed_ExpressionData"
+        else:
+            # Use the regular path structure
+            outDir = Path("outputs") / evalSummarizer.input_settings.datadir.relative_to("inputs") / dataset_name
+        ePRDF.to_csv(outDir / "EPr.csv")
                         
     # Compute early precision for activation and inhibitory edges
     if (opts.sepr):

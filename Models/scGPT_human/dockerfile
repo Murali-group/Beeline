@@ -1,0 +1,32 @@
+# Use a base image with conda pre-installed
+FROM continuumio/miniconda3
+
+LABEL Maintainer="Faizal Rahman <faizaljnu@gmail.com>"
+
+USER root
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y time
+
+WORKDIR /app
+
+# Copy model files, requirements, and environment file
+COPY best_model.pt vocab.json args.json req.yaml /app/
+
+# Create conda environment and install packages
+RUN conda env create -f req.yaml && \
+    conda run -n nrnb238 pip install pandas scgpt torch==2.1.2 && \
+    conda clean -afy
+
+# Copy the script for generating embeddings
+COPY generate_embeddings.py /app/
+
+# Create a shell script to run our Python script with debugging
+RUN echo '#!/bin/bash\n\
+echo "Debugging information:"\n\
+conda run -n nrnb238 python -c "import sys; print(sys.path)"\n\
+conda run --no-capture-output -n nrnb238 python generate_embeddings.py "$@"' > /app/run_script.sh && \
+    chmod +x /app/run_script.sh
+
+# Set the entrypoint to run our shell script
+ENTRYPOINT ["/app/run_script.sh"]
