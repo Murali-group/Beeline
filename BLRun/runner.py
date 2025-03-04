@@ -12,77 +12,80 @@ import BLRun.grisliRunner as GRISLI
 import BLRun.singeRunner as SINGE
 import BLRun.scribeRunner as SCRIBE
 import BLRun.scsglRunner as SCSGL
+import BLRun.micaRunner as MICA
 
 from pathlib import Path
 
-InputMapper = {'SCODE':SCODE.generateInputs,
-               'SINCERITIES':SINCERITIES.generateInputs,
-               'SCNS':SCNS.generateInputs,
-               'PIDC':PIDC.generateInputs,
-               'GRNVBEM':GRNVBEM.generateInputs,
-               'GENIE3':GENIE3.generateInputs,
-               'GRNBOOST2':GRNBOOST2.generateInputs,
-               'LEAP':LEAP.generateInputs,
-               'JUMP3':JUMP3.generateInputs,
-               'PPCOR':PPCOR.generateInputs,
-               'GRISLI':GRISLI.generateInputs,
-               'SINGE':SINGE.generateInputs,
-               'SCRIBE':SCRIBE.generateInputs,
-               'SCSGL':SCSGL.generateInputs}
+InputMapper = {'SCODE': SCODE.generateInputs,
+               'SINCERITIES': SINCERITIES.generateInputs,
+               'SCNS': SCNS.generateInputs,
+               'PIDC': PIDC.generateInputs,
+               'GRNVBEM': GRNVBEM.generateInputs,
+               'GENIE3': GENIE3.generateInputs,
+               'GRNBOOST2': GRNBOOST2.generateInputs,
+               'LEAP': LEAP.generateInputs,
+               'JUMP3': JUMP3.generateInputs,
+               'PPCOR': PPCOR.generateInputs,
+               'GRISLI': GRISLI.generateInputs,
+               'SINGE': SINGE.generateInputs,
+               'SCRIBE': SCRIBE.generateInputs,
+               'SCSGL': SCSGL.generateInputs,
+               'MICA': MICA.generateInputs}
 
+AlgorithmMapper = {'SCODE': SCODE.run,
+                   'SINCERITIES': SINCERITIES.run,
+                   'SCNS': SCNS.run,
+                   'PIDC': PIDC.run,
+                   'GRNVBEM': GRNVBEM.run,
+                   'GENIE3': GENIE3.run,
+                   'GRNBOOST2': GRNBOOST2.run,
+                   'LEAP': LEAP.run,
+                   'JUMP3': JUMP3.run,
+                   'PPCOR': PPCOR.run,
+                   'GRISLI': GRISLI.run,
+                   'SINGE': SINGE.run,
+                   'SCRIBE': SCRIBE.run,
+                   'SCSGL': SCSGL.run,
+                   'MICA': MICA.run}
 
-
-
-AlgorithmMapper = {'SCODE':SCODE.run,
-            'SINCERITIES':SINCERITIES.run,
-            'SCNS':SCNS.run,
-            'PIDC':PIDC.run,
-            'GRNVBEM':GRNVBEM.run,
-            'GENIE3':GENIE3.run,
-            'GRNBOOST2':GRNBOOST2.run,
-            'LEAP':LEAP.run,
-            'JUMP3':JUMP3.run,
-            'PPCOR':PPCOR.run,
-            'GRISLI':GRISLI.run,
-            'SINGE':SINGE.run,
-            'SCRIBE':SCRIBE.run,
-            'SCSGL':SCSGL.run}
-
-
-
-OutputParser = {'SCODE':SCODE.parseOutput, 
-            'SINCERITIES':SINCERITIES.parseOutput,
-            'SCNS':SCNS.parseOutput,
-            'PIDC':PIDC.parseOutput,
-            'GRNVBEM':GRNVBEM.parseOutput,
-            'GENIE3':GENIE3.parseOutput,
-            'GRNBOOST2':GRNBOOST2.parseOutput,
-            'LEAP': LEAP.parseOutput,
-            'JUMP3': JUMP3.parseOutput,
-            'PPCOR':PPCOR.parseOutput,
-            'GRISLI':GRISLI.parseOutput,
-            'SINGE':SINGE.parseOutput,
-            'SCRIBE':SCRIBE.parseOutput,
-            'SCSGL':SCSGL.parseOutput}
+OutputParser = {'SCODE': SCODE.parseOutput,
+                'SINCERITIES': SINCERITIES.parseOutput,
+                'SCNS': SCNS.parseOutput,
+                'PIDC': PIDC.parseOutput,
+                'GRNVBEM': GRNVBEM.parseOutput,
+                'GENIE3': GENIE3.parseOutput,
+                'GRNBOOST2': GRNBOOST2.parseOutput,
+                'LEAP': LEAP.parseOutput,
+                'JUMP3': JUMP3.parseOutput,
+                'PPCOR': PPCOR.parseOutput,
+                'GRISLI': GRISLI.parseOutput,
+                'SINGE': SINGE.parseOutput,
+                'SCRIBE': SCRIBE.parseOutput,
+                'SCSGL': SCSGL.parseOutput,
+                'MICA': MICA.parseOutput}
 
 
 class Runner(object):
     '''
     A runnable analysis to be incorporated into the pipeline
     '''
+
     def __init__(self,
-                params):
+                 params):
         self.name = params['name']
         self.inputDir = params['inputDir']
         self.params = params['params']
         self.exprData = params['exprData']
         self.cellData = params['cellData']
-        self.trueEdges = params['trueEdges'] #used for evaluation
-        
+        self.trueEdges = params['trueEdges']  #used for evaluation
+
+        # Used for mulitomics (ATAC seq data and regulatory genes information)
+        self.atacData = params['atacData']
+        self.regData = params['regData']
+
     def generateInputs(self):
         InputMapper[self.name](self)
-        
-        
+
     def run(self):
         AlgorithmMapper[self.name](self)
 
