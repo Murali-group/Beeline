@@ -1,0 +1,15 @@
+input_settings:
+
+  input_dir: inputs
+  dataset_dir: scRNA-seq/Specific
+  datasets:
+  - name: mHSC-L/mHSC-L-TFs-500-Generator
+    cellData: PseudoTime.csv
+    exprData: ExpressionData.csv
+    trueEdges: refNetwork.csv
+
+
+output_settings:
+
+  output_dir: outputs
+  output_prefix: Specific-mHSC-L-TFs-500
