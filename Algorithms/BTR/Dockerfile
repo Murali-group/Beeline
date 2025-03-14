@@ -12,7 +12,7 @@ RUN apt-get install time
 
 RUN R -e "install.packages(c('Rcpp', 'foreach', 'doParallel', 'poweRlaw', 'diptest', 'igraph', 'infotheo', 'entropy'))"
 
-RUN R -e "install.packages('https://cran.r-project.org/src/contrib/BTR_1.2.4.tar.gz', type = 'source', dependencies = TRUE)"
+RUN R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/BTR/BTR_1.2.4.tar.gz', type = 'source', dependencies = TRUE)"
 
 RUN mkdir data/
 
