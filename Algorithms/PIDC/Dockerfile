@@ -1,4 +1,3 @@
-# FROM julia:1.1.0-stretch
 FROM julia:1.6.0-buster
 
 LABEL maintainer="Aditya Pratapa <adyprat@vt.edu>"

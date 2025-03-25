@@ -1,7 +1,9 @@
 import os
 import subprocess
+import sys
 import pandas as pd
 from pathlib import Path
+from BLRun.out_path_generator import get_output_path
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -35,12 +37,12 @@ def run(RunnerObj):
     '''
     Function to run SINGE algorithm
     '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/SINGE/"
-    
+
 
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINGE/"
+    outDir = get_output_path(RunnerObj, "/SINGE/")
     os.makedirs(outDir, exist_ok = True)
 
     # if the parameters aren't specified, then use default parameters
@@ -70,7 +72,19 @@ def run(RunnerObj):
     replicates = []
     for replicate in range(num_replicates):
        replicates.append(' '.join('--' + p.replace('_', '-') + ' ' + str(params[p]) for p in params_order) + ' '.join(['', '--replicate', str(replicate), '--ID', str(replicate)]))
-    params_str = '\n'.join(replicates)    
+    params_str = '\n'.join(replicates)
+
+    '''
+    Workaround for Windows/Linux incompatibility for using shell to echo hyperparameters
+    into a file due to differences in parsing quotes in the terminal.
+    
+    Note: this works because the same hyperparameter.txt file is used for both
+          ExpressionData0 and ExpressionData1, and the docker command sees this file
+          as it is created before the command starts.
+    '''
+    hyperParamsFilePath = inputPath.split("data/")[1] + "hyperparameters.txt"
+    with open(hyperParamsFilePath, 'w') as hyperParamFile:
+        print(params_str, file=hyperParamFile)
 
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
@@ -84,7 +98,7 @@ def run(RunnerObj):
         inputFile = inputPath + "ExpressionData"+str(idx)+".csv"
         inputMat = inputPath + "ExpressionData"+str(idx)+".mat"
         geneListMat = inputPath + "GeneList"+str(idx)+".mat"
-        paramsFile = inputPath + "hyperparameters.txt"       
+        paramsFile = inputPath + "hyperparameters.txt"
 
         '''
         This is a workaround for https://github.com/gitter-lab/SINGE/blob/master/code/parseParams.m#L39
@@ -99,20 +113,29 @@ def run(RunnerObj):
         Saving fullKp is a very hacky workaround for https://github.com/gitter-lab/SINGE/blob/master/code/iLasso_for_SINGE.m#L56, 
         that assumes this input was saved in matfile v7.3 which octave does not support.
         '''
-        convert_input_to_matfile = 'octave -q --eval \\"CSV = csvread(\'' + inputFile + '\'); ' + \
-                             'X = sparse(CSV(2:end,1:end-1).\'); ptime = CSV(2:end,end).\'; ' + \
-                             'Kp2.Kp = single(ptime); Kp2.sumKp = single(ptime*X.\'); fullKp(1, ' + \
-                             str(params['dT']*params['num_lags']) + ') = Kp2; ' + \
-                             'save(\'-v7\',\'' + inputMat + '\', \'X\', \'ptime\', \'fullKp\'); ' + \
-                             'f = fopen(\'' + inputFile + '\'); gene_list = strsplit(fgetl(f), \',\')(1:end-1).\'; fclose(f); ' + \
-                             'save(\'-v7\',\'' + geneListMat + '\', \'gene_list\')\\"'
+        convert_input_to_matfile = ' '.join(
+            [f"octave -q --eval",
+             f"\\\"CSV = csvread('{inputFile}');",
+             f"X = sparse(CSV(2:end,1:end-1).');",
+             f"ptime = CSV(2:end,end).';",
+             f"Kp2.Kp = single(ptime);",
+             f"Kp2.sumKp = single(ptime*X.');",
+             f"fullKp(1, {params['dT'] * params['num_lags']}) = Kp2;",
+             f"save('-v7','{inputMat}', 'X', 'ptime', 'fullKp');",
+             f"f = fopen('{inputFile}');",
+             f"gene_list = strsplit(fgetl(f), ',')(1:end-1).';",
+             f"fclose(f);",
+             f"save('-v7','{geneListMat}', 'gene_list')\\\""]
+        )
 
-        cmdToRun = ' '.join(['docker run --rm --entrypoint /bin/sh -v', 
-                             str(Path.cwd())+':/usr/local/SINGE/data/ grnbeeline/singe:0.4.1 -c \"echo \\"',
-                             params_str, '\\" >', paramsFile, '&&', symlink_out_file, '&&', convert_input_to_matfile,
-                             '&& time -v -o', "data/" + str(outDir) + 'time'+str(idx)+'.txt',
-                             '/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
-                             inputMat, geneListMat, outFileSymlink, paramsFile, '\"'])
+        cmdToRun = ' '.join(
+            [f'docker run --rm --entrypoint /bin/sh -v {Path.cwd()}:/usr/local/SINGE/data/',
+             f'grnbeeline/singe:0.4.1 -c "{symlink_out_file} && {convert_input_to_matfile} &&',
+             f'time -v -o data/{outDir}time{idx}.txt /usr/local/SINGE/SINGE.sh',
+             f'/usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
+             f'{inputMat} {geneListMat} {outFileSymlink} {paramsFile}"']
+        )
+
         print(cmdToRun)
         # also print the parameters
         print("\tParameters: %s" % (', '.join("%s: %s" % (p, str(params[p])) for p in params_order)))
@@ -123,7 +146,7 @@ def parseOutput(RunnerObj):
     '''
     Function to parse outputs from SINGE.
     '''
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINGE/"
+    outDir = get_output_path(RunnerObj, "/SINGE/")
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
 

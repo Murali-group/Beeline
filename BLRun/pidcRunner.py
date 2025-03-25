@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
+from BLRun.out_path_generator import get_output_path
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -23,11 +24,11 @@ def run(RunnerObj):
     '''
     Function to run PIDC algorithm
     '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/PIDC/ExpressionData.csv"
     
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/PIDC/"
+    outDir = get_output_path(RunnerObj, "/PIDC/")
     os.makedirs(outDir, exist_ok = True)
     
     outPath = 'data/'+ str(outDir) + 'outFile.txt'
@@ -43,7 +44,7 @@ def parseOutput(RunnerObj):
     Function to parse outputs from SCODE.
     '''
     # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/PIDC/"
+    outDir = get_output_path(RunnerObj, "/PIDC/")
     if not Path(outDir+'outFile.txt').exists():
         print(outDir+'outFile.txt'+'does not exist, skipping...')
         return

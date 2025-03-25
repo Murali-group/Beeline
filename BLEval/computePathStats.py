@@ -5,6 +5,7 @@ import seaborn as sns
 from pathlib import Path
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 sns.set(rc={"lines.linewidth": 2}, palette  = "deep", style = "ticks")
 from sklearn.metrics import precision_recall_curve, roc_curve, auc
 from itertools import product, permutations, combinations, combinations_with_replacement
@@ -40,7 +41,7 @@ def pathAnalysis(dataDict, inputSettings):
 
     
     # set-up outDir that stores output directory name
-    outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
+    outDir = "outputs/"+str(inputSettings.datadir).split("inputs" + os.sep)[1]+ '/' +dataDict['name']
     #print(dataDict['name'])
 
     ##################################################

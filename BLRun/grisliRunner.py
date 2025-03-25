@@ -2,6 +2,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import numpy as np
+from BLRun.out_path_generator import get_output_path
 
 def generateInputs(RunnerObj):
     '''
@@ -47,7 +48,7 @@ def run(RunnerObj):
     alphaMin = str(RunnerObj.params['alphaMin'])
     
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRISLI/"
+    outDir = get_output_path(RunnerObj, "/GRISLI/")
     os.makedirs(outDir, exist_ok = True)
     
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
@@ -55,7 +56,7 @@ def run(RunnerObj):
 
     colNames = PTData.columns
     for idx in range(len(colNames)):
-        inputPath = "data"+str(RunnerObj.inputDir).split(str(Path.cwd()))[1]+"/GRISLI/"+str(idx)+"/"
+        inputPath = "data"+"/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep))+"/GRISLI/"+str(idx)+"/"
         os.makedirs(outDir+str(idx), exist_ok = True)
 
         outFile = "data/" +  str(outDir) +str(idx)+"/outFile.txt"
@@ -72,7 +73,7 @@ def parseOutput(RunnerObj):
     Function to parse outputs from GRISLI.
     '''
     
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRISLI/"
+    outDir = get_output_path(RunnerObj, "/GRISLI/")
 
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)

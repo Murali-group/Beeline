@@ -9,6 +9,7 @@ from sklearn.metrics import precision_recall_curve, roc_curve, auc
 from itertools import product, permutations, combinations, combinations_with_replacement
 from tqdm import tqdm
 import networkx as nx
+import os
 
 def Motifs(datasetDict, inputSettings):
     '''
@@ -68,7 +69,8 @@ def Motifs(datasetDict, inputSettings):
         refMI = 1
     
     # set-up outDir that stores output directory name
-    outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' + datasetDict['name']
+    outDir = "outputs/"+str(inputSettings.datadir).split("inputs" + os.sep)[1] + '/' + datasetDict['name']
+    print(f"\n\nThe output directory is: {outDir}\n\n")
     dataDict = {}
     # dataDict['Conn. Comp'] = {}
     dataDict['FFL'] = {}

@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
+from BLRun.out_path_generator import get_output_path
 import numpy as np
 
 
@@ -45,10 +46,10 @@ def run(RunnerObj):
 
     :param RunnerObj: A BLRun object
     '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                         "/SINCERITIES/"
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINCERITIES/"
+    outDir = get_output_path(RunnerObj, "/SINCERITIES/")
     os.makedirs(outDir, exist_ok = True)
     
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
@@ -72,7 +73,7 @@ def parseOutput(RunnerObj):
 
     :param RunnerObj: An instance of the :class:`BLRun`
     '''
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINCERITIES/"
+    outDir = get_output_path(RunnerObj, "/SINCERITIES/")
 
     PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
                              header = 0, index_col = 0)
