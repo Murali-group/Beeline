@@ -1,0 +1,15 @@
+input_settings:
+
+  input_dir: inputs
+  dataset_dir: scRNA-seq/String
+  datasets:
+  - name: mHSC-E/mHSC-TFs-1000-Generator
+    cellData: PseudoTime.csv
+    exprData: ExpressionData.csv
+    trueEdges: refNetwork.csv
+
+
+output_settings:
+
+  output_dir: outputs
+  output_prefix: String-mHSC-E-TFs-1000

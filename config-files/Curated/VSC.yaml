@@ -1,0 +1,296 @@
+# Input Settings: initialize base input folder names,
+# dataset collections, and algorithms to run over
+input_settings:
+
+    # Base input directory
+    input_dir : "inputs"
+
+    # Subdirectory of inputs that datasets are placed in
+    dataset_dir: "Simulated/VSC"
+
+    # Denotes a list of datasets, each with the following parameters:
+    #   name: Name of the dataset. May be used in logging or other
+    #       messages written during execution
+    #
+    #   ex_filename: scRNA-Seqexpression file name
+    #
+    #   pt_filename: a file containing pseudotime ordering
+    #
+    datasets:
+          
+        - name: "VSC-2000-10"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-1"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-2"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-3"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-4"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-5"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-6"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-7"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-8"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-9"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+
+        - name: "VSC-2000-10-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-1-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+                 
+        - name: "VSC-2000-2-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+         
+        - name: "VSC-2000-3-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-4-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-5-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-6-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-7-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-8-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+          
+        - name: "VSC-2000-9-70"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-10-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-1-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+                 
+        - name: "VSC-2000-2-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+         
+        - name: "VSC-2000-3-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-4-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-5-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-6-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-7-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+        - name: "VSC-2000-8-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+          
+          
+        - name: "VSC-2000-9-50"
+          exprData: "ExpressionData.csv"
+          cellData: "PseudoTime.csv"
+          trueEdges: "refNetwork.csv"
+    # Denotes a list of algorithms to run. Each has the following parameters:
+    #   name: Name of the algorithm. Must be recognized by the pipeline, see
+    #       code for acceptable values
+    #
+    #   should_run: whether or not to run the algorithm
+    #
+    #   params: any additional, algorithm-specific parameters
+    #       should be specified in the params map for a given algorithm
+    #
+    # Denotes a list of algorithms to run. Each has the following parameters:
+    #   name: Name of the algorithm. Must be recognized by the pipeline, see
+    #       code for acceptable values
+    #
+    #   should_run: whether or not to run the algorithm
+    #
+    #   params: any additional, algorithm-specific parameters
+    #       should be specified in the params map for a given algorithm
+    #
+    algorithms:
+
+              
+        - name: "PIDC"
+          params: 
+              should_run: [True]
+
+
+        - name: "GRNVBEM"
+          params: 
+              should_run: [True]
+
+              
+
+        - name: "GENIE3"
+          params: 
+              should_run: [True]
+              
+              
+              
+        - name: "GRNBOOST2"
+          params: 
+              should_run: [True]
+              
+              
+        - name: "PPCOR"
+          params: 
+              should_run: [True]
+              # Used in parsing output
+              pVal: [0.01]
+              
+               
+        - name: "SCODE"
+          params:
+              should_run: [True]
+              z: [10]
+              nIter: [100]
+              nRep: [5]
+
+        - name: "SCNS"
+          params: 
+              should_run: [True]
+              
+              
+        - name: "SINCERITIES"
+          params: 
+              should_run: [True]
+              nBins: [5]
+              
+              
+        - name: "LEAP"
+          params: 
+              should_run: [True]
+              # Default maxLag value is 0.33
+              maxLag: [0.33]
+             
+              
+        - name: "GRISLI"
+          params: 
+              should_run: [True]
+              L: [10]
+              R: [1500]
+              alphaMin: [0.0]
+
+
+        - name: "SCINGE"
+          params: 
+              should_run: [True]
+              lambda: [0.01]
+              dT: [15]
+              num_lags: [5]
+              kernel_width: [0.5]
+              prob_zero_removal: [0]
+              prob_remove_samples: [0.0]
+              family: ["gaussian"]
+              num_replicates: [2]
+
+
+        - name: "SCRIBE"
+          params: 
+              should_run: [True]
+              ### required parameters
+              # a list of delay values
+              delay: ["5,10,15,20,25"]
+              # any of 'RDI', 'uRDI', 'cRDI', or 'ucRDI'
+              method: ['ucRDI']
+              # lower detection limit (expression below this 
+              # will be treated as zero.
+              lowerDetectionLimit: [0]
+              # expressionFamily: for synthetic data use uninormal
+              #  for mRNA count data use negbinomial.size()
+              expressionFamily: ['uninormal']
+              ### optional but recommended parameters
+              # log transform expression values or not
+              log: [False]
+              # ignore pseudotime values (and use experimental
+              # time points instead), recommended True for synthetic data
+              # False for real mRNA data
+              ignorePT: [True]
+
+
+# Output Settings: initialize base output folder names
+output_settings:
+
+    # Base output directory
+    output_dir: "outputs"
+    output_prefix: "VSC"
