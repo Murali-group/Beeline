@@ -55,13 +55,13 @@ def load_data_TF2(indel_list,data_path): # cell type specific  ## random samples
 if len(sys.argv) < 4:
     print ('No enough input files')
     sys.exit()
-length_TF =int(sys.argv[1]) # number of data parts divided
+length_TF =int(sys.argv[1]) # number of data parts divided - TODO beeline makes this equal to k-folds
 data_path = sys.argv[2]
 num_classes = int(sys.argv[3])
 whole_data_TF = [i for i in range(length_TF)]
 ###################################################################################################################################
-for test_indel in range(1,4): ################## three fold cross validation                                                     ## for  3 fold CV              
-    test_TF = [i for i in range (int(np.ceil((test_indel-1)*0.333*length_TF)),int(np.ceil(test_indel*0.333*length_TF)))]         #
+for test_indel in range(1,length_TF + 1): ################## k-fold cross validation                                                            
+    test_TF = [i for i in whole_data_TF[test_indel - 1]] # 1 fold partitioned for test - just using list for compatbility with CNNC's code     
     train_TF = [i for i in whole_data_TF if i not in test_TF]                                                                    #
 ###################################################################################################################################
 #####################################################################

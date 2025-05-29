@@ -36,7 +36,7 @@ def get_parser() -> argparse.ArgumentParser:
         description='Run pathway reconstruction pipeline.')
 
     parser.add_argument('--config', default='config.yaml',
-        help='Path to config file')
+        help='Path to config file') 
 
     return parser
 
