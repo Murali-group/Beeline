@@ -45,11 +45,11 @@ input_settings:
               should_run: [True]
 
 
-        - name: "GRNVBEM"
-          params: 
-              should_run: [True]
+        # - name: "GRNVBEM"
+        #   params: 
+        #       should_run: [True]              
 
-              
+
 
         - name: "GENIE3"
           params: 
@@ -62,89 +62,89 @@ input_settings:
               should_run: [True]
               
               
-        - name: "PPCOR"
-          params: 
-              should_run: [True]
-              # p-value cutoff
-              # Used in parsing output
-              pVal: [0.01]
+        # - name: "PPCOR"
+        #   params: 
+        #       should_run: [True]
+        #       # p-value cutoff
+        #       # Used in parsing output
+        #       pVal: [0.01]
               
                
-        - name: "SCODE"
-          params:
-              should_run: [True]
-              z: [10]
-              nIter: [1000]
-              nRep: [6]
+        # - name: "SCODE"
+        #   params:
+        #       should_run: [True]
+        #       z: [10]
+        #       nIter: [1000]
+        #       nRep: [6]
 
-        - name: "SCNS"
-          params: 
-              should_run: [True]
+        # # - name: "SCNS"
+        # #   params: 
+        # #       should_run: [True]
               
               
-        - name: "SINCERITIES"
-          params: 
-              should_run: [True]
-              nBins: [10]
+        # - name: "SINCERITIES"
+        #   params: 
+        #       should_run: [True]
+        #       nBins: [10]
               
               
-        - name: "LEAP"
-          params: 
-              should_run: [True]
-              # Default maxLag value is 0.33
-              maxLag: [0.33]
+        # - name: "LEAP"
+        #   params: 
+        #       should_run: [True]
+        #       # Default maxLag value is 0.33
+        #       maxLag: [0.33]
              
               
-        - name: "GRISLI"
-          params: 
-              should_run: [True]
-              L: [10]
-              R: [3000]
-              alphaMin: [0.0]
+        # - name: "GRISLI"
+        #   params: 
+        #       should_run: [True]
+        #       L: [10]
+        #       R: [3000]
+        #       alphaMin: [0.0]
 
 
-        - name: "SINGE"
-          params: 
-              should_run: [True]
-              lambda: [0.01]
-              dT: [15]
-              num_lags: [5]
-              kernel_width: [0.5]
-              prob_zero_removal: [0]
-              prob_remove_samples: [0.0]
-              family: ["gaussian"]
-              num_replicates: [6]
+        # - name: "SINGE"
+        #   params: 
+        #       should_run: [True]
+        #       lambda: [0.01]
+        #       dT: [15]
+        #       num_lags: [5]
+        #       kernel_width: [0.5]
+        #       prob_zero_removal: [0]
+        #       prob_remove_samples: [0.0]
+        #       family: ["gaussian"]
+        #       num_replicates: [6]
 
 
-        - name: "SCRIBE"
-          params: 
-              should_run: [True]
-              ### required parameters
-              # a list of delay values
-              delay: ["5"]
-              # any of 'RDI', 'uRDI', 'cRDI', or 'ucRDI'
-              method: ['ucRDI']
-              # lower detection limit (expression below this 
-              # will be treated as zero.
-              lowerDetectionLimit: [0]
-              # expressionFamily: for synthetic data use uninormal
-              #  for mRNA count data use negbinomial.size()
-              expressionFamily: ['uninormal']
-              ### optional but recommended parameters
-              # log transform expression values or not
-              log: [False]
-              # ignore pseudotime values (and use experimental
-              # time points instead), recommended True for synthetic data
-              # False for real mRNA data
-              ignorePT: [True]
+        # - name: "SCRIBE"
+        #   params: 
+        #       should_run: [True]
+        #       ### required parameters
+        #       # a list of delay values
+        #       delay: ["5"]
+        #       # any of 'RDI', 'uRDI', 'cRDI', or 'ucRDI'
+        #       method: ['ucRDI']
+        #       # lower detection limit (expression below this 
+        #       # will be treated as zero.
+        #       lowerDetectionLimit: [0]
+        #       # expressionFamily: for synthetic data use uninormal
+        #       #  for mRNA count data use negbinomial.size()
+        #       expressionFamily: ['uninormal']
+        #       ### optional but recommended parameters
+        #       # log transform expression values or not
+        #       log: [False]
+        #       # ignore pseudotime values (and use experimental
+        #       # time points instead), recommended True for synthetic data
+        #       # False for real mRNA data
+        #       ignorePT: [True]
 
 
-        - name: "SCSGL"
-          params:
-              should_run: [True]
-              pos_density: [0.45]
-              neg_density: [0.45]
-              assoc: ["correlation"]
+        # - name: "SCSGL"
+        #   params:
+        #       should_run: [True]
+        #       pos_density: [0.45]
+        #       neg_density: [0.45]
+        #       assoc: ["correlation"]
 
 
 # Output Settings: initialize base output folder names

@@ -5,6 +5,24 @@ echo "This may take a while..."
 
 BASEDIR=$(pwd)
 
+echo "Building Docker image for scGPT model..."
+cd $BASEDIR/Models/scGPT_human  
+DOCKER_IMAGE_TAG="dostofizky/scgpt_human:latest"
+LOCAL_IMAGE_TAG="scgpt_human:latest"
+
+# Pull the Docker image from Docker Hub
+echo "Pulling Docker image for scGPT model..."
+docker pull $DOCKER_IMAGE_TAG
+if [ $? -eq 0 ]; then
+    echo "Successfully pulled scGPT image from DockerHub"
+    echo "Tagging the pulled image as '$LOCAL_IMAGE_TAG'"
+    docker tag $DOCKER_IMAGE_TAG $LOCAL_IMAGE_TAG
+    echo "The scGPT Docker image is now ready for use with the local tag '$LOCAL_IMAGE_TAG'"
+else
+    echo "Failed to pull scGPT image from DockerHub"
+fi
+
+
 # You may remove the -q flag if you want to see the docker build status
 cd $BASEDIR/Algorithms/ARBORETO
 docker build -q -t arboreto:base .

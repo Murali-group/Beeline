@@ -40,7 +40,6 @@ def run(RunnerObj):
     print(cmdToRun)
     os.system(cmdToRun)
 
-
 def parseOutput(RunnerObj):
     '''
     Function to parse outputs from GRNBOOST2.
