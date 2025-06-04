@@ -1,7 +1,7 @@
 # Usage: python get_xy_data_cnn_combine_from_database.py bulk_gene_list.txt sc_gene_list.txt gene_pair_list  data_separation_index_list  bulk_expression_data  sc_exprsssion_data flag (0, no label. 1, label)
 # command line in developer's linux machine :
 # python get_xy_label_data_cnn_combine_from_database.py bulk_gene_list.txt sc_gene_list.txt mmukegg_new_new_unique_rand_labelx_sy.txt mmukegg_new_new_unique_rand_labelx_num_sy.txt /home/yey3/sc_process_1/new_bulk_mouse/prs_calculation/mouse_bulk.h5 /home/yey3/sc_process_1/rank_total_gene_rpkm.h5 1
-#################INPUT################################################################################################################################
+#################INPUT##########################################################################################`######################################
 # 1, bulk_gene_list.txt is the list that convert bulk expression data gene set into gene symbol IDs. format: 'gene symbol IDs\t bulk gene ID'
 # 2, sc_gene_list.txt is the list that convert sc expression data gene set into gene symbol IDs. format: 'gene symbol IDs\t sc gene ID'
 # 3, gene_pair_list is the list that contains gene pairs and their labels. format : 'GeneA    GeneB     0'
@@ -80,7 +80,7 @@ elif sys.argv[1] == 'None':  ### sc list = none
 else:
     print('wrong bulk expression information')
     sys.exit()
-if not sys.argv[6] == 'None':
+if not sys.argv[6] == 'None': # TODO scrna - important beeline
     store = pd.HDFStore(sys.argv[6])#'/home/yey3/sc_process_1/rank_total_gene_rpkm.h5')    # scRNA-seq expression data                        )#
     rpkm = store['rpkm']
     store.close()
@@ -100,11 +100,12 @@ if sys.argv[5] == 'None' and sys.argv[6] == 'None':
 ########## generate NEPDF matrix
 gene_pair_label = []
 s=open(sys.argv[3])#'mmukegg_new_new_unique_rand_labelx.txt')#)   ### read the gene pair and label file
-# for line in s:
-#     gene_pair_label.append(line)
+for line in s:
+    gene_pair_label.append(line)    
 # gene_pair_index = get_sepration_index(sys.argv[4])#'mmukegg_new_new_unique_rand_labelx_num.npy')#sys.argv[6]) # read file speration index
-# s.close()
-gene_indexes = sys.argv[4] # we are going to seperate this file based on the test section to get k-partitions into NEDPF
+s.close()
+gene_indexes = pd.read_csv(sys.argv[4]) # we are going to seperate this file based on the test section to get k-partitions into NEDPF
+print(gene_indexes)
 gene_pair_label_array = array(gene_pair_label)
 for i in range(len(gene_indexes)):   #### many sperations
     print (i)
@@ -130,7 +131,7 @@ for i in range(len(gene_indexes)):   #### many sperations
             HT_bulk = (log10(H_bulk / 43261 + 10 ** -4) + 4)/4
         if not sys.argv[2] == 'None':
             x_tf = log10(rpkm[int(h_gene_list[x_gene_name])] + 10 ** -2) # ## 43261 means the number of samples in the sc data, we also have one row that is sum of all cells, so the real size is 43262, that is why we use [0:43261]. For TF target prediction or other data, just remove "[0:43261]"
-            x_gene = log10(rpkm[int(h_gene_list[y_gene_name])] + 10 ** -2)# For TF target prediction, remove "[0:43261]" TODO removed
+            x_gene = log10(rpkm[int(h_gene_list[y_gene_name])] + 10 ** -2)# For TF target prediction, remove "[0:43261]"
             H_T = histogram2d(x_tf, x_gene, bins=32)
             H = H_T[0].T
             HT = (log10(H / 43261 + 10 ** -4) + 4) / 4

@@ -61,9 +61,12 @@ whole_data_TF = [i for i in range(length_TF)]
 ###################################################################################################################################
 for test_indel in range(length_TF): ################## k-fold cross validation                                                            
     test_TF = test_indel # 1 fold partitioned for test - just using list for compatbility with CNNC's code     
-    train_TF = [i for i in whole_data_TF if i not in test_TF]                                                                     #
+    train_TF = whole_data_TF.remove(test_TF)                                                                     #
 ###################################################################################################################################
 #####################################################################
+    print(data_path)
+    print(test_TF)
+    print(train_TF)
     (x_train, y_train,count_set_train) = load_data_TF2(train_TF,data_path)
     (x_test, y_test,count_set) = load_data_TF2(test_TF,data_path)
     print(x_train.shape, 'x_train samples')
