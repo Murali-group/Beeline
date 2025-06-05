@@ -51,7 +51,7 @@ def generateInputs(RunnerObj):
     final_pairs = pd.concat([gene_pairs, negative_pairs], axis=0).sort_index(kind='merge')
     # print(gene_pairs)
     # print(negative_pairs)
-    print(final_pairs)
+    # print(final_pairs)
     # print(final_pairs.shape)
     # final_pairs.to_csv(RunnerObj.inputDir.joinpath("./genes.txt"), header=False, index=False, sep='\t')
     k = RunnerObj.params['k'] # k fold validation
@@ -67,6 +67,8 @@ def generateInputs(RunnerObj):
             # print(x_gene_name)
             y.append(label)
             z.append(x_gene_name+'\t'+y_gene_name)
+            # print(expression_data[x_gene_name])
+            # quit()
             x_tf = np.log10(expression_data[x_gene_name] + 10 ** -2)
             x_gene = np.log10(expression_data[y_gene_name] + 10 ** -2)
             H_T = np.histogram2d(x_tf, x_gene, bins=32)
@@ -99,7 +101,7 @@ def run(RunnerObj):
     outPathNonFile = 'data' + os.path.sep + outDir
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd()) + ':/data/ --expose=41269',
                          'cnnc:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt',
-                         'python cnncTrainModelKFold.py ' + str(RunnerObj.params['k']) + ' ' + inputPath + ' 2 ' + str(RunnerObj.params['epochs']) + ' ' + outPathNonFile + " > " + outPath, 
+                         'python cnncTrainModelKFold.py ' + str(RunnerObj.params['k']), inputPath + ' 2 ' + str(RunnerObj.params['epochs']), outPathNonFile, str(RunnerObj.params['dropouts']), str(RunnerObj.params['learning_rate']) + " > " + outPath, 
                          '\"'])
     print(cmdToRun)
     os.system(cmdToRun)

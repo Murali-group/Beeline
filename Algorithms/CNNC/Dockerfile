@@ -14,8 +14,8 @@ RUN apt-get install time
 ENV KERAS_BACKEND=theano
 RUN mkdir /files/
 COPY cnncTrainModelKFold.py /
-COPY cnncDataReprod.py /
-COPY NEPDF_data /NEPDF_data
+# COPY cnncDataReprod.py /
+# COPY NEPDF_data /NEPDF_data
 # can remove these after reprod
 # RUN conda install pandas
 # RUN conda install numpy

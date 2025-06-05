@@ -25,7 +25,9 @@ data_augmentation = False
 # num_predictions = 20
 batch_size = 1024 # mini batch for training
 #num_classes = 3   #### categories of labels
-epochs = sys.argv[4]     #### iterations of trainning, with GPU 1080, 600 for KEGG and Reactome, 200 for tasks for GTRD
+epochs = int(sys.argv[4])   #### iterations of trainning, with GPU 1080, 600 for KEGG and Reactome, 200 for tasks for GTRD
+dropoutPercentageLayers = float(sys.argv[6])
+learning_rate = float(sys.argv[7])
 #length_TF =3057  # number of divide data parts
 # num_predictions = 20
 model_name = 'keras_cnn_trained_model_shallow.h5'
@@ -87,21 +89,21 @@ for test_indel in range(length_TF): ################## k-fold cross validation
     model.add(Conv2D(32, (3, 3)))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
+    model.add(Dropout(dropoutPercentageLayers))
 
     model.add(Conv2D(64, (3, 3), padding='same'))
     model.add(Activation('relu'))
     model.add(Conv2D(64, (3, 3)))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
+    model.add(Dropout(dropoutPercentageLayers))
 
     model.add(Conv2D(128, (3, 3), padding='same'))
     model.add(Activation('relu'))
     model.add(Conv2D(128, (3, 3)))
     model.add(Activation('relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
+    model.add(Dropout(dropoutPercentageLayers))
 
     model.add(Flatten())
     model.add(Dense(512))
@@ -112,7 +114,7 @@ for test_indel in range(length_TF): ################## k-fold cross validation
         sys.exit()
     elif num_classes ==2:
         model.add(Dense(1, activation='sigmoid'))
-        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+        sgd = SGD(lr=learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
         model.compile(optimizer=sgd,loss='binary_crossentropy',metrics=['accuracy'])
     else:
         print("classes > 2")
@@ -166,232 +168,294 @@ for test_indel in range(length_TF): ################## k-fold cross validation
     plt.grid()
     plt.savefig(save_dir+'/end_result.pdf')
     ###############################################################  evaluation without consideration of data separation
-    if num_classes == 3:  ## here we only focus on three category tasks
-        plt.figure(figsize=(10, 6))
-        for i in range(3):
-            y_test_x = [j[i] for j in y_test]
-            y_predict_x = [j[i] for j in y_predict]
-            fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
-            plt.subplot(1, 3, i + 1)
-            plt.plot(fpr, tpr)
-            plt.grid()
-            plt.plot([0, 1], [0, 1])
-            plt.xlabel('FP')
-            plt.ylabel('TP')
-            plt.ylim([0, 1])
-            plt.xlim([0, 1])
-            auc = np.trapz(tpr, fpr)
-            print('AUC:', auc)
-            plt.title('label' + str(i) + ', AUC:' + str(auc))
-        plt.savefig(save_dir + '/end_3labels.pdf')
-        plt.figure(figsize=(10, 6))
-        y_predict_x = [j[1] + j[2] for j in y_predict]
-        y_test_x = [1 - j[0] for j in y_test]
-        fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
-        # Print ROC curve
-        plt.plot(fpr, tpr)
-        plt.plot([0, 1], [0, 1])
-        # Print AUC
-        auc = np.trapz(tpr, fpr)
-        print('AUC:', auc)
-        plt.ylim([0, 1])
-        plt.xlim([0, 1])
-        plt.grid()
-        plt.title('label 1+2, AUC:' + str(auc))
-        plt.xlabel('FP')
-        plt.ylabel('TP')
-        plt.savefig(save_dir + '/end_1+2.pdf')
-        #######################################
-        plt.figure(figsize=(10, 6))
-        y_predict1 = []
-        y_test1 = []
-        x = 2
-        for i in range(int(len(y_predict) / 3)):
-            y_predict1.append(y_predict[3 * i][x] - y_predict[3 * i + 1][x]) #### here we prepared the data as (GeneA,GeneB),(GeneB,GeneA) and (GeneA,GeneX) as label 1, 2, 0, That is why we can predict direaction using this code
-            y_predict1.append(-y_predict[3 * i][x] + y_predict[3 * i + 1][x])
-            y_test1.append(y_test[3 * i][x])
-            y_test1.append(y_test[3 * i + 1][x])
-        fpr, tpr, thresholds = metrics.roc_curve(y_test1, y_predict1, pos_label=1)
-        # Print ROC curve
-        plt.plot(fpr, tpr)
-        plt.plot([0, 1], [0, 1])
-        # Print AUC
-        auc = np.trapz(tpr, fpr)
-        print('AUC:', auc)
-        plt.ylim([0, 1])
-        plt.xlim([0, 1])
-        plt.grid()
-        plt.title('label 1 vs 2,direction diff, AUC:' + str(auc))
-        plt.xlabel('FP')
-        plt.ylabel('TP')
-        plt.savefig(save_dir + '/end_1vs2.pdf')
-        #############################################################
-        ################################################ evaluation with data separation
 
-        fig = plt.figure(figsize=(5, 5))
-        plt.plot([0, 1], [0, 1])
-        plt.ylim([0, 1])
-        plt.xlim([0, 1])
-        plt.xlabel('FP')
-        plt.ylabel('TP')
-        # plt.grid()
-        AUC_set = []
-        y_testy = y_test
-        y_predicty = y_predict
-        tprs = []
-        mean_fpr = np.linspace(0, 1, 100)
-        s = open(save_dir + '/divided_AUCs1vs2.txt', 'w')
-        for jj in range(len(count_set) - 1):  # len(count_set)-1):
-            if count_set[jj] < count_set[jj + 1]:
-                print(jj, count_set[jj], count_set[jj + 1])
-                y_test = y_testy[count_set[jj]:count_set[jj + 1]]
-                y_predict = y_predicty[count_set[jj]:count_set[jj + 1]]
-                y_predict1 = []
-                y_test1 = []
-                x = 2
-                for i in range(int(len(y_predict) / 3)):
-                    y_predict1.append(y_predict[3 * i][x] - y_predict[3 * i + 1][x])
-                    y_predict1.append(-y_predict[3 * i][x] + y_predict[3 * i + 1][x])
-                    y_test1.append(y_test[3 * i][x])
-                    y_test1.append(y_test[3 * i + 1][x])
-                fpr, tpr, thresholds = metrics.roc_curve(y_test1, y_predict1, pos_label=1)
-                tprs.append(interp(mean_fpr, fpr, tpr))
-                tprs[-1][0] = 0.0
-                plt.plot(fpr, tpr, color='0.5', lw=0.1)
-                auc = np.trapz(tpr, fpr)
-                s.write(str(jj) + '\t' + str(count_set[jj]) + '\t' + str(count_set[jj + 1]) + '\t' + str(auc) + '\n')
-                print('AUC:', auc)
-                AUC_set.append(auc)
-        mean_tpr = np.median(tprs, axis=0)
-        mean_tpr[-1] = 1.0
-        per_tpr = np.percentile(tprs, [25, 50, 75], axis=0)
-        mean_auc = np.trapz(mean_tpr, mean_fpr)
-        plt.plot(mean_fpr, mean_tpr, 'k', lw=3, label='median ROC')
-        plt.title(str(mean_auc))
-        plt.fill_between(mean_fpr, per_tpr[0, :], per_tpr[2, :], color='g', alpha=.2, label='Quartile')
-        plt.legend(loc='lower right')
-        plt.savefig(save_dir + '/divided_ROCs1vs2_percentile.pdf')
-        del fig
-        fig = plt.figure(figsize=(5, 5))
-        plt.hist(AUC_set, bins=50)
-        plt.savefig(save_dir + '/divided_ROCs1vs2_hist.pdf')
-        del fig
-        s.close()
+    plt.figure(figsize=(10, 6))
+    fpr, tpr, thresholds = metrics.roc_curve(y_test, y_predict, pos_label=1)
+    plt.plot(fpr, tpr)
+    plt.grid()
+    plt.plot([0, 1], [0, 1])
+    plt.xlabel('FP')
+    plt.ylabel('TP')
+    plt.ylim([0, 1])
+    plt.xlim([0, 1])
+    auc = np.trapz(tpr, fpr)
+    print('AUC:', auc)
+    plt.savefig(save_dir + '/overall.pdf')
+    #######################################
 
-
+    #############################################################
         #########################
-        fig = plt.figure(figsize=(5, 5))
-        plt.plot([0, 1], [0, 1])
-        plt.ylim([0, 1])
-        plt.xlim([0, 1])
-        plt.xlabel('FP')
-        plt.ylabel('TP')
-        # plt.grid()
-        AUC_set = []
-        s = open(save_dir + '/divided_RPKM_AUCs1+2.txt', 'w')
-        tprs = []
-        mean_fpr = np.linspace(0, 1, 100) # 3068
-        for jj in range(len(count_set) - 1):  # len(count_set)-1):
-            if count_set[jj] < count_set[jj + 1]:
-                print(test_indel, jj, count_set[jj], count_set[jj + 1])
-                y_test = y_testy[count_set[jj]:count_set[jj + 1]]
-                y_predict = y_predicty[count_set[jj]:count_set[jj + 1]]
-                # Score trained model.
-                y_predict_x = [j[1] + j[2] for j in y_predict]
-                y_test_x = [1 - j[0] for j in y_test]
-                fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
-                tprs.append(interp(mean_fpr, fpr, tpr))
-                tprs[-1][0] = 0.0
-                # Print ROC curve
-                plt.plot(fpr, tpr, color='0.5', lw=0.001, alpha=.2)
-                auc = np.trapz(tpr, fpr)
-                s.write(str(jj) + '\t' + str(count_set[jj]) + '\t' + str(count_set[jj + 1]) + '\t' + str(auc) + '\n')
-                print('AUC:', auc)
-                AUC_set.append(auc)
+    y_testy = y_test
+    y_predicty = y_predict
+    fig = plt.figure(figsize=(5, 5))
+    plt.plot([0, 1], [0, 1])
+    plt.ylim([0, 1])
+    plt.xlim([0, 1])
+    plt.xlabel('FP')
+    plt.ylabel('TP')
+    # plt.grid()
+    AUC_set = []
+    s = open(save_dir + '/divided_interaction.txt', 'w')
+    tprs = []
+    mean_fpr = np.linspace(0, 1, 100)  # 3068
+    for jj in range(len(count_set) - 1):  # len(count_set)-1):
+        if count_set[jj] < count_set[jj + 1]:
+            print(test_indel, jj, count_set[jj], count_set[jj + 1])
+            y_test = y_testy[count_set[jj]:count_set[jj + 1]]
+            y_predict = y_predicty[count_set[jj]:count_set[jj + 1]]
+            # Score trained model.
+            fpr, tpr, thresholds = metrics.roc_curve(y_test, y_predict, pos_label=1)
+            tprs.append(interp(mean_fpr, fpr, tpr))
+            tprs[-1][0] = 0.0
+            # Print ROC curve
+            plt.plot(fpr, tpr, color='0.5', lw=0.001, alpha=.2)
+            auc = np.trapz(tpr, fpr)
+            s.write(str(jj) + '\t' + str(count_set[jj]) + '\t' + str(count_set[jj + 1]) + '\t' + str(auc) + '\n')
+            print('AUC:', auc)
+            AUC_set.append(auc)
 
-        mean_tpr = np.median(tprs, axis=0)
-        mean_tpr[-1] = 1.0
-        per_tpr = np.percentile(tprs, [25, 50, 75], axis=0)
-        mean_auc = np.trapz(mean_tpr, mean_fpr)
-        plt.plot(mean_fpr, mean_tpr, 'k', lw=3, label='median ROC')
-        plt.title(str(mean_auc))
-        plt.fill_between(mean_fpr, per_tpr[0, :], per_tpr[2, :], color='g', alpha=.2, label='Quartile')
-        plt.plot(mean_fpr, per_tpr[0, :], 'g', lw=3, alpha=.2)
-        plt.legend(loc='lower right')
-        plt.savefig(save_dir + '/divided_ROCs1+2_percentile.pdf')
-        del fig
-        fig = plt.figure(figsize=(5, 5))
-        plt.hist(AUC_set, bins=50)
-        plt.savefig(save_dir + '/divided_kegg_ROCs1+2_hist.pdf')
-        del fig
-        s.close()
-    ###########################################################3 if we select the min point as the trained model
-    # y_test = y_testy
-    # y_predict = y_predicty
-    # model.load_weights(save_dir + '/weights.hdf5')
-    # scores = model.evaluate(x_test, y_test, verbose=1)
-    # print('Test loss:', scores[0])
-    # print('Test accuracy:', scores[1])
-    # y_predict = model.predict(x_test)
-    # np.save(save_dir+'/min_y_test.npy',y_test)
-    # np.save(save_dir+'/min_y_predict.npy',y_predict)
-    # plt.figure(figsize=(10, 6))
-    # for i in range(3):
-    #     y_test_x = [j[i] for j in y_test]
-    #     y_predict_x = [j[i] for j in y_predict]
-    #     fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
-    #     plt.subplot(1, 3, i + 1)
-    #     plt.plot(fpr, tpr)
-    #     plt.grid()
-    #     plt.plot([0, 1], [0, 1])
-    #     plt.xlabel('FP')
-    #     plt.ylabel('TP')
-    #     plt.ylim([0, 1])
-    #     plt.xlim([0, 1])
-    #     auc = np.trapz(tpr, fpr)
-    #     print('AUC:', auc)
-    #     plt.title('label' + str(i) + ', AUC:' + str(auc))
-    # plt.savefig(save_dir + '/min_3labels.pdf')
-    # plt.figure(figsize=(10, 6))
-    # y_predict_x = [j[1] + j[2] for j in y_predict]
-    # y_test_x = [1 - j[0] for j in y_test]
-    # fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
-    # # Print ROC curve
-    # plt.plot(fpr, tpr)
-    # plt.plot([0, 1], [0, 1])
-    # # Print AUC
-    # auc = np.trapz(tpr, fpr)
-    # print('AUC:', auc)
-    # plt.ylim([0, 1])
-    # plt.xlim([0, 1])
-    # plt.grid()
-    # plt.title('label 1+2, AUC:' + str(auc))
-    # plt.xlabel('FP')
-    # plt.ylabel('TP')
-    # plt.savefig(save_dir + '/min_1+2.pdf')
-    # #################################################### data speration
-    # plt.figure(figsize=(10, 6))
-    # y_predict1 = []
-    # y_test1 = []
-    # x = 2
-    # for i in range(int(len(y_predict) / 3)):
-    #     y_predict1.append(y_predict[3 * i][x] - y_predict[3 * i + 1][x])
-    #     y_predict1.append(-y_predict[3 * i][x] + y_predict[3 * i + 1][x])
-    #     y_test1.append(y_test[3 * i][x])
-    #     y_test1.append(y_test[3 * i + 1][x])
-    # fpr, tpr, thresholds = metrics.roc_curve(y_test1, y_predict1, pos_label=1)
-    # # Print ROC curve
-    # plt.plot(fpr, tpr)
-    # plt.plot([0, 1], [0, 1])
-    # # Print AUC
-    # auc = np.trapz(tpr, fpr)
-    # print('AUC:', auc)
-    # plt.ylim([0, 1])
-    # plt.xlim([0, 1])
-    # plt.grid()
-    # plt.title('label 1 vs 2,direction diff, AUC:' + str(auc))
-    # plt.xlabel('FP')
-    # plt.ylabel('TP')
-    # plt.savefig(save_dir + '/min_1vs2.pdf')
-###########################################################################
+    mean_tpr = np.median(tprs, axis=0)
+    mean_tpr[-1] = 1.0
+    per_tpr = np.percentile(tprs, [25, 50, 75], axis=0)
+    mean_auc = np.trapz(mean_tpr, mean_fpr)
+    plt.plot(mean_fpr, mean_tpr, 'k', lw=3, label='median ROC')
+    plt.title(str(mean_auc))
+    plt.fill_between(mean_fpr, per_tpr[0, :], per_tpr[2, :], color='g', alpha=.2, label='Quartile')
+    plt.plot(mean_fpr, per_tpr[0, :], 'g', lw=3, alpha=.2)
+    plt.legend(loc='lower right')
+    plt.savefig(save_dir + '/divided_interaction_percentile.pdf')
+    del fig
+    fig = plt.figure(figsize=(5, 5))
+    plt.hist(AUC_set, bins=50)
+    plt.savefig(save_dir + '/divided_interaction_hist.pdf')
+    del fig
+    s.close()
+#     if num_classes == 3:  ## here we only focus on three category tasks
+#         plt.figure(figsize=(10, 6))
+#         for i in range(3):
+#             y_test_x = [j[i] for j in y_test]
+#             y_predict_x = [j[i] for j in y_predict]
+#             fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
+#             plt.subplot(1, 3, i + 1)
+#             plt.plot(fpr, tpr)
+#             plt.grid()
+#             plt.plot([0, 1], [0, 1])
+#             plt.xlabel('FP')
+#             plt.ylabel('TP')
+#             plt.ylim([0, 1])
+#             plt.xlim([0, 1])
+#             auc = np.trapz(tpr, fpr)
+#             print('AUC:', auc)
+#             plt.title('label' + str(i) + ', AUC:' + str(auc))
+#         plt.savefig(save_dir + '/end_3labels.pdf')
+#         plt.figure(figsize=(10, 6))
+#         y_predict_x = [j[1] + j[2] for j in y_predict]
+#         y_test_x = [1 - j[0] for j in y_test]
+#         fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
+#         # Print ROC curve
+#         plt.plot(fpr, tpr)
+#         plt.plot([0, 1], [0, 1])
+#         # Print AUC
+#         auc = np.trapz(tpr, fpr)
+#         print('AUC:', auc)
+#         plt.ylim([0, 1])
+#         plt.xlim([0, 1])
+#         plt.grid()
+#         plt.title('label 1+2, AUC:' + str(auc))
+#         plt.xlabel('FP')
+#         plt.ylabel('TP')
+#         plt.savefig(save_dir + '/end_1+2.pdf')
+#         #######################################
+#         plt.figure(figsize=(10, 6))
+#         y_predict1 = []
+#         y_test1 = []
+#         x = 2
+#         for i in range(int(len(y_predict) / 3)):
+#             y_predict1.append(y_predict[3 * i][x] - y_predict[3 * i + 1][x]) #### here we prepared the data as (GeneA,GeneB),(GeneB,GeneA) and (GeneA,GeneX) as label 1, 2, 0, That is why we can predict direaction using this code
+#             y_predict1.append(-y_predict[3 * i][x] + y_predict[3 * i + 1][x])
+#             y_test1.append(y_test[3 * i][x])
+#             y_test1.append(y_test[3 * i + 1][x])
+#         fpr, tpr, thresholds = metrics.roc_curve(y_test1, y_predict1, pos_label=1)
+#         # Print ROC curve
+#         plt.plot(fpr, tpr)
+#         plt.plot([0, 1], [0, 1])
+#         # Print AUC
+#         auc = np.trapz(tpr, fpr)
+#         print('AUC:', auc)
+#         plt.ylim([0, 1])
+#         plt.xlim([0, 1])
+#         plt.grid()
+#         plt.title('label 1 vs 2,direction diff, AUC:' + str(auc))
+#         plt.xlabel('FP')
+#         plt.ylabel('TP')
+#         plt.savefig(save_dir + '/end_1vs2.pdf')
+#         #############################################################
+#         ################################################ evaluation with data separation
+
+#         fig = plt.figure(figsize=(5, 5))
+#         plt.plot([0, 1], [0, 1])
+#         plt.ylim([0, 1])
+#         plt.xlim([0, 1])
+#         plt.xlabel('FP')
+#         plt.ylabel('TP')
+#         # plt.grid()
+#         AUC_set = []
+#         y_testy = y_test
+#         y_predicty = y_predict
+#         tprs = []
+#         mean_fpr = np.linspace(0, 1, 100)
+#         s = open(save_dir + '/divided_AUCs1vs2.txt', 'w')
+#         for jj in range(len(count_set) - 1):  # len(count_set)-1):
+#             if count_set[jj] < count_set[jj + 1]:
+#                 print(jj, count_set[jj], count_set[jj + 1])
+#                 y_test = y_testy[count_set[jj]:count_set[jj + 1]]
+#                 y_predict = y_predicty[count_set[jj]:count_set[jj + 1]]
+#                 y_predict1 = []
+#                 y_test1 = []
+#                 x = 2
+#                 for i in range(int(len(y_predict) / 3)):
+#                     y_predict1.append(y_predict[3 * i][x] - y_predict[3 * i + 1][x])
+#                     y_predict1.append(-y_predict[3 * i][x] + y_predict[3 * i + 1][x])
+#                     y_test1.append(y_test[3 * i][x])
+#                     y_test1.append(y_test[3 * i + 1][x])
+#                 fpr, tpr, thresholds = metrics.roc_curve(y_test1, y_predict1, pos_label=1)
+#                 tprs.append(interp(mean_fpr, fpr, tpr))
+#                 tprs[-1][0] = 0.0
+#                 plt.plot(fpr, tpr, color='0.5', lw=0.1)
+#                 auc = np.trapz(tpr, fpr)
+#                 s.write(str(jj) + '\t' + str(count_set[jj]) + '\t' + str(count_set[jj + 1]) + '\t' + str(auc) + '\n')
+#                 print('AUC:', auc)
+#                 AUC_set.append(auc)
+#         mean_tpr = np.median(tprs, axis=0)
+#         mean_tpr[-1] = 1.0
+#         per_tpr = np.percentile(tprs, [25, 50, 75], axis=0)
+#         mean_auc = np.trapz(mean_tpr, mean_fpr)
+#         plt.plot(mean_fpr, mean_tpr, 'k', lw=3, label='median ROC')
+#         plt.title(str(mean_auc))
+#         plt.fill_between(mean_fpr, per_tpr[0, :], per_tpr[2, :], color='g', alpha=.2, label='Quartile')
+#         plt.legend(loc='lower right')
+#         plt.savefig(save_dir + '/divided_ROCs1vs2_percentile.pdf')
+#         del fig
+#         fig = plt.figure(figsize=(5, 5))
+#         plt.hist(AUC_set, bins=50)
+#         plt.savefig(save_dir + '/divided_ROCs1vs2_hist.pdf')
+#         del fig
+#         s.close()
+
+
+#         #########################
+#         fig = plt.figure(figsize=(5, 5))
+#         plt.plot([0, 1], [0, 1])
+#         plt.ylim([0, 1])
+#         plt.xlim([0, 1])
+#         plt.xlabel('FP')
+#         plt.ylabel('TP')
+#         # plt.grid()
+#         AUC_set = []
+#         s = open(save_dir + '/divided_RPKM_AUCs1+2.txt', 'w')
+#         tprs = []
+#         mean_fpr = np.linspace(0, 1, 100) # 3068
+#         for jj in range(len(count_set) - 1):  # len(count_set)-1):
+#             if count_set[jj] < count_set[jj + 1]:
+#                 print(test_indel, jj, count_set[jj], count_set[jj + 1])
+#                 y_test = y_testy[count_set[jj]:count_set[jj + 1]]
+#                 y_predict = y_predicty[count_set[jj]:count_set[jj + 1]]
+#                 # Score trained model.
+#                 y_predict_x = [j[1] + j[2] for j in y_predict]
+#                 y_test_x = [1 - j[0] for j in y_test]
+#                 fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
+#                 tprs.append(interp(mean_fpr, fpr, tpr))
+#                 tprs[-1][0] = 0.0
+#                 # Print ROC curve
+#                 plt.plot(fpr, tpr, color='0.5', lw=0.001, alpha=.2)
+#                 auc = np.trapz(tpr, fpr)
+#                 s.write(str(jj) + '\t' + str(count_set[jj]) + '\t' + str(count_set[jj + 1]) + '\t' + str(auc) + '\n')
+#                 print('AUC:', auc)
+#                 AUC_set.append(auc)
+
+#         mean_tpr = np.median(tprs, axis=0)
+#         mean_tpr[-1] = 1.0
+#         per_tpr = np.percentile(tprs, [25, 50, 75], axis=0)
+#         mean_auc = np.trapz(mean_tpr, mean_fpr)
+#         plt.plot(mean_fpr, mean_tpr, 'k', lw=3, label='median ROC')
+#         plt.title(str(mean_auc))
+#         plt.fill_between(mean_fpr, per_tpr[0, :], per_tpr[2, :], color='g', alpha=.2, label='Quartile')
+#         plt.plot(mean_fpr, per_tpr[0, :], 'g', lw=3, alpha=.2)
+#         plt.legend(loc='lower right')
+#         plt.savefig(save_dir + '/divided_ROCs1+2_percentile.pdf')
+#         del fig
+#         fig = plt.figure(figsize=(5, 5))
+#         plt.hist(AUC_set, bins=50)
+#         plt.savefig(save_dir + '/divided_kegg_ROCs1+2_hist.pdf')
+#         del fig
+#         s.close()
+#     ###########################################################3 if we select the min point as the trained model
+#     # y_test = y_testy
+#     # y_predict = y_predicty
+#     # model.load_weights(save_dir + '/weights.hdf5')
+#     # scores = model.evaluate(x_test, y_test, verbose=1)
+#     # print('Test loss:', scores[0])
+#     # print('Test accuracy:', scores[1])
+#     # y_predict = model.predict(x_test)
+#     # np.save(save_dir+'/min_y_test.npy',y_test)
+#     # np.save(save_dir+'/min_y_predict.npy',y_predict)
+#     # plt.figure(figsize=(10, 6))
+#     # for i in range(3):
+#     #     y_test_x = [j[i] for j in y_test]
+#     #     y_predict_x = [j[i] for j in y_predict]
+#     #     fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
+#     #     plt.subplot(1, 3, i + 1)
+#     #     plt.plot(fpr, tpr)
+#     #     plt.grid()
+#     #     plt.plot([0, 1], [0, 1])
+#     #     plt.xlabel('FP')
+#     #     plt.ylabel('TP')
+#     #     plt.ylim([0, 1])
+#     #     plt.xlim([0, 1])
+#     #     auc = np.trapz(tpr, fpr)
+#     #     print('AUC:', auc)
+#     #     plt.title('label' + str(i) + ', AUC:' + str(auc))
+#     # plt.savefig(save_dir + '/min_3labels.pdf')
+#     # plt.figure(figsize=(10, 6))
+#     # y_predict_x = [j[1] + j[2] for j in y_predict]
+#     # y_test_x = [1 - j[0] for j in y_test]
+#     # fpr, tpr, thresholds = metrics.roc_curve(y_test_x, y_predict_x, pos_label=1)
+#     # # Print ROC curve
+#     # plt.plot(fpr, tpr)
+#     # plt.plot([0, 1], [0, 1])
+#     # # Print AUC
+#     # auc = np.trapz(tpr, fpr)
+#     # print('AUC:', auc)
+#     # plt.ylim([0, 1])
+#     # plt.xlim([0, 1])
+#     # plt.grid()
+#     # plt.title('label 1+2, AUC:' + str(auc))
+#     # plt.xlabel('FP')
+#     # plt.ylabel('TP')
+#     # plt.savefig(save_dir + '/min_1+2.pdf')
+#     # #################################################### data speration
+#     # plt.figure(figsize=(10, 6))
+#     # y_predict1 = []
+#     # y_test1 = []
+#     # x = 2
+#     # for i in range(int(len(y_predict) / 3)):
+#     #     y_predict1.append(y_predict[3 * i][x] - y_predict[3 * i + 1][x])
+#     #     y_predict1.append(-y_predict[3 * i][x] + y_predict[3 * i + 1][x])
+#     #     y_test1.append(y_test[3 * i][x])
+#     #     y_test1.append(y_test[3 * i + 1][x])
+#     # fpr, tpr, thresholds = metrics.roc_curve(y_test1, y_predict1, pos_label=1)
+#     # # Print ROC curve
+#     # plt.plot(fpr, tpr)
+#     # plt.plot([0, 1], [0, 1])
+#     # # Print AUC
+#     # auc = np.trapz(tpr, fpr)
+#     # print('AUC:', auc)
+#     # plt.ylim([0, 1])
+#     # plt.xlim([0, 1])
+#     # plt.grid()
+#     # plt.title('label 1 vs 2,direction diff, AUC:' + str(auc))
+#     # plt.xlabel('FP')
+#     # plt.ylabel('TP')
+#     # plt.savefig(save_dir + '/min_1vs2.pdf')
+# ###########################################################################
 
