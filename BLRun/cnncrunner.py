@@ -48,13 +48,15 @@ def generateInputs(RunnerObj):
     negative_pairs = split.generate_negative_samples_CNNC(df=gene_pairs, seed=1)
     negative_pairs['label'] = 0
     gene_pairs['label'] = 1
-    reversed_pairs = gene_pairs.copy(deep=True)
-    reversed_pairs[['source', 'target']] = reversed_pairs[['target', 'source']]
-    reversed_pairs['label'] = 2
-    final_pairs = pd.concat([gene_pairs, reversed_pairs, negative_pairs], axis=0).sort_index(kind='merge')
-    final_pairs.to_csv("./genes.txt", header=False, index=False, sep='\t')
+    # reversed_pairs = gene_pairs.copy(deep=True)
+    # reversed_pairs[['source', 'target']] = reversed_pairs[['target', 'source']]
+    # reversed_pairs['label'] = 2
+    # final_pairs = pd.concat([gene_pairs, reversed_pairs, negative_pairs], axis=0).sort_index(kind='merge')
+    final_pairs = pd.concat([gene_pairs, negative_pairs], axis=0).sort_index(kind='merge')
+    # print(final_pairs.shape)
+    # final_pairs.to_csv(RunnerObj.inputDir.joinpath("./genes.txt"), header=False, index=False, sep='\t')
     k = RunnerObj.params['k'] # k fold validation
-    train, test = split.split_edge_cv(gene_pairs, k, 1)
+    train, test = split.split_edge_cv(gene_pairs, k, RunnerObj.params['rngseed'])
     for i in range(k):   
         split.verify_split(gene_pairs, train[i], test[i], "edge")
         x = []
@@ -70,7 +72,10 @@ def generateInputs(RunnerObj):
             x_gene = np.log10(expression_data[y_gene_name] + 10 ** -2)
             H_T = np.histogram2d(x_tf, x_gene, bins=32)
             H = H_T[0].T
-            HT = (np.log10(H / 43261 + 10 ** -4) + 4) / 4
+            HT = (np.log10(H / (final_pairs.__len__() / 2) + 10 ** (-int(np.log10(final_pairs.__len__())))) + 4) / 4
+            # print(final_pairs.__len__())
+            # print((-int(np.log10(final_pairs.__len__()))))
+            # print(HT)
             x.append(HT)
         if (len(x)>0):
             xx = np.array(x)[:, :, :, np.newaxis]
@@ -88,13 +93,14 @@ def run(RunnerObj):
     # dataPath = PurePath('data')
     # print(dataPath)
     inputPath = 'data' + str(PurePath().joinpath(str(RunnerObj.inputDir).split(str(Path.cwd()))[1], "CNNC", "NEPDF_data"))
-    # print(inputPath)
+    print(inputPath)
     outDir = 'outputs' + os.path.sep + str(PurePath().joinpath(str(RunnerObj.inputDir).split("inputs/")[1], "CNNC"))
     os.makedirs(outDir, exist_ok = True)
     outPath = 'data' + os.path.sep + str(PurePath().joinpath(outDir, 'outFile.txt'))
+    outPathNonFile = 'data' + os.path.sep + outDir
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd()) + ':/data/ --expose=41269',
                          'cnnc:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt',
-                         'python cnncTrainModelKFold.py ' + str(RunnerObj.params['k']) + ' ' + inputPath + ' 3 > ' + outPath, 
+                         'python cnncTrainModelKFold.py ' + str(RunnerObj.params['k']) + ' ' + inputPath + ' 2 ' + str(RunnerObj.params['epochs']) + ' ' + outPathNonFile + " > " + outPath, 
                          '\"'])
     print(cmdToRun)
     os.system(cmdToRun)

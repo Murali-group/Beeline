@@ -1,4 +1,5 @@
 from __future__ import print_function
+from copy import deepcopy
 # Usage  python train_with_labels_three_fold.py number_of_data_parts_divided NEPDF_pathway number_of_category
 # command line in developer's linux machine :
 # module load cuda-8.0 using GPU
@@ -24,7 +25,7 @@ data_augmentation = False
 # num_predictions = 20
 batch_size = 1024 # mini batch for training
 #num_classes = 3   #### categories of labels
-epochs = 20     #### iterations of trainning, with GPU 1080, 600 for KEGG and Reactome, 200 for tasks for GTRD
+epochs = sys.argv[4]     #### iterations of trainning, with GPU 1080, 600 for KEGG and Reactome, 200 for tasks for GTRD
 #length_TF =3057  # number of divide data parts
 # num_predictions = 20
 model_name = 'keras_cnn_trained_model_shallow.h5'
@@ -35,7 +36,7 @@ def load_data_TF2(indel_list,data_path): # cell type specific  ## random samples
     import numpy as np
     xxdata_list = []
     yydata = []
-    count_set = [0]
+    count_set = [0] 
     count_setx = 0
     for i in indel_list:#len(h_tf_sc)):
         xdata = np.load(data_path+'/Nxdata_tf' + str(i) + '.npy')
@@ -51,7 +52,7 @@ def load_data_TF2(indel_list,data_path): # cell type specific  ## random samples
     print (np.array(xxdata_list).shape)
     return((np.array(xxdata_list),yydata_x,count_set))
 
-if len(sys.argv) < 4:
+if len(sys.argv) < 6:
     print ('No enough input files')
     sys.exit()
 length_TF =int(sys.argv[1]) # number of data parts divided - TODO beeline makes this equal to k-folds
@@ -60,19 +61,17 @@ num_classes = int(sys.argv[3])
 whole_data_TF = [i for i in range(length_TF)]
 ###################################################################################################################################
 for test_indel in range(length_TF): ################## k-fold cross validation                                                            
-    test_TF = test_indel # 1 fold partitioned for test - just using list for compatbility with CNNC's code     
-    train_TF = whole_data_TF.remove(test_TF)                                                                     #
+    test_TF = [test_indel] # 1 fold partitioned for test - just using list for compatbility with CNNC's code     
+    train_TF = deepcopy(whole_data_TF)
+    train_TF.remove(test_TF[0])                                                                #
 ###################################################################################################################################
 #####################################################################
-    print(data_path)
-    print(test_TF)
-    print(train_TF)
     (x_train, y_train,count_set_train) = load_data_TF2(train_TF,data_path)
     (x_test, y_test,count_set) = load_data_TF2(test_TF,data_path)
     print(x_train.shape, 'x_train samples')
     print(x_test.shape, 'x_test samples')
-    save_dir = os.path.join(os.getcwd(),str(test_indel)+'YYYY_saved_models_T_32-32-64-64-128-128-512_e'+str(epochs)) ## the result folder 
-    if num_classes >2:
+    save_dir = sys.argv[5] + '/YYYY_saved_models_T_32-32-64-64-128-128-512_e'+str(epochs) ## the result folder 
+    if num_classes > 2:
         y_train = keras.utils.to_categorical(y_train, num_classes)
         y_test = keras.utils.to_categorical(y_test, num_classes)
     print(y_train.shape, 'y_train samples')
@@ -116,22 +115,23 @@ for test_indel in range(length_TF): ################## k-fold cross validation
         sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
         model.compile(optimizer=sgd,loss='binary_crossentropy',metrics=['accuracy'])
     else:
+        print("classes > 2")
         model.add(Dense(num_classes))
         model.add(Activation('softmax'))
         sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
         model.compile(optimizer=sgd,loss='categorical_crossentropy',metrics=['accuracy'])
 
-    early_stopping = keras.callbacks.EarlyStopping(monitor='val_acc', patience=50, verbose=0, mode='auto')
+    early_stopping = keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=50, verbose=0, mode='auto')
     checkpoint1 = ModelCheckpoint(filepath=save_dir + '/weights.{epoch:02d}-{val_loss:.2f}.hdf5', monitor='val_loss',
                                   verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-    checkpoint2 = ModelCheckpoint(filepath=save_dir + '/weights.hdf5', monitor='val_acc', verbose=1,
+    checkpoint2 = ModelCheckpoint(filepath=save_dir + '/weights.hdf5', monitor='val_accuracy', verbose=1,
                                   save_best_only=True, mode='auto', period=1)
     callbacks_list = [checkpoint2, early_stopping]
     if not data_augmentation:
         print('Not using data augmentation.')
         history = model.fit(x_train, y_train,
                   batch_size=batch_size,
-                  epochs=epochs,validation_split=0.2,
+                  epochs=int(epochs), validation_split=0.2,
                   shuffle=True, callbacks=callbacks_list)
 
     # Save model and weights
@@ -149,8 +149,8 @@ for test_indel in range(length_TF): ################## k-fold cross validation
 ############################################################################## plot training process
     plt.figure(figsize=(10, 6))
     plt.subplot(1,2,1)
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
     plt.title('model accuracy')
     plt.ylabel('accuracy')
     plt.xlabel('epoch')

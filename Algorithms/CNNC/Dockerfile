@@ -9,10 +9,10 @@ RUN conda env create -f /tmp/environment.yml
 RUN echo "source activate CNNC" > ~/.bashrc
 ENV PATH /opt/conda/envs/CNNC/bin:$PATH
 RUN mkdir /data
-COPY cnncTrainModelKFold.py /
 RUN apt-get update
 RUN apt-get install time
 ENV KERAS_BACKEND=theano
+COPY cnncTrainModelKFold.py /
 # RUN conda install pandas
 # RUN conda install numpy
 # RUN conda install matplotlib 

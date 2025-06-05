@@ -130,6 +130,7 @@ for test_indel in range(length_TF): ################## k-fold cross validation
                   batch_size=batch_size,
                   epochs=epochs,validation_split=0.2,
                   shuffle=True, callbacks=callbacks_list)
+        print('got here')
 
     # Save model and weights
 

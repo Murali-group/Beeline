@@ -18,3 +18,4 @@ dependencies:
   - gxx
   - gxx_linux-64
   - theano
+  - tensorflow-estimator=2.1.0
