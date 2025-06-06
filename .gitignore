@@ -8,6 +8,7 @@ src/.*
 human-tfs.csv
 mouse-tfs.csv
 README.txt
+Algorithms/CNNC/NEPDF_data/
 Algorithms/TENET/temp/pair_list_aaa
 Algorithms/TENET/temp/pair_list_aab
 Algorithms/TENET/temp/pair_list_aac
