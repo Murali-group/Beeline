@@ -49,9 +49,9 @@ input_settings:
             should_run: [True]
             k: [3] # k-folds for cross validation
             rngseed: [1] # keep consistent!
-            epochs: [20] # recommended > 200
-            dropouts: [0.5] # default 0.5 for 2 label data
-            learning_rate: [0.02] #defualt 0.02 - keep close to zero
+            epochs: [500] # recommended > 200
+            dropouts: [0.1] # default 0.5
+            learning_rate: [0.01] #defualt 0.02
         
 
 
