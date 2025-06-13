@@ -99,8 +99,8 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
     outPath = 'data' + os.path.sep + str(PurePath().joinpath(outDir, 'outFile.txt'))
     outPathNonFile = 'data' + os.path.sep + outDir
-    cmdToRun = ' '.join(['docker run --name cnnc --gpus all --rm -v', str(Path.cwd()) + ':/data/ --expose=41269',
-                         'cnnc:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt',
+    cmdToRun = ' '.join(['docker run --name cnnc --gpus all --rm -v', str(Path.cwd()) + ':/data/ --expose=41269', '--entrypoint bash',
+                         'cnnc:cuda -c \"/usr/bin/time -v -o', "data/" + str(outDir) + 'time.txt', # importantly, use bin/bash
                          'python cnncTrainModelKFold.py ' + str(RunnerObj.params['k']), inputPath + ' 2 ' + str(RunnerObj.params['epochs']), outPathNonFile, str(RunnerObj.params['dropouts']), str(RunnerObj.params['learning_rate']) + " > " + outPath, 
                          '\"'])
     print(cmdToRun)
