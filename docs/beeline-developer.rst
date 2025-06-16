@@ -81,3 +81,30 @@ BEELINE currently supports several evaluation techniques, namely, area under ROC
 3. The final step is to add a command line option to perform the evaluation to `BLEvaluator.py <https://github.com/Murali-group/Beeline/blob/master/BLEvaluator.py>`_.
 
 
+.. _blevalguide:
+
+Adding a new experimental scRNA-seq data from sfaira
+#################################
+
+BEELINE provides seven experimental scRNA-seq datasets for evaluation. Sfaira is a standardized framework for sharing and accessing scRNA-seq datasets from various species, tissues, and experimental conditions. To extend BEELINE to analyze additional datasets, we further integrated sfaira to enable the automatic downloading of datasets according to prespecified features from sfaira. You can specify the desired features including year, organism, organ, and assay_sc in config-files/sfaira/sfaira-config.yaml. Then run the following code to download experimental scRNA-seq datasets into the existing pipeline.
+
+.. code:: python
+
+          python BLDataloader.py --config config-files/sfaira/sfaira-config.yaml
+
+
+.. _blevalguide:
+
+Generating expression inputs and reference networks for a new experimental scRNA-seq dataset
+#################################
+
+BEELINE provides the data files, including ExpressionData.csv, GeneOrdering.csv, and PseudoTime.csv for seven experimental scRNA-seq datasets. We also offer the option to generate the necessary expression inputs and reference networks by certain ground truth data to accommodate new datasets.
+
+1. Generate expression inputs: use generateExpInputs.py to produce expression inputs for the new dataset. Below is an example of generating the expression inputs with all transcription factors and 500 most varying genes for mHSC dataset based on STRING network: 
+
+.. code:: python
+
+python generateExpInputs.py -e=inputs/BEELINE-data/scRNA-Seq/Raw-data/mHSC-E/ExpressionData.csv -g=inputs/BEELINE-data/scRNA-Seq/Raw-data/mHSC-E/GeneOrdering.csv -f=inputs/BEELINE-Networks/Networks/mouse/STRING-network.csv -i=inputs/BEELINE-Networks/mouse-tfs.csv -p=0.01 -c -t -n=500
+
+2. Generate reference networks: use generateRefNetworks.py to create reference networks that will be used as ground truth to evaluate the above generated dataset. You can obtain the reference networks by referring to configure files in config-files
+/scRNA-seq-generator and changing the values of each argument in generateRefNetworks.sh.

@@ -1,0 +1,64 @@
+# sfaira Settings: specify the values of organism and organ to filter datasets from the sfaira database. 
+sfaira_settings:
+
+    # Base directory used to store datasets
+    data_dir : "inputs/sfaira"
+
+  
+    # Denotes a list of scRNA-seq datasets to download with the following parameters:
+    # Each filter is a key-value pair. 
+    # As of April 1st, 2023, sfaira supports the following key-value pairs:
+    #   key: the choices include year, organism, organ, and assay_sc. 
+    #
+    #   value: the specific values corresponds to the key. The values to each key can be more than one.
+    #          Below are the choices are by key. 
+    #          - year: 2016, 2017, 2018, 2019, 2020, 2021, 2022 
+    #          - organism: Ambystoma mexicanum, Anolis carolinensis, Canis lupus familiaris, Capra hircus, 
+    #                      Felis catus, Homo sapiens, Macaca fascicularis, Mesocricetus auratus, Mus musculus,  
+    #                      Mustela putorius furo, Oryctolagus cuniculus, Panthera tigris altaica
+    #          - organ: adipose tissue, aorta, arcuate nucleus of hypothalamus, blood, bone marrow, brain, bronchus, 
+    #                   caudate lobe of liver, cerebral cortex, cloaca, colon, colonic epithelium, dermis, diaphragm, 
+    #                   dorsal plus ventral thalamus, esophagus, eye, forebrain, forelimb, gill, gonad, heart, hindbrain, 
+    #                   hindlimb, ileum, intestine, islet of Langerhans, kidney, lamina propria of mucosa of colon, liver, 
+    #                   lung, lung parenchyma, lymph node, mammary gland, mesenchyme, midbrain tegmentum, multicellular organism, 
+    #                   muscle organ, neck, ovary, pallium, pancreas, placenta, prostate gland, rectum, retina, rib, 
+    #                   skeletal muscle organ, skin epidermis, skin of body, small intestine, spleen, stomach, striatum, tail, 
+    #                   testis, thymus, tongue, trachea, trophoblast, urinary bladder, uterus, vault of skull    
+    #          - assay_sc: 10x 3' transcription profiling, 10x 3' v1, 10x 3' v2, 10x 3' v3, 10x 5' transcription profiling, 
+    #                      10x multiome, 10x scATAC-seq, 10x technology, 10x transcription profiling, 
+    #                      BD Rhapsody Whole Transcriptome Analysis, CEL-seq2, CITE-seq (cell surface protein profiling), 
+    #                      CITE-seq (sample multiplexing), DroNc-seq, droplet-based single-cell RNA library preparation, 
+    #                      Drop-seq, inDrop, MARS-seq, microwell-seq, Quartz-seq, sci-RNA-seq, sci-RNA-seq3, Seq-Well, 
+    #                      Seq-Well S3, sfaira single cell library construction, single cell library construction, 
+    #                      single-cell RNA sequencing, sNuc-Seq, Smart-seq2, SPLiT-seq
+    #
+    subsets:   
+
+      - filters:
+            organ: ["bone marrow"]
+
+      - filters:
+            organism: ["Homo sapiens"]
+            organ: ["eye"]   
+
+      - filters:
+            organ: ["kidney"]
+            organism: ["Mus musculus"]
+            year: [2019] 
+            
+      - filters:
+            organism: ["Mus musculus"]
+            year: [2019] 
+            organ: ["heart"] 
+            
+      - filters:
+            assay_sc: ["Drop-seq"] 
+            organism: ["Homo sapiens"]
+
+      - filters:
+            organ: ["lung", "liver"]
+            organism: ["Mus musculus"]
+
+      - filters:
+            organ: ["retina"]
+            year: [2019, 2020, 2021]
