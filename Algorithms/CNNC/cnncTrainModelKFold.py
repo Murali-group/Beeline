@@ -7,19 +7,21 @@ from copy import deepcopy
 #######################OUTPUT
 # it will generate three-fold cross validation results
 import keras
-from keras.preprocessing.image import ImageDataGenerator
+from keras.src.legacy.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.optimizers import SGD
 from keras.callbacks import EarlyStopping,ModelCheckpoint
+from keras.optimizers.schedules import ExponentialDecay
 import os,sys
 import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn import metrics
-from scipy import interp
+from numpy import interp
+import tensorflow as tf
 ####################################### parameter settings
 data_augmentation = False
 # num_predictions = 20
@@ -33,7 +35,7 @@ learning_rate = float(sys.argv[7])
 model_name = 'keras_cnn_trained_model_shallow.h5'
 ###################################################
 
-
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 def load_data_TF2(indel_list,data_path): # cell type specific  ## random samples for reactome is not enough, need borrow some from keggp
     import numpy as np
     xxdata_list = []
@@ -114,20 +116,21 @@ for test_indel in range(length_TF): ################## k-fold cross validation
         sys.exit()
     elif num_classes ==2:
         model.add(Dense(1, activation='sigmoid'))
-        sgd = SGD(lr=learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
+        schedule = ExponentialDecay(initial_learning_rate=learning_rate, decay_steps=batch_size,decay_rate=1e-6)
+        sgd = SGD(learning_rate=schedule, momentum=0.9, nesterov=True)
         model.compile(optimizer=sgd,loss='binary_crossentropy',metrics=['accuracy'])
     else:
         print("classes > 2")
         model.add(Dense(num_classes))
         model.add(Activation('softmax'))
-        sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+        sgd = SGD(learning_rate=learning_rate, decay=1e-6, momentum=0.9, nesterov=True)
         model.compile(optimizer=sgd,loss='categorical_crossentropy',metrics=['accuracy'])
 
     early_stopping = keras.callbacks.EarlyStopping(monitor='val_accuracy', patience=50, verbose=0, mode='auto')
-    checkpoint1 = ModelCheckpoint(filepath=save_dir + '/weights.{epoch:02d}-{val_loss:.2f}.hdf5', monitor='val_loss',
-                                  verbose=1, save_best_only=False, save_weights_only=False, mode='auto', period=1)
-    checkpoint2 = ModelCheckpoint(filepath=save_dir + '/weights.hdf5', monitor='val_accuracy', verbose=1,
-                                  save_best_only=True, mode='auto', period=1)
+    checkpoint1 = ModelCheckpoint(filepath=save_dir + '/weights.{epoch:02d}-{val_loss:.2f}.keras', monitor='val_loss',
+                                  verbose=1, save_best_only=False, save_weights_only=False, mode='auto', save_freq=1)
+    checkpoint2 = ModelCheckpoint(filepath=save_dir + '/weights.keras', monitor='val_accuracy', verbose=1,
+                                  save_best_only=True, mode='auto', save_freq=1)
     callbacks_list = [checkpoint2, early_stopping]
     if not data_augmentation:
         print('Not using data augmentation.')
