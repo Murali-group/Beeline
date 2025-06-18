@@ -6,6 +6,7 @@ import argparse
 import pandas as pd
 from itertools import product, permutations, combinations, combinations_with_replacement
 import numpy as np
+import sys
 
 def get_parser() -> argparse.ArgumentParser:
     '''
@@ -34,16 +35,16 @@ def get_parser() -> argparse.ArgumentParser:
                         help='p-value cutoff. Default = 0.01')
 
     
-    parser.add_argument('-c','--BFcorr', action='store_true', default = False,
-                        help='Perform Bonferroni correction. Default = False. \n')
+    parser.add_argument('-c','--BFcorr', action='store_true', default = True,
+                        help='Perform Bonferroni correction. Default = True (in figure 5). \n')
 
     
     parser.add_argument('-n','--numGenes', type=int, default = 500,
                         help='Number of genes to add. Default=500. \n')
 
 
-    parser.add_argument('-t','--TFs', action='store_true', default = False,
-                        help='Add all significantly varying TFs. Default = False.\n')
+    parser.add_argument('-t','--TFs', action='store_true', default = True,
+                        help='Add all significantly varying TFs. Default = True (in figure 5).\n')
 
     parser.add_argument('-o','--outPrefix', type = str, default = 'BL-',
                         help='Prefix for writing output files. \n')
