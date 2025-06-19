@@ -92,31 +92,30 @@ def main():
     # Compute median time taken
     if (opts.time):
         print('\n\nComputing time taken...')
-        collate_tables(evalOutDirs, 'Times.csv', output_dir)
+        df_dict['Time'] = collate_tables(evalOutDirs, 'Times.csv', output_dir)
     
     # Compute early precision
     if (opts.epr):
         print('\n\nComputing early precision values...')
-        collate_tables(evalOutDirs, 'EPr.csv', output_dir)
+        df_dict['Early Percision'] = collate_tables(evalOutDirs, 'EPr.csv', output_dir)
   
     # Compute Jaccard index    
     if (opts.jaccard):
         print('\n\nComputing Jaccard index...')
-        collate_tables(evalOutDirs, "Jaccard.csv", output_dir)
+        df_dict['Jaccard'] = collate_tables(evalOutDirs, "Jaccard.csv", output_dir)
 
     # Compute Spearman correlation scores
     if (opts.spearman):
         print('\n\nComputing Spearman\'s correlation...')
-        collate_tables(evalOutDirs, "Spearman.csv", output_dir)
+        df_dict['Spearman'] = collate_tables(evalOutDirs, "Spearman.csv", output_dir)
  
      # Compute early precision for activation and inhibitory edges
     if (opts.sepr):
         print('\n\nComputing early precision values for activation and inhibitory edges...')
-        
-        collate_tables(evalOutDirs, "EPr-Activation.csv", output_dir)
-        collate_tables(evalOutDirs, "EPr-Inhibitory.csv", output_dir)
+        df_dict['EPR Activation'] = collate_tables(evalOutDirs, "EPr-Activation.csv", output_dir)
+        df_dict['EPR Inhibitory'] = collate_tables(evalOutDirs, "EPr-Inhibitory.csv", output_dir)
 
-    output_xlsx = output_dir + 'Collated.xlsx'
+    output_xlsx = output_dir + 'BEELINE-Collated.xlsx'
     with pd.ExcelWriter(output_xlsx) as writer:
         for dfkey, rdf in df_dict.items():
             rdf.to_excel(writer, sheet_name=dfkey)

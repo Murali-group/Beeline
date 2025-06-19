@@ -3,65 +3,72 @@ import pandas as pd
 from pathlib import Path
 import numpy as np
 
+
 def generateInputs(RunnerObj):
     '''
-    Function to generate desired outputs for XGBDENSE.
+    Function to generate desired outputs for mcpnetMI.
     If the folder/files under RunnerObj.datadir exist, 
     this function will not do anything.
     '''
-    if not RunnerObj.inputDir.joinpath("XGBDENSE").exists():
-        print("Input folder for XGBDENSE does not exist, creating input folder...")
-        RunnerObj.inputDir.joinpath("XGBDENSE").mkdir(exist_ok = False)
-        
-    if not RunnerObj.inputDir.joinpath("XGBDENSE/ExpressionData.csv").exists():
+    if not RunnerObj.inputDir.joinpath("MI").exists():
+        print("Input folder for MI does not exist, creating input folder...")
+        RunnerObj.inputDir.joinpath("MI").mkdir(exist_ok = False)
+ 
+    if not RunnerObj.inputDir.joinpath("MI/ExpressionData.csv").exists():
         import shutil
         shutil.copy(
             RunnerObj.inputDir.joinpath(RunnerObj.exprData),
-            RunnerObj.inputDir.joinpath("XGBDENSE")
+            RunnerObj.inputDir.joinpath("MI")
         )
-    
+
 def run(RunnerObj):
     '''
-    Function to run XGBDENSE algorithm
+    Function to run MI algorithm
     '''
     # inputDir = str(RunnerObj.inputDir).split(str(Path.cwd()))[1]
     # inputPath = f"{inputDir}/XGBDENSE/ExpressionData.csv"
-    inputPath = RunnerObj.inputDir.joinpath("XGBDENSE/ExpressionData.csv")
+    inputPath = RunnerObj.inputDir.joinpath("MI/ExpressionData.csv")
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/XGBDENSE/"
+    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/MI/"
     os.makedirs(outDir, exist_ok = True)
 
-    outPath = str(outDir) + 'outFile.txt'
-    statsPath = str(outDir) + 'outStats.json'
+    outPath = str(outDir) + 'outFile.h5'
     #TODO::
     cmdToRun = ' '.join([
         'time -v -o',
         f"{outDir}time.txt", 
-        'python -m gbr.cli csv --device=cpu --method=xgb',
-        f'--out_file {outPath}', 
-        f'--rstats_out_file {statsPath}',
-        f'--csv_file {inputPath}',
+        'mcpnet/build/bin/mi ',
+        f'-i {inputPath}',
+        f'-o {outPath}', 
     ])
     print(cmdToRun)
     os.system(cmdToRun)
 
-
 def parseOutput(RunnerObj):
     '''
-    Function to parse outputs from XGBDENSE.
+    Function to parse outputs from MI.
     '''
     # Quit if output directory does not exist
     rinDir = str(RunnerObj.inputDir).split("inputs/")[1]
-    outDir = f"outputs/{rinDir}/XGBDENSE/"
+    outDir = f"outputs/{rinDir}/MI/"
     
-    if not Path(outDir+'outFile.txt').exists():
-        print(outDir+'outFile.txt'+'does not exist, skipping...')
+    if not Path(outDir+'outFile.h5').exists():
+        print(outDir+'outFile.h5'+'does not exist, skipping...')
         return
     # Read output
-    OutDF : pd.DataFrame = pd.read_csv(
-        outDir+'outFile.txt', header = 0, index_col=0
+    h5file = outDir+'outFile.h5'
+    dfx = pd.read_hdf(h5file)
+    OutDF = (
+        dfx  # type:ignore
+        .transpose()   # type:ignore
+        .stack()
+        .reset_index()
+        .set_axis(
+            ["TF", "target", "importance"], axis=1
+        )
     )
-
+    OutDF = OutDF[OutDF["TF"] != OutDF["target"]]
+    OutDF = OutDF.sort_values(by=["importance"], ascending=False)
 
     final_df = OutDF.rename(columns={
         'TF': 'Gene1',
@@ -75,4 +82,3 @@ def parseOutput(RunnerObj):
     # for idx, row in OutDF.iterrows():
     #     outFile.write('\t'.join([row['TF'],row['target'],str(row['importance'])])+'\n')
     # outFile.close()
- 

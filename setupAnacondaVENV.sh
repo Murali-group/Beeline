@@ -3,7 +3,7 @@
 # Set-up Anaconda virtual environment
 echo "Setting up Anaconda Python virtual environment..."
 
-conda create -y --name BEELINE python=3.7.1 r=3.5.0 --file requirements.txt
+conda create -y --name BEELINE python=3.10 --file requirements.txt
 conda activate BEELINE
 
 # Install the PRROC package for computing area under PR curve

@@ -76,10 +76,11 @@ def boxplot(opts, evalConfigs, datasets, randValue, resTypeFile, resTypeName):
         evalConfig = evalConfigs[i]
         
         # Read output file containing AUROC values
-        DF = pd.read_csv(str(evalConfig.output_settings.base_dir) + '/' \
+        fname = str(evalConfig.output_settings.base_dir) + '/' \
                            + str(evalConfig.input_settings.datadir).split("inputs")[1] + '/' \
                            + str(evalConfig.output_settings.output_prefix) \
-                           + '-' + resTypeFile + '.csv', header = 0, index_col = 0)
+                           + '-' + resTypeFile + '.csv'
+        DF = pd.read_csv(fname, header = 0, index_col = 0)
         
         DF = DF.T
         DFs.append(DF)    
@@ -89,7 +90,8 @@ def boxplot(opts, evalConfigs, datasets, randValue, resTypeFile, resTypeName):
      
     for i, dataset in enumerate(datasets):
         DF = DFs[i]
-        modifiedDF = pd.melt(DF, id_vars=DF.index, value_vars=DF.columns)
+        modifiedDF = pd.melt(DF, value_vars=DF.columns, ignore_index=False)
+        # modifiedDF = pd.melt(DF, id_vars=DF.index, value_vars=DF.columns)
               
         if len(datasets) > 1:
             subax = axes[i]
@@ -103,13 +105,20 @@ def boxplot(opts, evalConfigs, datasets, randValue, resTypeFile, resTypeName):
         ax.lines[0].set_color("gray")
         
         # Plot the AUROC values as a box plot
-        ax = sns.boxplot(y='value',x ='variable', data=modifiedDF, fliersize = 0,
-                        palette=sns.color_palette("Set1"),
-                        ax = subax)
-        sns.swarmplot(y='value',x ='variable', data=modifiedDF,
-                         alpha = 0.5, palette=['k'],
-                         dodge = True,
+        ax = sns.boxplot(y='value',x ='variable',
+                         data=modifiedDF,
+                         fliersize = 0,
+                         hue='variable',
+                         palette=sns.color_palette("husl", 11),
                          ax = subax)
+        sns.swarmplot(y='value',x ='variable',
+                      data=modifiedDF,
+                      alpha = 0.5,
+                      color=sns.color_palette(['k'])[0],
+                      # palette=['k'],
+                      dodge = True,
+                      ax = subax,
+                      warn_thresh=0.25)
         
         ax.set_ylim([0.0,1])
         ax.set_ylabel(resTypeName, fontsize = 18)
@@ -475,12 +484,12 @@ def main():
                     # If early precision, compute the Early Precision Ratio (EPR)
                     # by dividing the values by that of a random predictor
                     if res == 'Early Precision Ratio' or res == 'AUPRC Ratio':
-                        overviewDF.loc[alg][res,dataset] =  ResDF[alg].median()/randPredictor[dataset]
+                        overviewDF.loc[alg, (res,dataset)] =  ResDF[alg].median()/randPredictor[dataset]
                     elif res == 'Stability Across Datasets' or res == 'Spearman':
-                        overviewDF.loc[alg][res,dataset] =  ResDF.iloc[0][alg]
+                        overviewDF.loc[alg, (res,dataset)] =  ResDF.iloc[0][alg]
                     else:
         
-                        overviewDF.loc[alg][res,dataset] =  ResDF[alg].median()
+                        overviewDF.loc[alg, (res,dataset)] =  ResDF[alg].median()
         
         overviewDF = overviewDF.loc[overviewDF['AUPRC Ratio'].median(axis='columns').sort_values().index]
         

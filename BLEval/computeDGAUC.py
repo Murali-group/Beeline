@@ -222,6 +222,6 @@ def computeScores(trueEdgesDF, predEdgeDF,
                                      y_score=outDF['PredEdges'], pos_label=1)
 
     prec, recall, thresholds = precision_recall_curve(y_true=outDF['TrueEdges'],
-                                                      probas_pred=outDF['PredEdges'], pos_label=1)
+                                                      y_score=outDF['PredEdges'], pos_label=1)
     
     return prec, recall, fpr, tpr, prCurve[2][0], auc(fpr, tpr)

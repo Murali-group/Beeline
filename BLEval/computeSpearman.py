@@ -5,6 +5,7 @@ import itertools
 import numpy as np
 import pandas as pd
 import networkx as nx
+from scipy import stats
 from tqdm import tqdm
 import multiprocessing
 from pathlib import Path
@@ -73,4 +74,5 @@ def Spearman(evalObject, algorithmName):
     df = df.stack().reset_index()
     df.columns = ['Row','Column','Value']
 
-    return(df.Value.median(),df.Value.mad())
+    dv_mad = stats.median_abs_deviation(df.Value.to_numpy(), scale=1)
+    return(df.Value.median(),dv_mad)

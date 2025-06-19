@@ -37,10 +37,9 @@ def run(RunnerObj):
     cmdToRun = ' '.join([
         'time -v -o',
         f"{outDir}time.txt", 
-        'python -m gbr.cli --method=lgb',
+        'python -m gbr.cli csv --device=cpu --method=lgb',
         f'--out_file {outPath}', 
         f'--rstats_out_file {statsPath}',
-        'csv',
         f'--csv_file {inputPath}',
     ])
     print(cmdToRun)

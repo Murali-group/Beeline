@@ -16,6 +16,12 @@ import BLRun.xgbDenseRunner as XGBDR
 import BLRun.xgbGPUDenseRunner as XGBGPDR
 import BLRun.lightbmDenseRunner as LBMDR
 import BLRun.arbDefaultRunner as ARBDR
+import BLRun.miRunner as MIRR
+import BLRun.clrRunner as CLRR
+import BLRun.dpiRunner as DPIR
+import BLRun.mcp2Runner as MCP2R
+import BLRun.mcp3Runner as MCP3R
+import BLRun.mcp4Runner as MCP4R
 
 from pathlib import Path
 
@@ -36,7 +42,14 @@ InputMapper = {'SCODE':SCODE.generateInputs,
                'XGBDENSE': XGBDR.generateInputs,
                'XGBGPUDENSE': XGBGPDR.generateInputs,
                'LGBDENSE': LBMDR.generateInputs,
-               'ARBDEF': ARBDR.generateInputs,}
+               'ARBDEF': ARBDR.generateInputs,
+               'MI': MIRR.generateInputs,
+               'CLR': CLRR.generateInputs,
+               'DPI': DPIR.generateInputs,
+               'MCP2': MCP2R.generateInputs,
+               'MCP3': MCP3R.generateInputs,
+               'MCP4': MCP4R.generateInputs,
+               }
 
 
 
@@ -58,7 +71,14 @@ AlgorithmMapper = {'SCODE':SCODE.run,
             'XGBDENSE':XGBDR.run,
             'XGBGPUDENSE':XGBGPDR.run,
             'LGBDENSE': LBMDR.run,
-            'ARBDEF':ARBDR.run}
+            'ARBDEF':ARBDR.run,
+            'MI': MIRR.run,
+            'CLR': CLRR.run,
+            'DPI': DPIR.run,
+            'MCP2': MCP2R.run,
+            'MCP3': MCP3R.run,
+            'MCP4': MCP4R.run,
+            }
 
 
 
@@ -80,6 +100,12 @@ OutputParser = {'SCODE':SCODE.parseOutput,
             'XGBGPUDENSE':XGBGPDR.parseOutput,
             'LGBDENSE': LBMDR.parseOutput,
             'ARBDEF':ARBDR.parseOutput,
+            'MI': MIRR.parseOutput,
+            'CLR': CLRR.parseOutput,
+            'DPI': DPIR.parseOutput,
+            'MCP2': MCP2R.parseOutput,
+            'MCP3': MCP3R.parseOutput,
+            'MCP4': MCP4R.parseOutput,
             }
 
 
