@@ -56,12 +56,16 @@ def generateInputs(RunnerObj):
         # final_pairs.to_csv(RunnerObj.inputDir.joinpath("./genes.txt"), header=False, index=False, sep='\t')
         k = RunnerObj.params['k'] # k fold validation
         train, test = split.split_edge_cv(gene_pairs, k, RunnerObj.params['rngseed'])
+        tf_list_folds = split.split_list(final_pairs['source'].unique(), k, RunnerObj.params['rngseed'])
+        # fold 0 will be the holdout
+        # print(tf_list_folds[0])
+        # print(final_pairs[final_pairs['source'].isin(tf_list_folds[0])])
         for i in range(k):   
-            split.verify_split(gene_pairs, train[i], test[i], "edge")
+            # split.verify_split(gene_pairs, train[i], test[i], "edge")
             x = []
             y = []
-            z = []
-            for index, gene_pair in final_pairs.loc[test[i]].iterrows(): 
+            z = []  
+            for index, gene_pair in final_pairs[final_pairs['source'].isin(tf_list_folds[i])].iterrows(): 
                 # print(gene_pair)
                 x_gene_name, y_gene_name, label = gene_pair[0], gene_pair[1], gene_pair[2]
                 # print(x_gene_name)
