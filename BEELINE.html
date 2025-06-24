@@ -194,12 +194,11 @@ visualizing output from BLEval.</li>
 <div class="section" id="getting-started">
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
 <p>The BEELINE pipeline interfaces with the implementations of various
-algorithms through Docker containers.  Please follow this tutorial on
-how to <a class="reference external" href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-18-04">install docker</a>
-on Ubuntu 18.0.</p>
+algorithms through Docker containers. BEELINE natively supports Debian-based distributions (e.g. Ubuntu), and also supports Windows/other Linux distributions. <a class="reference external" href="https://docs.docker.com/engine/install/">Install Docker Engine for your system.</a>
+<br> If you prefer/your system supports a graphical interface, you may instead <a class="reference external" href="https://docs.docker.com/desktop/">install Docker Desktop.</a></p>
 <div class="admonition tip">
 <p class="first admonition-title">Tip</p>
-<p>Setup docker to run docker without sudo using the following shell command</p>
+<p>Setup docker to run docker without using sudo each time by adding yourself to the Docker group. You may have to restart your shell for the changes to take effect.</p>
 <div class="code sh highlight-default notranslate"><div class="highlight"><pre><span></span>sudo usermod -aG docker $USER
 </pre></div>
 </div>
@@ -214,13 +213,21 @@ terminal</p>
 </div>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">This step will take a while!</p>
+<p class="last">This step will take a while! Ensure that your system also has ~20GB of memory available to build each image.</p>
 </div>
-<p>We recommend using <a class="reference external" href="https://www.anaconda.com">Anaconda</a> for Python. Run the following command to automatically create an Anaconda virtual environment named BEELINE from requirements.txt and install necessary libraries required to run BEELINE</p>
+<p>BEELINE requires <a class="reference external" href="https://www.anaconda.com/docs/getting-started/miniconda/install">Miniconda</a> (or Anaconda) for package management. Run the following command to automatically create an Anaconda virtual environment named BEELINE that contains all the necessary dependencies.</p>
 <div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">.</span> <span class="n">setupAnacondaVENV</span><span class="o">.</span><span class="n">sh</span>
-</pre></div>
+</pre>
 </div>
-<p>Alternatively, one can create a virtual environment in Python using venv from requirements.txt as detailed <a class="reference external" href="https://packaging.python.org/guides/installing-using-pip-and-virtual-environments/">here</a>.</p>
+
+    <div class="admonition tip">
+    <p class="first admonition-title">Tip</p>
+    <p>Anaconda isolates different sets of dependencies into each environment that it creates. To use an environment, you must "activate" it. You may have to reactivate it after logging back into a server or switching to another environment with</p>
+    <div class="code sh highlight-default notranslate"><div class="highlight"><pre><span></span>conda activate BEELINE</pre></div>
+    </div>
+  </div>
+
+  <p>BEELINE should now be installed and ready to run benchmarks.</p>
 <p>To compute proposed reconstructions using the 12 GRN algorithms on the example dataset, run</p>
 <div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">BLRunner</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
 </pre></div>
