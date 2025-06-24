@@ -1,4 +1,4 @@
-FROM nvidia/cuda:12.9.0-cudnn-devel-ubuntu24.04
+FROM nvidia/cuda:12.5.1-cudnn-devel-ubuntu20.04
 
 LABEL Maintainer="Tim Wilson <timwilson@vt.edu>"
 USER root
@@ -21,5 +21,6 @@ RUN echo "source activate CNNC" > ~/.bashrc
 ENV PATH /miniconda3/envs/CNNC/bin:$PATH
 RUN mkdir /data
 ENV KERAS_BACKEND=tensorflow
+RUN conda list -n CNNC > /list.txt
 # ENV CUDA_VISIBLE_DEVICES = "0"
 COPY cnncTrainModelKFold.py /

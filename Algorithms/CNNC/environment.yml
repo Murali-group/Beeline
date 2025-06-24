@@ -5,17 +5,16 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - python
-  - tensorflow
+  - python==3.12
+  - tensorflow==2.18.0
   - keras
   - pandas
   - numpy
   - scikit-learn
   - matplotlib
-  - h5py=3.14.0
+  - h5py
   - time
   - gcc
   - gxx
   - gxx_linux-64
-  - theano
   - tensorflow-estimator
