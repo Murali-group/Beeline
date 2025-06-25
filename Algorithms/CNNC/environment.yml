@@ -3,10 +3,13 @@ channels:
   - anaconda
   - conda-forge
   - bioconda
+  - nvidia
   - defaults
 dependencies:
   - python==3.12
-  - tensorflow==2.18.0
+  - pytorch-gpu==2.7.1
+  - torchvision
+  - torchaudio
   - keras
   - pandas
   - numpy
@@ -18,3 +21,6 @@ dependencies:
   - gxx
   - gxx_linux-64
   - tensorflow-estimator
+  - pip
+  - pip:
+    - torch

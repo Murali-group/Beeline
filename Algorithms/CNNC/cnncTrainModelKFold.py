@@ -21,7 +21,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from sklearn import metrics
 from numpy import interp
-import tensorflow as tf
+import torch
 ####################################### parameter settings
 data_augmentation = False
 # num_predictions = 20
@@ -34,8 +34,9 @@ learning_rate = float(sys.argv[7])
 # num_predictions = 20
 model_name = 'keras_cnn_trained_model_shallow.h5'
 ###################################################
+print(torch.cuda.is_available())
+print(torch.cuda.device_count())
 
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 def load_data_TF2(indel_list,data_path): # cell type specific  ## random samples for reactome is not enough, need borrow some from keggp
     import numpy as np
     xxdata_list = []
@@ -90,7 +91,7 @@ for test_indel in range(length_TF): ################## k-fold cross validation
     model.add(Activation('relu'))
     model.add(Conv2D(32, (3, 3)))
     model.add(Activation('relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(MaxPooling2D(pool_size=(2 , 2)))
     model.add(Dropout(dropoutPercentageLayers))
 
     model.add(Conv2D(64, (3, 3), padding='same'))
