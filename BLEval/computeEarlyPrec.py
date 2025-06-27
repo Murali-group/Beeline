@@ -38,6 +38,9 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = True):
 
     '''
     rankDict = {}
+    Eprec = {}
+    Erec = {}
+    EPR = {}
     for dataset in tqdm(evalObject.input_settings.datasets):
         trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
                       dataset['name'] + '/' +\
@@ -128,11 +131,7 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = True):
         else:
             print("\nSkipping early precision computation for on path ", rank_path,"due to lack of predictions.")
             rankDict[dataset["name"]] = set([])
-            
-    Eprec = {}
-    Erec = {}
-    EPR = {}
-    for dataset in tqdm(evalObject.input_settings.datasets):
+
         if len(rankDict[dataset["name"]]) != 0:
             intersectionSet = rankDict[dataset["name"]].intersection(trueEdges)
             Eprec[dataset["name"]] = len(intersectionSet)/len(rankDict[dataset["name"]])
