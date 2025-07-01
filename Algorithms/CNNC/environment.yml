@@ -7,9 +7,6 @@ channels:
   - defaults
 dependencies:
   - python==3.12
-  - pytorch-gpu==2.7.1
-  - torchvision
-  - torchaudio
   - keras
   - pandas
   - numpy
@@ -24,3 +21,5 @@ dependencies:
   - pip
   - pip:
     - torch
+    - torchvision
+    - torchaudio
