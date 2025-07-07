@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 import seaborn as sns
@@ -45,7 +46,7 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
     AUROC = {}
     
     # set-up outDir that stores output directory name
-    outDir = "outputs/"+str(inputSettings.datadir).split("inputs/")[1]+ '/' +dataDict['name']
+    outDir = "outputs/"+"/".join(str(inputSettings.datadir).split("inputs" + os.sep)[1].split(os.sep))+ '/' +dataDict['name']
     
     if directed:
         for algo in tqdm(inputSettings.algorithms, 
@@ -214,6 +215,9 @@ def computeScores(trueEdgesDF, predEdgeDF,
     # to pass it to sklearn
     outDF = pd.DataFrame([TrueEdgeDict,PredEdgeDict]).T
     outDF.columns = ['TrueEdges','PredEdges']
+    utils = importr('utils')
+    utils.chooseCRANmirror(ind=1)
+    # utils.install_packages('PRROC')
     prroc = importr('PRROC')
     prCurve = prroc.pr_curve(scores_class0 = FloatVector(list(outDF['PredEdges'].values)), 
               weights_class0 = FloatVector(list(outDF['TrueEdges'].values)))

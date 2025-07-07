@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
+from BLRun.out_path_generator import get_output_path
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -38,11 +39,11 @@ def run(RunnerObj):
     :param RunnerObj: An instance of the :class:`BLRun`
     '''
     # Get path for ExpressionData.csv generated in SCSGL folder for certain type of network in inputs
-    expressionDataPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    expressionDataPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/SCSGL/ExpressionData.csv"
 
     # Get path for refNetwor.csv generated in SCSGL folder for certain type of network in inputs
-    refNetworkPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    refNetworkPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/SCSGL/refNetwork.csv"
 
     pos_density = str(RunnerObj.params['pos_density'])
@@ -50,7 +51,7 @@ def run(RunnerObj):
     assoc = str(RunnerObj.params['assoc'])
 
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCSGL/"
+    outDir = get_output_path(RunnerObj, "/SCSGL/")
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
@@ -70,7 +71,7 @@ def parseOutput(RunnerObj):
     :param RunnerObj: An instance of the :class:`BLRun`
     '''
     # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCSGL/"
+    outDir = get_output_path(RunnerObj, "/SCSGL/")
 
         
     # Read output file

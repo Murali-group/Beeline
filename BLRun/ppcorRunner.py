@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 from pathlib import Path
+from BLRun.out_path_generator import get_output_path
 import numpy as np
 
 def generateInputs(RunnerObj):
@@ -27,11 +28,11 @@ def run(RunnerObj):
     '''
     Function to run PPCOR algorithm
     '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+    inputPath = "data" + "/".join(str(RunnerObj.inputDir).split(str(Path.cwd()))[1].split(os.sep)) + \
                     "/PPCOR/ExpressionData.csv"
     
     # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/PPCOR/"
+    outDir = get_output_path(RunnerObj, "/PPCOR/")
     os.makedirs(outDir, exist_ok = True)
     
     outPath = "data/" +  str(outDir) + 'outFile.txt'
@@ -47,7 +48,7 @@ def parseOutput(RunnerObj):
     Function to parse outputs from PPCOR.
     '''
     # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/PPCOR/"
+    outDir = get_output_path(RunnerObj, "/PPCOR/")
     if not Path(outDir+'outFile.txt').exists():
         print(outDir+'outFile.txt'+'does not exist, skipping...')
         return
