@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Defining an input model &mdash; BEELINE  documentation</title>
+  <title>BoolODE &mdash; BEELINE  documentation</title>
   
 
   
@@ -34,7 +34,9 @@
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="BoolODE package" href="BoolODE.html" />
+    <link rel="prev" title="BLPlot package" href="BLPlot.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -81,9 +83,29 @@
               
             
             
-              <ul>
+              <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="BEELINE.html">BEELINE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="BoolODE-intro.html">BoolODE</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">BoolODE</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#defining-an-input-model">Defining an input model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#running-boolode">Running BoolODE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#working-with-boolode-output">Working with BoolODE output</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-inputs-for-beeline">Generating inputs for BEELINE</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#generate-samples-from-simulations">Generate Samples from Simulations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#carry-out-dimensionality-reduction">Carry out dimensionality reduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-dropouts-from-expression-data">Generate dropouts from expression data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compute-pseudotime-using-slingshot">Compute Pseudotime using Slingshot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#api-reference">API Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BoolODE.html">BoolODE package</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
             
@@ -129,13 +151,13 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Defining an input model</li>
+      <li>BoolODE</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="_sources/boolode-tutorial.rst.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/BoolODE-intro.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -148,8 +170,21 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="defining-an-input-model">
-<h1>Defining an input model<a class="headerlink" href="#defining-an-input-model" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="boolode">
+<h1>BoolODE<a class="headerlink" href="#boolode" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>The BoolODE package converts a Boolean model to an ODE model and carries out stochastic
+simulations. It reads a model definition file, and outputs the simulated expression data
+for a given model.</p>
+<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">boolode</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">config</span> <span class="n">config</span><span class="o">-</span><span class="n">files</span><span class="o">/</span><span class="n">example</span><span class="o">-</span><span class="n">config</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="tutorial">
+<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="defining-an-input-model">
+<h3>Defining an input model<a class="headerlink" href="#defining-an-input-model" title="Permalink to this headline">¶</a></h3>
 <p>Consider a toy gene regulatory network with a series of mutual
 inhibition motifs as illustrated below:</p>
 <div class="figure align-center" id="id1">
@@ -217,7 +252,7 @@ between 0 and 2, to prevent numerical instability.</p>
 </div>
 </div>
 <div class="section" id="running-boolode">
-<h1>Running BoolODE<a class="headerlink" href="#running-boolode" title="Permalink to this headline">¶</a></h1>
+<h3>Running BoolODE<a class="headerlink" href="#running-boolode" title="Permalink to this headline">¶</a></h3>
 <p>A few more decisions before we get our simulated dataset of gene expression
 values:</p>
 <ol class="arabic simple">
@@ -258,7 +293,7 @@ three sections:
 <p>For a full list of available options, see <cite>example-config.yaml</cite></p>
 </div>
 <div class="section" id="working-with-boolode-output">
-<h1>Working with BoolODE output<a class="headerlink" href="#working-with-boolode-output" title="Permalink to this headline">¶</a></h1>
+<h3>Working with BoolODE output<a class="headerlink" href="#working-with-boolode-output" title="Permalink to this headline">¶</a></h3>
 <p>The simulations will take about 5 minutes to complete. At the end of a successful run, the
 output directory should like this:</p>
 <div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span>test/                      # User specified destination
@@ -276,7 +311,91 @@ output directory should like this:</p>
 files, the cell IDs, has the form <code class="docutils literal notranslate"><span class="pre">E&lt;simulation</span> <span class="pre">number&gt;_&lt;timepoint&gt;</span></code>.</p>
 <p>The above run has generated a series of simulation files. In the next step, we
 can use the same config file to carry out post processing on the simulation output,
-as described in <a class="reference internal" href="BoolODE-intro.html#geninputs"><span class="std std-ref">Generating inputs for BEELINE</span></a>.</p>
+as described in <a class="reference internal" href="#geninputs"><span class="std std-ref">Generating inputs for BEELINE</span></a>.</p>
+</div>
+</div>
+<div class="section" id="generating-inputs-for-beeline">
+<span id="geninputs"></span><h2>Generating inputs for BEELINE<a class="headerlink" href="#generating-inputs-for-beeline" title="Permalink to this headline">¶</a></h2>
+<p>In order to process the output of BoolODE simulations, configure settings under <code class="docutils literal notranslate"><span class="pre">post_processsing</span></code>
+in the config file. Ensure that <code class="docutils literal notranslate"><span class="pre">do_post_processing</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<div class="section" id="generate-samples-from-simulations">
+<h3>Generate Samples from Simulations<a class="headerlink" href="#generate-samples-from-simulations" title="Permalink to this headline">¶</a></h3>
+<p>The default post processing option is <code class="docutils literal notranslate"><span class="pre">genSamples</span></code>. Even if <code class="docutils literal notranslate"><span class="pre">genSamples</span></code> is
+not specified by the user, as long as any other post processing methods are specified,
+at least one dataset is generated by <code class="docutils literal notranslate"><span class="pre">genSamples</span></code> for further processing. This ensures
+that the simulation files remain untouched, while working with datasets of maneagable sizes.</p>
+<p><code class="docutils literal notranslate"><span class="pre">genSamples</span></code> takes two further parameters</p>
+<ol class="arabic simple">
+<li><code class="docutils literal notranslate"><span class="pre">sample_size</span></code> specifies the number of cells (&lt; <code class="docutils literal notranslate"><span class="pre">num_cells</span></code>) to sample from the simulations.</li>
+<li><code class="docutils literal notranslate"><span class="pre">nDatasets</span></code> specifies the number of datasets with <code class="docutils literal notranslate"><span class="pre">sample_size</span></code> simulation time points, i.e. cells, to sample.</li>
+</ol>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If genSamples is not explicitly specified, genSamples() is still run with <code class="docutils literal notranslate"><span class="pre">sample_size=num_cells</span></code>
+and <code class="docutils literal notranslate"><span class="pre">nDatasets=1</span></code></p>
+</div>
+</div>
+<div class="section" id="carry-out-dimensionality-reduction">
+<h3>Carry out dimensionality reduction<a class="headerlink" href="#carry-out-dimensionality-reduction" title="Permalink to this headline">¶</a></h3>
+<p>Having sampled the simulated trajectories, we can now visualize the generated
+dataset, by carrying out dimensionality reduction using t-SNE. This is specified
+using <code class="docutils literal notranslate"><span class="pre">DimRed</span></code> which further takes a list of <code class="docutils literal notranslate"><span class="pre">perplexities</span></code>. tSNE is performed
+on each generated dataset with each specified perplexity. This can help in picking
+the appropriate value of perplexity for downstream analysis.</p>
+<p>Remember, each cell is a time point from a simulation. Thus, the low
+dimensional representation of cells can be colored by their
+“simulation time” which is inferred from the cell ID. Darker
+colors imply early time points in the simulation. The output should
+look like the following</p>
+<div class="figure align-center" id="id2">
+<img alt="_images/tree.png" src="_images/tree.png" />
+<p class="caption"><span class="caption-text">t-SNE visualization of BoolODE output</span></p>
+</div>
+</div>
+<div class="section" id="generate-dropouts-from-expression-data">
+<h3>Generate dropouts from expression data<a class="headerlink" href="#generate-dropouts-from-expression-data" title="Permalink to this headline">¶</a></h3>
+<p>In order to mimic real single-cell expression datasets, BoolODE
+includes <code class="docutils literal notranslate"><span class="pre">post_processing.genDropouts()</span></code> which implements dropouts as described in
+the paper, by dropping expression values below <code class="docutils literal notranslate"><span class="pre">drop_cutoff</span></code> using a
+probability of <code class="docutils literal notranslate"><span class="pre">drop_prob</span></code>.</p>
+<div class="admonition attention">
+<p class="first admonition-title">Attention</p>
+<p class="last">Ensure the <code class="docutils literal notranslate"><span class="pre">-</span> <span class="pre">dropout:</span> <span class="pre">True</span></code> is specified. If not, <code class="docutils literal notranslate"><span class="pre">genDropouts</span></code>
+will still randomly sample cells but not dropout any values.</p>
+</div>
+</div>
+<div class="section" id="compute-pseudotime-using-slingshot">
+<h3>Compute Pseudotime using Slingshot<a class="headerlink" href="#compute-pseudotime-using-slingshot" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">runSlingshot.py requires the SlingShot docker file! Please make sure
+docker has been setup and the container built.</p>
+</div>
+<p>Slingshot computes pseudotime trajectories for a given dataset by
+first carrying out dimensionality reduction, then carrying out
+<em>k</em>-means clustering on the low dimensional embedding in order to
+compute trajectories. The number of clusters expected depend on the
+features of the dataset. For instance, a dataset with two steady state
+clusters should be specified with <code class="docutils literal notranslate"><span class="pre">nClusters:</span> <span class="pre">3</span></code>, specifying an
+additional initial state cluster.</p>
+</div>
+</div>
+<div class="section" id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BoolODE.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BoolODE.html#module-BoolODE.model_generator">BoolODE.model_generator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BoolODE.html#module-BoolODE.post_processing">BoolODE.post_processing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BoolODE.html#module-BoolODE.run_experiment">BoolODE.run_experiment module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BoolODE.html#module-BoolODE.simulator">BoolODE.simulator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BoolODE.html#module-BoolODE.utils">BoolODE.utils module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 </div>
 
 
@@ -284,6 +403,15 @@ as described in <a class="reference internal" href="BoolODE-intro.html#geninputs
            
           </div>
           <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="BoolODE.html" class="btn btn-neutral float-right" title="BoolODE package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="BLPlot.html" class="btn btn-neutral float-left" title="BLPlot package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
   
 
   <hr/>

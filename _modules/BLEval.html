@@ -83,7 +83,7 @@
             
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../BEELINE.html">BEELINE</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BoolODE-intro.html">BoolODE</a></li>
 </ul>
 
             
@@ -179,11 +179,12 @@
 <span class="c1"># local imports</span>
 <span class="kn">from</span> <span class="nn">BLEval.parseTime</span> <span class="k">import</span> <span class="n">getTime</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeDGAUC</span> <span class="k">import</span> <span class="n">PRROC</span>
+<span class="kn">from</span> <span class="nn">BLEval.computeBorda</span> <span class="k">import</span> <span class="n">Borda</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeJaccard</span> <span class="k">import</span> <span class="n">Jaccard</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeSpearman</span> <span class="k">import</span> <span class="n">Spearman</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeNetMotifs</span> <span class="k">import</span> <span class="n">Motifs</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeEarlyPrec</span> <span class="k">import</span> <span class="n">EarlyPrec</span>
-<span class="c1">#from BLEval.computePathStats import pathAnalysis</span>
+<span class="kn">from</span> <span class="nn">BLEval.computePathStats</span> <span class="k">import</span> <span class="n">pathAnalysis</span>
 <span class="kn">from</span> <span class="nn">BLEval.computeSignedEPrec</span> <span class="k">import</span> <span class="n">signedEPrec</span>
 
 
@@ -372,17 +373,17 @@
         <span class="k">return</span> <span class="n">FBL</span><span class="p">,</span> <span class="n">FFL</span><span class="p">,</span> <span class="n">MI</span></div>
     
     
-    <span class="c1"># def computePaths(self):</span>
-    <span class="c1">#     &#39;&#39;&#39;</span>
-    <span class="c1">#     For each algorithm-dataset combination, this function computes path lengths</span>
-    <span class="c1">#     through TP edges and FP edges, returns statistics on path lengths.</span>
+<div class="viewcode-block" id="BLEval.computePaths"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computePaths">[docs]</a>    <span class="k">def</span> <span class="nf">computePaths</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        For each algorithm-dataset combination, this function computes path lengths</span>
+<span class="sd">        through TP edges and FP edges, returns statistics on path lengths.</span>
 
-    <span class="c1">#     :returns:</span>
-    <span class="c1">#         - pathStats: A dataframe path lengths in predicted network</span>
-    <span class="c1">#     &#39;&#39;&#39;</span>
-    <span class="c1">#     for dataset in tqdm(self.input_settings.datasets, </span>
-    <span class="c1">#                         total = len(self.input_settings.datasets), unit = &quot; Datasets&quot;):</span>
-    <span class="c1">#         pathAnalysis(dataset, self.input_settings)</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            - pathStats: A dataframe path lengths in predicted network</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datasets</span><span class="p">,</span> 
+                            <span class="n">total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">datasets</span><span class="p">),</span> <span class="n">unit</span> <span class="o">=</span> <span class="s2">&quot; Datasets&quot;</span><span class="p">):</span>
+            <span class="n">pathAnalysis</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="p">)</span></div>
 
                  
 <div class="viewcode-block" id="BLEval.computeEarlyPrec"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computeEarlyPrec">[docs]</a>    <span class="k">def</span> <span class="nf">computeEarlyPrec</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -428,8 +429,39 @@
                 <span class="n">sEPrecDF</span> <span class="o">=</span> <span class="n">signedEPrec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                 <span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;EPrec Activation&#39;</span><span class="p">][</span><span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">sEPrecDF</span><span class="p">[</span><span class="s1">&#39;+&#39;</span><span class="p">]</span>
                 <span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;EPrec Inhibition&#39;</span><span class="p">][</span><span class="n">algo</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">sEPrecDF</span><span class="p">[</span><span class="s1">&#39;-&#39;</span><span class="p">]</span>
-        <span class="k">return</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;EPrec Activation&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;EPrec Inhibition&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div></div>
+        <span class="k">return</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;EPrec Activation&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sEPRDict</span><span class="p">[</span><span class="s1">&#39;EPrec Inhibition&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
     
+<div class="viewcode-block" id="BLEval.computeBorda"><a class="viewcode-back" href="../BLEval.html#BLEval.BLEval.computeBorda">[docs]</a>    <span class="k">def</span> <span class="nf">computeBorda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selectedAlgorithms</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">aggregationMethod</span><span class="o">=</span><span class="s2">&quot;average&quot;</span><span class="p">):</span>
+
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Computes edge ranked list using the Borda method for each dataset.</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        selectedAlgorithms: [str]</span>
+<span class="sd">          List of algorithm names used to run borda method on selected</span>
+<span class="sd">          algorithms. If nothing is provided, the function runs borda on</span>
+<span class="sd">          all available algorithms.</span>
+<span class="sd">        aggregationMethod: str</span>
+<span class="sd">          Method used to aggregate rank in borda method. Available options are</span>
+<span class="sd">          {‘average’, ‘min’, ‘max’, ‘first’}, default ‘average’</span>
+<span class="sd">        :returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">feasibleAlgorithmOptions</span> <span class="o">=</span> <span class="p">[</span><span class="n">algorithmName</span> <span class="k">for</span> <span class="n">algorithmName</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_settings</span><span class="o">.</span><span class="n">algorithms</span><span class="p">]</span>
+        <span class="n">feasibleaggregationMethodOptions</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;average&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">,</span> <span class="s1">&#39;first&#39;</span><span class="p">]</span>
+
+        <span class="n">selectedAlgorithms</span> <span class="o">=</span> <span class="n">feasibleAlgorithmOptions</span> <span class="k">if</span> <span class="n">selectedAlgorithms</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">selectedAlgorithms</span>
+
+        <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">selectedAlgorithms</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">feasibleAlgorithmOptions</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ERROR: No data available on algorithm </span><span class="si">%s</span><span class="s2">. Please choose an algorithm from the following options: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">feasibleAlgorithmOptions</span><span class="p">))</span>
+                <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">aggregationMethod</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">feasibleaggregationMethodOptions</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ERROR: Please choose an aggregation method algorithm from following options: &quot;</span> <span class="o">%</span> <span class="n">feasibleaggregationMethodOptions</span><span class="p">)</span>
+                <span class="k">return</span>
+
+        <span class="n">Borda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selectedAlgorithms</span><span class="p">,</span> <span class="n">aggregationMethod</span><span class="p">)</span></div></div>
 
 <div class="viewcode-block" id="ConfigParser"><a class="viewcode-back" href="../BLEval.html#BLEval.ConfigParser">[docs]</a><span class="k">class</span> <span class="nc">ConfigParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39;</span>

@@ -1,0 +1,509 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>BoolODE &mdash; BEELINE  documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> BEELINE
+          
+
+          
+            
+            <img src="../_static/beeline.svg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../BEELINE.html">BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BoolODE-intro.html">BoolODE</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BEELINE</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">Module code</a> &raquo;</li>
+        
+      <li>BoolODE</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for BoolODE</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">import</span> <span class="nn">argparse</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="k">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="k">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+<span class="c1"># Local imports</span>
+<span class="kn">from</span> <span class="nn">BoolODE</span> <span class="k">import</span> <span class="n">model_generator</span> <span class="k">as</span> <span class="n">mg</span>
+<span class="kn">from</span> <span class="nn">BoolODE</span> <span class="k">import</span> <span class="n">run_experiment</span> <span class="k">as</span> <span class="n">runexp</span>
+<span class="kn">from</span> <span class="nn">BoolODE</span> <span class="k">import</span> <span class="n">post_processing</span> <span class="k">as</span> <span class="n">po</span>
+
+
+<div class="viewcode-block" id="GlobalSettings"><a class="viewcode-back" href="../BoolODE.html#BoolODE.GlobalSettings">[docs]</a><span class="k">class</span> <span class="nc">GlobalSettings</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">model_dir</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">,</span>
+                 <span class="n">do_simulations</span><span class="p">,</span> <span class="n">do_post_processing</span><span class="p">,</span>
+                 <span class="n">modeltype</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_dir</span> <span class="o">=</span> <span class="n">model_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dir</span> <span class="o">=</span> <span class="n">output_dir</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_simulations</span> <span class="o">=</span> <span class="n">do_simulations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_post_processing</span> <span class="o">=</span> <span class="n">do_post_processing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modeltype</span> <span class="o">=</span> <span class="n">modeltype</span></div>
+
+<div class="viewcode-block" id="JobSettings"><a class="viewcode-back" href="../BoolODE.html#BoolODE.JobSettings">[docs]</a><span class="k">class</span> <span class="nc">JobSettings</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Store user defined job settings</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jobs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span> <span class="o">=</span> <span class="n">jobs</span></div>
+        
+<div class="viewcode-block" id="PostProcSettings"><a class="viewcode-back" href="../BoolODE.html#BoolODE.PostProcSettings">[docs]</a><span class="k">class</span> <span class="nc">PostProcSettings</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">dropout_jobs</span><span class="p">,</span>
+                 <span class="n">dimred_jobs</span><span class="p">,</span>
+                 <span class="n">slingshot_jobs</span><span class="p">,</span>
+                 <span class="n">gensample_jobs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout_jobs</span> <span class="o">=</span> <span class="n">dropout_jobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimred_jobs</span> <span class="o">=</span> <span class="n">dimred_jobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slingshot_jobs</span> <span class="o">=</span> <span class="n">slingshot_jobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gensample_jobs</span> <span class="o">=</span> <span class="n">gensample_jobs</span></div>
+
+
+<div class="viewcode-block" id="BoolODE"><a class="viewcode-back" href="../BoolODE.html#BoolODE.BoolODE">[docs]</a><span class="k">class</span> <span class="nc">BoolODE</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    The BoolODE object is created by parsing a user-provided configuration</span>
+<span class="sd">    file. It then calls the correct functions for executing the user defined</span>
+<span class="sd">    experiment.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                 <span class="n">job_settings</span><span class="p">:</span> <span class="n">JobSettings</span><span class="p">,</span>
+                 <span class="n">global_settings</span><span class="p">:</span> <span class="n">GlobalSettings</span><span class="p">,</span>
+                 <span class="n">postproc_settings</span><span class="p">:</span> <span class="n">PostProcSettings</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">job_settings</span> <span class="o">=</span> <span class="n">job_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span> <span class="o">=</span> <span class="n">global_settings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span> <span class="o">=</span> <span class="n">postproc_settings</span>        
+        <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__process_jobs</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__process_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Creates a list of jobs, where each job is specified by </span>
+<span class="sd">        the values in a dictionary called data.</span>
+<span class="sd">        Default parameter values are specified here.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">jobid</span><span class="p">,</span> <span class="n">job</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">job_settings</span><span class="o">.</span><span class="n">jobs</span><span class="p">):</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="c1"># Create output folder if it doesnt exist</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;outprefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;modelpath&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;model_definition&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;simulation_time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;simulation_time&#39;</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;icsPath&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;model_initial_conditions&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;num_cells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;num_cells&#39;</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;sample_cells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sample_cells&#39;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;nClusters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nClusters&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;doParallel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;do_parallel&#39;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>            
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;identical_pars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;identical_pars&#39;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;sample_pars&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sample_pars&#39;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;sample_std&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sample_std&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;integration_step_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;integration_step_size&#39;</span><span class="p">,</span><span class="mf">0.01</span><span class="p">)</span>            
+            <span class="c1"># Optional Settings</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;parameter_inputs_path&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span>\
+                                                 <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parameter_inputs_path&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;parameter_set&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span>\
+                                              <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;parameter_set&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;interaction_strengths&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span>\
+                                                     <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;interaction_strengths&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;species_type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">model_dir</span><span class="p">,</span>\
+                                             <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;species_type&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>            
+            <span class="c1"># Simulator settings</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;burnin&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;burn_in&#39;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;writeProtein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;write_protein&#39;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;normalizeTrajectory&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;normalize_trajectory&#39;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;add_dummy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;add_dummy&#39;</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;max_parents&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">job</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;max_parents&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">data</span><span class="p">[</span><span class="s1">&#39;modeltype&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">modeltype</span>
+
+            <span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="k">return</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BoolODE.execute_jobs"><a class="viewcode-back" href="../BoolODE.html#BoolODE.BoolODE.execute_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">execute_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parallel</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">num_threads</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Run each user specified job. </span>
+<span class="sd">        BoolODE runs two types of functions</span>
+<span class="sd">        1. If `do_simulation == TRUE`, perform SDE simulations of model specified as Boolean rules. </span>
+<span class="sd">        2. If `do_post_processing == TRUE` perform the list of post processing operations specified.</span>
+
+<span class="sd">        .. warning::</span>
+<span class="sd">            This function automatically creates folders for each job name </span>
+<span class="sd">            as specified in the config file, if the folder doesn&#39;t already exist.</span>
+<span class="sd">            Contents of existing folders will be rewritten!</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">base_output_dir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">output_dir</span>
+
+        <span class="n">alljobs</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Creating output folders&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">jobid</span> <span class="ow">in</span> <span class="n">alljobs</span><span class="p">:</span>
+            <span class="n">outdir</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;outprefix&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">outdir</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">outdir</span><span class="p">,</span> <span class="s2">&quot;does not exist, creating it...&quot;</span><span class="p">)</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">do_simulations</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting simulations&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">jobid</span> <span class="ow">in</span> <span class="n">alljobs</span><span class="p">:</span>
+                <span class="n">runexp</span><span class="o">.</span><span class="n">startRun</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">])</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_settings</span><span class="o">.</span><span class="n">do_post_processing</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting post processing&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_post_processing</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="BoolODE.do_post_processing"><a class="viewcode-back" href="../BoolODE.html#BoolODE.BoolODE.do_post_processing">[docs]</a>    <span class="k">def</span> <span class="nf">do_post_processing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Call genSamples() first. Then run DimRed runSlingShot,  </span>
+<span class="sd">        generateDropouts, if specified by the user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">alljobs</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">filetypedict</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;expr&#39;</span><span class="p">:</span><span class="s1">&#39;ExpressionData.csv&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;pseudo&#39;</span><span class="p">:</span><span class="s1">&#39;PseudoTime.csv&#39;</span><span class="p">,</span>
+                        <span class="s1">&#39;refNet&#39;</span><span class="p">:</span><span class="s1">&#39;refNetwork.csv&#39;</span><span class="p">}</span>
+
+        <span class="c1">## Always do genSamples() once if even a single other analysis is requested!</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">dropout_jobs</span>\
+           <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">dimred_jobs</span>\
+           <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">slingshot_jobs</span><span class="p">:</span>
+            <span class="n">doOtherAnalysis</span> <span class="o">=</span> <span class="kc">True</span>
+            
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">gensample_jobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>\
+           <span class="ow">or</span> <span class="n">doOtherAnalysis</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating Samples...&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">gensample_jobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">gsamp</span><span class="p">[</span><span class="s1">&#39;sample_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">alljobs</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="s1">&#39;num_cells&#39;</span><span class="p">]</span>
+                <span class="n">gsamp</span><span class="p">[</span><span class="s1">&#39;nDatasets&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">gensample_jobs</span> <span class="o">=</span> <span class="p">[</span><span class="n">gsamp</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">gensample_jobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">gensample_jobs</span>
+            <span class="k">for</span> <span class="n">gsamp</span> <span class="ow">in</span> <span class="n">gensample_jobs</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">jobid</span> <span class="ow">in</span> <span class="n">alljobs</span><span class="p">:</span>
+                    <span class="n">settings</span> <span class="o">=</span> <span class="p">{}</span>
+                    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;num_cells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;num_cells&#39;</span><span class="p">]</span>
+                    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;sample_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gsamp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sample_size&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+                    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;outprefix&#39;</span><span class="p">])</span>
+                    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;nDatasets&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gsamp</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;nDatasets&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+                    <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;nClusters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;nClusters&#39;</span><span class="p">]</span>
+                    <span class="n">generatedPaths</span> <span class="o">=</span> <span class="n">po</span><span class="o">.</span><span class="n">genSamples</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">dropout_jobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting genDropouts...&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">drop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">dropout_jobs</span><span class="p">:</span>
+                <span class="n">num_invalid</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">jobid</span> <span class="ow">in</span> <span class="n">alljobs</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">gsampPath</span> <span class="ow">in</span> <span class="n">generatedPaths</span><span class="p">:</span>
+                        <span class="n">settings</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="n">invalid</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gsampPath</span> 
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">gsampPath</span><span class="p">,</span>\
+                                                <span class="s1">&#39;ExpressionData.csv&#39;</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;pseudo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">gsampPath</span><span class="p">,</span>\
+                                                  <span class="s1">&#39;PseudoTime.csv&#39;</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;refNet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">gsampPath</span><span class="p">,</span>\
+                                                  <span class="s1">&#39;refNetwork.csv&#39;</span><span class="p">)</span>                        
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;dropout&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">drop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;dropout&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>                
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;sample_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">drop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;sample_size&#39;</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;num_cells&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;num_cells&#39;</span><span class="p">]</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;drop_cutoff&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">drop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;drop_cutoff&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;drop_prob&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">drop</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;drop_prob&#39;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+                        <span class="k">for</span> <span class="n">filetype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">,</span> <span class="s1">&#39;pseudo&#39;</span><span class="p">,</span> <span class="s1">&#39;refNet&#39;</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">settings</span><span class="p">[</span><span class="n">filetype</span><span class="p">]</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;: &#39;</span><span class="p">,</span><span class="n">filetypedict</span><span class="p">[</span><span class="n">filetype</span><span class="p">],</span> <span class="s2">&quot;not found. Retry with `do_simulations: True` in global_settings.&quot;</span><span class="p">)</span>                            
+                                <span class="n">invalid</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="n">num_invalid</span> <span class="o">+=</span> <span class="mi">1</span>
+                                <span class="k">break</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">invalid</span><span class="p">:</span>
+                            <span class="n">po</span><span class="o">.</span><span class="n">genDropouts</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">num_invalid</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">alljobs</span><span class="p">):</span>
+                        <span class="k">break</span>
+                    
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">dimred_jobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Starting dimesionality reduction using tSNE&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">dimred_jobs</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">dimred_jobs</span><span class="p">:</span>
+                <span class="n">num_invalid</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">jobid</span> <span class="ow">in</span> <span class="n">alljobs</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">gsampPath</span> <span class="ow">in</span> <span class="n">generatedPaths</span><span class="p">:</span>
+                        <span class="n">settings</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="n">invalid</span> <span class="o">=</span> <span class="kc">False</span>                    
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">gsampPath</span><span class="p">,</span>\
+                                                <span class="s1">&#39;ExpressionData.csv&#39;</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;pseudo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">gsampPath</span><span class="p">,</span>\
+                                                <span class="s1">&#39;PseudoTime.csv&#39;</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;perplexity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dimred_jobs</span><span class="p">[</span><span class="s1">&#39;perplexity&#39;</span><span class="p">]</span>
+                        <span class="k">for</span> <span class="n">filetype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">,</span> <span class="s1">&#39;pseudo&#39;</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">settings</span><span class="p">[</span><span class="n">filetype</span><span class="p">]</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;:&#39;</span><span class="p">,</span><span class="n">filetypedict</span><span class="p">[</span><span class="n">filetype</span><span class="p">],</span> <span class="s2">&quot;not found. Retry with `do_simulations: True` in global_settings.&quot;</span><span class="p">)</span>                            
+                                <span class="n">invalid</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="n">num_invalid</span> <span class="o">+=</span> <span class="mi">1</span>
+                                <span class="k">break</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">invalid</span><span class="p">:</span>
+                            <span class="n">po</span><span class="o">.</span><span class="n">doDimRed</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+                            <span class="n">all_invalid</span> <span class="o">=</span> <span class="kc">False</span>
+                    <span class="k">if</span> <span class="n">num_invalid</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">alljobs</span><span class="p">):</span>
+                        <span class="k">break</span>
+            
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">slingshot_jobs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">dimred_jobs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using default perplexity=300. (Specify `perplexity` under DimRed.)&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting SlingShot...&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">sshot</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">post_settings</span><span class="o">.</span><span class="n">slingshot_jobs</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">jobid</span> <span class="ow">in</span> <span class="n">alljobs</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">gsampPath</span> <span class="ow">in</span> <span class="n">generatedPaths</span><span class="p">:</span>
+                        <span class="n">settings</span> <span class="o">=</span> <span class="p">{}</span>
+                        <span class="n">invalid</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;outPrefix&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">gsamp</span> <span class="o">+</span> <span class="s1">&#39;-ss&#39;</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">gsampPath</span>\
+                                                <span class="p">,</span><span class="s1">&#39;ExpressionData.csv&#39;</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;pseudo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">gsampPath</span>\
+                                                  <span class="p">,</span><span class="s1">&#39;PseudoTime.csv&#39;</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;refNet&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">gsampPath</span>\
+                                                  <span class="p">,</span><span class="s1">&#39;refNetwork.csv&#39;</span><span class="p">)</span>
+                        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;nClusters&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;nClusters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;nClusters&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;nClusters&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;noEnd&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sshot</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;noEnd&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+                        <span class="n">settings</span><span class="p">[</span><span class="s1">&#39;perplexity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sshot</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;perplexity&#39;</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+
+                        <span class="k">for</span> <span class="n">filetype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;expr&#39;</span><span class="p">,</span> <span class="s1">&#39;pseudo&#39;</span><span class="p">,</span> <span class="s1">&#39;refNet&#39;</span><span class="p">]:</span>
+                            <span class="k">if</span> <span class="ow">not</span> <span class="n">settings</span><span class="p">[</span><span class="n">filetype</span><span class="p">]</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
+                                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jobs</span><span class="p">[</span><span class="n">jobid</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="s1">&#39;: &#39;</span><span class="p">,</span><span class="n">filetypedict</span><span class="p">[</span><span class="n">filetype</span><span class="p">],</span> <span class="s2">&quot;not found. Retry with `do_simulations: True` in global_settings.&quot;</span><span class="p">)</span>
+                                <span class="n">invalid</span> <span class="o">=</span> <span class="kc">True</span>
+                                <span class="k">break</span>
+                        <span class="k">if</span> <span class="ow">not</span> <span class="n">invalid</span><span class="p">:</span>
+                            <span class="n">po</span><span class="o">.</span><span class="n">computeSSPT</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span></div></div>
+            
+<div class="viewcode-block" id="ConfigParser"><a class="viewcode-back" href="../BoolODE.html#BoolODE.ConfigParser">[docs]</a><span class="k">class</span> <span class="nc">ConfigParser</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Define static methods for parsing a config file that sets a large number</span>
+<span class="sd">    of parameters for the pipeline</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="ConfigParser.parse"><a class="viewcode-back" href="../BoolODE.html#BoolODE.ConfigParser.parse">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">config_file_handle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BoolODE</span><span class="p">:</span>
+        <span class="n">config_map</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">config_file_handle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">BoolODE</span><span class="p">(</span>
+            <span class="n">ConfigParser</span><span class="o">.</span><span class="n">__parse_job_settings</span><span class="p">(</span>
+                <span class="n">config_map</span><span class="p">[</span><span class="s1">&#39;jobs&#39;</span><span class="p">]),</span>
+            <span class="n">ConfigParser</span><span class="o">.</span><span class="n">__parse_global_settings</span><span class="p">(</span>
+                <span class="n">config_map</span><span class="p">[</span><span class="s1">&#39;global_settings&#39;</span><span class="p">]),</span>
+            <span class="n">ConfigParser</span><span class="o">.</span><span class="n">__parse_postproc_settings</span><span class="p">(</span>
+                <span class="n">config_map</span><span class="p">[</span><span class="s1">&#39;post_processing&#39;</span><span class="p">])</span>            
+        <span class="p">)</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__parse_job_settings</span><span class="p">(</span><span class="n">joblist</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JobSettings</span><span class="p">:</span>
+        <span class="n">jobs</span> <span class="o">=</span> <span class="n">joblist</span>
+        <span class="k">return</span> <span class="n">JobSettings</span><span class="p">(</span><span class="n">jobs</span><span class="p">)</span>
+    
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__parse_global_settings</span><span class="p">(</span><span class="n">input_settings_map</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalSettings</span><span class="p">:</span>
+        <span class="n">required_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;model_dir&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;output_dir&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;do_simulations&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;do_post_processing&#39;</span><span class="p">,</span>
+                           <span class="s1">&#39;modeltype&#39;</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Global settings:&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;----------------&quot;</span><span class="p">)</span>        
+        <span class="k">for</span> <span class="n">rf</span> <span class="ow">in</span> <span class="n">required_fields</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{rf}</span><span class="s2">: </span><span class="si">{input_settings_map[rf]}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;!!Missing inputs!!&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;BoolODE global settings is missing &#39;</span><span class="si">{rf}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s2">&quot;Please specify </span><span class="si">{rf}</span><span class="s2"> in the input config file!</span><span class="se">\n</span><span class="s2">Exiting BoolODE...&quot;</span><span class="p">)</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+                
+        <span class="n">model_dir</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="p">[</span><span class="s1">&#39;model_dir&#39;</span><span class="p">]</span>
+        <span class="n">output_dir</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="p">[</span><span class="s1">&#39;output_dir&#39;</span><span class="p">]</span>
+        <span class="n">do_simulations</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="p">[</span><span class="s1">&#39;do_simulations&#39;</span><span class="p">]</span>
+        <span class="n">do_post_processing</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="p">[</span><span class="s1">&#39;do_post_processing&#39;</span><span class="p">]</span>
+        <span class="n">modeltype</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="p">[</span><span class="s1">&#39;modeltype&#39;</span><span class="p">]</span>
+
+
+
+        
+        <span class="k">return</span> <span class="n">GlobalSettings</span><span class="p">(</span><span class="n">model_dir</span><span class="p">,</span>
+                              <span class="n">output_dir</span><span class="p">,</span>
+                              <span class="n">do_simulations</span><span class="p">,</span>
+                              <span class="n">do_post_processing</span><span class="p">,</span>
+                              <span class="n">modeltype</span><span class="p">)</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">__parse_postproc_settings</span><span class="p">(</span><span class="n">input_settings_map</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GlobalSettings</span><span class="p">:</span>
+        <span class="n">dropout_jobs</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Dropouts&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">slingshot_jobs</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;Slingshot&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">dimred_jobs</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;DimRed&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">gensample_jobs</span> <span class="o">=</span> <span class="n">input_settings_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;genSamples&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">PostProcSettings</span><span class="p">(</span><span class="n">dropout_jobs</span><span class="p">,</span> <span class="n">dimred_jobs</span><span class="p">,</span> <span class="n">slingshot_jobs</span><span class="p">,</span> <span class="n">gensample_jobs</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2019, Aditya Pratapa
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
