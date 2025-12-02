@@ -1,5 +1,6 @@
 # FROM julia:1.1.0-stretch
-FROM julia:1.6.0-buster
+# FROM julia:1.6.0-buster
+FROM julia:1.10.10-trixie
 
 LABEL maintainer="Aditya Pratapa <adyprat@vt.edu>"
 

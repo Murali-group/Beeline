@@ -5,15 +5,15 @@ LABEL maintainer="Aditya Pratapa <adyprat@vt.edu>"
 USER root
 ENV TZ=America/New_York
 ENV DEBIAN_FRONTEND=noninteractive 
-RUN echo "deb http://archive.debian.org/debian stretch main contrib non-free" > /etc/apt/sources.list
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 04EE7237B7D453EC
-#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 0E98404D386FA1D9
-#RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EF0F382A1A7B6500
-RUN apt-get update --allow-unauthenticated
-RUN apt-get install -y build-essential patch --allow-unauthenticated
+
+RUN echo "deb [trusted=yes] http://archive.debian.org/debian stretch main non-free contrib" > /etc/apt/sources.list && \
+    echo "deb-src [trusted=yes] http://archive.debian.org/debian stretch main non-free contrib" >> /etc/apt/sources.list && \
+    echo "deb [trusted=yes] http://archive.debian.org/debian-security stretch/updates main non-free contrib" >> /etc/apt/sources.list
+
+RUN apt-get update
+RUN apt-get install -y build-essential patch
 RUN apt-get install -y fsharp \ 
-	mono-xbuild --allow-unauthenticated
+	mono-xbuild
 RUN git clone https://github.com/Z3Prover/z3
 WORKDIR z3
 RUN git checkout d6df51951f4cdc95f0dfd3b1297d04a465d8f2ca 
