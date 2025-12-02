@@ -76,7 +76,7 @@ class Runner(object):
         self.inputDir = params['inputDir']
         self.params = params['params']
         self.exprData = params['exprData']
-        self.cellData = params['cellData']
+        self.pseudoTimeData = params['pseudoTimeData']
         self.trueEdges = params['trueEdges'] #used for evaluation
         
     def generateInputs(self):

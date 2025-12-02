@@ -14,7 +14,7 @@ input_settings:
     #
     #   exprData: scRNA-Seq expression data file. Cells are along the
     #            columns and genes are along the rows.
-    #   cellData: a file containing pseudotime ordering, or any other 
+    #   pseudoTimeData: a file containing pseudotime ordering, or any other 
     #             information about cells.
     #   trueEdges: Name of the refrence network file in the
     #              edge list format. Needed for evaluation.
@@ -25,7 +25,7 @@ input_settings:
     # datasets:
     #     - name: "GSD"
     #       exprData: "ExpressionData.csv"
-    #       cellData: "PseudoTime.csv"
+    #       pseudoTimeData: "PseudoTime.csv"
     #       trueEdges: "refNetwork.csv"
 
     # Denotes a list of algorithms to run. Each has the following parameters:

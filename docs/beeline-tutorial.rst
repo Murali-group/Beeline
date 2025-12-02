@@ -108,7 +108,7 @@ config file should contain at minimum
               datasets:
                   - name: "Dataset name"
                     exprData: "Expression Data filename"
-                    cellData: "PseudoTime filename"
+                    pseudoTimeData: "PseudoTime filename"
                     trueEdges: "Ground truth network filename"
               algorithms:
                   - name: "Algorithm name"
@@ -140,7 +140,7 @@ contains the following:
               datasets:
                   - name: "GSD"
                     exprData: "ExpressionData.csv"
-                    cellData: "PseudoTime.csv"
+                    pseudoTimeData: "PseudoTime.csv"
                     trueEdges: "refNetwork.csv"
               algorithms:
                   - name: "PIDC"

@@ -362,7 +362,7 @@ class ConfigParser(object):
              for x in subfolder_dir:
                 datasets.append({"name": pathlib.Path(x).name, 
                                  "exprData": "ExpressionData.csv", 
-                                 "cellData": "PseudoTime.csv", 
+                                 "pseudoTimeData": "PseudoTime.csv", 
                                  "trueEdges": "refNetwork.csv"})
         # If datasets specified, run the corresponding datasets
         else:

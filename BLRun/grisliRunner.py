@@ -15,7 +15,7 @@ def generateInputs(RunnerObj):
             
     ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
 
     colNames = PTData.columns
@@ -50,7 +50,7 @@ def run(RunnerObj):
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRISLI/"
     os.makedirs(outDir, exist_ok = True)
     
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
 
     colNames = PTData.columns
@@ -74,7 +74,7 @@ def parseOutput(RunnerObj):
     
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRISLI/"
 
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
     colNames = PTData.columns
     OutSubDF = [0]*len(colNames)

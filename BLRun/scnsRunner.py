@@ -30,7 +30,7 @@ def generateInputs(RunnerObj):
 
     # Read PseudoTime file to figure out
     # initial and final states
-    PseudoTimeDF = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PseudoTimeDF = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                                           header = 0, index_col = 0)
     # Get the Time corresponding to cells in BinExpression dataframe
     # Identify cells in initial and final states from them

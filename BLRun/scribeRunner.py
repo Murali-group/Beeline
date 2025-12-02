@@ -16,7 +16,7 @@ def generateInputs(RunnerObj):
     
     ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
 
     colNames = PTData.columns
@@ -27,7 +27,7 @@ def generateInputs(RunnerObj):
         exprName = "SCRIBE/ExpressionData"+str(idx)+".csv"
         ExpressionData.loc[:,index].to_csv(RunnerObj.inputDir.joinpath(exprName),
                                  sep = ',', header  = True, index = True)
-        cellName = "SCRIBE/CellData"+str(idx)+".csv"
+        cellName = "SCRIBE/pseudoTimeData"+str(idx)+".csv"
         ptDF = PTData.loc[index,[colName]]        
         # Scribe expects a column labeled Time.
         ptDF.rename(columns = {colName:'Time'}, inplace = True)
@@ -69,14 +69,14 @@ def run(RunnerObj):
     os.makedirs(outDir, exist_ok = True)
 
     # Build the command to run Scribe
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
     colNames = PTData.columns
     
     for idx in range(len(colNames)):
         # Specify file names for inputs and outputs
         exprName = "ExpressionData"+str(idx)+".csv"
-        cellName = "CellData"+str(idx)+".csv"
+        cellName = "pseudoTimeData"+str(idx)+".csv"
         outFile = "outFile"+str(idx)+".csv"
         timeFile = 'time'+str(idx)+".txt"
         
@@ -104,7 +104,7 @@ def parseOutput(RunnerObj):
     '''
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCRIBE/"
 
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
     colNames = PTData.columns
     OutSubDF = [0]*len(colNames)

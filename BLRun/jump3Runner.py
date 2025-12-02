@@ -18,7 +18,7 @@ def generateInputs(RunnerObj):
         ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
         newExpressionData = ExpressionData.T.copy()
-        PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+        PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
         # make sure the indices are strings for both dataframes
         newExpressionData.index = newExpressionData.index.map(str) 
