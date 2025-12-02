@@ -402,18 +402,18 @@ def main():
         evalConfig = evalConfigs[i]
         
         # Read the reference network
-        trueEdgesDF = pd.read_csv(str(evalConfig.input_settings.datadir) + '/' + evalConfig.input_settings.datasets[0]['name'] \
-                               + '/' + evalConfig.input_settings.datasets[0]['trueEdges'],
+        groundTruthDF = pd.read_csv(str(evalConfig.input_settings.datadir) + '/' + evalConfig.input_settings.datasets[0]['name'] \
+                               + '/' + evalConfig.input_settings.datasets[0]['groundTruthNetwork'],
                                header = 0, index_col = None)
         # Remove self-edges in network density computation, if any
-        trueEdgesDF = trueEdgesDF[trueEdgesDF.Gene1 != trueEdgesDF.Gene2]
+        groundTruthDF = groundTruthDF[groundTruthDF.Gene1 != groundTruthDF.Gene2]
         # remove duplicated edges, if any
-        trueEdgesDF.drop_duplicates(inplace = True)
+        groundTruthDF.drop_duplicates(inplace = True)
         
         # Compute number of possible directed edges
-        numGenes = len(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]))
+        numGenes = len(np.unique(groundTruthDF.loc[:,['Gene1','Gene2']]))
         numPossibleEdges = numGenes*(numGenes-1)
-        randPred = trueEdgesDF.shape[0]/numPossibleEdges
+        randPred = groundTruthDF.shape[0]/numPossibleEdges
         print("Early Precision of a random predictor for ", dataset ," network (excluding self loops) is: %.2f" %(randPred))
         randPredictor[dataset] = randPred
 

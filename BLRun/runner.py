@@ -77,7 +77,7 @@ class Runner(object):
         self.params = params['params']
         self.exprData = params['exprData']
         self.pseudoTimeData = params['pseudoTimeData']
-        self.trueEdges = params['trueEdges'] #used for evaluation
+        self.groundTruthNetwork = params['groundTruthNetwork'] #used for evaluation
         
     def generateInputs(self):
         InputMapper[self.name](self)

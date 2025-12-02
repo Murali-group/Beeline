@@ -36,11 +36,11 @@ def Spearman(evalObject, algorithmName):
     rankDict = {}
     sim_names = []
     for dataset in tqdm(evalObject.input_settings.datasets):
-        trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
+        groundTruthDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
                       dataset['name'] + '/' +\
-                      dataset['trueEdges'], sep = ',',
+                      dataset['groundTruthNetwork'], sep = ',',
                       header = 0, index_col = None)
-        possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+        possibleEdges = list(permutations(np.unique(groundTruthDF.loc[:,['Gene1','Gene2']]),
                                      r = 2))
         PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
 

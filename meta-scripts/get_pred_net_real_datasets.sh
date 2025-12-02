@@ -13,7 +13,7 @@ for f in `find $results_dir -maxdepth 4 -name "$base_file"`; do
     inputs_dir=`dirname $(dirname $f) | sed "s/outputs/inputs/g"`
     #echo $inputs_dir
     # get the number of edges from the original string network. The header line is ok because the rankedEdges files also have a header
-    num_edges=`cat ${inputs_dir}/refNetwork${postfix}.csv | wc -l`
+    num_edges=`cat ${inputs_dir}/groundTruthNetwork${postfix}.csv | wc -l`
     #echo $num_edges
 
     mkdir -p "${out_dir}/${base_dir}"

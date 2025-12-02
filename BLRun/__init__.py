@@ -87,7 +87,7 @@ class BLRun(object):
                 data['inputDir'] = Path.cwd().joinpath(self.input_settings.datadir.joinpath(dataset['name']))
                 data['exprData'] = dataset['exprData']
                 data['pseudoTimeData'] = dataset['pseudoTimeData']
-                data['trueEdges'] = dataset['trueEdges']
+                data['groundTruthNetwork'] = dataset['groundTruthNetwork']
 
                 if 'should_run' in data['params'] and \
                         data['params']['should_run'] is False:
@@ -156,7 +156,7 @@ class ConfigParser(object):
                 datasets.append({"name": pathlib.Path(x).name, 
                                  "exprData": "ExpressionData.csv", 
                                  "pseudoTimeData": "PseudoTime.csv", 
-                                 "trueEdges": "refNetwork.csv"})
+                                 "groundTruthNetwork": "GroundTruthNetwork.csv"})
         # If datasets specified, run the corresponding datasets
         else:
             datasets = input_settings_map['datasets']

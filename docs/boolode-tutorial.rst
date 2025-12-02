@@ -119,7 +119,7 @@ output directory should like this:
           |-- parameters.txt         # Parameter names and values generated for input model
           |-- ExpressionData.csv     # Gene expression dataset
           |-- PseudoTime.csv         # Simulation time of each sample time point/cell
-          |-- refNetwork.csv         # Boolean network represented as an edge list, the ground truth network
+          |-- GroundTruthNetwork.csv         # Boolean network represented as an edge list, the ground truth network
           `-- simulations/
               |-- E1.csv
               |-- E2.csv

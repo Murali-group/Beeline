@@ -50,10 +50,10 @@ def generateInputs(RunnerObj):
 
 
     parameters =  open(RunnerObj.inputDir.joinpath("SCNS/Parameters.csv"),'w')
-    refNetwork =  open(RunnerObj.inputDir.joinpath("refNetwork.csv"),'r')
+    groundTruthNetwork =  open(RunnerObj.inputDir.joinpath("GroundTruthNetwork.csv"),'r')
     countA = {gene:0 for gene in BinExpression.columns}
     countR = {gene:0 for gene in BinExpression.columns}
-    for line in refNetwork:
+    for line in groundTruthNetwork:
         items = line.strip().split(',')
         if items[2] == '+':
             countA[items[1]] += 1
@@ -62,7 +62,7 @@ def generateInputs(RunnerObj):
         else:
             continue
             
-    refNetwork.close()
+    groundTruthNetwork.close()
 
     parameters.write('Gene,MaxActivators,MaxRepressors,Threshold\n')
     for cols in BinExpression.columns:
@@ -117,8 +117,8 @@ def parseOutput(RunnerObj):
     
     # Initialize ranked egdes file 
     possibleEdges = list(permutations(geneList, r = 2))
-    trueEdges =  {'|'.join(p):0 for p in possibleEdges}
-    rankedEdges = pd.DataFrame(index = trueEdges.keys(),columns=['Gene1','Gene2','EdgeWeight'])
+    groundTruthNetwork =  {'|'.join(p):0 for p in possibleEdges}
+    rankedEdges = pd.DataFrame(index = groundTruthNetwork.keys(),columns=['Gene1','Gene2','EdgeWeight'])
         
     for gene in geneList:
         outFile = gene+'.txt'
@@ -131,10 +131,10 @@ def parseOutput(RunnerObj):
                     count[w] = 1
             for gene2 in geneList:
                 if gene2 in count.keys():
-                    trueEdges[gene+'|'+gene2] = count[gene2]
+                    groundTruthNetwork[gene+'|'+gene2] = count[gene2]
                 if gene != gene2:
                     # ignoring self-edges
-                    rankedEdges.loc[gene+'|'+gene2,'EdgeWeight'] = trueEdges[gene+'|'+gene2]
+                    rankedEdges.loc[gene+'|'+gene2,'EdgeWeight'] = groundTruthNetwork[gene+'|'+gene2]
                     rankedEdges.loc[gene+'|'+gene2,'Gene1'] = gene2
                     rankedEdges.loc[gene+'|'+gene2,'Gene2'] = gene
         else:

@@ -13,7 +13,7 @@ This is the instruction on how to integrate the new GRN method scSGL ([[Paper](h
 3. **Create run_scSGL.py script:** In the SCSGL folder, create a Python script run_scSGL.py to learn signed graphs from target datasets. The arguments are as follows:
 
    - ``--expression_file`` : path of gene expression file
-   - ``--ref_net_file`` : path of reference network file
+   - ``--ground_truth_net_file`` : path of reference network file
    - ``--pos_density`` : the parameter controls the density of positive part of the learned signed graph with default as 0.45
    - ``--neg_density`` : the parameter controls the density of negative part of the learned signed graph with default as 0.45
    - ``--assoc`` : the association of signed graph with default as "correlation"
@@ -70,7 +70,7 @@ The Dockerfile will run the script run_scSGL.py within the Docker container.
     - add "'SCSGL':SCSGL.run" to AlgorithmMapper
     - add "'SCSGL':SCSGL.parseOutput" to OutputParser
 
-In addition, add "self.trueEdges = params['trueEdges']" in def __init__(self, params) within class Runner(object) for evaluation.
+In addition, add "self.groundTruthNetwork = params['groundTruthNetwork']" in def __init__(self, params) within class Runner(object) for evaluation.
 
 
 8. **Add scSGL to config.yaml:** The final step is to add the new algorithm scSGLC and any necessary parameters to the config.yaml located in Beeline/config-files folder. Note that currently BEELINE can only handle one parameter set at a time eventhough multiple parameters can be passed onto the single parameter object.

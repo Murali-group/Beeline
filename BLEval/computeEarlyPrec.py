@@ -42,13 +42,13 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = True):
     Erec = {}
     EPR = {}
     for dataset in tqdm(evalObject.input_settings.datasets):
-        trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
+        groundTruthDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
                       dataset['name'] + '/' +\
-                      dataset['trueEdges'], sep = ',',
+                      dataset['groundTruthNetwork'], sep = ',',
                       header = 0, index_col = None)
-        trueEdgesDF = trueEdgesDF.loc[(trueEdgesDF['Gene1'] != trueEdgesDF['Gene2'])]
-        trueEdgesDF.drop_duplicates(keep = 'first', inplace=True)
-        trueEdgesDF.reset_index(drop=True, inplace=True)
+        groundTruthDF = groundTruthDF.loc[(groundTruthDF['Gene1'] != groundTruthDF['Gene2'])]
+        groundTruthDF.drop_duplicates(keep = 'first', inplace=True)
+        groundTruthDF.reset_index(drop=True, inplace=True)
 
 
         outDir = str(evalObject.output_settings.base_dir) + \
@@ -76,8 +76,8 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = True):
             # Consider only edges going out of TFs
             
             # Get a list of all possible TF to gene interactions 
-            uniqueNodes = np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']])
-            possibleEdges_TF = set(product(set(trueEdgesDF.Gene1),set(uniqueNodes)))
+            uniqueNodes = np.unique(groundTruthDF.loc[:,['Gene1','Gene2']])
+            possibleEdges_TF = set(product(set(groundTruthDF.Gene1),set(uniqueNodes)))
 
             # Get a list of all possible interactions 
             possibleEdges_noSelf = set(permutations(uniqueNodes, r = 2))
@@ -88,21 +88,21 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = True):
             
             TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
 
-            trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
-            trueEdges = trueEdges[trueEdges.isin(TrueEdgeDict)]
-            # print("\nEdges considered ", len(trueEdges))
-            numEdges = len(trueEdges)
+            groundTruthNetwork = groundTruthDF['Gene1'] + "|" + groundTruthDF['Gene2']
+            groundTruthNetwork = groundTruthNetwork[groundTruthNetwork.isin(TrueEdgeDict)]
+            # print("\nEdges considered ", len(groundTruthNetwork))
+            numEdges = len(groundTruthNetwork)
         
             predDF['Edges'] = predDF['Gene1'] + "|" + predDF['Gene2']
             # limit the predicted edges to the genes that are in the ground truth
             predDF = predDF[predDF['Edges'].isin(TrueEdgeDict)]
 
         else:
-            uniqueNodes = np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']])
+            uniqueNodes = np.unique(groundTruthDF.loc[:,['Gene1','Gene2']])
             possibleEdges = set(permutations(uniqueNodes, r = 2))
-            trueEdges = trueEdgesDF['Gene1'] + "|" + trueEdgesDF['Gene2']
-            trueEdges = set(trueEdges.values)
-            numEdges = len(trueEdges)
+            groundTruthNetwork = groundTruthDF['Gene1'] + "|" + groundTruthDF['Gene2']
+            groundTruthNetwork = set(groundTruthNetwork.values)
+            numEdges = len(groundTruthNetwork)
             
         
         # check if ranked edges list is empty
@@ -133,10 +133,10 @@ def EarlyPrec(evalObject, algorithmName, TFEdges = True):
             rankDict[dataset["name"]] = set([])
 
         if len(rankDict[dataset["name"]]) != 0:
-            intersectionSet = rankDict[dataset["name"]].intersection(trueEdges)
+            intersectionSet = rankDict[dataset["name"]].intersection(groundTruthNetwork)
             Eprec[dataset["name"]] = len(intersectionSet)/len(rankDict[dataset["name"]])
-            Erec[dataset["name"]] = len(intersectionSet)/len(trueEdges)
-            randomEprc = len(trueEdges) / len(possibleEdges) 
+            Erec[dataset["name"]] = len(intersectionSet)/len(groundTruthNetwork)
+            randomEprc = len(groundTruthNetwork) / len(possibleEdges) 
             EPR[dataset["name"]] = Eprec[dataset["name"]]/randomEprc
         else:
             Eprec[dataset["name"]] = 0

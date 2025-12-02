@@ -363,7 +363,7 @@ class ConfigParser(object):
                 datasets.append({"name": pathlib.Path(x).name, 
                                  "exprData": "ExpressionData.csv", 
                                  "pseudoTimeData": "PseudoTime.csv", 
-                                 "trueEdges": "refNetwork.csv"})
+                                 "groundTruthNetwork": "GroundTruthNetwork.csv"})
         # If datasets specified, run the corresponding datasets
         else:
             datasets = input_settings_map['datasets']
