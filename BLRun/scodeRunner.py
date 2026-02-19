@@ -17,7 +17,7 @@ def generateInputs(RunnerObj):
     
     ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
 
     colNames = PTData.columns
@@ -53,7 +53,7 @@ def run(RunnerObj):
     nRep = str(RunnerObj.params['nRep'])
     
     
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
 
     colNames = PTData.columns
@@ -87,7 +87,7 @@ def parseOutput(RunnerObj):
     '''
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCODE/"
 
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
     colNames = PTData.columns
     for indx in range(len(colNames)):

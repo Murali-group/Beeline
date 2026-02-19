@@ -16,8 +16,8 @@ def get_parser() -> argparse.ArgumentParser:
         description='Run scSGL algorithm.') 
     parser.add_argument('--expression_file', 
         help='Path to ExpressionData file')
-    parser.add_argument('--ref_net_file', 
-        help='Path to refNetwork file')
+    parser.add_argument('--ground_truth_net_file', 
+        help='Path to groundTruthNetwork file')
     parser.add_argument('--pos_density', default='0.45', #to control the density of positive part of the learned signed graph
         help='Positive density')
     parser.add_argument('--neg_density', default='0.45', #to control the density of negative part of the learned signed graph
@@ -36,11 +36,11 @@ def parse_arguments():
     return opts
 
 def main(args):
-    #python run_scSGL.py --expression_file scSGL/data/inputs/GSD/ExpressionData.csv --ref_net_file scSGL/data/inputs/GSD/refNetwork.csv --out_file outFile.txt
+    #python run_scSGL.py --expression_file scSGL/data/inputs/GSD/ExpressionData.csv --ground_truth_net_file scSGL/data/inputs/GSD/GroundTruthNetwork.csv --out_file outFile.txt
 
     opts = parse_arguments()
     expression_df = pd.read_csv(opts.expression_file, index_col=0)  #to read gene expression file
-    ref_net_df = pd.read_csv(opts.ref_net_file) #to read reference network file
+    ref_net_df = pd.read_csv(opts.ground_truth_net_file) #to read reference network file
 
     #Learn signed graph with the parameters
     G = learn_signed_graph(expression_df.to_numpy(), pos_density=float(opts.pos_density), neg_density=float(opts.neg_density),

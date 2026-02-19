@@ -41,17 +41,17 @@ def Borda(evalObject, selectedAlgorithms=None, aggregationMethod="average"):
                      "/" + dataset["name"]
             inDir = str(evalObject.input_settings.datadir) + "/" + dataset["name"]
             rank_path = outDir + "/" + algorithmName + "/rankedEdges.csv"
-            refNetwork_path = inDir + "/" + dataset["trueEdges"]
+            groundTruthNetwork_path = inDir + "/" + dataset["groundTruthNetwork"]
 
             if not os.path.isdir(outDir) or not os.path.isdir(inDir):
                 continue
             try:
                 df = pd.read_csv(rank_path, sep="\t", header=0, index_col=None)
-                refNetwork = pd.read_csv(refNetwork_path, header=0, index_col=None)
-                refNetwork['edge'] = refNetwork.apply(lambda x: '%s-%s' % (x.Gene1, x.Gene2), axis=1)
-                refNetwork = refNetwork[refNetwork.Gene1!=refNetwork.Gene2]
-                refNetwork['isReferenceEdge'] = 1
-                all_edges_df = pd.DataFrame(list(permutations(np.unique(refNetwork.loc[:,['Gene1','Gene2']]), r = 2)), columns=['Gene1','Gene2'])
+                groundTruthNetwork = pd.read_csv(groundTruthNetwork_path, header=0, index_col=None)
+                groundTruthNetwork['edge'] = groundTruthNetwork.apply(lambda x: '%s-%s' % (x.Gene1, x.Gene2), axis=1)
+                groundTruthNetwork = groundTruthNetwork[groundTruthNetwork.Gene1!=groundTruthNetwork.Gene2]
+                groundTruthNetwork['isReferenceEdge'] = 1
+                all_edges_df = pd.DataFrame(list(permutations(np.unique(groundTruthNetwork.loc[:,['Gene1','Gene2']]), r = 2)), columns=['Gene1','Gene2'])
                 ranked_edges = pd.merge(all_edges_df, df, on=['Gene1','Gene2'], how='left')
                 ranked_edges.EdgeWeight = ranked_edges.EdgeWeight.fillna(0)
                 ranked_edges['absEdgeWeight'] = ranked_edges['EdgeWeight'].abs()

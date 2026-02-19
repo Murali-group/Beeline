@@ -36,12 +36,12 @@ def Jaccard(evalObject, algorithmName):
     rankDict = {}
     sim_names = []
     for dataset in tqdm(evalObject.input_settings.datasets):
-        trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
+        groundTruthDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
                       dataset['name'] + '/' +\
-                      dataset['trueEdges'], sep = ',',
+                      dataset['groundTruthNetwork'], sep = ',',
                       header = 0, index_col = None)
 
-        possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+        possibleEdges = list(permutations(np.unique(groundTruthDF.loc[:,['Gene1','Gene2']]),
                                      r = 2))
 
         TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
@@ -52,8 +52,8 @@ def Jaccard(evalObject, algorithmName):
         # 0 if edge is not present in the ground-truth
         numEdges = 0
         for key in TrueEdgeDict.keys():
-            if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                   (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
+            if len(groundTruthDF.loc[(groundTruthDF['Gene1'] == key.split('|')[0]) &
+                   (groundTruthDF['Gene2'] == key.split('|')[1])])>0:
                     TrueEdgeDict[key] = 1
                     numEdges += 1
 

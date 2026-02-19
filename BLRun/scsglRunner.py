@@ -23,12 +23,12 @@ def generateInputs(RunnerObj):
         ExpressionData.to_csv(RunnerObj.inputDir.joinpath("SCSGL/ExpressionData.csv"),
                              sep = ',', header  = True)
 
-    if not RunnerObj.inputDir.joinpath("SCSGL/refNetwork.csv").exists():
-        refNetworkData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.trueEdges),
+    if not RunnerObj.inputDir.joinpath("SCSGL/GroundTruthNetwork.csv").exists():
+        groundTruthNetworkData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.groundTruthNetwork),
                                      header = 0, index_col = 0)
 
 	  # Write reference network data in SCSGL folder 
-        refNetworkData.to_csv(RunnerObj.inputDir.joinpath("SCSGL/refNetwork.csv"),
+        groundTruthNetworkData.to_csv(RunnerObj.inputDir.joinpath("SCSGL/GroundTruthNetwork.csv"),
                              sep = ',', header  = True)    
 
     
@@ -42,8 +42,8 @@ def run(RunnerObj):
                     "/SCSGL/ExpressionData.csv"
 
     # Get path for refNetwor.csv generated in SCSGL folder for certain type of network in inputs
-    refNetworkPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
-                    "/SCSGL/refNetwork.csv"
+    groundTruthNetworkPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
+                    "/SCSGL/GroundTruthNetwork.csv"
 
     pos_density = str(RunnerObj.params['pos_density'])
     neg_density = str(RunnerObj.params['neg_density'])
@@ -56,7 +56,7 @@ def run(RunnerObj):
     outPath = "data/" +  str(outDir) + 'outFile.txt'
     cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
                          'scsgl:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'python run_scSGL.py',
-                         '--expression_file='+expressionDataPath, '--ref_net_file='+refNetworkPath, '--out_file='+outPath, 
+                         '--expression_file='+expressionDataPath, '--ground_truth_net_file='+groundTruthNetworkPath, '--out_file='+outPath, 
                          '--pos_density='+pos_density, '--neg_density='+neg_density, '--assoc='+assoc,
                          '\"'])
 

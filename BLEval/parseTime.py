@@ -46,6 +46,10 @@ def getTime(evalObject, dataset):
     
     # Repeat for each algorithm
     for algo in algos:
+
+        if 'should_run' in algo[1] and not algo[1]["should_run"]:
+            continue
+
         # Check if single time.txt file
         path = outDir+algo[0]+"/time.txt"
         if Path(path).exists():
@@ -64,11 +68,11 @@ def getTime(evalObject, dataset):
             # on each trajectory.
             
             # First, obtain the number of trajectories
-            # by reading the 'cellData' file for the given
+            # by reading the 'pseudoTimeData' file for the given
             # dataset.
             
-            # path to pseduotime file (or 'cellData' file)
-            PTFile = str(evalObject.input_settings.datadir.joinpath(dataset['name']+'/'+dataset['cellData']))
+            # path to pseduotime file (or 'pseudoTimeData' file)
+            PTFile = str(evalObject.input_settings.datadir.joinpath(dataset['name']+'/'+dataset['pseudoTimeData']))
          
             # Read in the PTFile to obtain the number of trajectories
             # Which is equal to the number of columns.           

@@ -16,7 +16,7 @@ def generateInputs(RunnerObj):
         
     ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
                                      header = 0, index_col = 0)
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
 
     colNames = PTData.columns
@@ -72,7 +72,7 @@ def run(RunnerObj):
        replicates.append(' '.join('--' + p.replace('_', '-') + ' ' + str(params[p]) for p in params_order) + ' '.join(['', '--replicate', str(replicate), '--ID', str(replicate)]))
     params_str = '\n'.join(replicates)    
 
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
 
     colNames = PTData.columns
@@ -124,7 +124,7 @@ def parseOutput(RunnerObj):
     Function to parse outputs from SINGE.
     '''
     outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SINGE/"
-    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.cellData),
+    PTData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.pseudoTimeData),
                              header = 0, index_col = 0)
 
     colNames = PTData.columns

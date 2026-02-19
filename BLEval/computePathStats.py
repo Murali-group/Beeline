@@ -17,13 +17,13 @@ def pathAnalysis(dataDict, inputSettings):
     "cascade", and "mutual" motifs.
     '''
     
-    # Read file for trueEdges
-    trueEdgesDF = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
-                                '/' +dataDict['trueEdges'],
+    # Read file for groundTruthNetwork
+    groundTruthDF = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
+                                '/' +dataDict['groundTruthNetwork'],
                                 sep = ',', 
                                 header = 0, index_col = None)
             
-    possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+    possibleEdges = list(permutations(np.unique(groundTruthDF.loc[:,['Gene1','Gene2']]),
                                  r = 2))        
     EdgeDict = {'|'.join(p):0 for p in possibleEdges}
 
@@ -32,8 +32,8 @@ def pathAnalysis(dataDict, inputSettings):
     for key in EdgeDict.keys():
         u = key.split('|')[0]
         v = key.split('|')[1]
-        if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == u) &
-               (trueEdgesDF['Gene2'] == v)])>0:
+        if len(groundTruthDF.loc[(groundTruthDF['Gene1'] == u) &
+               (groundTruthDF['Gene2'] == v)])>0:
                 refGraph.add_edge(u,v)
 
     #refCC, refFB, refFF, refMI = getNetProp(refGraph)

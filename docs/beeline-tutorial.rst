@@ -14,7 +14,7 @@ The BEELINE repository is structured as follows:
           |-- inputs/
           |   `-- examples/
           |       `-- GSD/
-          |           |--refNetwork.csv
+          |           |--GroundTruthNetwork.csv
           |           |--PseudoTime.csv
           |           `--ExpressionData.csv
           |-- config-files/
@@ -58,14 +58,14 @@ required in the BEELINE pipline.
    pipeline require a pseudotime file as input. Here is a `sample
    PseudoTime file
    <https://github.com/Murali-group/Beeline/blob/master/inputs/example/GSD/PseudoTime.csv>`_.
-3. `refNetwork.csv` contains the ground truth network underlying the
+3. `GroundTruthNetwork.csv` contains the ground truth network underlying the
    interactions between genes in `ExpressionData.csv`. Typically this
    network is not available, and will have to be curated from various
    Transcription Factor databases. While this file is not a
    requirement to run the base pipeline, a reference network is
    required to run some of the performance evaluations in
-   :ref:`BLEval`.  Here is a `sample refNetwork.csv file
-   <https://github.com/Murali-group/Beeline/blob/master/inputs/example/GSD/refNetwork.csv>`_
+   :ref:`BLEval`.  Here is a `sample GroundTruthNetwork.csv file
+   <https://github.com/Murali-group/Beeline/blob/master/inputs/example/GSD/GroundTruthNetwork.csv>`_
 
 
 The figure below shows the t-SNE visualization of the expression
@@ -108,8 +108,8 @@ config file should contain at minimum
               datasets:
                   - name: "Dataset name"
                     exprData: "Expression Data filename"
-                    cellData: "PseudoTime filename"
-                    trueEdges: "Ground truth network filename"
+                    pseudoTimeData: "PseudoTime filename"
+                    groundTruthNetwork: "Ground truth network filename"
               algorithms:
                   - name: "Algorithm name"
                     params:
@@ -140,8 +140,8 @@ contains the following:
               datasets:
                   - name: "GSD"
                     exprData: "ExpressionData.csv"
-                    cellData: "PseudoTime.csv"
-                    trueEdges: "refNetwork.csv"
+                    pseudoTimeData: "PseudoTime.csv"
+                    groundTruthNetwork: "GroundTruthNetwork.csv"
               algorithms:
                   - name: "PIDC"
                     params:
@@ -161,7 +161,7 @@ contains the following:
 
 BEELINE would interepret this as follows: 
 
-- The input expression data file is located at ``inputs/example/GSD/ExpressionData.csv``, the pseudotime file is located at ``inputs/example/GSD/PseudoTime.csv``, and the reference network or true edges file is located at ``inputs/example/GSD/refNetwork.csv``. Note that the paths are relative to the current working directory. 
+- The input expression data file is located at ``inputs/example/GSD/ExpressionData.csv``, the pseudotime file is located at ``inputs/example/GSD/PseudoTime.csv``, and the reference network or true edges file is located at ``inputs/example/GSD/GroundTruthNetwork.csv``. Note that the paths are relative to the current working directory. 
 - The algorithm specific inputs will be placed under ``inputs/example/GSD/<algorithm_name>``. For example, for PIDC, the inputs will be placed under ``inputs/example/GSD/PIDC/``. The SCODE algorithm will be skipped becuase the should_run flag is set to False. 
 - The output folder structure will be similar to that of the inputs under output_dir. For example, the outputs obtained after running PIDC on this dataset will be placed under ``outputs/example/GSD/PIDC/``. 
 

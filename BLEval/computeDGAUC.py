@@ -30,9 +30,9 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
             - AUROC: A dictionary containing AUROC values for each algorithm
     '''
     
-    # Read file for trueEdges
-    trueEdgesDF = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
-                                '/' +dataDict['trueEdges'],
+    # Read file for groundTruthNetwork
+    groundTruthDF = pd.read_csv(str(inputSettings.datadir)+'/'+ dataDict['name'] +
+                                '/' +dataDict['groundTruthNetwork'],
                                 sep = ',', 
                                 header = 0, index_col = None)
             
@@ -58,7 +58,7 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
                 predDF = pd.read_csv(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                                             sep = '\t', header =  0, index_col = None)
 
-                precisionDict[algo[0]], recallDict[algo[0]], FPRDict[algo[0]], TPRDict[algo[0]], AUPRC[algo[0]], AUROC[algo[0]] = computeScores(trueEdgesDF, predDF, directed = True, selfEdges = selfEdges)
+                precisionDict[algo[0]], recallDict[algo[0]], FPRDict[algo[0]], TPRDict[algo[0]], AUPRC[algo[0]], AUROC[algo[0]] = computeScores(groundTruthDF, predDF, directed = True, selfEdges = selfEdges)
 
             else:
                 print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
@@ -76,7 +76,7 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
                 predDF = pd.read_csv(outDir + '/' +algo[0]+'/rankedEdges.csv', \
                                             sep = '\t', header =  0, index_col = None)
 
-                precisionDict[algo[0]], recallDict[algo[0]], FPRDict[algo[0]], TPRDict[algo[0]], AUPRC[algo[0]], AUROC[algo[0]] = computeScores(trueEdgesDF, predDF, directed = False, selfEdges = selfEdges)
+                precisionDict[algo[0]], recallDict[algo[0]], FPRDict[algo[0]], TPRDict[algo[0]], AUPRC[algo[0]], AUROC[algo[0]] = computeScores(groundTruthDF, predDF, directed = False, selfEdges = selfEdges)
 
             else:
                 print(outDir + '/' +algo[0]+'/rankedEdges.csv', \
@@ -117,15 +117,15 @@ def PRROC(dataDict, inputSettings, directed = True, selfEdges = False, plotFlag 
         plt.clf()
     return AUPRC, AUROC
 
-def computeScores(trueEdgesDF, predEdgeDF, 
+def computeScores(groundTruthDF, predEdgeDF, 
                   directed = True, selfEdges = True):
     '''        
     Computes precision-recall and ROC curves
     using scikit-learn for a given set of predictions in the 
     form of a DataFrame.
     
-    :param trueEdgesDF:   A pandas dataframe containing the true classes.The indices of this dataframe are all possible edgesin a graph formed using the genes in the given dataset. This dataframe only has one column to indicate the classlabel of an edge. If an edge is present in the reference network, it gets a class label of 1, else 0.
-    :type trueEdgesDF: DataFrame
+    :param groundTruthDF:   A pandas dataframe containing the true classes.The indices of this dataframe are all possible edgesin a graph formed using the genes in the given dataset. This dataframe only has one column to indicate the classlabel of an edge. If an edge is present in the reference network, it gets a class label of 1, else 0.
+    :type groundTruthDF: DataFrame
         
     :param predEdgeDF:   A pandas dataframe containing the edge ranks from the prediced network. The indices of this dataframe are all possible edges.This dataframe only has one column to indicate the edge weightsin the predicted network. Higher the weight, higher the edge confidence.
     :type predEdgeDF: DataFrame
@@ -149,10 +149,10 @@ def computeScores(trueEdgesDF, predEdgeDF,
         # Initialize dictionaries with all 
         # possible edges
         if selfEdges:
-            possibleEdges = list(product(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+            possibleEdges = list(product(np.unique(groundTruthDF.loc[:,['Gene1','Gene2']]),
                                          repeat = 2))
         else:
-            possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+            possibleEdges = list(permutations(np.unique(groundTruthDF.loc[:,['Gene1','Gene2']]),
                                          r = 2))
         
         TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
@@ -162,8 +162,8 @@ def computeScores(trueEdgesDF, predEdgeDF,
         # 1 if edge is present in the ground-truth
         # 0 if edge is not present in the ground-truth
         for key in TrueEdgeDict.keys():
-            if len(trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                   (trueEdgesDF['Gene2'] == key.split('|')[1])])>0:
+            if len(groundTruthDF.loc[(groundTruthDF['Gene1'] == key.split('|')[0]) &
+                   (groundTruthDF['Gene2'] == key.split('|')[1])])>0:
                     TrueEdgeDict[key] = 1
                 
         for key in PredEdgeDict.keys():
@@ -178,10 +178,10 @@ def computeScores(trueEdgesDF, predEdgeDF,
         # Initialize dictionaries with all 
         # possible edges
         if selfEdges:
-            possibleEdges = list(combinations_with_replacement(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+            possibleEdges = list(combinations_with_replacement(np.unique(groundTruthDF.loc[:,['Gene1','Gene2']]),
                                                                r = 2))
         else:
-            possibleEdges = list(combinations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+            possibleEdges = list(combinations(np.unique(groundTruthDF.loc[:,['Gene1','Gene2']]),
                                                                r = 2))
         TrueEdgeDict = {'|'.join(p):0 for p in possibleEdges}
         PredEdgeDict = {'|'.join(p):0 for p in possibleEdges}
@@ -191,10 +191,10 @@ def computeScores(trueEdgesDF, predEdgeDF,
         # 0 if edge is not present in the ground-truth
 
         for key in TrueEdgeDict.keys():
-            if len(trueEdgesDF.loc[((trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                           (trueEdgesDF['Gene2'] == key.split('|')[1])) |
-                              ((trueEdgesDF['Gene2'] == key.split('|')[0]) &
-                           (trueEdgesDF['Gene1'] == key.split('|')[1]))]) > 0:
+            if len(groundTruthDF.loc[((groundTruthDF['Gene1'] == key.split('|')[0]) &
+                           (groundTruthDF['Gene2'] == key.split('|')[1])) |
+                              ((groundTruthDF['Gene2'] == key.split('|')[0]) &
+                           (groundTruthDF['Gene1'] == key.split('|')[1]))]) > 0:
                 TrueEdgeDict[key] = 1  
 
         # Compute PredEdgeDict Dictionary

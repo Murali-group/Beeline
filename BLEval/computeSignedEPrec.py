@@ -43,12 +43,12 @@ def signedEPrec(evalObject, algorithmName):
     sim_names = []
     for sgn in ['+','-']:
         for dataset in tqdm(evalObject.input_settings.datasets):
-            trueEdgesDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
+            groundTruthDF = pd.read_csv(str(evalObject.input_settings.datadir)+'/'+ \
                                       dataset['name'] + '/' +\
-                                      dataset['trueEdges'], sep = ',',
+                                      dataset['groundTruthNetwork'], sep = ',',
                                       header = 0, index_col = None)
 
-            possibleEdges = list(permutations(np.unique(trueEdgesDF.loc[:,['Gene1','Gene2']]),
+            possibleEdges = list(permutations(np.unique(groundTruthDF.loc[:,['Gene1','Gene2']]),
                                          r = 2))
 
 
@@ -59,16 +59,16 @@ def signedEPrec(evalObject, algorithmName):
             # 1 if edge is present in the ground-truth
             # 0 if edge is not present in the ground-truth
             numEdges = 0
-            trueEdges = set()
+            groundTruthNetwork = set()
             toRemove = []
             for key in TrueEdgeDict.keys():
-                subDF = trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                       (trueEdgesDF['Gene2'] == key.split('|')[1])]
+                subDF = groundTruthDF.loc[(groundTruthDF['Gene1'] == key.split('|')[0]) &
+                       (groundTruthDF['Gene2'] == key.split('|')[1])]
 
                 if subDF.shape[0] > 0:
                     if  subDF['Type'].values[0] == sgn:
                         TrueEdgeDict[key] = 1
-                        trueEdges.add(key)
+                        groundTruthNetwork.add(key)
                         numEdges += 1
                     else:
                         toRemove.append(key)
@@ -137,19 +137,19 @@ def signedEPrec(evalObject, algorithmName):
         # Compute TrueEdgeDict Dictionary
         # 1 if edge is present in the ground-truth
         # 0 if edge is not present in the ground-truth
-        trueEdges = set()
+        groundTruthNetwork = set()
         for key in TrueEdgeDict.keys():
-            subDF = trueEdgesDF.loc[(trueEdgesDF['Gene1'] == key.split('|')[0]) &
-                   (trueEdgesDF['Gene2'] == key.split('|')[1])]
+            subDF = groundTruthDF.loc[(groundTruthDF['Gene1'] == key.split('|')[0]) &
+                   (groundTruthDF['Gene2'] == key.split('|')[1])]
 
             if subDF.shape[0] > 0:
                 if  subDF['Type'].values[0] == sgn:
                     TrueEdgeDict[key] = 1
-                    trueEdges.add(key)
+                    groundTruthNetwork.add(key)
 
         for dataset in tqdm(evalObject.input_settings.datasets):
-            if len(rankDict[sgn][dataset["name"]]) != 0 and len(trueEdges) != 0:
-                intersectionSet = rankDict[sgn][dataset["name"]].intersection(trueEdges)
+            if len(rankDict[sgn][dataset["name"]]) != 0 and len(groundTruthNetwork) != 0:
+                intersectionSet = rankDict[sgn][dataset["name"]].intersection(groundTruthNetwork)
                 Pprec[sgn][dataset["name"]] = len(intersectionSet)/len(rankDict[sgn][dataset["name"]])
             else:
                 Pprec[sgn][dataset["name"]] = 0
