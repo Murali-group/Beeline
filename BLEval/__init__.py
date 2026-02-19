@@ -40,7 +40,6 @@ from BLEval.computeEarlyPrec import EarlyPrec
 from BLEval.computePathStats import pathAnalysis
 from BLEval.computeSignedEPrec import signedEPrec
 
-
 class InputSettings(object):
     '''
     The class for storing the names of input files.
@@ -63,7 +62,12 @@ class InputSettings(object):
 
         self.datadir = datadir
         self.datasets = datasets
-        self.algorithms = algorithms
+        self.algorithms = []
+        for alg in algorithms:
+            params = alg[1]
+            if 'should_run' in params and \
+                params['should_run'] is True:
+                self.algorithms.append(alg)
 
 
 class OutputSettings(object):

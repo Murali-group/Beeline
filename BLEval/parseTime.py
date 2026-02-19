@@ -46,6 +46,10 @@ def getTime(evalObject, dataset):
     
     # Repeat for each algorithm
     for algo in algos:
+
+        if 'should_run' in algo[1] and not algo[1]["should_run"]:
+            continue
+
         # Check if single time.txt file
         path = outDir+algo[0]+"/time.txt"
         if Path(path).exists():
