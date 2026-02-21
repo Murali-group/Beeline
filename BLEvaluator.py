@@ -7,6 +7,11 @@ from BLEval.AUROC import AUROC
 from BLEval.data import EvaluationData
 from BLEval.EarlyPrecision import EarlyPrecision
 from BLEval.SignedEarlyPrecision import SignedEarlyPrecision
+from BLEval.BLTime import BLTime
+from BLEval.Borda import Borda
+from BLEval.Jaccard import Jaccard
+from BLEval.Motifs import Motifs
+from BLEval.Spearman import Spearman
 
 
 def parse_args():
@@ -50,7 +55,7 @@ def parse_args():
         help="Compute path length statistics on the predicted top-k networks.")
 
     parser.add_argument('-b', '--borda', action="store_true", default=False,
-        help="Compute edge ranked list using the various Borda aggregatio methods.")
+        help="Compute edge ranked list using the various Borda aggregation methods.")
 
     return parser.parse_args()
 
@@ -82,11 +87,26 @@ def main():
         AUPRC()(evaluation_data)
         AUROC()(evaluation_data)
 
+    if args.jaccard:
+        Jaccard()(evaluation_data)
+
+    if args.time:
+        BLTime()(evaluation_data)
+
     if args.epr:
         EarlyPrecision()(evaluation_data)
 
     if args.sepr:
         SignedEarlyPrecision()(evaluation_data)
+
+    if args.motifs:
+        Motifs()(evaluation_data)
+
+    if args.spearman:
+        Spearman()(evaluation_data)
+
+    if args.borda:
+        Borda()(evaluation_data)
 
 
 if __name__ == '__main__':
