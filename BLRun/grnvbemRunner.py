@@ -16,13 +16,6 @@ class GRNVBEMRunner(Runner):
         the rows. If the files already exist, this function will overwrite it.
         '''
 
-        # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
-        if not self.working_dir.exists():
-            self.working_dir.mkdir(parents=True, exist_ok = False)
-
-        if not self.output_dir.exists():
-            self.output_dir.mkdir(parents=True, exist_ok = False)
-
         ExpressionData = pd.read_csv(self.input_dir / self.exprData,
                                          header = 0, index_col = 0)
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
@@ -57,17 +50,13 @@ class GRNVBEMRunner(Runner):
 
         colNames = PTData.columns
         for idx in range(len(colNames)):
-            # Directly mount the input and output folders
-            inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
-                                inputVolumeMount,
-                                outputVolumeMount,
+                                f"-v {self.working_dir}:/usr/working_dir",
                                 'grnbeeline/grnvbem:base /bin/sh -c \"time -v -o',
-                                "/output/time" + str(idx) + ".txt",
+                                "/usr/working_dir/time" + str(idx) + ".txt",
                                 './GRNVBEM',
-                                "/input/ExpressionData" + str(idx) + ".csv",
-                                "/output/outFile" + str(idx) + ".txt", '\"'])
+                                "/usr/working_dir/ExpressionData" + str(idx) + ".csv",
+                                "/usr/working_dir/outFile" + str(idx) + ".txt", '\"'])
 
             self._run_docker(cmdToRun, append=(idx > 0))
 
@@ -76,10 +65,6 @@ class GRNVBEMRunner(Runner):
         Function to parse outputs from GRNVBEM.
         '''
         workDir = self.working_dir
-        outDir = self.output_dir
-        if not outDir.is_dir():
-            raise FileNotFoundError(
-                f"Output directory does not exist: {outDir}")
 
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
                              header = 0, index_col = 0)

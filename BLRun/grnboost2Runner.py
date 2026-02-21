@@ -14,13 +14,6 @@ class GRNBoost2Runner(Runner):
         this function will not do anything.
         '''
 
-        # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
-        if not self.working_dir.exists():
-            self.working_dir.mkdir(parents=True, exist_ok = False)
-
-        if not self.output_dir.exists():
-            self.output_dir.mkdir(parents=True, exist_ok = False)
-
         # Create ExpressionData.csv file in the created input directory
         GRNBOOST2_EXPRESSION_FILE = self.working_dir / "ExpressionData.csv"
         if not GRNBOOST2_EXPRESSION_FILE.exists():
@@ -36,17 +29,13 @@ class GRNBoost2Runner(Runner):
         Function to run GRNBOOST2 algorithm
         '''
 
-        # Directly mount the input and output folders
-        inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-        outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
         cmdToRun = ' '.join(['docker run --rm',
-                            inputVolumeMount,
-                            outputVolumeMount,
+                            f"-v {self.working_dir}:/usr/working_dir",
                             '--expose=41269',
                             'grnbeeline/arboreto:base /bin/sh -c \"time -v -o',
-                            "/output/time.txt",
+                            "/usr/working_dir/time.txt",
                             'python runArboreto.py --algo=GRNBoost2',
-                            '--inFile=/input/ExpressionData.csv', '--outFile=/output/outFile.txt', '\"'])
+                            '--inFile=/usr/working_dir/ExpressionData.csv', '--outFile=/usr/working_dir/outFile.txt', '\"'])
 
         self._run_docker(cmdToRun)
 
@@ -55,11 +44,7 @@ class GRNBoost2Runner(Runner):
         Function to parse outputs from GRNBOOST2.
         '''
         workDir = self.working_dir
-        outDir = self.output_dir
         outFile = workDir / 'outFile.txt'
-        if not outDir.is_dir():
-            raise FileNotFoundError(
-                f"Output directory does not exist: {outDir}")
 
         # Quit if output file does not exist
         if not outFile.exists():

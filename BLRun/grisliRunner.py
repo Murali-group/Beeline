@@ -15,13 +15,6 @@ class GRISLIRunner(Runner):
         this function will not do anything.
         '''
 
-        # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
-        if not self.working_dir.exists():
-            self.working_dir.mkdir(parents=True, exist_ok = False)
-
-        if not self.output_dir.exists():
-            self.output_dir.mkdir(parents=True, exist_ok = False)
-
         ExpressionData = pd.read_csv(self.input_dir / self.exprData,
                                          header = 0, index_col = 0)
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
@@ -60,17 +53,13 @@ class GRISLIRunner(Runner):
         for idx in range(len(colNames)):
             os.makedirs(str(self.working_dir / str(idx)), exist_ok = True)
 
-            # Directly mount the input and output folders
-            inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
-                                inputVolumeMount,
-                                outputVolumeMount,
+                                f"-v {self.working_dir}:/usr/working_dir",
                                 'grnbeeline/grisli:base /bin/sh -c \"time -v -o',
-                                "/output/time" + str(idx) + ".txt",
+                                "/usr/working_dir/time" + str(idx) + ".txt",
                                 './GRISLI',
-                                "/input/" + str(idx) + "/",
-                                "/output/" + str(idx) + "/outFile.txt",
+                                "/usr/working_dir/" + str(idx) + "/",
+                                "/usr/working_dir/" + str(idx) + "/outFile.txt",
                                 L, R, alphaMin, '\"'])
 
             self._run_docker(cmdToRun, append=(idx > 0))
@@ -80,10 +69,6 @@ class GRISLIRunner(Runner):
         Function to parse outputs from GRISLI.
         '''
         workDir = self.working_dir
-        outDir = self.output_dir
-        if not outDir.is_dir():
-            raise FileNotFoundError(
-                f"Output directory does not exist: {outDir}")
 
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
                              header = 0, index_col = 0)

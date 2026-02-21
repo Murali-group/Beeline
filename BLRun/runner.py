@@ -60,6 +60,10 @@ class Runner(ABC):
             for item in sorted(self.working_dir.rglob('*'), reverse=True):
                 item.unlink() if (item.is_file() or item.is_symlink()) else item.rmdir()
             self.working_dir.rmdir()
+
+        # Pre-create output_dir and working_dir so docker cannot claim them as root.
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.working_dir.mkdir(parents=True, exist_ok=True)
         
         # Precompute progress message for CLI output.
         dataset_id = Path(inp['dataset_dir']).name if inp.get('dataset_dir') else ds['dataset_id']
@@ -136,7 +140,17 @@ class Runner(ABC):
         Returns
         -------
         None
+
+        Raises
+        ------
+        FileNotFoundError
+            If self.output_dir does not exist at the time of writing.
+        TypeError
+            If df is not a pd.DataFrame.
         """
         if not isinstance(df, pd.DataFrame):
             raise TypeError(f"df must be pd.DataFrame, got {type(df)}")
+        if not self.output_dir.is_dir():
+            raise FileNotFoundError(
+                f"Output directory does not exist: {self.output_dir}")
         df.to_csv(self.output_dir / 'rankedEdges.csv', sep='\t', index=False)

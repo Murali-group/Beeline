@@ -14,13 +14,6 @@ class SCSGLRunner(Runner):
         this function will not do anything.
         '''
 
-        # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
-        if not self.working_dir.exists():
-            self.working_dir.mkdir(parents=True, exist_ok = False)
-
-        if not self.output_dir.exists():
-            self.output_dir.mkdir(parents=True, exist_ok = False)
-
         # Create ExpressionData.csv file in the created input directory
         SCSGL_EXPRESSION_FILE = self.working_dir / "ExpressionData.csv"
         if not SCSGL_EXPRESSION_FILE.exists():
@@ -50,18 +43,14 @@ class SCSGLRunner(Runner):
         neg_density = str(self.params['neg_density'])
         assoc = str(self.params['assoc'])
 
-        # Directly mount the input and output folders
-        inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-        outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
         cmdToRun = ' '.join(['docker run --rm',
-                            inputVolumeMount,
-                            outputVolumeMount,
+                            f"-v {self.working_dir}:/usr/working_dir",
                             '--expose=41269',
                             'scsgl:base /bin/sh -c \"time -v -o',
-                            "/output/time.txt", 'python run_scSGL.py',
-                            '--expression_file=/input/ExpressionData.csv',
-                            '--ground_truth_net_file=/input/GroundTruthNetwork.csv',
-                            '--out_file=/output/outFile.txt',
+                            "/usr/working_dir/time.txt", 'python run_scSGL.py',
+                            '--expression_file=/usr/working_dir/ExpressionData.csv',
+                            '--ground_truth_net_file=/usr/working_dir/GroundTruthNetwork.csv',
+                            '--out_file=/usr/working_dir/outFile.txt',
                             '--pos_density='+pos_density, '--neg_density='+neg_density, '--assoc='+assoc,
                             '\"'])
 
@@ -72,11 +61,7 @@ class SCSGLRunner(Runner):
         Function to parse outputs from SCSGL.
         '''
         workDir = self.working_dir
-        outDir = self.output_dir
         outFile = workDir / 'outFile.txt'
-        if not outDir.is_dir():
-            raise FileNotFoundError(
-                f"Output directory does not exist: {outDir}")
 
         # Quit if output file does not exist
         if not outFile.exists():

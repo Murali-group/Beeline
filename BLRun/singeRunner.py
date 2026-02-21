@@ -14,13 +14,6 @@ class SINGERunner(Runner):
         this function will not do anything.
         '''
 
-        # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
-        if not self.working_dir.exists():
-            self.working_dir.mkdir(parents=True, exist_ok = False)
-
-        if not self.output_dir.exists():
-            self.output_dir.mkdir(parents=True, exist_ok = False)
-
         ExpressionData = pd.read_csv(self.input_dir / self.exprData,
                                          header = 0, index_col = 0)
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
@@ -79,16 +72,16 @@ class SINGERunner(Runner):
             os.makedirs(str(self.working_dir / str(idx)), exist_ok = True)
 
             outFileSymlink = "out" + str(idx)
-            inputFile = "/input/ExpressionData"+str(idx)+".csv"
-            inputMat = "/input/ExpressionData"+str(idx)+".mat"
-            geneListMat = "/input/GeneList"+str(idx)+".mat"
-            paramsFile = "/input/hyperparameters.txt"
+            inputFile = "/usr/working_dir/ExpressionData"+str(idx)+".csv"
+            inputMat = "/usr/working_dir/ExpressionData"+str(idx)+".mat"
+            geneListMat = "/usr/working_dir/GeneList"+str(idx)+".mat"
+            paramsFile = "/usr/working_dir/hyperparameters.txt"
 
             '''
             This is a workaround for https://github.com/gitter-lab/SINGE/blob/master/code/parseParams.m#L39
             not allowing '/' characters in the outDir parameter.
             '''
-            symlink_out_file = ' '.join(['ln -s', "/output/" + str(idx) + "/", outFileSymlink])
+            symlink_out_file = ' '.join(['ln -s', "/usr/working_dir/" + str(idx) + "/", outFileSymlink])
 
             '''
             See https://github.com/gitter-lab/SINGE/blob/master/README.md.  SINGE expects a data matfile with variables "X" and "ptime",
@@ -105,15 +98,11 @@ class SINGERunner(Runner):
                                  'f = fopen(\'' + inputFile + '\'); gene_list = strsplit(fgetl(f), \',\')(1:end-1).\'; fclose(f); ' + \
                                  'save(\'-v7\',\'' + geneListMat + '\', \'gene_list\')\\"'
 
-            # Directly mount the input and output folders
-            inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm --entrypoint /bin/sh',
-                                inputVolumeMount,
-                                outputVolumeMount,
+                                f"-v {self.working_dir}:/usr/working_dir",
                                 'grnbeeline/singe:0.4.1 -c \"echo \\"',
                                  params_str, '\\" >', paramsFile, '&&', symlink_out_file, '&&', convert_input_to_matfile,
-                                 '&& time -v -o', "/output/time" + str(idx) + ".txt",
+                                 '&& time -v -o', "/usr/working_dir/time" + str(idx) + ".txt",
                                  '/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
                                  inputMat, geneListMat, outFileSymlink, paramsFile, '\"'])
 
@@ -124,10 +113,6 @@ class SINGERunner(Runner):
         Function to parse outputs from SINGE.
         '''
         workDir = self.working_dir
-        outDir = self.output_dir
-        if not outDir.is_dir():
-            raise FileNotFoundError(
-                f"Output directory does not exist: {outDir}")
 
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
                              header = 0, index_col = 0)

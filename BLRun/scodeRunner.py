@@ -15,13 +15,6 @@ class SCODERunner(Runner):
         this function will not do anything.
         '''
 
-        # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
-        if not self.working_dir.exists():
-            self.working_dir.mkdir(parents=True, exist_ok = False)
-
-        if not self.output_dir.exists():
-            self.output_dir.mkdir(parents=True, exist_ok = False)
-
         ExpressionData = pd.read_csv(self.input_dir / self.exprData,
                                          header = 0, index_col = 0)
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
@@ -69,20 +62,16 @@ class SCODERunner(Runner):
             nCells = str(ExpressionData.shape[1])
             nGenes = str(ExpressionData.shape[0])
 
-            # Directly mount the input and output folders
-            inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
                                 f'--user {os.getuid()}:{os.getgid()}',
                                 '-e HOME=/tmp',
-                                inputVolumeMount,
-                                outputVolumeMount,
+                                f"-v {self.working_dir}:/usr/working_dir",
                                 'grnbeeline/scode:base /bin/sh -c \"time -v -o',
-                                "/output/time" + str(idx) + ".txt",
+                                "/usr/working_dir/time" + str(idx) + ".txt",
                                 'ruby run_R.rb',
-                                "/input/ExpressionData" + str(idx) + ".csv",
-                                "/input/PseudoTime" + str(idx) + ".csv",
-                                "/output/" + str(idx),
+                                "/usr/working_dir/ExpressionData" + str(idx) + ".csv",
+                                "/usr/working_dir/PseudoTime" + str(idx) + ".csv",
+                                "/usr/working_dir/" + str(idx),
                                 nGenes, z, nCells, nIter, nRep, '\"'])
 
             self._run_docker(cmdToRun, append=(idx > 0))
@@ -92,10 +81,6 @@ class SCODERunner(Runner):
         Function to parse outputs from SCODE.
         '''
         workDir = self.working_dir
-        outDir = self.output_dir
-        if not outDir.is_dir():
-            raise FileNotFoundError(
-                f"Output directory does not exist: {outDir}")
 
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
                              header = 0, index_col = 0)

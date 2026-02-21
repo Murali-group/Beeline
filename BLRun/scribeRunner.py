@@ -14,13 +14,6 @@ class SCRIBERunner(Runner):
         this function will not do anything.
         '''
 
-        # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
-        if not self.working_dir.exists():
-            self.working_dir.mkdir(parents=True, exist_ok = False)
-
-        if not self.output_dir.exists():
-            self.output_dir.mkdir(parents=True, exist_ok = False)
-
         ExpressionData = pd.read_csv(self.input_dir / self.exprData,
                                          header = 0, index_col = 0)
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
@@ -77,16 +70,12 @@ class SCRIBERunner(Runner):
             outFile = "outFile"+str(idx)+".csv"
             timeFile = 'time'+str(idx)+".txt"
 
-            # Directly mount the input and output folders
-            inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
-                           inputVolumeMount,
-                           outputVolumeMount,
+                           f"-v {self.working_dir}:/usr/working_dir",
                            'grnbeeline/scribe:base /bin/sh -c \"time -v -o',
-                           "/output/" + timeFile, 'Rscript runScribe.R',
-                           '-e', "/input/" + exprName, '-c', "/input/" + cellName,
-                           '-g', "/input/GeneData.csv", '-o /output/', '-d', delay, '-l', low,
+                           "/usr/working_dir/" + timeFile, 'Rscript runScribe.R',
+                           '-e', "/usr/working_dir/" + exprName, '-c', "/usr/working_dir/" + cellName,
+                           '-g', "/usr/working_dir/GeneData.csv", '-o /usr/working_dir/', '-d', delay, '-l', low,
                            '-m', method, '-x', fam, '--outFile ' + outFile])
 
             if str(self.params['log']) == 'True':
@@ -103,10 +92,6 @@ class SCRIBERunner(Runner):
         Function to parse outputs from SCRIBE.
         '''
         workDir = self.working_dir
-        outDir = self.output_dir
-        if not outDir.is_dir():
-            raise FileNotFoundError(
-                f"Output directory does not exist: {outDir}")
 
         PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
                              header = 0, index_col = 0)
