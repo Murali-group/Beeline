@@ -17,11 +17,9 @@ class GRISLIRunner(Runner):
 
         # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
         if not self.working_dir.exists():
-            print("Input folder for GRISLI does not exist, creating input folder...")
             self.working_dir.mkdir(parents=True, exist_ok = False)
 
         if not self.output_dir.exists():
-            print("Output folder for GRISLI does not exist, creating output folder...")
             self.output_dir.mkdir(parents=True, exist_ok = False)
 
         ExpressionData = pd.read_csv(self.input_dir / self.exprData,

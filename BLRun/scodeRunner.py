@@ -17,11 +17,9 @@ class SCODERunner(Runner):
 
         # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
         if not self.working_dir.exists():
-            print("Input folder for SCODE does not exist, creating input folder...")
             self.working_dir.mkdir(parents=True, exist_ok = False)
 
         if not self.output_dir.exists():
-            print("Output folder for SCODE does not exist, creating output folder...")
             self.output_dir.mkdir(parents=True, exist_ok = False)
 
         ExpressionData = pd.read_csv(self.input_dir / self.exprData,
@@ -75,6 +73,8 @@ class SCODERunner(Runner):
             inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
             outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
+                                f'--user {os.getuid()}:{os.getgid()}',
+                                '-e HOME=/tmp',
                                 inputVolumeMount,
                                 outputVolumeMount,
                                 'grnbeeline/scode:base /bin/sh -c \"time -v -o',

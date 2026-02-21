@@ -16,11 +16,9 @@ class GENIE3Runner(Runner):
 
         # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
         if not self.working_dir.exists():
-            print("Input folder for GENIE3 does not exist, creating input folder...")
             self.working_dir.mkdir(parents=True, exist_ok = False)
 
         if not self.output_dir.exists():
-            print("Output folder for GENIE3 does not exist, creating output folder...")
             self.output_dir.mkdir(parents=True, exist_ok = False)
 
         # Create ExpressionData.csv file in the created input directory

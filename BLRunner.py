@@ -2,6 +2,7 @@ import argparse
 import os
 from pathlib import Path
 import yaml
+from tqdm import tqdm
 
 from BLRun.genie3Runner import GENIE3Runner
 from BLRun.grnboost2Runner import GRNBoost2Runner
@@ -135,14 +136,52 @@ def build_runners(config):
     return runners
 
 
-def warn_if_populated(runners):
+def get_working_dirs(config):
+    """
+    Compute expected working_dir paths from config without constructing Runner objects.
+
+    Mirrors the path logic in Runner.__init__ so the overwrite check can run
+    before runners are built (and their __init__ erases the directories).
+
+    Parameters
+    ----------
+    config : dict
+        Parsed YAML configuration dictionary.
+
+    Returns
+    -------
+    list of Path
+        One working_dir path per enabled dataset/algorithm combination.
+    """
+    root            = Path.cwd()
+    input_settings  = config['input_settings']
+    output_settings = config['output_settings']
+    output_dir      = Path(output_settings['output_dir'])
+    datasets        = get_datasets(input_settings)
+    algorithms      = input_settings.get('algorithms', [])
+
+    paths = []
+    for dataset in datasets:
+        for algo in algorithms:
+            if not algo.get('should_run', [False])[0]:
+                continue
+            base_output = output_dir if output_dir.is_absolute() else root / output_dir
+            if dataset['dataset_dir']:
+                base_output = base_output / dataset['dataset_dir']
+            base_output = base_output / dataset['dataset_id'] / algo['algorithm_id']
+            paths.append(base_output / 'working_dir')
+
+    return paths
+
+
+def warn_if_populated(working_dirs):
     """
     Warn and prompt the user if any working directory already contains files.
 
     Parameters
     ----------
-    runners : list of Runner
-        Runners whose working_dir attributes are checked for existing content.
+    working_dirs : list of Path
+        Working directory paths to check for existing content.
 
     Returns
     -------
@@ -150,8 +189,8 @@ def warn_if_populated(runners):
         True if the user confirms they want to proceed, False otherwise.
     """
     n_populated = sum(
-        1 for r in runners
-        if r.working_dir.exists() and any(r.working_dir.iterdir())
+        1 for p in working_dirs
+        if p.exists() and any(p.iterdir())
     )
     if n_populated == 0:
         return True
@@ -167,14 +206,14 @@ def main():
     args = parse_args()
     config = load_config(args.config)
 
-    runners = build_runners(config)
-
-    if not warn_if_populated(runners):
+    if not warn_if_populated(get_working_dirs(config)):
         print("Aborted.")
         return
 
-    for runner in runners:
-        print(runner.running_message)
+    runners = build_runners(config)
+
+    for runner in tqdm(runners):
+        tqdm.write(runner.running_message)
         runner.generateInputs()
         runner.run()
         runner.parseOutput()
