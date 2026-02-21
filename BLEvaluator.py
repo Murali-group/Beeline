@@ -11,6 +11,7 @@ from BLEval.BLTime import BLTime
 from BLEval.Borda import Borda
 from BLEval.Jaccard import Jaccard
 from BLEval.Motifs import Motifs
+from BLEval.PathStats import PathStats
 from BLEval.Spearman import Spearman
 
 
@@ -104,6 +105,9 @@ def main():
 
     if args.spearman:
         Spearman()(evaluation_data)
+
+    if args.paths:
+        PathStats()(evaluation_data)
 
     if args.borda:
         Borda()(evaluation_data)
