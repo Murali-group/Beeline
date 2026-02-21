@@ -137,5 +137,5 @@ class SCODERunner(Runner):
 
         outDF = pd.concat(OutSubDF)
         FinalDF = outDF[outDF['EdgeWeight'] == outDF.groupby(['Gene1','Gene2'])['EdgeWeight'].transform('max')]
-        FinalDF.sort_values(['EdgeWeight'], ascending = False, inplace = True)
+        FinalDF = FinalDF.sort_values(['EdgeWeight'], ascending=False)
         self._write_ranked_edges(FinalDF[['Gene1', 'Gene2', 'EdgeWeight']])
