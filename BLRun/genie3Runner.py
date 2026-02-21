@@ -30,8 +30,8 @@ class GENIE3Runner(Runner):
             ExpressionData = pd.read_csv(self.input_dir / self.exprData,
                                          header = 0, index_col = 0)
 
-            # Write .csv file
-            ExpressionData.to_csv(GENIE3_EXPRESSION_FILE,
+            # Write .csv file — arboreto expects cells as rows, genes as columns
+            ExpressionData.T.to_csv(GENIE3_EXPRESSION_FILE,
                                  sep = '\t', header  = True, index = True)
 
     def run(self):
