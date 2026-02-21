@@ -142,6 +142,7 @@ def main():
     runners = build_runners(config)
 
     for runner in runners:
+        print(runner.running_message)
         runner.generateInputs()
         runner.run()
         runner.parseOutput()

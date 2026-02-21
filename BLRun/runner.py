@@ -53,6 +53,14 @@ class Runner(ABC):
         self.input_dir   = base_input / ds['dataset_id']
         self.output_dir  = base_output
         self.working_dir = base_output / "working_dir"
+        
+        # Precompute progress message for CLI output.
+        dataset_id = Path(inp['dataset_dir']).name if inp.get('dataset_dir') else ds['dataset_id']
+        run_id     = ds['dataset_id']
+        self.running_message = (
+            f"Running {config['algo_name']} | dataset: {dataset_id} | run: {run_id}"
+        )
+
         self.exprData           = ds.get('exprData',           'ExpressionData.csv')
         self.pseudoTimeData     = ds.get('pseudoTimeData',     'PseudoTime.csv')
         self.groundTruthNetwork = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
