@@ -58,7 +58,7 @@ def get_datasets(input_settings):
 
     Each dataset entry in the config may have a 'variants' field (dict or list
     of dicts). Each variant becomes a separate runnable dataset. The dataset
-    'name' is appended to dataset_dir so the runner resolves the correct path.
+    'dataset_id' is appended to dataset_dir so the runner resolves the correct path.
 
     If 'datasets' is absent, returns an empty list (caller handles auto-discovery).
     """
@@ -85,7 +85,7 @@ def get_datasets(input_settings):
         for run in runs:
             datasets.append({
                 'dataset_dir': variant_dataset_dir,
-                'name': run['run_id'],
+                'dataset_id': run['run_id'],
                 'exprData': run.get('exprData', 'ExpressionData.csv'),
                 'pseudoTimeData': run.get('pseudoTimeData', 'PseudoTime.csv'),
                 'groundTruthNetwork': run.get('groundTruthNetwork', 'GroundTruthNetwork.csv'),
@@ -104,7 +104,7 @@ def build_runner(algo_name, params, dataset, input_settings, output_settings):
             'dataset_dir': dataset['dataset_dir'],
         },
         'dataset': {
-            'name':                dataset['name'],
+            'dataset_id':          dataset['dataset_id'],
             'exprData':            dataset['exprData'],
             'pseudoTimeData':      dataset['pseudoTimeData'],
             'groundTruthNetwork':  dataset['groundTruthNetwork'],
@@ -128,9 +128,9 @@ def build_runners(config):
     runners = []
     for dataset in datasets:
         for algo in algorithms:
-            params = algo.get('params', {})
-            if not params.get('should_run', [False])[0]:
+            if not algo.get('should_run', [False])[0]:
                 continue
+            params = algo.get('params', {})
             runners.append(build_runner(algo['algorithm_id'], params, dataset, input_settings, output_settings))
     return runners
 
