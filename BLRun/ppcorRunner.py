@@ -52,7 +52,7 @@ class PPCORRunner(Runner):
                             "/input/ExpressionData.csv", "/output/outFile.txt", '\"'])
 
         # Run command
-        os.system(cmdToRun)
+        self._run_docker(cmdToRun)
 
     def parseOutput(self):
         '''

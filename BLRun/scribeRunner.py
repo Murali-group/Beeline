@@ -98,7 +98,7 @@ class SCRIBERunner(Runner):
 
             cmdToRun += '\"'
 
-            os.system(cmdToRun)
+            self._run_docker(cmdToRun, append=(idx > 0))
 
     def parseOutput(self):
         '''

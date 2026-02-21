@@ -47,7 +47,7 @@ class PIDCRunner(Runner):
                             'julia runPIDC.jl',
                             "/input/ExpressionData.csv", "/output/outFile.txt", '\"'])
 
-        os.system(cmdToRun)
+        self._run_docker(cmdToRun)
 
     def parseOutput(self):
         '''

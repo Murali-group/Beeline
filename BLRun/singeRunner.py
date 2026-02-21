@@ -120,7 +120,7 @@ class SINGERunner(Runner):
                                  '/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
                                  inputMat, geneListMat, outFileSymlink, paramsFile, '\"'])
 
-            subprocess.check_call(cmdToRun, shell=True)
+            self._run_docker(cmdToRun, append=(idx > 0))
 
     def parseOutput(self):
         '''

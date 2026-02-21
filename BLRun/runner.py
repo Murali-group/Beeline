@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
+import subprocess
 import pandas as pd
 
 class Runner(ABC):
@@ -91,6 +92,31 @@ class Runner(ABC):
         EdgeWeight and pass it to self._write_ranked_edges(). Returns early
         without writing if the expected output file is missing.
         """
+
+    def _run_docker(self, cmd: str, append: bool = False) -> None:
+        """
+        Execute a shell command and write combined stdout/stderr to output.txt.
+
+        Parameters
+        ----------
+        cmd : str
+            Shell command to execute (passed to the shell verbatim).
+        append : bool
+            If True, append to an existing output.txt. Use for runners that
+            invoke docker in a loop so all container output is collected in
+            one file. Defaults to False (overwrite).
+        """
+        if not isinstance(cmd, str):
+            raise TypeError(f"cmd must be str, got {type(cmd)}")
+        if not isinstance(append, bool):
+            raise TypeError(f"append must be bool, got {type(append)}")
+
+        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+
+        mode = 'a' if append else 'w'
+        with open(self.output_dir / 'output.txt', mode) as f:
+            f.write(result.stdout)
+            f.write(result.stderr)
 
     def _write_ranked_edges(self, df: pd.DataFrame) -> None:
         """

@@ -75,7 +75,7 @@ class LEAPRunner(Runner):
                                 maxLag,
                                 "/output/outFile" + str(idx) + ".txt", '\"'])
 
-            os.system(cmdToRun)
+            self._run_docker(cmdToRun, append=(idx > 0))
 
     def parseOutput(self):
         '''

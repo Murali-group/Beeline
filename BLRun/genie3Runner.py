@@ -51,7 +51,7 @@ class GENIE3Runner(Runner):
                             'python runArboreto.py --algo=GENIE3',
                             '--inFile=/input/ExpressionData.csv', '--outFile=/output/outFile.txt', '\"'])
 
-        os.system(cmdToRun)
+        self._run_docker(cmdToRun)
 
     def parseOutput(self):
         '''

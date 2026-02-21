@@ -85,7 +85,7 @@ class SCODERunner(Runner):
                                 "/output/" + str(idx),
                                 nGenes, z, nCells, nIter, nRep, '\"'])
 
-            os.system(cmdToRun)
+            self._run_docker(cmdToRun, append=(idx > 0))
 
     def parseOutput(self):
         '''

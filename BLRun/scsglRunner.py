@@ -67,7 +67,7 @@ class SCSGLRunner(Runner):
                             '--pos_density='+pos_density, '--neg_density='+neg_density, '--assoc='+assoc,
                             '\"'])
 
-        os.system(cmdToRun)
+        self._run_docker(cmdToRun)
 
     def parseOutput(self):
         '''

@@ -50,7 +50,7 @@ class GRNBoost2Runner(Runner):
                             'python runArboreto.py --algo=GRNBoost2',
                             '--inFile=/input/ExpressionData.csv', '--outFile=/output/outFile.txt', '\"'])
 
-        os.system(cmdToRun)
+        self._run_docker(cmdToRun)
 
     def parseOutput(self):
         '''

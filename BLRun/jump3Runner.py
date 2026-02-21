@@ -65,7 +65,7 @@ class JUMP3Runner(Runner):
                             './runJump3',
                             "/input/ExpressionData.csv", "/output/outFile.txt", '\"'])
 
-        os.system(cmdToRun)
+        self._run_docker(cmdToRun)
 
     def parseOutput(self):
         '''

@@ -75,7 +75,7 @@ class GRISLIRunner(Runner):
                                 "/output/" + str(idx) + "/outFile.txt",
                                 L, R, alphaMin, '\"'])
 
-            os.system(cmdToRun)
+            self._run_docker(cmdToRun, append=(idx > 0))
 
     def parseOutput(self):
         '''
