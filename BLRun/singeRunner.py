@@ -1,0 +1,160 @@
+import os
+import subprocess
+import pandas as pd
+
+from BLRun.runner import Runner
+
+
+class SINGERunner(Runner):
+    """Concrete runner for the SINGE GRN inference algorithm."""
+
+    def generateInputs(self):
+        '''
+        Function to generate desired inputs for SINGE.
+        If the folder/files under self.input_dir exist,
+        this function will not do anything.
+        '''
+
+        # Create folders in advance to prevent docker from creating folders with root-exclusive permissions
+        if not self.working_dir.exists():
+            print("Input folder for SINGE does not exist, creating input folder...")
+            self.working_dir.mkdir(parents=True, exist_ok = False)
+
+        if not self.output_dir.exists():
+            print("Output folder for SINGE does not exist, creating output folder...")
+            self.output_dir.mkdir(parents=True, exist_ok = False)
+
+        ExpressionData = pd.read_csv(self.input_dir / self.exprData,
+                                         header = 0, index_col = 0)
+        PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
+                             header = 0, index_col = 0)
+
+        colNames = PTData.columns
+        for idx in range(len(colNames)):
+            # Select cells belonging to each pseudotime trajectory
+            colName = colNames[idx]
+            index = PTData[colName].index[PTData[colName].notnull()]
+            exprName = "ExpressionData"+str(idx)+".csv"
+            newExpressionData = ExpressionData.loc[:,index].T
+            newExpressionData['PseudoTime'] = PTData.loc[index,colName]
+            newExpressionData.to_csv(self.working_dir / exprName,
+                                 sep = ',', header  = True, index = False)
+
+    def run(self):
+        '''
+        Function to run SINGE algorithm
+        '''
+
+        # if the parameters aren't specified, then use default parameters
+        # TODO allow passing in multiple sets of hyperparameters
+        # these must be in the right order!
+        params_order = [
+            'lambda', 'dT', 'num_lags', 'kernel_width',
+            'prob_zero_removal', 'prob_remove_samples',
+            'family'
+        ]
+        default_params = {
+            'lambda': '0.01',
+            'dT': '10',
+            'num_lags': '5',
+            'kernel_width': '4',
+            'prob_zero_removal': '0',
+            'prob_remove_samples': '0.2',
+            'family': 'gaussian',
+            'num_replicates': '2',
+        }
+        params = self.params
+        for param, val in default_params.items():
+            if param not in params:
+                params[param] = val
+
+        num_replicates = params['num_replicates']
+        replicates = []
+        for replicate in range(num_replicates):
+           replicates.append(' '.join('--' + p.replace('_', '-') + ' ' + str(params[p]) for p in params_order) + ' '.join(['', '--replicate', str(replicate), '--ID', str(replicate)]))
+        params_str = '\n'.join(replicates)
+
+        PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
+                             header = 0, index_col = 0)
+
+        colNames = PTData.columns
+        for idx in range(len(colNames)):
+            os.makedirs(str(self.output_dir / str(idx)), exist_ok = True)
+
+            outFileSymlink = "out" + str(idx)
+            inputFile = "/input/ExpressionData"+str(idx)+".csv"
+            inputMat = "/input/ExpressionData"+str(idx)+".mat"
+            geneListMat = "/input/GeneList"+str(idx)+".mat"
+            paramsFile = "/input/hyperparameters.txt"
+
+            '''
+            This is a workaround for https://github.com/gitter-lab/SINGE/blob/master/code/parseParams.m#L39
+            not allowing '/' characters in the outDir parameter.
+            '''
+            symlink_out_file = ' '.join(['ln -s', "/output/" + str(idx) + "/", outFileSymlink])
+
+            '''
+            See https://github.com/gitter-lab/SINGE/blob/master/README.md.  SINGE expects a data matfile with variables "X" and "ptime",
+            and a gene_list matfile with the variable "gene_list".
+
+            Saving fullKp is a very hacky workaround for https://github.com/gitter-lab/SINGE/blob/master/code/iLasso_for_SINGE.m#L56,
+            that assumes this input was saved in matfile v7.3 which octave does not support.
+            '''
+            convert_input_to_matfile = 'octave -q --eval \\"CSV = csvread(\'' + inputFile + '\'); ' + \
+                                 'X = sparse(CSV(2:end,1:end-1).\'); ptime = CSV(2:end,end).\'; ' + \
+                                 'Kp2.Kp = single(ptime); Kp2.sumKp = single(ptime*X.\'); fullKp(1, ' + \
+                                 str(params['dT']*params['num_lags']) + ') = Kp2; ' + \
+                                 'save(\'-v7\',\'' + inputMat + '\', \'X\', \'ptime\', \'fullKp\'); ' + \
+                                 'f = fopen(\'' + inputFile + '\'); gene_list = strsplit(fgetl(f), \',\')(1:end-1).\'; fclose(f); ' + \
+                                 'save(\'-v7\',\'' + geneListMat + '\', \'gene_list\')\\"'
+
+            # Directly mount the input and output folders
+            inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
+            outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+            cmdToRun = ' '.join(['docker run --rm --entrypoint /bin/sh',
+                                inputVolumeMount,
+                                outputVolumeMount,
+                                'grnbeeline/singe:0.4.1 -c \"echo \\"',
+                                 params_str, '\\" >', paramsFile, '&&', symlink_out_file, '&&', convert_input_to_matfile,
+                                 '&& time -v -o', "/output/time" + str(idx) + ".txt",
+                                 '/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',
+                                 inputMat, geneListMat, outFileSymlink, paramsFile, '\"'])
+
+            subprocess.check_call(cmdToRun, shell=True)
+
+    def parseOutput(self):
+        '''
+        Function to parse outputs from SINGE.
+        '''
+        outDir = self.output_dir
+        if not outDir.is_dir():
+            raise FileNotFoundError(
+                f"Output directory does not exist: {outDir}")
+
+        PTData = pd.read_csv(self.input_dir / self.pseudoTimeData,
+                             header = 0, index_col = 0)
+
+        colNames = PTData.columns
+        OutSubDF = [0]*len(colNames)
+
+        for idx in range(len(colNames)):
+
+            # Quit if output directory does not exist
+            if not (outDir / str(idx) / 'SINGE_Ranked_Edge_List.txt').exists():
+                print(str(outDir / str(idx) / 'SINGE_Ranked_Edge_List.txt') + ' does not exist, skipping...')
+                return
+
+            # Read output
+            OutSubDF[idx] = pd.read_csv(outDir / str(idx) / 'SINGE_Ranked_Edge_List.txt',
+                                sep = '\t', header = 0)
+        # megre the dataframe by taking the maximum value from each DF
+        # Code from here:
+        # https://stackoverflow.com/questions/20383647/pandas-selecting-by-label-sometimes-return-series-sometimes-returns-dataframe
+        outDF = pd.concat(OutSubDF)
+        outDF.columns= ['Gene1','Gene2','EdgeWeight']
+        # Group by rows code is from here:
+        # https://stackoverflow.com/questions/53114609/pandas-how-to-remove-duplicate-rows-but-keep-all-rows-with-max-value
+        res = outDF[outDF['EdgeWeight'] == outDF.groupby(['Gene1','Gene2'])['EdgeWeight'].transform('max')]
+        # Sort values in the dataframe
+        finalDF = res.sort_values('EdgeWeight', ascending=False)
+        finalDF.to_csv(outDir / 'rankedEdges.csv', sep='\t', index = False)

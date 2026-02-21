@@ -1,0 +1,151 @@
+import argparse
+import os
+from pathlib import Path
+import yaml
+
+from BLRun.genie3Runner import GENIE3Runner
+from BLRun.grnboost2Runner import GRNBoost2Runner
+from BLRun.grisliRunner import GRISLIRunner
+from BLRun.grnvbemRunner import GRNVBEMRunner
+from BLRun.jump3Runner import JUMP3Runner
+from BLRun.leapRunner import LEAPRunner
+from BLRun.pidcRunner import PIDCRunner
+from BLRun.ppcorRunner import PPCORRunner
+from BLRun.scodeRunner import SCODERunner
+from BLRun.scribeRunner import SCRIBERunner
+from BLRun.scsglRunner import SCSGLRunner
+from BLRun.sinceritiesRunner import SINCERITIESRunner
+from BLRun.singeRunner import SINGERunner
+
+RUNNERS = {
+    'GENIE3':       GENIE3Runner,
+    'GRNBOOST2':    GRNBoost2Runner,
+    'GRISLI':       GRISLIRunner,
+    'GRNVBEM':      GRNVBEMRunner,
+    'JUMP3':        JUMP3Runner,
+    'LEAP':         LEAPRunner,
+    'PIDC':         PIDCRunner,
+    'PPCOR':        PPCORRunner,
+    'SCODE':        SCODERunner,
+    'SCRIBE':       SCRIBERunner,
+    'SCSGL':        SCSGLRunner,
+    'SINCERITIES':  SINCERITIESRunner,
+    'SINGE':        SINGERunner,
+}
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description='BLRunner: Run GRN inference algorithms using BEELINE.'
+    )
+    parser.add_argument(
+        '-c', '--config',
+        type=str,
+        required=True,
+        help='Path to the configuration file used to run the inference algorithms.'
+    )
+    return parser.parse_args()
+
+
+def load_config(config_path):
+    with open(config_path, 'r') as f:
+        return yaml.safe_load(f)
+
+
+def get_datasets(input_settings):
+    """
+    Return a flat list of dataset dicts from input_settings.
+
+    Each dataset entry in the config may have a 'variants' field (dict or list
+    of dicts). Each variant becomes a separate runnable dataset. The dataset
+    'name' is appended to dataset_dir so the runner resolves the correct path.
+
+    If 'datasets' is absent, returns an empty list (caller handles auto-discovery).
+    """
+    if 'datasets' not in input_settings:
+        return []
+
+    datasets = []
+    dataset_dir = input_settings.get('dataset_dir', '')
+
+    for ds in input_settings['datasets']:
+        if not ds.get('should_run', [True])[0]:
+            continue
+
+        if 'runs' not in ds:
+            raise KeyError(f"Dataset '{ds['dataset_id']}' is missing required 'runs' field.")
+        runs = ds['runs']
+        # runs may be a single dict or a list of dicts
+        if isinstance(runs, dict):
+            runs = [runs]
+
+        # Append dataset_id to dataset_dir so runner paths resolve correctly
+        variant_dataset_dir = os.path.join(dataset_dir, ds['dataset_id']) if dataset_dir else ds['dataset_id']
+
+        for run in runs:
+            datasets.append({
+                'dataset_dir': variant_dataset_dir,
+                'name': run['run_id'],
+                'exprData': run.get('exprData', 'ExpressionData.csv'),
+                'pseudoTimeData': run.get('pseudoTimeData', 'PseudoTime.csv'),
+                'groundTruthNetwork': run.get('groundTruthNetwork', 'GroundTruthNetwork.csv'),
+            })
+
+    return datasets
+
+
+def build_runner(algo_name, params, dataset, input_settings, output_settings):
+    if algo_name not in RUNNERS:
+        raise ValueError(f"Unknown algorithm '{algo_name}'. Available: {list(RUNNERS)}")
+
+    runner_config = {
+        'input': {
+            'input_dir': input_settings['input_dir'],
+            'dataset_dir': dataset['dataset_dir'],
+        },
+        'dataset': {
+            'name':                dataset['name'],
+            'exprData':            dataset['exprData'],
+            'pseudoTimeData':      dataset['pseudoTimeData'],
+            'groundTruthNetwork':  dataset['groundTruthNetwork'],
+        },
+        'output_settings': {
+            'output_dir': output_settings['output_dir'],
+        },
+        'algo_name': algo_name,
+        'params': params,
+    }
+
+    return RUNNERS[algo_name](Path.cwd(), runner_config)
+
+
+def build_runners(config):
+    input_settings  = config['input_settings']
+    output_settings = config['output_settings']
+    datasets        = get_datasets(input_settings)
+    algorithms      = input_settings.get('algorithms', [])
+
+    runners = []
+    for dataset in datasets:
+        for algo in algorithms:
+            params = algo.get('params', {})
+            if not params.get('should_run', [False])[0]:
+                continue
+            runners.append(build_runner(algo['algorithm_id'], params, dataset, input_settings, output_settings))
+    return runners
+
+
+def main():
+    args = parse_args()
+    config = load_config(args.config)
+
+    runners = build_runners(config)
+
+    for runner in runners:
+        runner.generateInputs()
+        runner.run()
+        runner.parseOutput()
+
+
+if __name__ == '__main__':
+    main()
