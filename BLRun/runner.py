@@ -54,6 +54,12 @@ class Runner(ABC):
         self.input_dir   = base_input / ds['dataset_id']
         self.output_dir  = base_output
         self.working_dir = base_output / "working_dir"
+
+        # Erase working directory so stale inputs from prior runs are not reused.
+        if self.working_dir.exists():
+            for item in sorted(self.working_dir.rglob('*'), reverse=True):
+                item.unlink() if (item.is_file() or item.is_symlink()) else item.rmdir()
+            self.working_dir.rmdir()
         
         # Precompute progress message for CLI output.
         dataset_id = Path(inp['dataset_dir']).name if inp.get('dataset_dir') else ds['dataset_id']

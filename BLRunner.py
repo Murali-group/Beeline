@@ -135,11 +135,43 @@ def build_runners(config):
     return runners
 
 
+def warn_if_populated(runners):
+    """
+    Warn and prompt the user if any working directory already contains files.
+
+    Parameters
+    ----------
+    runners : list of Runner
+        Runners whose working_dir attributes are checked for existing content.
+
+    Returns
+    -------
+    bool
+        True if the user confirms they want to proceed, False otherwise.
+    """
+    n_populated = sum(
+        1 for r in runners
+        if r.working_dir.exists() and any(r.working_dir.iterdir())
+    )
+    if n_populated == 0:
+        return True
+
+    answer = input(
+        f"Warning: {n_populated} working director{'y' if n_populated == 1 else 'ies'} "
+        f"already exist and will be overwritten. Proceed? [y/n]: "
+    ).strip().lower()
+    return answer == 'y'
+
+
 def main():
     args = parse_args()
     config = load_config(args.config)
 
     runners = build_runners(config)
+
+    if not warn_if_populated(runners):
+        print("Aborted.")
+        return
 
     for runner in runners:
         print(runner.running_message)
