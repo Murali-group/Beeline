@@ -5,6 +5,8 @@ import yaml
 from BLEval.AUPRC import AUPRC
 from BLEval.AUROC import AUROC
 from BLEval.data import EvaluationData
+from BLEval.EarlyPrecision import EarlyPrecision
+from BLEval.SignedEarlyPrecision import SignedEarlyPrecision
 
 
 def parse_args():
@@ -79,6 +81,12 @@ def main():
     if args.auc:
         AUPRC()(evaluation_data)
         AUROC()(evaluation_data)
+
+    if args.epr:
+        EarlyPrecision()(evaluation_data)
+
+    if args.sepr:
+        SignedEarlyPrecision()(evaluation_data)
 
 
 if __name__ == '__main__':
