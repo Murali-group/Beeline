@@ -31,6 +31,10 @@ class SCODERunner(Runner):
 
         colNames = PTData.columns
         for idx in range(len(colNames)):
+            # Create output subdirectory in advance to prevent docker from
+            # creating it with root-exclusive permissions
+            (self.working_dir / str(idx)).mkdir(exist_ok=True)
+
             # Select cells belonging to each pseudotime trajectory
             colName = colNames[idx]
             index = PTData[colName].index[PTData[colName].notnull()]
@@ -67,11 +71,9 @@ class SCODERunner(Runner):
             nCells = str(ExpressionData.shape[1])
             nGenes = str(ExpressionData.shape[0])
 
-            os.makedirs(str(self.output_dir / str(idx)), exist_ok = True)
-
             # Directly mount the input and output folders
             inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
                                 inputVolumeMount,
                                 outputVolumeMount,
@@ -89,6 +91,7 @@ class SCODERunner(Runner):
         '''
         Function to parse outputs from SCODE.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
         if not outDir.is_dir():
             raise FileNotFoundError(
@@ -100,11 +103,11 @@ class SCODERunner(Runner):
         for indx in range(len(colNames)):
             # Read output
             outFile = str(indx)+'/meanA.txt'
-            if not (outDir / outFile).exists():
+            if not (workDir / outFile).exists():
                 # Quit if output file does not exist
-                print(str(outDir / outFile) + ' does not exist, skipping...')
+                print(str(workDir / outFile) + ' does not exist, skipping...')
                 return
-            OutDF = pd.read_csv(outDir / outFile, sep = '\t', header = None)
+            OutDF = pd.read_csv(workDir / outFile, sep = '\t', header = None)
 
             # Sort values in a matrix using code from:
             # https://stackoverflow.com/questions/21922806/sort-values-of-matrix-in-python
@@ -118,7 +121,7 @@ class SCODERunner(Runner):
                                              header = 0, index_col = 0)
             GeneList = list(ExpressionData.index)
 
-            outFile = open(outDir / ('outFile'+str(indx)+'.csv'),'w')
+            outFile = open(workDir / ('outFile'+str(indx)+'.csv'),'w')
             outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 
             for row, col, val in zip(rows, cols, DFSorted):
@@ -128,11 +131,11 @@ class SCODERunner(Runner):
         OutSubDF = [0]*len(colNames)
         for indx in range(len(colNames)):
             outFile = 'outFile'+str(indx)+'.csv'
-            OutSubDF[indx] = pd.read_csv(outDir / outFile, sep = '\t', header = 0)
+            OutSubDF[indx] = pd.read_csv(workDir / outFile, sep = '\t', header = 0)
 
             OutSubDF[indx].EdgeWeight = np.abs(OutSubDF[indx].EdgeWeight)
 
         outDF = pd.concat(OutSubDF)
         FinalDF = outDF[outDF['EdgeWeight'] == outDF.groupby(['Gene1','Gene2'])['EdgeWeight'].transform('max')]
         FinalDF.sort_values(['EdgeWeight'], ascending = False, inplace = True)
-        FinalDF.to_csv(outDir / 'rankedEdges.csv', sep = '\t', index = False)
+        self._write_ranked_edges(FinalDF[['Gene1', 'Gene2', 'EdgeWeight']])

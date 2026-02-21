@@ -79,7 +79,7 @@ class SINGERunner(Runner):
 
         colNames = PTData.columns
         for idx in range(len(colNames)):
-            os.makedirs(str(self.output_dir / str(idx)), exist_ok = True)
+            os.makedirs(str(self.working_dir / str(idx)), exist_ok = True)
 
             outFileSymlink = "out" + str(idx)
             inputFile = "/input/ExpressionData"+str(idx)+".csv"
@@ -110,7 +110,7 @@ class SINGERunner(Runner):
 
             # Directly mount the input and output folders
             inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm --entrypoint /bin/sh',
                                 inputVolumeMount,
                                 outputVolumeMount,
@@ -126,6 +126,7 @@ class SINGERunner(Runner):
         '''
         Function to parse outputs from SINGE.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
         if not outDir.is_dir():
             raise FileNotFoundError(
@@ -140,12 +141,12 @@ class SINGERunner(Runner):
         for idx in range(len(colNames)):
 
             # Quit if output directory does not exist
-            if not (outDir / str(idx) / 'SINGE_Ranked_Edge_List.txt').exists():
-                print(str(outDir / str(idx) / 'SINGE_Ranked_Edge_List.txt') + ' does not exist, skipping...')
+            if not (workDir / str(idx) / 'SINGE_Ranked_Edge_List.txt').exists():
+                print(str(workDir / str(idx) / 'SINGE_Ranked_Edge_List.txt') + ' does not exist, skipping...')
                 return
 
             # Read output
-            OutSubDF[idx] = pd.read_csv(outDir / str(idx) / 'SINGE_Ranked_Edge_List.txt',
+            OutSubDF[idx] = pd.read_csv(workDir / str(idx) / 'SINGE_Ranked_Edge_List.txt',
                                 sep = '\t', header = 0)
         # megre the dataframe by taking the maximum value from each DF
         # Code from here:
@@ -157,4 +158,4 @@ class SINGERunner(Runner):
         res = outDF[outDF['EdgeWeight'] == outDF.groupby(['Gene1','Gene2'])['EdgeWeight'].transform('max')]
         # Sort values in the dataframe
         finalDF = res.sort_values('EdgeWeight', ascending=False)
-        finalDF.to_csv(outDir / 'rankedEdges.csv', sep='\t', index = False)
+        self._write_ranked_edges(finalDF[['Gene1', 'Gene2', 'EdgeWeight']])

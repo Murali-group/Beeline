@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
+import pandas as pd
 
 class Runner(ABC):
     """
@@ -74,5 +75,28 @@ class Runner(ABC):
         """Execute the inference algorithm."""
 
     @abstractmethod
-    def parseOutput(self):
-        """Parse algorithm output into a ranked edge list (rankedEdges.csv)."""
+    def parseOutput(self) -> None:
+        """
+        Parse raw algorithm output and write a ranked edge list to disk.
+
+        Implementations should build a DataFrame with columns Gene1, Gene2,
+        EdgeWeight and pass it to self._write_ranked_edges(). Returns early
+        without writing if the expected output file is missing.
+        """
+
+    def _write_ranked_edges(self, df: pd.DataFrame) -> None:
+        """
+        Write a ranked edge list to self.output_dir/rankedEdges.csv.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            DataFrame with columns Gene1, Gene2, EdgeWeight.
+
+        Returns
+        -------
+        None
+        """
+        if not isinstance(df, pd.DataFrame):
+            raise TypeError(f"df must be pd.DataFrame, got {type(df)}")
+        df.to_csv(self.output_dir / 'rankedEdges.csv', sep='\t', index=False)

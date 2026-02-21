@@ -64,7 +64,7 @@ class LEAPRunner(Runner):
         for idx in range(len(colNames)):
             # Directly mount the input and output folders
             inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
                                 inputVolumeMount,
                                 outputVolumeMount,
@@ -81,6 +81,7 @@ class LEAPRunner(Runner):
         '''
         Function to parse outputs from LEAP.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
         if not outDir.is_dir():
             raise FileNotFoundError(
@@ -95,20 +96,16 @@ class LEAPRunner(Runner):
         for indx in range(len(colNames)):
             outFileName = 'outFile'+str(indx)+'.txt'
             # Quit if output file does not exist
-            if not (outDir / outFileName).exists():
-                print(str(outDir / outFileName) + ' does not exist, skipping...')
+            if not (workDir / outFileName).exists():
+                print(str(workDir / outFileName) + ' does not exist, skipping...')
                 return
 
             # Read output
-            OutSubDF[indx] = pd.read_csv(outDir / outFileName, sep = '\t', header = 0)
+            OutSubDF[indx] = pd.read_csv(workDir / outFileName, sep = '\t', header = 0)
             OutSubDF[indx].Score = np.abs(OutSubDF[indx].Score)
         outDF = pd.concat(OutSubDF)
         FinalDF = outDF[outDF['Score'] == outDF.groupby(['Gene1','Gene2'])['Score'].transform('max')]
 
-        # Write converted csv file
-        outFile = open(outDir / 'rankedEdges.csv','w')
-        outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
-
-        for _, row in FinalDF.sort_values(['Score'], ascending = False).iterrows():
-            outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(row['Score'])])+'\n')
-        outFile.close()
+        self._write_ranked_edges(FinalDF.sort_values('Score', ascending=False).rename(
+            columns={'Score': 'EdgeWeight'}
+        )[['Gene1', 'Gene2', 'EdgeWeight']])

@@ -56,7 +56,7 @@ class JUMP3Runner(Runner):
 
         # Directly mount the input and output folders
         inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-        outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+        outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
         cmdToRun = ' '.join(['docker run --rm',
                             inputVolumeMount,
                             outputVolumeMount,
@@ -71,13 +71,14 @@ class JUMP3Runner(Runner):
         '''
         Function to parse outputs from JUMP3.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
-        outFile = outDir / 'outFile.txt'
+        outFile = workDir / 'outFile.txt'
         if not outDir.is_dir():
             raise FileNotFoundError(
                 f"Output directory does not exist: {outDir}")
 
-        # Quit if output directory does not exist
+        # Quit if output file does not exist
         if not outFile.exists():
             print(str(outFile) +'does not exist, skipping...')
             return
@@ -97,10 +98,8 @@ class JUMP3Runner(Runner):
                                          header = 0, index_col = 0)
         GeneList = list(ExpressionData.index)
 
-        # Write converted csv file
-        outFile = open(outDir / 'rankedEdges.csv','w')
-        outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
-
-        for row, col, val in zip(rows, cols, DFSorted):
-            outFile.write('\t'.join([GeneList[row],GeneList[col],str(val)])+'\n')
-        outFile.close()
+        self._write_ranked_edges(pd.DataFrame({
+            'Gene1':      [GeneList[r] for r in rows],
+            'Gene2':      [GeneList[c] for c in cols],
+            'EdgeWeight': DFSorted,
+        }))

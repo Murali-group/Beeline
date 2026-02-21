@@ -60,11 +60,11 @@ class GRISLIRunner(Runner):
 
         colNames = PTData.columns
         for idx in range(len(colNames)):
-            os.makedirs(str(self.output_dir / str(idx)), exist_ok = True)
+            os.makedirs(str(self.working_dir / str(idx)), exist_ok = True)
 
             # Directly mount the input and output folders
             inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
                                 inputVolumeMount,
                                 outputVolumeMount,
@@ -81,6 +81,7 @@ class GRISLIRunner(Runner):
         '''
         Function to parse outputs from GRISLI.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
         if not outDir.is_dir():
             raise FileNotFoundError(
@@ -94,11 +95,11 @@ class GRISLIRunner(Runner):
         for indx in range(len(colNames)):
             # Read output
             outFile = str(indx)+'/outFile.txt'
-            if not (outDir / outFile).exists():
+            if not (workDir / outFile).exists():
                 # Quit if output file does not exist
-                print(str(outDir / outFile) + ' does not exist, skipping...')
+                print(str(workDir / outFile) + ' does not exist, skipping...')
                 return
-            OutDF = pd.read_csv(outDir / outFile, sep = ',', header = None)
+            OutDF = pd.read_csv(workDir / outFile, sep = ',', header = None)
             # Sort values in a matrix using code from:
             # https://stackoverflow.com/questions/21922806/sort-values-of-matrix-in-python
             OutMatrix = OutDF.values
@@ -110,7 +111,7 @@ class GRISLIRunner(Runner):
             ExpressionData = pd.read_csv(self.input_dir / self.exprData,
                                              header = 0, index_col = 0)
             GeneList = list(ExpressionData.index)
-            outFileName = outDir / str(indx) / 'rankedEdges.csv'
+            outFileName = workDir / str(indx) / 'rankedEdges.csv'
             outFile = open(outFileName,'w')
             outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
 
@@ -128,4 +129,4 @@ class GRISLIRunner(Runner):
         # Sort values in the dataframe
         finalDF = res.sort_values('EdgeWeight',ascending=False)
 
-        finalDF.to_csv(outDir / 'rankedEdges.csv', sep='\t', index = False)
+        self._write_ranked_edges(finalDF)

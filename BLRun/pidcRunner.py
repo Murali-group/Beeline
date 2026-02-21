@@ -38,7 +38,7 @@ class PIDCRunner(Runner):
 
         # Directly mount the input and output folders
         inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-        outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+        outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
         cmdToRun = ' '.join(['docker run --rm',
                             inputVolumeMount,
                             outputVolumeMount,
@@ -53,24 +53,23 @@ class PIDCRunner(Runner):
         '''
         Function to parse outputs from PIDC.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
-        outFile = outDir / 'outFile.txt'
+        outFile = workDir / 'outFile.txt'
         if not outDir.is_dir():
             raise FileNotFoundError(
                 f"Output directory does not exist: {outDir}")
 
-        # Quit if output directory does not exist
+        # Quit if output file does not exist
         if not outFile.exists():
             print(str(outFile) +'does not exist, skipping...')
             return
 
-        # Read output
+        # Read output (headerless: col 0 = Gene1, col 1 = Gene2, col 2 = EdgeWeight)
         OutDF = pd.read_csv(outFile, sep = '\t', header = None)
 
-        # Write converted csv file
-        outFile = open(outDir / 'rankedEdges.csv','w')
-        outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
-
-        for _, row in OutDF.iterrows():
-            outFile.write('\t'.join([row[0],row[1],str(row[2])])+'\n')
-        outFile.close()
+        self._write_ranked_edges(pd.DataFrame({
+            'Gene1':      OutDF[0],
+            'Gene2':      OutDF[1],
+            'EdgeWeight': OutDF[2],
+        }))

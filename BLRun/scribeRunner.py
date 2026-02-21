@@ -81,7 +81,7 @@ class SCRIBERunner(Runner):
 
             # Directly mount the input and output folders
             inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
                            inputVolumeMount,
                            outputVolumeMount,
@@ -104,6 +104,7 @@ class SCRIBERunner(Runner):
         '''
         Function to parse outputs from SCRIBE.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
         if not outDir.is_dir():
             raise FileNotFoundError(
@@ -116,11 +117,11 @@ class SCRIBERunner(Runner):
         for idx in range(len(colNames)):
             # Read output
             outFile = 'outFile'+str(idx)+'.csv'
-            if not (outDir / outFile).exists():
+            if not (workDir / outFile).exists():
                 # Quit if output file does not exist
-                print(str(outDir / outFile) + ' does not exist, skipping...')
+                print(str(workDir / outFile) + ' does not exist, skipping...')
                 return
-            OutSubDF[idx] = pd.read_csv(outDir / outFile, sep = ' ', header = None)
+            OutSubDF[idx] = pd.read_csv(workDir / outFile, sep = ' ', header = None)
 
         # megre the dataframe by taking the maximum value from each DF
         # From here: https://stackoverflow.com/questions/20383647/pandas-selecting-by-label-sometimes-return-series-sometimes-returns-dataframe
@@ -132,4 +133,4 @@ class SCRIBERunner(Runner):
         # Sort values in the dataframe
         finalDF = res.sort_values('EdgeWeight',ascending=False)
 
-        finalDF.to_csv(outDir / 'rankedEdges.csv', sep='\t', index = False)
+        self._write_ranked_edges(finalDF[['Gene1', 'Gene2', 'EdgeWeight']])

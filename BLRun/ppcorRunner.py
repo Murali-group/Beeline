@@ -42,7 +42,7 @@ class PPCORRunner(Runner):
 
         # Directly mount the input and output folders
         inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-        outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+        outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
         cmdToRun = ' '.join(['docker run --rm',
                             inputVolumeMount,
                             outputVolumeMount,
@@ -58,13 +58,14 @@ class PPCORRunner(Runner):
         '''
         Function to parse outputs from PPCOR.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
-        outFile = outDir / 'outFile.txt'
+        outFile = workDir / 'outFile.txt'
         if not outDir.is_dir():
             raise FileNotFoundError(
                 f"Output directory does not exist: {outDir}")
 
-        # Quit if output directory does not exist
+        # Quit if output file does not exist
         if not outFile.exists():
             print(str(outFile) +'does not exist, skipping...')
             return
@@ -77,13 +78,11 @@ class PPCORRunner(Runner):
         # edges without significant p-value
         part2 = OutDF.loc[OutDF['pValue'] > float(self.params['pVal'])]
 
-        # Write converted csv file
-        outFile = open(outDir / 'rankedEdges.csv','w')
-        outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
+        part1_sorted = part1.sort_values('absCorVal', ascending=False)
+        part2_out = part2[['Gene1', 'Gene2']].copy()
+        part2_out['EdgeWeight'] = 0.0
 
-        for _, row in part1.sort_values('absCorVal', ascending = False).iterrows():
-            outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(row['corVal'])])+'\n')
-
-        for _, row in part2.iterrows():
-            outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(0)])+'\n')
-        outFile.close()
+        self._write_ranked_edges(pd.concat([
+            part1_sorted[['Gene1', 'Gene2']].assign(EdgeWeight=part1_sorted['corVal']),
+            part2_out,
+        ], ignore_index=True)[['Gene1', 'Gene2', 'EdgeWeight']])

@@ -54,7 +54,7 @@ class SCSGLRunner(Runner):
 
         # Directly mount the input and output folders
         inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-        outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+        outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
         cmdToRun = ' '.join(['docker run --rm',
                             inputVolumeMount,
                             outputVolumeMount,
@@ -73,13 +73,14 @@ class SCSGLRunner(Runner):
         '''
         Function to parse outputs from SCSGL.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
-        outFile = outDir / 'outFile.txt'
+        outFile = workDir / 'outFile.txt'
         if not outDir.is_dir():
             raise FileNotFoundError(
                 f"Output directory does not exist: {outDir}")
 
-        # Quit if output directory does not exist
+        # Quit if output file does not exist
         if not outFile.exists():
             print(str(outFile) +'does not exist, skipping...')
             return
@@ -89,11 +90,4 @@ class SCSGLRunner(Runner):
 
         OutDF.sort_values(by="EdgeWeight", ascending=False, inplace=True)
 
-        # Write converted csv file
-        outFile = open(outDir / 'rankedEdges.csv','w')
-        outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
-
-        for _, row in OutDF.iterrows():
-            # TODO: might need to sort
-            outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(row['EdgeWeight'])])+'\n')
-        outFile.close()
+        self._write_ranked_edges(OutDF[['Gene1', 'Gene2', 'EdgeWeight']])

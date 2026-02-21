@@ -61,7 +61,7 @@ class GRNVBEMRunner(Runner):
         for idx in range(len(colNames)):
             # Directly mount the input and output folders
             inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
                                 inputVolumeMount,
                                 outputVolumeMount,
@@ -77,6 +77,7 @@ class GRNVBEMRunner(Runner):
         '''
         Function to parse outputs from GRNVBEM.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
         if not outDir.is_dir():
             raise FileNotFoundError(
@@ -91,20 +92,18 @@ class GRNVBEMRunner(Runner):
         for indx in range(len(colNames)):
             outFileName = 'outFile'+str(indx)+'.txt'
             # Quit if output file does not exist
-            if not (outDir / outFileName).exists():
-                print(str(outDir / outFileName) + ' does not exist, skipping...')
+            if not (workDir / outFileName).exists():
+                print(str(workDir / outFileName) + ' does not exist, skipping...')
                 return
 
             # Read output
-            OutSubDF[indx] = pd.read_csv(outDir / outFileName, sep = '\t', header = 0)
+            OutSubDF[indx] = pd.read_csv(workDir / outFileName, sep = '\t', header = 0)
 
         outDF = pd.concat(OutSubDF)
         FinalDF = outDF[outDF['Probability'] == outDF.groupby(['Parent','Child'])['Probability'].transform('max')]
 
-        # Write converted csv file
-        outFile = open(outDir / 'rankedEdges.csv','w')
-        outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
-
-        for _, row in FinalDF.sort_values(['Probability'], ascending = False).iterrows():
-            outFile.write('\t'.join([row['Parent'],row['Child'],str(row['Probability'])])+'\n')
-        outFile.close()
+        self._write_ranked_edges(
+            FinalDF.sort_values('Probability', ascending=False).rename(
+                columns={'Parent': 'Gene1', 'Child': 'Gene2', 'Probability': 'EdgeWeight'}
+            )[['Gene1', 'Gene2', 'EdgeWeight']]
+        )

@@ -57,7 +57,7 @@ class SINCERITIESRunner(Runner):
         for idx in range(len(colNames)):
             # Directly mount the input and output folders
             inputVolumeMount = " -v " + str(self.working_dir) + ":/input/"
-            outputVolumeMount = " -v " + str(self.output_dir) + ":/output/"
+            outputVolumeMount = " -v " + str(self.working_dir) + ":/output/"
             cmdToRun = ' '.join(['docker run --rm',
                                 inputVolumeMount,
                                 outputVolumeMount,
@@ -73,6 +73,7 @@ class SINCERITIESRunner(Runner):
         '''
         Function to parse outputs from SINCERITIES.
         '''
+        workDir = self.working_dir
         outDir = self.output_dir
         if not outDir.is_dir():
             raise FileNotFoundError(
@@ -85,11 +86,11 @@ class SINCERITIESRunner(Runner):
         for idx in range(len(colNames)):
             # Read output
             outFile = 'outFile'+str(idx)+'.txt'
-            if not (outDir / outFile).exists():
+            if not (workDir / outFile).exists():
                 # Quit if output file does not exist
-                print(str(outDir / outFile) + ' does not exist, skipping...')
+                print(str(workDir / outFile) + ' does not exist, skipping...')
                 return
-            OutSubDF[idx] = pd.read_csv(outDir / outFile, sep = ',', header = 0)
+            OutSubDF[idx] = pd.read_csv(workDir / outFile, sep = ',', header = 0)
 
         # megre the dataframe by taking the maximum value from each DF
         # From here: https://stackoverflow.com/questions/20383647/pandas-selecting-by-label-sometimes-return-series-sometimes-returns-dataframe
@@ -102,5 +103,4 @@ class SINCERITIESRunner(Runner):
         finalDF.drop(labels = 'Edges',axis = 'columns', inplace = True)
         # SINCERITIES output is incorrectly orderd
         finalDF.columns = ['Gene2','Gene1','EdgeWeight']
-        finalDF.to_csv(outDir / 'rankedEdges.csv', sep='\t',
-                       columns = ['Gene1','Gene2','EdgeWeight'],index = False)
+        self._write_ranked_edges(finalDF[['Gene1', 'Gene2', 'EdgeWeight']])
