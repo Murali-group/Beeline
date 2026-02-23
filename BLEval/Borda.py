@@ -7,6 +7,26 @@ from BLEval.evaluator import Evaluator
 from BLEval.data import EvaluationData
 
 
+def _normalize(arr: np.ndarray) -> np.ndarray:
+    """
+    Min-max normalize an array to [0, 1].
+
+    Parameters
+    ----------
+    arr : np.ndarray
+        1-D array of floats.
+
+    Returns
+    -------
+    np.ndarray
+        Normalized array. Returns a zero array if max == min.
+    """
+    mn, mx = arr.min(), arr.max()
+    if mx == mn:
+        return np.zeros_like(arr, dtype=float)
+    return 1.0 * (arr - mn) / (mx - mn)
+
+
 def _compute_borda_aggregations(
     ranked_edges: Dict[str, pd.DataFrame],
 ) -> Dict[str, pd.DataFrame]:
@@ -108,27 +128,30 @@ class Borda(Evaluator):
     consensus ranking using Borda count.
 
     For each run, four aggregation methods are computed: mean, median, min, and
-    max of per-algorithm Borda scores. Results across all runs in a DatasetGroup
-    are combined into a single dataset-level DataFrame per method, where rows
-    are edges (Gene1|Gene2) and columns are run_ids. Output is written to
-    dataset_path as:
+    max of per-algorithm Borda scores. Per-run scores for each method are then
+    summarised across runs by taking the median. The final output is a single
+    file written to dataset_path:
 
-        dataset_path/BordaMean.csv
-        dataset_path/BordaMedian.csv
-        dataset_path/BordaMin.csv
-        dataset_path/BordaMax.csv
+        dataset_path/Borda.csv
 
-    Each file has a row for every unique edge seen across all runs, with the
-    aggregated Borda score for each run as a column (NaN where an edge does not
-    appear in a particular run). Runs with no algorithm predictions are skipped.
+    Columns: Gene1, Gene2, BORDA (median of mean), mBORDA (median of median),
+    sBORDA (median of min), smBORDA (median of max). Rows are sorted by BORDA
+    descending.
     """
 
-    _METHODS = ('mean', 'median', 'min', 'max')
+    # Maps internal aggregation method names to output column names
+    _METHOD_COLUMNS = {
+        'mean':   'BORDA',
+        'median': 'mBORDA',
+        'min':    'sBORDA',
+        'max':    'smBORDA',
+    }
 
     def __call__(self, evaluation_data: EvaluationData) -> None:
         """
-        Compute Borda aggregations per run, combine across runs, and write one
-        CSV per aggregation method to each DatasetGroup's dataset_path.
+        Compute Borda aggregations per run, take the median across runs for
+        each method, and write a single Borda.csv to each DatasetGroup's
+        dataset_path.
 
         Parameters
         ----------
@@ -146,7 +169,7 @@ class Borda(Evaluator):
 
         for dataset_group in evaluation_data:
             # method → {run_id → Series(Score, index=(Gene1, Gene2))}
-            per_method: Dict[str, Dict[str, pd.Series]] = {m: {} for m in self._METHODS}
+            per_method: Dict[str, Dict[str, pd.Series]] = {m: {} for m in self._METHOD_COLUMNS}
 
             for run in dataset_group:
                 if not run.ranked_edges:
@@ -175,22 +198,33 @@ class Borda(Evaluator):
                     )
 
             # Skip dataset if no runs produced any output
-            if not any(per_method[m] for m in self._METHODS):
+            if not any(per_method[m] for m in self._METHOD_COLUMNS):
                 continue
 
             dataset_group.dataset_path.mkdir(parents=True, exist_ok=True)
 
-            for method in self._METHODS:
+            # For each method, combine runs, take the median across runs,
+            # then normalize to [0, 1] using min-max normalization.
+            col_series = {}
+            for method, col_name in self._METHOD_COLUMNS.items():
                 run_series = per_method[method]
                 if not run_series:
                     continue
+                # rows = (Gene1, Gene2), columns = run_ids
+                runs_df = pd.concat(run_series.values(), axis=1)
+                median_scores = runs_df.median(axis=1)
+                col_series[col_name] = pd.Series(
+                    _normalize(median_scores.values),
+                    index=median_scores.index,
+                )
 
-                # Combine runs: rows = (Gene1, Gene2), columns = run_ids
-                # Missing edges for a run are filled with NaN
-                out_df = pd.concat(run_series.values(), axis=1)
-                out_df.index.names = ['Gene1', 'Gene2']
+            if not col_series:
+                continue
 
-                filename = f'Borda{method.capitalize()}.csv'
-                out_path = dataset_group.dataset_path / filename
-                out_df.to_csv(out_path)
-                print(f"Wrote {filename} to {out_path}")
+            out_df = pd.DataFrame(col_series)
+            out_df.index.names = ['Gene1', 'Gene2']
+            out_df = out_df.reset_index().sort_values('BORDA', ascending=False)
+
+            out_path = dataset_group.dataset_path / 'Borda.csv'
+            out_df.to_csv(out_path, index=False)
+            print(f"Wrote Borda.csv to {out_path}")

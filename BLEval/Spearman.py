@@ -40,8 +40,15 @@ def _align_weights(
         raise TypeError(f"df_b must be DataFrame, got {type(df_b)}")
 
     def _to_series(df: pd.DataFrame) -> pd.Series:
-        """Return a Series of EdgeWeight indexed by (Gene1, Gene2), self-loops removed."""
+        """Return a Series of EdgeWeight indexed by (Gene1, Gene2), self-loops removed.
+
+        Duplicate (Gene1, Gene2) pairs are deduplicated by keeping the row with
+        the highest EdgeWeight, matching the top-k selection used elsewhere.
+        """
         no_loops = df[df['Gene1'] != df['Gene2']].copy()
+        # Keep highest-weight entry per directed edge to ensure a unique index.
+        no_loops = no_loops.sort_values('EdgeWeight', ascending=False)
+        no_loops = no_loops.drop_duplicates(subset=['Gene1', 'Gene2'], keep='first')
         idx = pd.MultiIndex.from_arrays([no_loops['Gene1'], no_loops['Gene2']])
         return pd.Series(no_loops['EdgeWeight'].values, index=idx)
 
