@@ -6,6 +6,7 @@ from typing import Dict, List
 import matplotlib as mpl
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
+from matplotlib.transforms import blended_transform_factory
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -141,6 +142,7 @@ def _draw_section(
     dataset_ids: List[str],
     section_label: str,
     switch_text: bool = False,
+    show_all_values: bool = False,
 ) -> None:
     """
     Draw one heatmap section onto ax using flat square patches.
@@ -233,10 +235,15 @@ def _draw_section(
             col = palette[min(int(np.floor(norm_val * 10)), 10)]
             _flat_square(ax, cx, cy, col)
 
-            # Annotate the maximum and minimum value cells with the raw value.
+            # Annotate cells with the raw value.
             # Use one decimal place for values >= 1.0, two otherwise.
             fmt = f'{raw:.1f}' if raw >= 1.0 else f'{raw:.2f}'
-            if norm_val >= 1.0:
+            if show_all_values:
+                text_col = text_col_max if norm_val >= 0.5 else text_col_min
+                ax.text(cx, cy, fmt, fontsize=12,
+                        ha='center', va='center', color=text_col,
+                        bbox=dict(boxstyle='round', ec=(1,1,1,0), fc=(1,1,1,0)))
+            elif norm_val >= 1.0:
                 ax.text(cx, cy, fmt, fontsize=12,
                         ha='center', va='center', color=text_col_max,
                         bbox=dict(boxstyle='round', ec=(1,1,1,0), fc=(1,1,1,0)))
@@ -352,11 +359,17 @@ class PlotSummaryHeatmap(Plotter):
             spine.set_visible(False)
 
         # Alternating grey / white row backgrounds spanning both sections.
+        # Row backgrounds extend into the y-tick label area using a blended
+        # transform (x in axes fraction, y in data coords) so the leftward
+        # reach scales with the axes width rather than a fixed data offset.
+        row_trans = blended_transform_factory(ax.transAxes, ax.transData)
         for row_idx in range(n_algos):
             bg = (0.9, 0.9, 0.9) if row_idx % 2 == 0 else (1.0, 1.0, 1.0)
             ax.add_artist(patches.Rectangle(
-                (0, n_algos - row_idx - 0.5),
-                width=total_cols + 1, height=1,
+                (-0.15, n_algos - row_idx - 0.5),
+                width=1.15, height=1,
+                transform=row_trans,
+                clip_on=False,
                 edgecolor=(1, 1, 1), facecolor=bg,
             ))
 

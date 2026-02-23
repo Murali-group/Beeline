@@ -6,12 +6,13 @@ from typing import Dict, List, Tuple
 import matplotlib as mpl
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
+from matplotlib.transforms import blended_transform_factory
 import numpy as np
 import pandas as pd
 import seaborn as sns
 
 from BLPlot.plotter import Plotter, iter_datasets_with_runs
-from BLPlot.PlotSummaryHeatmap import _draw_section
+from BLPlot.PlotSummaryHeatmap import _draw_section, _DARK_COL
 
 plt.rcParams["font.size"] = 12
 
@@ -230,11 +231,8 @@ class PlotEPRHeatmap(Plotter):
         asp_ratio  = (total_cols + pad) / (n_algos + pad)
         fig_size   = (height * asp_ratio + 0.5, height)
 
-        # Gridspec: row 0 = heatmap (all 4 cols), row 1 = palette legends.
         fig = plt.figure(figsize=(fig_size[0], fig_size[1] + 0.5))
-        gs  = fig.add_gridspec(
-            2, 4, height_ratios=[n_algos + pad, 0.5], hspace=0.05)
-        ax  = fig.add_subplot(gs[0, :])
+        ax  = fig.add_subplot(111)
 
         # Y-axis: algorithms listed bottom-to-top; labels reversed so the
         # best algo (drawn at y = n_algos) aligns with the correct label.
@@ -250,25 +248,29 @@ class PlotEPRHeatmap(Plotter):
             spine.set_visible(False)
 
         # Alternating grey / white row backgrounds.
+        # Row backgrounds extend into the y-tick label area using a blended
+        # transform (x in axes fraction, y in data coords) so the leftward
+        # reach scales with the axes width rather than a fixed data offset.
+        row_trans = blended_transform_factory(ax.transAxes, ax.transData)
         for row_idx in range(n_algos):
             bg = (0.9, 0.9, 0.9) if row_idx % 2 == 0 else (1.0, 1.0, 1.0)
             ax.add_artist(patches.Rectangle(
-                (0, n_algos - row_idx - 0.5),
-                width=total_cols + 1, height=1,
+                (-0.15, n_algos - row_idx - 0.5),
+                width=1.15, height=1,
+                transform=row_trans,
+                clip_on=False,
                 edgecolor=(1, 1, 1), facecolor=bg,
             ))
 
-        # Color palettes — one per section.
-        auprc_palette   = sns.color_palette("viridis", 11)
-        epr_palette     = sns.cubehelix_palette(11, reverse=True)
-        epr_act_palette = sns.cubehelix_palette(11, reverse=True)
-        epr_inh_palette = sns.cubehelix_palette(11, reverse=True)
+        # Color palettes — viridis for AUPRC, rocket for the three EPR sections.
+        auprc_palette = sns.color_palette("viridis", 11)
+        epr_palette   = sns.color_palette("rocket", 11)
 
         sections = [
-            (auprc_arr,   auprc_palette,   'AUPRC Ratio',      1),
-            (epr_arr,     epr_palette,     'EPR',              n_datasets + 2),
-            (epr_act_arr, epr_act_palette, 'EPR (Activating)', n_datasets * 2 + 3),
-            (epr_inh_arr, epr_inh_palette, 'EPR (Inhibitory)', n_datasets * 3 + 4),
+            (auprc_arr,   auprc_palette, 'AUPRC Ratio',      1),
+            (epr_arr,     epr_palette,   'EPR',              n_datasets + 2),
+            (epr_act_arr, epr_palette,   'EPR (Activating)', n_datasets * 2 + 3),
+            (epr_inh_arr, epr_palette,   'EPR (Inhibitory)', n_datasets * 3 + 4),
         ]
 
         for data, palette, label, col_x_start in sections:
@@ -284,20 +286,44 @@ class PlotEPRHeatmap(Plotter):
         ax.set_xlim(0, total_cols + 1)
         ax.set_ylim(0, n_algos + 3)
 
-        # Color range legend: one palette bar per section.
-        palettes = [auprc_palette, epr_palette, epr_act_palette, epr_inh_palette]
-        for levl_idx, palette in enumerate(palettes):
-            legend_ax = fig.add_subplot(gs[1, levl_idx])
-            legend_ax.imshow(
-                np.arange(len(palette)).reshape(1, len(palette)),
-                cmap=mpl.colors.ListedColormap(list(palette)),
-                interpolation='nearest', aspect='auto',
-            )
+        # Legend geometry — positions are independent of column layout.
+        # Three legends placed at the left third, center, and right third of
+        # the axes width, each the same size.
+        lw = 5.0 / (total_cols + 1)   # legend width as axes fraction
+        lh = 0.5 / (n_algos + pad)    # legend height as axes fraction
+        ly = -lh - 0.05               # just below the heatmap
+
+        # Width that makes the random-predictor box square in figure inches.
+        # lh is a fraction of axes height; multiply by height/width to get the
+        # equivalent fraction of axes width.
+        actual_fig_w = fig_size[0]
+        actual_fig_h = fig_size[1] + 0.5
+        rand_lw = lh * (actual_fig_h / actual_fig_w)
+
+        for cx, palette, ticks, labels, w in [
+            (1/6, auprc_palette, [0.5, len(auprc_palette) - 2], ['Low/Poor', 'High/Good'], lw),
+            (1/2, None,          [0],                            ['Random Predictor'],      rand_lw),
+            (5/6, epr_palette,   [0.5, len(epr_palette) - 2],   ['Low/Poor', 'High/Good'], lw),
+        ]:
+            legend_ax = ax.inset_axes([cx - w / 2, ly, w, lh])
+            if palette is None:
+                # Single grey cell for the random-predictor indicator.
+                legend_ax.imshow(
+                    np.zeros((1, 1)),
+                    cmap=mpl.colors.ListedColormap([_DARK_COL]),
+                    interpolation='nearest', aspect='auto',
+                )
+            else:
+                legend_ax.imshow(
+                    np.arange(len(palette)).reshape(1, len(palette)),
+                    cmap=mpl.colors.ListedColormap(list(palette)),
+                    interpolation='nearest', aspect='auto',
+                )
             legend_ax.yaxis.set_ticks_position('none')
             legend_ax.xaxis.set_ticks_position('none')
             legend_ax.set_yticklabels([])
-            legend_ax.set_xticks([0.5, len(palette) - 2])
-            legend_ax.set_xticklabels(['Low/Poor', 'High/Good'], fontsize=12)
+            legend_ax.set_xticks(ticks)
+            legend_ax.set_xticklabels(labels, fontsize=12)
 
         out_path = output_dir / 'EPRSummary.pdf'
         plt.savefig(out_path, bbox_inches='tight')

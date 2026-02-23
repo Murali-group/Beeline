@@ -303,9 +303,7 @@ def make_box_figure(
 
     # Dashed grey line marking the random-predictor baseline
     if rand_value is not None:
-        sns.lineplot(y=rand_value, x=range(-1, len(algos) + 1), ax=ax)
-        ax.lines[0].set_linestyle('--')
-        ax.lines[0].set_color('gray')
+        ax.axhline(rand_value, color='gray', linestyle='--', linewidth=0.8)
 
     sns.boxplot(
         data=df, x='Algorithm', y='Value', order=algos,
