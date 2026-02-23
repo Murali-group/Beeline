@@ -89,7 +89,7 @@ def get_datasets(input_settings):
                 'dataset_id': run['run_id'],
                 'exprData': run.get('exprData', 'ExpressionData.csv'),
                 'pseudoTimeData': run.get('pseudoTimeData', 'PseudoTime.csv'),
-                'groundTruthNetwork': run.get('groundTruthNetwork', 'GroundTruthNetwork.csv'),
+                'groundTruthNetwork': ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv'),
             })
 
     return datasets

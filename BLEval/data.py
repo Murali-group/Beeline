@@ -137,10 +137,10 @@ class EvaluationData:
 
             for run in ds.get('runs', []):
                 run_id: str = run['run_id']
-                gt_filename: str = run.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
+                gt_filename: str = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
 
-                # Ground truth: inputs / dataset_dir / dataset_id / run_id / filename
-                gt_path: Path = input_dir / dataset_dir / dataset_id / run_id / gt_filename
+                # Ground truth: inputs / dataset_dir / dataset_id / filename
+                gt_path: Path = input_dir / dataset_dir / dataset_id / gt_filename
 
                 # outputs / dataset_dir / dataset_id / run_id
                 run_path: Path = output_dir / dataset_dir / dataset_id / run_id
