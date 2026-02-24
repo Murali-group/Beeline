@@ -45,7 +45,7 @@ class PIDCRunner(Runner):
 
         # Quit if output file does not exist
         if not outFile.exists():
-            print(str(outFile) +'does not exist, skipping...')
+            print(str(outFile) + ' does not exist, skipping...')
             return
 
         # Read output (headerless: col 0 = Gene1, col 1 = Gene2, col 2 = EdgeWeight)

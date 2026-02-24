@@ -58,7 +58,7 @@ class SINGERunner(Runner):
             if param not in params:
                 params[param] = val
 
-        num_replicates = params['num_replicates']
+        num_replicates = int(params['num_replicates'])
         replicates = []
         for replicate in range(num_replicates):
            replicates.append(' '.join('--' + p.replace('_', '-') + ' ' + str(params[p]) for p in params_order) + ' '.join(['', '--replicate', str(replicate), '--ID', str(replicate)]))
@@ -93,7 +93,7 @@ class SINGERunner(Runner):
             convert_input_to_matfile = 'octave -q --eval \\"CSV = csvread(\'' + inputFile + '\'); ' + \
                                  'X = sparse(CSV(2:end,1:end-1).\'); ptime = CSV(2:end,end).\'; ' + \
                                  'Kp2.Kp = single(ptime); Kp2.sumKp = single(ptime*X.\'); fullKp(1, ' + \
-                                 str(params['dT']*params['num_lags']) + ') = Kp2; ' + \
+                                 str(int(params['dT'])*int(params['num_lags'])) + ') = Kp2; ' + \
                                  'save(\'-v7\',\'' + inputMat + '\', \'X\', \'ptime\', \'fullKp\'); ' + \
                                  'f = fopen(\'' + inputFile + '\'); gene_list = strsplit(fgetl(f), \',\')(1:end-1).\'; fclose(f); ' + \
                                  'save(\'-v7\',\'' + geneListMat + '\', \'gene_list\')\\"'

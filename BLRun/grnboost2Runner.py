@@ -48,7 +48,7 @@ class GRNBoost2Runner(Runner):
 
         # Quit if output file does not exist
         if not outFile.exists():
-            print(str(outFile) +'does not exist, skipping...')
+            print(str(outFile) + ' does not exist, skipping...')
             return
 
         # Read output
