@@ -2,14 +2,13 @@
 Shared drawing helpers for BEELINE heatmap plotters.
 
 Provides the cell-drawing primitive (_flat_square), the section renderer
-(_draw_section), and axis-setup utilities (_draw_row_backgrounds,
-_setup_heatmap_axes) used by both PlotSummaryHeatmap and PlotEPRHeatmap.
+(_draw_section), and the axis-setup utility (_setup_heatmap_axes) used by
+both PlotSummaryHeatmap and PlotEPRHeatmap.
 """
 import math
 from typing import List
 
 import matplotlib.patches as patches
-from matplotlib.transforms import blended_transform_factory
 import numpy as np
 
 
@@ -163,30 +162,6 @@ def _draw_section(
                         ha='center', va='center', color=text_col_min,
                         bbox=dict(boxstyle='round', ec=(1,1,1,0), fc=(1,1,1,0)))
 
-
-def _draw_row_backgrounds(ax, n_algos: int) -> None:
-    """
-    Draw alternating grey/white row backgrounds extending into the y-tick label area.
-
-    Uses a blended transform (x in axes fraction, y in data coords) so the
-    leftward extension scales with the axes width rather than a fixed data offset.
-
-    Parameters
-    ----------
-    ax : matplotlib Axes
-    n_algos : int
-        Number of algorithm rows.
-    """
-    row_trans = blended_transform_factory(ax.transAxes, ax.transData)
-    for row_idx in range(n_algos):
-        bg = (0.9, 0.9, 0.9) if row_idx % 2 == 0 else (1.0, 1.0, 1.0)
-        ax.add_artist(patches.Rectangle(
-            (-0.15, n_algos - row_idx - 0.5),
-            width=1.15, height=1,
-            transform=row_trans,
-            clip_on=False,
-            edgecolor=(1, 1, 1), facecolor=bg,
-        ))
 
 
 def _setup_heatmap_axes(

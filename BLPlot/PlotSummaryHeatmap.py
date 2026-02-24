@@ -4,14 +4,15 @@ from pathlib import Path
 from typing import Dict, List
 
 import matplotlib as mpl
+import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+from matplotlib.transforms import blended_transform_factory
 
 from BLPlot._heatmap import (
     _DARK_COL,
-    _draw_row_backgrounds,
     _draw_section,
     _setup_heatmap_axes,
 )
@@ -198,7 +199,17 @@ class PlotSummaryHeatmap(Plotter):
         ax = fig.add_subplot(gs[0, :])
 
         _setup_heatmap_axes(ax, n_algos, sorted_algos, total_cols, pad)
-        _draw_row_backgrounds(ax, n_algos)
+
+        row_trans = blended_transform_factory(ax.transAxes, ax.transData)
+        for row_idx in range(n_algos):
+            bg = (0.9, 0.9, 0.9) if row_idx % 2 == 0 else (1.0, 1.0, 1.0)
+            ax.add_artist(patches.Rectangle(
+                (-0.25, n_algos - row_idx - 0.5),
+                width=1.25, height=1,
+                transform=row_trans,
+                clip_on=False,
+                edgecolor=(1, 1, 1), facecolor=bg,
+            ))
 
         # Color palettes: viridis for AUPRC, cool (blue) for stability.
         auprc_palette = sns.color_palette("viridis", 11)
