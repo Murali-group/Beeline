@@ -116,11 +116,16 @@ def _draw_section(
             bbox=dict(boxstyle='round', ec=(1, 1, 1, 0), fc=(1, 1, 1, 0)),
         )
 
-        # Per-column min/max for normalization (all non-NaN values)
+        # Per-column min/max for normalization (all non-NaN values).
         col_vals = [data[r, col_idx] for r in range(n_algos)
                     if not math.isnan(data[r, col_idx])]
         col_min = min(col_vals) if col_vals else 0.0
         col_max = max(col_vals) if col_vals else 1.0
+
+        # Minimum value that exceeds rand_cutoff — used for the low annotation
+        # so the label always appears on a visible (non-dark) cell.
+        visible_vals = [v for v in col_vals if v >= rand_cutoff]
+        col_visible_min = min(visible_vals) if visible_vals else float('nan')
 
         for row_idx in range(n_algos):
             # Best algorithm at row 0 is drawn at the top (y = n_algos).
@@ -136,7 +141,7 @@ def _draw_section(
                 _flat_square(ax, cx, cy, _DARK_COL)
                 continue
 
-            # Column-wise min-max normalization for color selection
+            # Column-wise min-max normalization for color selection.
             if col_max > col_min:
                 norm_val = (raw - col_min) / (col_max - col_min)
             else:
@@ -157,7 +162,7 @@ def _draw_section(
                 ax.text(cx, cy, fmt, fontsize=12,
                         ha='center', va='center', color=text_col_max,
                         bbox=dict(boxstyle='round', ec=(1,1,1,0), fc=(1,1,1,0)))
-            elif norm_val <= 0.0:
+            elif not math.isnan(col_visible_min) and raw <= col_visible_min:
                 ax.text(cx, cy, fmt, fontsize=12,
                         ha='center', va='center', color=text_col_min,
                         bbox=dict(boxstyle='round', ec=(1,1,1,0), fc=(1,1,1,0)))
