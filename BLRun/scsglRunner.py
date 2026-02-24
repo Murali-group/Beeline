@@ -27,7 +27,7 @@ class SCSGLRunner(Runner):
 
         SCSGL_GROUND_TRUTH_FILE = self.working_dir / "GroundTruthNetwork.csv"
         if not SCSGL_GROUND_TRUTH_FILE.exists():
-            groundTruthNetworkData = pd.read_csv(self.input_dir / self.groundTruthNetwork,
+            groundTruthNetworkData = pd.read_csv(self.ground_truth_file,
                                          header = 0, index_col = 0)
 
             # Write reference network data in SCSGL folder

@@ -57,8 +57,9 @@ class Runner(ABC):
         base_input.resolve()
         base_output.resolve()
 
-        self.input_dir   = base_input / ds['dataset_id']
-        self.output_dir  = base_output
+        # input_dir: run-level input directory (expression data, pseudo-time).
+        self.input_dir  = base_input / ds['dataset_id']
+        self.output_dir = base_output
         self.working_dir = base_output / "working_dir"
 
         # Erase working directory so stale inputs from prior runs are not reused.
@@ -81,6 +82,8 @@ class Runner(ABC):
         self.exprData           = ds.get('exprData',           'ExpressionData.csv')
         self.pseudoTimeData     = ds.get('pseudoTimeData',     'PseudoTime.csv')
         self.groundTruthNetwork = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
+        # ground_truth_file: full path to the dataset-level ground truth CSV.
+        self.ground_truth_file  = base_input / self.groundTruthNetwork
         
         # Unwrap single-element lists so runners receive scalar values.
         # YAML config files commonly wrap param values in brackets
