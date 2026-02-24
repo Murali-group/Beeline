@@ -1,14 +1,12 @@
 from pathlib import Path
 
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_pdf import PdfPages
-
 from BLPlot.plotter import (
     Plotter,
     iter_datasets_with_runs,
     load_dataset_metric,
     make_box_figure,
     random_classifier_baseline,
+    write_pdf,
 )
 
 
@@ -46,28 +44,19 @@ class PlotEPR(Plotter):
         if not isinstance(root, Path):
             raise TypeError(f"root must be Path, got {type(root)}")
 
-        out_path = output_dir / 'EPR.pdf'
-        pages_written = 0
-
-        with PdfPages(out_path) as pdf:
-            for dataset_id, dataset_path, gt_path, _ in iter_datasets_with_runs(config, root):
-                baseline = (
-                    random_classifier_baseline(gt_path)
-                    if gt_path.exists() else None
+        write_pdf(
+            output_dir / 'EPR.pdf',
+            (
+                make_box_figure(
+                    load_dataset_metric(dataset_path, 'EarlyPrecision.csv'),
+                    f'Early Precision — {dataset_id}', 'Early Precision',
+                    rand_value=(
+                        random_classifier_baseline(gt_path)
+                        if gt_path.exists() else None
+                    ),
                 )
-                values = load_dataset_metric(dataset_path, 'EarlyPrecision.csv')
-                fig = make_box_figure(
-                    values, f'Early Precision — {dataset_id}', 'Early Precision',
-                    rand_value=baseline,
-                )
-
-                if fig is None:
-                    continue
-                pdf.savefig(fig)
-                plt.close(fig)
-                pages_written += 1
-
-        if pages_written:
-            print(f"Saved {pages_written} plot(s) to {out_path}")
-        else:
-            print(f"No EPR data found; {out_path} not written.")
+                for dataset_id, dataset_path, gt_path, _
+                in iter_datasets_with_runs(config, root)
+            ),
+            'Early Precision',
+        )

@@ -4,15 +4,18 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 import matplotlib as mpl
-import matplotlib.patches as patches
 import matplotlib.pyplot as plt
-from matplotlib.transforms import blended_transform_factory
 import numpy as np
 import pandas as pd
 import seaborn as sns
 
+from BLPlot._heatmap import (
+    _DARK_COL,
+    _draw_row_backgrounds,
+    _draw_section,
+    _setup_heatmap_axes,
+)
 from BLPlot.plotter import Plotter, iter_datasets_with_runs
-from BLPlot.PlotSummaryHeatmap import _draw_section, _DARK_COL
 
 plt.rcParams["font.size"] = 12
 
@@ -234,33 +237,8 @@ class PlotEPRHeatmap(Plotter):
         fig = plt.figure(figsize=(fig_size[0], fig_size[1] + 0.5))
         ax  = fig.add_subplot(111)
 
-        # Y-axis: algorithms listed bottom-to-top; labels reversed so the
-        # best algo (drawn at y = n_algos) aligns with the correct label.
-        ax.set_yticks(np.arange(0, n_algos + pad))
-        ax.set_yticklabels([""] + sorted_algos[::-1] + [""], fontsize=12)
-
-        ax.set_xticks(np.arange(0, total_cols + pad))
-        ax.set_xticklabels([])
-        ax.xaxis.set_ticks_position('none')
-        ax.yaxis.set_ticks_position('none')
-
-        for spine in ax.spines.values():
-            spine.set_visible(False)
-
-        # Alternating grey / white row backgrounds.
-        # Row backgrounds extend into the y-tick label area using a blended
-        # transform (x in axes fraction, y in data coords) so the leftward
-        # reach scales with the axes width rather than a fixed data offset.
-        row_trans = blended_transform_factory(ax.transAxes, ax.transData)
-        for row_idx in range(n_algos):
-            bg = (0.9, 0.9, 0.9) if row_idx % 2 == 0 else (1.0, 1.0, 1.0)
-            ax.add_artist(patches.Rectangle(
-                (-0.15, n_algos - row_idx - 0.5),
-                width=1.15, height=1,
-                transform=row_trans,
-                clip_on=False,
-                edgecolor=(1, 1, 1), facecolor=bg,
-            ))
+        _setup_heatmap_axes(ax, n_algos, sorted_algos, total_cols, pad)
+        _draw_row_backgrounds(ax, n_algos)
 
         # Color palettes — viridis for AUPRC, rocket for the three EPR sections.
         auprc_palette = sns.color_palette("viridis", 11)
@@ -282,9 +260,6 @@ class PlotEPRHeatmap(Plotter):
                 dataset_ids=dataset_ids,
                 section_label=label,
             )
-
-        ax.set_xlim(0, total_cols + 1)
-        ax.set_ylim(0, n_algos + 3)
 
         # Legend geometry — positions are independent of column layout.
         # Three legends placed at the left third, center, and right third of

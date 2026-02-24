@@ -1,11 +1,12 @@
 import math
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Iterator, List, Tuple
+from typing import Dict, Iterable, Iterator, List, Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
+from matplotlib.backends.backend_pdf import PdfPages
 
 
 def get_algo_ids(config: dict) -> List[str]:
@@ -332,6 +333,44 @@ def make_box_figure(
     plt.setp(ax.get_xticklabels(), rotation=45, ha='right')
     plt.tight_layout()
     return fig
+
+
+def write_pdf(
+    out_path: Path,
+    figures: Iterable,
+    metric_name: str,
+) -> None:
+    """
+    Write an iterable of figures to a multi-page PDF.
+
+    None entries in the iterable are skipped so callers can pass generator
+    expressions that return None for datasets with no data.
+
+    Parameters
+    ----------
+    out_path : Path
+        Destination PDF file path.
+    figures : iterable of plt.Figure or None
+        Figures to save. Each figure is closed after saving.
+    metric_name : str
+        Human-readable metric name used in progress/warning messages.
+    """
+    if not isinstance(out_path, Path):
+        raise TypeError(f"out_path must be Path, got {type(out_path)}")
+
+    pages_written = 0
+    with PdfPages(out_path) as pdf:
+        for fig in figures:
+            if fig is None:
+                continue
+            pdf.savefig(fig)
+            plt.close(fig)
+            pages_written += 1
+
+    if pages_written:
+        print(f"Saved {pages_written} plot(s) to {out_path}")
+    else:
+        print(f"No {metric_name} data found; {out_path} not written.")
 
 
 def box_plot(

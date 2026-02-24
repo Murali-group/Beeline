@@ -4,7 +4,6 @@ from typing import List
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.metrics import auc, precision_recall_curve
 
 from BLPlot.plotter import (
@@ -14,6 +13,7 @@ from BLPlot.plotter import (
     load_dataset_metric,
     make_box_figure,
     random_classifier_baseline,
+    write_pdf,
 )
 
 
@@ -101,6 +101,45 @@ def _make_pr_curve_figure(
     return fig
 
 
+def _make_figure(
+    dataset_id: str,
+    dataset_path: Path,
+    gt_path: Path,
+    runs: list,
+    algos: List[str],
+) -> 'plt.Figure | None':
+    """
+    Produce the appropriate AUPRC figure for one dataset.
+
+    Returns a PR curve figure for single-run datasets and a box plot for
+    multi-run datasets.
+
+    Parameters
+    ----------
+    dataset_id : str
+        Dataset label used in the plot title.
+    dataset_path : Path
+        Output directory containing AUPRC.csv for multi-run datasets.
+    gt_path : Path
+        Ground truth CSV path (used for the random baseline and curve plots).
+    runs : list
+        Run dicts from the config for this dataset.
+    algos : list[str]
+        Algorithm IDs to include.
+
+    Returns
+    -------
+    plt.Figure or None
+    """
+    if len(runs) == 1:
+        run_path = dataset_path / runs[0]['run_id']
+        return _make_pr_curve_figure(run_path, gt_path, algos, dataset_id)
+
+    baseline = random_classifier_baseline(gt_path) if gt_path.exists() else None
+    values = load_dataset_metric(dataset_path, 'AUPRC.csv')
+    return make_box_figure(values, f'AUPRC — {dataset_id}', 'AUPRC', rand_value=baseline)
+
+
 class PlotAUPRC(Plotter):
     """
     Plotter that produces one AUPRC graphic per dataset.
@@ -136,32 +175,11 @@ class PlotAUPRC(Plotter):
             raise TypeError(f"root must be Path, got {type(root)}")
 
         algos = get_algo_ids(config)
-        out_path = output_dir / 'AUPRC.pdf'
-        pages_written = 0
-
-        with PdfPages(out_path) as pdf:
-            for dataset_id, dataset_path, gt_path, runs in iter_datasets_with_runs(config, root):
-                if len(runs) == 1:
-                    run_path = dataset_path / runs[0]['run_id']
-                    fig = _make_pr_curve_figure(run_path, gt_path, algos, dataset_id)
-                else:
-                    baseline = (
-                        random_classifier_baseline(gt_path)
-                        if gt_path.exists() else None
-                    )
-                    values = load_dataset_metric(dataset_path, 'AUPRC.csv')
-                    fig = make_box_figure(
-                        values, f'AUPRC — {dataset_id}', 'AUPRC',
-                        rand_value=baseline,
-                    )
-
-                if fig is None:
-                    continue
-                pdf.savefig(fig)
-                plt.close(fig)
-                pages_written += 1
-
-        if pages_written:
-            print(f"Saved {pages_written} plot(s) to {out_path}")
-        else:
-            print(f"No AUPRC data found; {out_path} not written.")
+        write_pdf(
+            output_dir / 'AUPRC.pdf',
+            (
+                _make_figure(did, dp, gtp, runs, algos)
+                for did, dp, gtp, runs in iter_datasets_with_runs(config, root)
+            ),
+            'AUPRC',
+        )

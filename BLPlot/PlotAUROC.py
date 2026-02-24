@@ -4,7 +4,6 @@ from typing import List
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from matplotlib.backends.backend_pdf import PdfPages
 from sklearn.metrics import auc, roc_curve
 
 from BLPlot.plotter import (
@@ -13,6 +12,7 @@ from BLPlot.plotter import (
     iter_datasets_with_runs,
     load_dataset_metric,
     make_box_figure,
+    write_pdf,
 )
 
 
@@ -102,6 +102,44 @@ def _make_roc_curve_figure(
     return fig
 
 
+def _make_figure(
+    dataset_id: str,
+    dataset_path: Path,
+    gt_path: Path,
+    runs: list,
+    algos: List[str],
+) -> 'plt.Figure | None':
+    """
+    Produce the appropriate AUROC figure for one dataset.
+
+    Returns a ROC curve figure for single-run datasets and a box plot for
+    multi-run datasets. The random classifier AUROC baseline is always 0.5.
+
+    Parameters
+    ----------
+    dataset_id : str
+        Dataset label used in the plot title.
+    dataset_path : Path
+        Output directory containing AUROC.csv for multi-run datasets.
+    gt_path : Path
+        Ground truth CSV path (used for single-run curve plots).
+    runs : list
+        Run dicts from the config for this dataset.
+    algos : list[str]
+        Algorithm IDs to include.
+
+    Returns
+    -------
+    plt.Figure or None
+    """
+    if len(runs) == 1:
+        run_path = dataset_path / runs[0]['run_id']
+        return _make_roc_curve_figure(run_path, gt_path, algos, dataset_id)
+
+    values = load_dataset_metric(dataset_path, 'AUROC.csv')
+    return make_box_figure(values, f'AUROC — {dataset_id}', 'AUROC', rand_value=0.5)
+
+
 class PlotAUROC(Plotter):
     """
     Plotter that produces one AUROC graphic per dataset.
@@ -137,29 +175,11 @@ class PlotAUROC(Plotter):
             raise TypeError(f"root must be Path, got {type(root)}")
 
         algos = get_algo_ids(config)
-        out_path = output_dir / 'AUROC.pdf'
-        pages_written = 0
-
-        with PdfPages(out_path) as pdf:
-            for dataset_id, dataset_path, gt_path, runs in iter_datasets_with_runs(config, root):
-                if len(runs) == 1:
-                    run_path = dataset_path / runs[0]['run_id']
-                    fig = _make_roc_curve_figure(run_path, gt_path, algos, dataset_id)
-                else:
-                    values = load_dataset_metric(dataset_path, 'AUROC.csv')
-                    # Random classifier AUROC baseline is always 0.5
-                    fig = make_box_figure(
-                        values, f'AUROC — {dataset_id}', 'AUROC',
-                        rand_value=0.5,
-                    )
-
-                if fig is None:
-                    continue
-                pdf.savefig(fig)
-                plt.close(fig)
-                pages_written += 1
-
-        if pages_written:
-            print(f"Saved {pages_written} plot(s) to {out_path}")
-        else:
-            print(f"No AUROC data found; {out_path} not written.")
+        write_pdf(
+            output_dir / 'AUROC.pdf',
+            (
+                _make_figure(did, dp, gtp, runs, algos)
+                for did, dp, gtp, runs in iter_datasets_with_runs(config, root)
+            ),
+            'AUROC',
+        )
