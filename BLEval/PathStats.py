@@ -55,7 +55,7 @@ def _path_stats(
     Returns
     -------
     dict
-        Keys: 0, 2, 3, 4, 5 (path length counts), numPred, numTP,
+        Keys: '0', '2', '3', '4', '5' (path length counts), numPred, numTP,
         numFP_withPath, numFP_noPath.
     """
     if not isinstance(pred_graph, nx.DiGraph):
@@ -84,7 +84,7 @@ def _path_stats(
             nopath += 1
 
     return {
-        **path_length_counts,
+        **{str(k): v for k, v in path_length_counts.items()},
         'numPred':        len(pred_edges),
         'numTP':          len(true_positives),
         'numFP_withPath': yespath,
@@ -160,7 +160,7 @@ class PathStats(Evaluator):
 
         dataset_path/PathStats_{run_id}.csv
 
-    Rows are algorithms; columns are 0, 2, 3, 4, 5, numPred, numTP,
+    Rows are algorithms; columns are '0', '2', '3', '4', '5', numPred, numTP,
     numFP_withPath, numFP_noPath. Runs whose ground truth file is missing are
     skipped with a warning.
     """
