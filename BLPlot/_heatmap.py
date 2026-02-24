@@ -116,11 +116,16 @@ def _draw_section(
             bbox=dict(boxstyle='round', ec=(1, 1, 1, 0), fc=(1, 1, 1, 0)),
         )
 
-        # Per-column min/max for normalization (all non-NaN values).
+        # Per-column bounds for normalization (all non-NaN values).
         col_vals = [data[r, col_idx] for r in range(n_algos)
                     if not math.isnan(data[r, col_idx])]
-        col_min = min(col_vals) if col_vals else 0.0
         col_max = max(col_vals) if col_vals else 1.0
+
+        # Color gradient runs from rand_cutoff to col_max so that the baseline
+        # anchors the bottom of the scale. When rand_cutoff is 0 fall back to
+        # the column minimum so the full range is still used.
+        col_min   = min(col_vals) if col_vals else 0.0
+        norm_floor = rand_cutoff if rand_cutoff > 0 else col_min
 
         # Minimum value that exceeds rand_cutoff — used for the low annotation
         # so the label always appears on a visible (non-dark) cell.
@@ -141,9 +146,9 @@ def _draw_section(
                 _flat_square(ax, cx, cy, _DARK_COL)
                 continue
 
-            # Column-wise min-max normalization for color selection.
-            if col_max > col_min:
-                norm_val = (raw - col_min) / (col_max - col_min)
+            # Normalize from norm_floor (rand_cutoff or col_min) to col_max.
+            if col_max > norm_floor:
+                norm_val = (raw - norm_floor) / (col_max - norm_floor)
             else:
                 norm_val = 0.5
 

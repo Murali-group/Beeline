@@ -251,9 +251,9 @@ class PlotEPRHeatmap(Plotter):
                 edgecolor=(1, 1, 1), facecolor=bg,
             ))
 
-        # Color palettes — viridis for AUPRC, rocket for the three EPR sections.
+        # Color palettes — viridis for AUPRC, magma for the three EPR sections.
         auprc_palette = sns.color_palette("viridis", 11)
-        epr_palette   = sns.color_palette("rocket", 11)
+        epr_palette   = sns.color_palette("magma", 11)
 
         sections = [
             (auprc_arr,   auprc_palette, 'AUPRC Ratio',      1),
