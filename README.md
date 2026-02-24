@@ -71,8 +71,8 @@ python BLPlotter.py -c config-files/Curated/VSC.yaml -o ./plots [flags]
 
 | Flag | Output file | Description |
 |------|-------------|-------------|
-| `-a` / `--auprc` | `AUPRC.pdf` | Precision-recall curves or box plots per dataset |
-| `-r` / `--auroc` | `AUROC.pdf` | ROC curves or box plots per dataset |
+| `-a` / `--auprc` | `AUPRC.pdf` | Per-dataset AUPRC plots. One run: precision-recall curve. Multiple runs: box plots. |
+| `-r` / `--auroc` | `AUROC.pdf` | Per-dataset AUROC plots. One run: ROC curve. Multiple runs: box plots. |
 | `-e` / `--epr` | `EPR.pdf` | Box plot of early precision values per algorithm |
 | `--summary` | `Summary.pdf` | Heatmap of median AUPRC ratio and Spearman stability |
 | `--epr-summary` | `EPRSummary.pdf` | Heatmap of AUPRC ratio, EPR ratio, and signed EPR ratios |
