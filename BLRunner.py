@@ -112,6 +112,7 @@ def build_runner(algo_name, params, dataset, input_settings, output_settings):
         },
         'output_settings': {
             'output_dir': output_settings['output_dir'],
+            'run_id':     output_settings.get('run_id', ''),
         },
         'algo_name': algo_name,
         'params': params,
@@ -156,6 +157,7 @@ def get_working_dirs(config):
     root            = Path.cwd()
     input_settings  = config['input_settings']
     output_settings = config['output_settings']
+    run_id          = output_settings.get('run_id', '')
     output_dir      = Path(output_settings['output_dir'])
     datasets        = get_datasets(input_settings)
     algorithms      = input_settings.get('algorithms', [])
@@ -166,6 +168,8 @@ def get_working_dirs(config):
             if not algo.get('should_run', [False])[0]:
                 continue
             base_output = output_dir if output_dir.is_absolute() else root / output_dir
+            if run_id:
+                base_output = base_output / run_id
             if dataset['dataset_dir']:
                 base_output = base_output / dataset['dataset_dir']
             base_output = base_output / dataset['dataset_id'] / algo['algorithm_id']

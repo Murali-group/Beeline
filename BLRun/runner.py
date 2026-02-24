@@ -38,12 +38,18 @@ class Runner(ABC):
 
         input_dir_path  = Path(inp['input_dir'])
         output_dir_path = Path(config['output_settings']['output_dir'])
+        # run_id : str — optional; when set, a run_id segment is inserted
+        # between output_dir and the dataset path so multiple experiment runs
+        # can coexist under the same base output directory.
+        run_id_prefix = config['output_settings'].get('run_id', '')
 
         base_input = input_dir_path if input_dir_path.is_absolute() else root / input_dir_path
         if inp.get('dataset_dir'):
             base_input = base_input / inp['dataset_dir']
 
         base_output = output_dir_path if output_dir_path.is_absolute() else root / output_dir_path
+        if run_id_prefix:
+            base_output = base_output / run_id_prefix
         if inp.get('dataset_dir'):
             base_output = base_output / inp['dataset_dir']
         base_output = base_output / ds['dataset_id'] / config['algo_name']

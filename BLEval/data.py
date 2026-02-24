@@ -110,8 +110,13 @@ class EvaluationData:
         input_settings  = config['input_settings']
         output_settings = config['output_settings']
 
-        input_dir   = root / input_settings['input_dir']
-        output_dir  = root / output_settings['output_dir']
+        input_dir  = root / input_settings['input_dir']
+        output_dir = root / output_settings['output_dir']
+        # run_id : str — optional; when set, a run_id segment is inserted
+        # between output_dir and the dataset path.
+        run_id = output_settings.get('run_id', '')
+        if run_id:
+            output_dir = output_dir / run_id
         dataset_dir = input_settings.get('dataset_dir', '')
 
         # Collect algorithm IDs that are enabled in the config.

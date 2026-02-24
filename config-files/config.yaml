@@ -11,6 +11,8 @@ input_settings:
     # datasets: A list of datasets. Each dataset has the following parameters:
     #   dataset_id: Identifier for the dataset group. Used to resolve the input path.
     #   should_run: whether or not to run this dataset.
+    #   groundTruthNetwork: Name of the reference network file in edge list format.
+    #       Shared across all runs within the dataset. Needed for evaluation.
     #
     #   runs: A list of runs within the dataset, each with the following parameters:
     #       run_id: Identifier for this specific run. Used as the input subdirectory name.
@@ -18,12 +20,6 @@ input_settings:
     #           columns and genes are along the rows.
     #       pseudoTimeData: a file containing pseudotime ordering, or any other
     #           information about cells.
-    #       groundTruthNetwork: Name of the reference network file in the
-    #           edge list format. Needed for evaluation.
-    #
-    # If datasets is absent (or commented out), run BEELINE on every sub-directory of dataset_dir.
-    # BEELINE will assume that these files are present under the default names
-    # "ExpressionData.csv", "PseudoTime.csv" and "GroundTruthNetwork.csv", respectively.
 
     # Denotes a list of algorithms to run. Each has the following parameters:
     #   algorithm_id: Identifier for the algorithm. Must be recognized by the pipeline,
@@ -136,15 +132,17 @@ input_settings:
     datasets:
         - dataset_id: "GSD"
           should_run: [True]
+          groundTruthNetwork: "GroundTruthNetwork.csv"
           runs:
             - run_id: "ex1"
               exprData: "ExpressionData.csv"
               pseudoTimeData: "PseudoTime.csv"
-              groundTruthNetwork: "GroundTruthNetwork.csv"
 
-# Output Settings: initialize base output folder names
+# Output Settings: configure where results are written
 output_settings:
 
     # Base output directory
     output_dir: "outputs"
-    output_prefix: "GSD"
+    # Optional: if set, outputs are written to output_dir/run_id/...
+    # so multiple experiment runs can coexist under the same base directory.
+    run_id: "example_run_GSD"
