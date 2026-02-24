@@ -32,7 +32,7 @@ class GRNBoost2Runner(Runner):
         cmdToRun = ' '.join(['docker run --rm',
                             f"-v {self.working_dir}:/usr/working_dir",
                             '--expose=41269',
-                            'grnbeeline/arboreto:base /bin/sh -c \"time -v -o',
+                            f'{self.image} /bin/sh -c \"time -v -o',
                             "/usr/working_dir/time.txt",
                             'python runArboreto.py --algo=GRNBoost2',
                             '--inFile=/usr/working_dir/ExpressionData.csv', '--outFile=/usr/working_dir/outFile.txt', '\"'])

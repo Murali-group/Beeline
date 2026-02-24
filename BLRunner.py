@@ -95,7 +95,7 @@ def get_datasets(input_settings):
     return datasets
 
 
-def build_runner(algo_name, params, dataset, input_settings, output_settings):
+def build_runner(algo_name, image, params, dataset, input_settings, output_settings):
     if algo_name not in RUNNERS:
         raise ValueError(f"Unknown algorithm '{algo_name}'. Available: {list(RUNNERS)}")
 
@@ -115,6 +115,7 @@ def build_runner(algo_name, params, dataset, input_settings, output_settings):
             'run_id':     output_settings.get('run_id', ''),
         },
         'algo_name': algo_name,
+        'image': image,
         'params': params,
     }
 
@@ -133,7 +134,7 @@ def build_runners(config):
             if not algo.get('should_run', [False])[0]:
                 continue
             params = algo.get('params', {})
-            runners.append(build_runner(algo['algorithm_id'], params, dataset, input_settings, output_settings))
+            runners.append(build_runner(algo['algorithm_id'], algo['image'], params, dataset, input_settings, output_settings))
     return runners
 
 

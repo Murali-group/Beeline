@@ -47,7 +47,7 @@ class JUMP3Runner(Runner):
 
         cmdToRun = ' '.join(['docker run --rm',
                             f"-v {self.working_dir}:/usr/working_dir",
-                            'jump3:base /bin/sh -c \"time -v -o',
+                            f'{self.image} /bin/sh -c \"time -v -o',
                             "/usr/working_dir/time.txt",
                             './runJump3',
                             "/usr/working_dir/ExpressionData.csv", "/usr/working_dir/outFile.txt", '\"'])

@@ -72,7 +72,7 @@ class SCRIBERunner(Runner):
 
             cmdToRun = ' '.join(['docker run --rm',
                            f"-v {self.working_dir}:/usr/working_dir",
-                           'grnbeeline/scribe:base /bin/sh -c \"time -v -o',
+                           f'{self.image} /bin/sh -c \"time -v -o',
                            "/usr/working_dir/" + timeFile, 'Rscript runScribe.R',
                            '-e', "/usr/working_dir/" + exprName, '-c', "/usr/working_dir/" + cellName,
                            '-g', "/usr/working_dir/GeneData.csv", '-o /usr/working_dir/', '-d', delay, '-l', low,

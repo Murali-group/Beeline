@@ -55,7 +55,7 @@ class GRISLIRunner(Runner):
 
             cmdToRun = ' '.join(['docker run --rm',
                                 f"-v {self.working_dir}:/usr/working_dir",
-                                'grnbeeline/grisli:base /bin/sh -c \"time -v -o',
+                                f'{self.image} /bin/sh -c \"time -v -o',
                                 "/usr/working_dir/time" + str(idx) + ".txt",
                                 './GRISLI',
                                 "/usr/working_dir/" + str(idx) + "/",

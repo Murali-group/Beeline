@@ -66,7 +66,7 @@ class SCODERunner(Runner):
                                 f'--user {os.getuid()}:{os.getgid()}',
                                 '-e HOME=/tmp',
                                 f"-v {self.working_dir}:/usr/working_dir",
-                                'grnbeeline/scode:base /bin/sh -c \"time -v -o',
+                                f'{self.image} /bin/sh -c \"time -v -o',
                                 "/usr/working_dir/time" + str(idx) + ".txt",
                                 'ruby run_R.rb',
                                 "/usr/working_dir/ExpressionData" + str(idx) + ".csv",

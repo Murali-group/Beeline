@@ -29,7 +29,7 @@ class PIDCRunner(Runner):
 
         cmdToRun = ' '.join(['docker run --rm',
                             f"-v {self.working_dir}:/usr/working_dir",
-                            'grnbeeline/pidc:base /bin/sh -c \"time -v -o',
+                            f'{self.image} /bin/sh -c \"time -v -o',
                             "/usr/working_dir/time.txt",
                             'julia runPIDC.jl',
                             "/usr/working_dir/ExpressionData.csv", "/usr/working_dir/outFile.txt", '\"'])

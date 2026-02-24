@@ -97,10 +97,12 @@ input_settings:
 
     algorithms:
         - algorithm_id: "GENIE3"
+          image: "grnbeeline/arboreto:base"
           should_run: True
           params: {}
 
         - algorithm_id: "PPCOR"
+          image: "grnbeeline/ppcor:base"
           should_run: True
           params:
               pVal: 0.01
@@ -142,6 +144,7 @@ Each entry under `runs` represents one replicate or condition variant. Input fil
 | Field | Required | Description |
 |-------|----------|-------------|
 | `algorithm_id` | Yes | Algorithm name. Must match one of the supported identifiers (see [Supported Algorithms](#supported-algorithms)). |
+| `image` | Yes | Docker image name to run for this algorithm (e.g., `"grnbeeline/genie3:base"`). See the [Supported Algorithms](#supported-algorithms) table for default image names. |
 | `should_run` | Yes | Set to `True` to run this algorithm, `False` to skip it. |
 | `params` | No | Dict of algorithm-specific parameters. Values are typically wrapped in a single-element list (e.g., `pVal: [0.01]`); the runner unwraps them automatically. |
 
@@ -161,21 +164,21 @@ output_dir/[run_id/]dataset_dir/dataset_id/run_id/algorithm_id/rankedEdges.csv
 
 ## Supported Algorithms
 
-| Algorithm | Runner file |
-|-----------|-------------|
-| GENIE3 | `BLRun/genie3Runner.py` |
-| GRISLI | `BLRun/grisliRunner.py` |
-| GRNBOOST2 | `BLRun/grnboost2Runner.py` |
-| GRNVBEM | `BLRun/grnvbemRunner.py` |
-| JUMP3 | `BLRun/jump3Runner.py` |
-| LEAP | `BLRun/leapRunner.py` |
-| PIDC | `BLRun/pidcRunner.py` |
-| PPCOR | `BLRun/ppcorRunner.py` |
-| SCODE | `BLRun/scodeRunner.py` |
-| SCRIBE | `BLRun/scribeRunner.py` |
-| SCSGL | `BLRun/scsglRunner.py` |
-| SINCERITIES | `BLRun/sinceritiesRunner.py` |
-| SINGE | `BLRun/singeRunner.py` |
+| Algorithm | Default `image` | Runner file |
+|-----------|-----------------|-------------|
+| GENIE3 | `grnbeeline/arboreto:base` | `BLRun/genie3Runner.py` |
+| GRISLI | `grnbeeline/grisli:base` | `BLRun/grisliRunner.py` |
+| GRNBOOST2 | `grnbeeline/arboreto:base` | `BLRun/grnboost2Runner.py` |
+| GRNVBEM | `grnbeeline/grnvbem:base` | `BLRun/grnvbemRunner.py` |
+| JUMP3 | `jump3:base` | `BLRun/jump3Runner.py` |
+| LEAP | `grnbeeline/leap:base` | `BLRun/leapRunner.py` |
+| PIDC | `grnbeeline/pidc:base` | `BLRun/pidcRunner.py` |
+| PPCOR | `grnbeeline/ppcor:base` | `BLRun/ppcorRunner.py` |
+| SCODE | `grnbeeline/scode:base` | `BLRun/scodeRunner.py` |
+| SCRIBE | `grnbeeline/scribe:base` | `BLRun/scribeRunner.py` |
+| SCSGL | `scsgl:base` | `BLRun/scsglRunner.py` |
+| SINCERITIES | `grnbeeline/sincerities:base` | `BLRun/sinceritiesRunner.py` |
+| SINGE | `grnbeeline/singe:0.4.1` | `BLRun/singeRunner.py` |
 
 ---
 

@@ -100,7 +100,7 @@ class SINGERunner(Runner):
 
             cmdToRun = ' '.join(['docker run --rm --entrypoint /bin/sh',
                                 f"-v {self.working_dir}:/usr/working_dir",
-                                'grnbeeline/singe:0.4.1 -c \"echo \\"',
+                                f'{self.image} -c \"echo \\"',
                                  params_str, '\\" >', paramsFile, '&&', symlink_out_file, '&&', convert_input_to_matfile,
                                  '&& time -v -o', "/usr/working_dir/time" + str(idx) + ".txt",
                                  '/usr/local/SINGE/SINGE.sh /usr/local/MATLAB/MATLAB_Runtime/v94 standalone',

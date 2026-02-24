@@ -34,22 +34,27 @@ input_settings:
               
 
         - algorithm_id: "PIDC"
+          image: "grnbeeline/pidc:base"
           should_run: [True]
 
 
         - algorithm_id: "GRNVBEM"
+          image: "grnbeeline/grnvbem:base"
           should_run: [True]
 
 
         - algorithm_id: "GENIE3"
+          image: "grnbeeline/arboreto:base"
           should_run: [True]
 
 
         - algorithm_id: "GRNBOOST2"
+          image: "grnbeeline/arboreto:base"
           should_run: [True]
 
 
         - algorithm_id: "PPCOR"
+          image: "grnbeeline/ppcor:base"
           should_run: [True]
           params:
               # p-value cutoff
@@ -58,6 +63,7 @@ input_settings:
 
 
         - algorithm_id: "SCODE"
+          image: "grnbeeline/scode:base"
           should_run: [True]
           params:
               z: [10]
@@ -66,12 +72,14 @@ input_settings:
 
 
         - algorithm_id: "SINCERITIES"
+          image: "grnbeeline/sincerities:base"
           should_run: [True]
           params:
               nBins: [10]
 
 
         - algorithm_id: "LEAP"
+          image: "grnbeeline/leap:base"
           should_run: [True]
           params:
               # Default maxLag value is 0.33
@@ -79,6 +87,7 @@ input_settings:
 
 
         - algorithm_id: "GRISLI"
+          image: "grnbeeline/grisli:base"
           should_run: [True]
           params:
               L: [10]
@@ -87,6 +96,7 @@ input_settings:
 
 
         - algorithm_id: "SINGE"
+          image: "grnbeeline/singe:0.4.1"
           should_run: [True]
           params:
               lambda: [0.01]
@@ -100,6 +110,7 @@ input_settings:
 
 
         - algorithm_id: "SCRIBE"
+          image: "grnbeeline/scribe:base"
           should_run: [True]
           params:
               ### required parameters
@@ -120,14 +131,6 @@ input_settings:
               # time points instead), recommended True for synthetic data
               # False for real mRNA data
               ignorePT: [True]
-
-
-        - algorithm_id: "SCSGL"
-          should_run: [True]
-          params:
-              pos_density: [0.45]
-              neg_density: [0.45]
-              assoc: ["correlation"]
     
     datasets:
         - dataset_id: "GSD"

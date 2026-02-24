@@ -85,6 +85,14 @@ class Runner(ABC):
         # ground_truth_file: full path to the dataset-level ground truth CSV.
         self.ground_truth_file  = base_input / self.groundTruthNetwork
         
+        # image: Docker image name used to run this algorithm (e.g. "grnbeeline/genie3:base").
+        # Mandatory — every algorithm entry in the config must supply this field.
+        if 'image' not in config or not config['image']:
+            raise ValueError("Algorithm config must include a non-empty 'image' field.")
+        if not isinstance(config['image'], str):
+            raise TypeError(f"'image' must be a str, got {type(config['image'])}")
+        self.image = config['image']
+
         # Unwrap single-element lists so runners receive scalar values.
         # YAML config files commonly wrap param values in brackets
         # (e.g. `pVal: [0.01]`), which YAML parses as a list.

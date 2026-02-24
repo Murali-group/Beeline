@@ -52,7 +52,7 @@ class GRNVBEMRunner(Runner):
         for idx in range(len(colNames)):
             cmdToRun = ' '.join(['docker run --rm',
                                 f"-v {self.working_dir}:/usr/working_dir",
-                                'grnbeeline/grnvbem:base /bin/sh -c \"time -v -o',
+                                f'{self.image} /bin/sh -c \"time -v -o',
                                 "/usr/working_dir/time" + str(idx) + ".txt",
                                 './GRNVBEM',
                                 "/usr/working_dir/ExpressionData" + str(idx) + ".csv",

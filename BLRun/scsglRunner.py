@@ -46,7 +46,7 @@ class SCSGLRunner(Runner):
         cmdToRun = ' '.join(['docker run --rm',
                             f"-v {self.working_dir}:/usr/working_dir",
                             '--expose=41269',
-                            'scsgl:base /bin/sh -c \"time -v -o',
+                            f'{self.image} /bin/sh -c \"time -v -o',
                             "/usr/working_dir/time.txt", 'python run_scSGL.py',
                             '--expression_file=/usr/working_dir/ExpressionData.csv',
                             '--ground_truth_net_file=/usr/working_dir/GroundTruthNetwork.csv',
