@@ -26,25 +26,27 @@ def parse_args():
         help="Output directory for generated plots.\n")
 
     parser.add_argument('-a', '--auprc', action='store_true', default=False,
-        help="Produce per-dataset AUPRC plots. Datasets with a single run "
-             "output a precision-recall curve; datasets with multiple runs "
-             "output a box plot.\n")
+        help="Produce per-dataset AUPRC plots (AUPRC.pdf). Datasets with a "
+             "single run output a precision-recall curve; datasets with "
+             "multiple runs output a box plot.\n")
 
     parser.add_argument('-r', '--auroc', action='store_true', default=False,
-        help="Produce per-dataset AUROC plots. Datasets with a single run "
-             "output a ROC curve; datasets with multiple runs output a box "
-             "plot.\n")
+        help="Produce per-dataset AUROC plots (AUROC.pdf). Datasets with a "
+             "single run output a ROC curve; datasets with multiple runs "
+             "output a box plot.\n")
 
     parser.add_argument('-e', '--epr', action='store_true', default=False,
-        help="Produce a box plot of early precision values for the evaluated algorithms.\n")
+        help="Produce a box plot of early precision values for the evaluated "
+             "algorithms (EPR.pdf).\n")
 
     parser.add_argument('--summary', action='store_true', default=False,
         help="Produce a Figure-2-style heatmap of median AUPRC ratios and "
-             "median Spearman stability per algorithm and dataset.\n")
+             "median Spearman stability per algorithm and dataset (Summary.pdf).\n")
 
     parser.add_argument('--epr-summary', action='store_true', default=False,
         help="Produce a Figure-4-style heatmap of median AUPRC ratio, EPR "
-             "ratio, and signed EPR ratios per algorithm and dataset.\n")
+             "ratio, and signed EPR ratios per algorithm and dataset "
+             "(EPRSummary.pdf).\n")
 
     parser.add_argument('--all', action='store_true', default=False,
         help="Run all plots.\n")

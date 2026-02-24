@@ -120,19 +120,19 @@ class PlotSummaryHeatmap(Plotter):
     rounded square sized and colored by its value. Values above the random
     predictor baseline (ratio >= 1) are drawn full-size with their raw value
     as white text. Alternating row backgrounds aid readability. Writes
-    Overview.pdf to the output directory.
+    Summary.pdf to the output directory.
     """
 
     def __call__(self, config: dict, output_dir: Path, root: Path) -> None:
         """
-        Generate the summary heatmap and write it to output_dir/Overview.pdf.
+        Generate the summary heatmap and write it to output_dir/Summary.pdf.
 
         Parameters
         ----------
         config : dict
             Parsed YAML configuration.
         output_dir : Path
-            Directory where Overview.pdf is written.
+            Directory where Summary.pdf is written.
         root : Path
             Working directory from which config paths are resolved.
 
@@ -247,7 +247,7 @@ class PlotSummaryHeatmap(Plotter):
             legend_ax.set_xticks([0.5, len(palette) - 2])
             legend_ax.set_xticklabels(['Low/Poor', 'High/Good'], fontsize=12)
 
-        out_path = output_dir / 'Overview.pdf'
+        out_path = output_dir / 'Summary.pdf'
         plt.savefig(out_path, bbox_inches='tight')
         plt.close(fig)
         print(f"Saved summary heatmap to {out_path}")
