@@ -27,6 +27,9 @@ input_settings:
     #
     #   should_run: whether or not to run the algorithm
     #
+    #   image: Docker image name to run for this algorithm (e.g. "grnbeeline/genie3:base").
+    #       Mandatory. See README for the default image name for each algorithm.
+    #
     #   params: any additional, algorithm-specific parameters
     #       should be specified in the params map for a given algorithm
     #
