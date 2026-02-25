@@ -144,7 +144,7 @@ Each entry under `runs` represents one replicate or condition variant. Input fil
 | Field | Required | Description |
 |-------|----------|-------------|
 | `algorithm_id` | Yes | Algorithm name. Must match one of the supported identifiers (see [Supported Algorithms](#supported-algorithms)). |
-| `image` | Yes | Docker image name to run for this algorithm (e.g., `"grnbeeline/genie3:base"`). See the [Supported Algorithms](#supported-algorithms) table for default image names. |
+| `image` | Yes | Docker image name to run for this algorithm (e.g., `"grnbeeline/genie3:base"`). Use `"local"` for algorithms that run directly in the conda environment without Docker. See the [Supported Algorithms](#supported-algorithms) table for default image names. |
 | `should_run` | Yes | Set to `True` to run this algorithm, `False` to skip it. |
 | `params` | No | Dict of algorithm-specific parameters. Values are typically wrapped in a single-element list (e.g., `pVal: [0.01]`); the runner unwraps them automatically. |
 
@@ -172,6 +172,7 @@ output_dir/[run_id/]dataset_dir/dataset_id/run_id/algorithm_id/rankedEdges.csv
 | GRNVBEM | `grnbeeline/grnvbem:base` | `BLRun/grnvbemRunner.py` |
 | JUMP3 | `jump3:base` | `BLRun/jump3Runner.py` |
 | LEAP | `grnbeeline/leap:base` | `BLRun/leapRunner.py` |
+| PEARSON | `local` | `BLRun/pearsonRunner.py` |
 | PIDC | `grnbeeline/pidc:base` | `BLRun/pidcRunner.py` |
 | PPCOR | `grnbeeline/ppcor:base` | `BLRun/ppcorRunner.py` |
 | SCODE | `grnbeeline/scode:base` | `BLRun/scodeRunner.py` |

@@ -134,7 +134,13 @@ input_settings:
               # time points instead), recommended True for synthetic data
               # False for real mRNA data
               ignorePT: [True]
-    
+
+
+        - algorithm_id: "PEARSON"
+          image: "local"
+          should_run: [True]
+
+
     datasets:
         - dataset_id: "GSD"
           should_run: [True]
