@@ -58,13 +58,11 @@ def _make_pr_curve_figure(
     gt_df = pd.read_csv(gt_path, header=0)
     true_edges = set(zip(gt_df['Gene1'], gt_df['Gene2']))
 
-    sorted_algos = sorted(algos)
-    colors = sns.color_palette("Set1", n_colors=len(sorted_algos))
-
-    fig, ax = plt.subplots(figsize=(7, 5))
-    any_line = False
-
-    for algo, color in zip(sorted_algos, colors):
+    # Compute AUPRC for each algorithm first, then sort descending so that
+    # the best-performing algorithm appears first in the legend and is drawn
+    # with the first palette colour.
+    curves = []
+    for algo in algos:
         edges_path = run_path / algo / 'rankedEdges.csv'
         if not edges_path.exists():
             continue
@@ -86,12 +84,19 @@ def _make_pr_curve_figure(
 
         precision, recall, _ = precision_recall_curve(labels, scores)
         score = auc(recall, precision)
-        ax.plot(recall, precision, label=f'{algo} (AUPRC={score:.3f})', color=color)
-        any_line = True
+        curves.append((score, algo, recall, precision))
 
-    if not any_line:
-        plt.close(fig)
+    if not curves:
         return None
+
+    # Sort by AUPRC descending
+    curves.sort(key=lambda x: x[0], reverse=True)
+    colors = sns.color_palette("Set1", n_colors=len(curves))
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+
+    for (score, algo, recall, precision), color in zip(curves, colors):
+        ax.plot(recall, precision, label=f'{algo} (AUPRC={score:.3f})', color=color)
 
     ax.set_xlabel('Recall')
     ax.set_ylabel('Precision')

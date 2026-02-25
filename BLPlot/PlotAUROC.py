@@ -57,15 +57,11 @@ def _make_roc_curve_figure(
     gt_df = pd.read_csv(gt_path, header=0)
     true_edges = set(zip(gt_df['Gene1'], gt_df['Gene2']))
 
-    sorted_algos = sorted(algos)
-    colors = sns.color_palette("Set1", n_colors=len(sorted_algos))
-
-    fig, ax = plt.subplots(figsize=(7, 5))
-    # Random classifier diagonal reference line
-    ax.plot([0, 1], [0, 1], color='grey', linestyle='--', linewidth=0.8, label='Random')
-    any_line = False
-
-    for algo, color in zip(sorted_algos, colors):
+    # Compute AUROC for each algorithm first, then sort descending so that
+    # the best-performing algorithm appears first in the legend and is drawn
+    # with the first palette colour.
+    curves = []
+    for algo in algos:
         edges_path = run_path / algo / 'rankedEdges.csv'
         if not edges_path.exists():
             continue
@@ -87,12 +83,21 @@ def _make_roc_curve_figure(
 
         fpr, tpr, _ = roc_curve(labels, scores)
         score = auc(fpr, tpr)
-        ax.plot(fpr, tpr, label=f'{algo} (AUROC={score:.3f})', color=color)
-        any_line = True
+        curves.append((score, algo, fpr, tpr))
 
-    if not any_line:
-        plt.close(fig)
+    if not curves:
         return None
+
+    # Sort by AUROC descending
+    curves.sort(key=lambda x: x[0], reverse=True)
+    colors = sns.color_palette("Set1", n_colors=len(curves))
+
+    fig, ax = plt.subplots(figsize=(7, 5))
+    # Random classifier diagonal reference line
+    ax.plot([0, 1], [0, 1], color='grey', linestyle='--', linewidth=0.8, label='Random')
+
+    for (score, algo, fpr, tpr), color in zip(curves, colors):
+        ax.plot(fpr, tpr, label=f'{algo} (AUROC={score:.3f})', color=color)
 
     ax.set_xlabel('False Positive Rate')
     ax.set_ylabel('True Positive Rate')
