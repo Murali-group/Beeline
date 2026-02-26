@@ -5,16 +5,39 @@ BASEDIR="$(dirname "$(readlink -f "$0")")" # set env variable for current direct
 
 BUILD=false
 HELP=false
+REMOVE_LOCAL=false
+REMOVE_GRNBEELINE=false
 VERBOSE_VALUE="-q "
+
+# Images pulled from DockerHub (grnbeeline organisation).
+# Referenced in both the --remove-grnbeeline-images block and the pull block.
+DOCKERHUB_IMAGES=(
+    grnbeeline/arboreto:base
+    grnbeeline/grisli:base
+    grnbeeline/grnvbem:base
+    grnbeeline/leap:base
+    grnbeeline/pidc:base
+    grnbeeline/ppcor:base
+    grnbeeline/scinge:base
+    grnbeeline/scns:base
+    grnbeeline/scode:base
+    grnbeeline/scribe:base
+    grnbeeline/sincerities:base
+    grnbeeline/singe:0.4.1
+)
 
 show_help() {
   echo "Usage: $(basename "$0") [OPTIONS] [ARGUMENTS]"
   echo "This script creates docker containers for BEELINE."
   echo ""
   echo "Options:"
-  echo "  -h, --help    Display this help message and exit."
-  echo "  -b, --build   Instead of pulling images from docker hub, build them manually locally."
-  echo "  -v, --verbose Enable verbose output."
+  echo "  -h, --help                   Display this help message and exit."
+  echo "  -b, --build                  Instead of pulling images from docker hub, build them manually locally."
+  echo "  -v, --verbose                Enable verbose output."
+  echo "  --remove-local-images        Remove locally built BEELINE docker images. If combined with --build,"
+  echo "                               images are removed first then rebuilt. If used alone, exits after removal."
+  echo "  --remove-grnbeeline-images   Remove DockerHub (grnbeeline) BEELINE docker images. If combined with --build,"
+  echo "                               images are removed first then rebuilt. If used alone, exits after removal."
   echo ""
   echo "Requirements:"
   echo "  docker (last version tested 28.5.1, build e180ab8)"
@@ -37,6 +60,12 @@ while [[ "$#" -gt 0 ]]; do
     -h|--help)
       HELP=true
       ;;
+    --remove-local-images)
+      REMOVE_LOCAL=true
+      ;;
+    --remove-grnbeeline-images)
+      REMOVE_GRNBEELINE=true
+      ;;
     *)
       echo "Unknown option: $1" >&2
       show_help
@@ -49,6 +78,59 @@ done
 if [[ "$HELP" = true ]]; then
     show_help
     exit 0
+fi
+
+# Images built locally from source in Algorithms/.
+# Referenced in both the --remove-local-images block and the build block.
+LOCAL_IMAGES=(
+    arboreto:base
+    grisli:base
+    grnvbem:base
+    jump3:base
+    leap:base
+    pidc:base
+    pni:base
+    ppcor:base
+    singe:base
+    scns:base
+    scode:base
+    scribe:base
+    sincerities:base
+    scsgl:base
+)
+
+if [[ "$REMOVE_GRNBEELINE" = true ]]; then
+    echo "Removing grnbeeline DockerHub images..."
+    for image in "${DOCKERHUB_IMAGES[@]}"; do
+        if [ "$(docker images -q "$image" 2>/dev/null)" != "" ]; then
+            docker rmi "$image"
+            echo "Removed $image"
+        fi
+    done
+    echo "Done removing grnbeeline images."
+
+    # Exit here unless --build was also specified, in which case fall through
+    # to rebuild the images immediately after removal.
+    if [[ "$BUILD" = false ]]; then
+        exit 0
+    fi
+fi
+
+if [[ "$REMOVE_LOCAL" = true ]]; then
+    echo "Removing locally built BEELINE docker images..."
+    for image in "${LOCAL_IMAGES[@]}"; do
+        if [ "$(docker images -q "$image" 2>/dev/null)" != "" ]; then
+            docker rmi "$image"
+            echo "Removed $image"
+        fi
+    done
+    echo "Done removing local images."
+
+    # Exit here unless --build was also specified, in which case fall through
+    # to rebuild the images immediately after removal.
+    if [[ "$BUILD" = false ]]; then
+        exit 0
+    fi
 fi
 
 if [[ "$BUILD" = true ]]; then
@@ -212,16 +294,7 @@ if [[ "$BUILD" = true ]]; then
     popd
 else
     echo "Pulling docker images from https://hub.docker.com/u/grnbeeline..."
-    docker image pull grnbeeline/arboreto:base $VERBOSE_VALUE
-    docker image pull grnbeeline/grisli:base $VERBOSE_VALUE
-    docker image pull grnbeeline/grnvbem:base $VERBOSE_VALUE
-    docker image pull grnbeeline/leap:base $VERBOSE_VALUE
-    docker image pull grnbeeline/pidc:base $VERBOSE_VALUE
-    docker image pull grnbeeline/ppcor:base $VERBOSE_VALUE
-    docker image pull grnbeeline/scinge:base $VERBOSE_VALUE
-    docker image pull grnbeeline/scns:base $VERBOSE_VALUE
-    docker image pull grnbeeline/scode:base $VERBOSE_VALUE
-    docker image pull grnbeeline/scribe:base $VERBOSE_VALUE
-    docker image pull grnbeeline/sincerities:base $VERBOSE_VALUE
-    docker image pull grnbeeline/singe:0.4.1 $VERBOSE_VALUE
+    for image in "${DOCKERHUB_IMAGES[@]}"; do
+        docker image pull $VERBOSE_VALUE "$image"
+    done
 fi

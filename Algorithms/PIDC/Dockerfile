@@ -16,4 +16,3 @@ RUN julia installPackages.jl
 COPY runPIDC.jl /
 
 RUN apt-get update && apt-get install -y time
-
