@@ -13,6 +13,8 @@ input_settings:
     #   should_run: whether or not to run this dataset.
     #   groundTruthNetwork: Name of the reference network file in edge list format.
     #       Shared across all runs within the dataset. Needed for evaluation.
+    #   nickname: (optional) Short display label used by the plotter for plot
+    #       titles and heatmap column headers. Defaults to dataset_id when absent.
     #
     #   runs: A list of runs within the dataset, each with the following parameters:
     #       run_id: Identifier for this specific run. Used as the input subdirectory name.
@@ -145,6 +147,7 @@ input_settings:
         - dataset_id: "GSD"
           should_run: [True]
           groundTruthNetwork: "GroundTruthNetwork.csv"
+          # nickname: "Gonadal Sex Determination"  # optional: overrides dataset_id in plot labels
           runs:
             - run_id: "ex1"
               exprData: "ExpressionData.csv"

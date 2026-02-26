@@ -21,7 +21,7 @@ def _make_pr_curve_figure(
     run_path: Path,
     gt_path: Path,
     algos: List[str],
-    dataset_id: str,
+    dataset_label: str,
 ) -> 'plt.Figure | None':
     """
     Build a precision-recall curve figure for all algorithms in a single run.
@@ -38,8 +38,8 @@ def _make_pr_curve_figure(
         Path to the ground truth edge list CSV (columns Gene1, Gene2).
     algos : list[str]
         Algorithm IDs to plot, drawn in sorted order.
-    dataset_id : str
-        Dataset name used in the plot title.
+    dataset_label : str
+        Dataset label used in the plot title (nickname if set, else dataset_id).
 
     Returns
     -------
@@ -100,14 +100,14 @@ def _make_pr_curve_figure(
 
     ax.set_xlabel('Recall')
     ax.set_ylabel('Precision')
-    ax.set_title(f'Precision-Recall — {dataset_id}')
+    ax.set_title(f'Precision-Recall — {dataset_label}')
     ax.legend(bbox_to_anchor=(1.05, 1), loc='upper left', fontsize='small')
     plt.tight_layout()
     return fig
 
 
 def _make_figure(
-    dataset_id: str,
+    dataset_label: str,
     dataset_path: Path,
     gt_path: Path,
     runs: list,
@@ -121,8 +121,8 @@ def _make_figure(
 
     Parameters
     ----------
-    dataset_id : str
-        Dataset label used in the plot title.
+    dataset_label : str
+        Dataset label used in the plot title (nickname if set, else dataset_id).
     dataset_path : Path
         Output directory containing AUPRC.csv for multi-run datasets.
     gt_path : Path
@@ -138,11 +138,11 @@ def _make_figure(
     """
     if len(runs) == 1:
         run_path = dataset_path / runs[0]['run_id']
-        return _make_pr_curve_figure(run_path, gt_path, algos, dataset_id)
+        return _make_pr_curve_figure(run_path, gt_path, algos, dataset_label)
 
     baseline = random_classifier_baseline(gt_path) if gt_path.exists() else None
     values = load_dataset_metric(dataset_path, 'AUPRC.csv')
-    return make_box_figure(values, f'AUPRC — {dataset_id}', 'AUPRC', rand_value=baseline)
+    return make_box_figure(values, f'AUPRC — {dataset_label}', 'AUPRC', rand_value=baseline)
 
 
 class PlotAUPRC(Plotter):
@@ -183,8 +183,8 @@ class PlotAUPRC(Plotter):
         write_pdf(
             output_dir / 'AUPRC.pdf',
             (
-                _make_figure(did, dp, gtp, runs, algos)
-                for did, dp, gtp, runs in iter_datasets_with_runs(config, root)
+                _make_figure(dlabel, dp, gtp, runs, algos)
+                for _, dlabel, dp, gtp, runs in iter_datasets_with_runs(config, root)
             ),
             'AUPRC',
         )

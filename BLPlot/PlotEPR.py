@@ -49,13 +49,13 @@ class PlotEPR(Plotter):
             (
                 make_box_figure(
                     load_dataset_metric(dataset_path, 'EarlyPrecision.csv'),
-                    f'Early Precision — {dataset_id}', 'Early Precision',
+                    f'Early Precision — {dataset_label}', 'Early Precision',
                     rand_value=(
                         random_classifier_baseline(gt_path)
                         if gt_path.exists() else None
                     ),
                 )
-                for dataset_id, dataset_path, gt_path, _
+                for _, dataset_label, dataset_path, gt_path, _
                 in iter_datasets_with_runs(config, root)
             ),
             'Early Precision',

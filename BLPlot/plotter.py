@@ -37,9 +37,10 @@ def get_algo_ids(config: dict) -> List[str]:
 def iter_datasets_with_runs(
     config: dict,
     root: Path,
-) -> Iterator[Tuple[str, Path, Path, list]]:
+) -> Iterator[Tuple[str, str, Path, Path, list]]:
     """
-    Yield (dataset_id, dataset_path, gt_path, runs) for each enabled dataset.
+    Yield (dataset_id, dataset_label, dataset_path, gt_path, runs) for each
+    enabled dataset.
 
     Extends iter_datasets by also yielding the raw list of run dicts from the
     config, so callers can determine run count and resolve per-run paths via
@@ -54,9 +55,10 @@ def iter_datasets_with_runs(
 
     Yields
     ------
-    tuple of (str, Path, Path, list)
-        dataset_id, output dataset directory, ground truth file path,
-        list of run dicts from config (each has at least 'run_id').
+    tuple of (str, str, Path, Path, list)
+        dataset_id, dataset_label (nickname if set else dataset_id), output
+        dataset directory, ground truth file path, list of run dicts from
+        config (each has at least 'run_id').
     """
     if not isinstance(config, dict):
         raise TypeError(f"config must be dict, got {type(config)}")
@@ -80,22 +82,26 @@ def iter_datasets_with_runs(
         if not (should_run[0] if isinstance(should_run, list) else should_run):
             continue
 
-        dataset_id  = ds['dataset_id']
-        gt_filename = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
+        dataset_id    = ds['dataset_id']
+        # dataset_label : str — nickname used for plot labels; defaults to
+        # dataset_id when 'nickname' is absent from the dataset config entry.
+        dataset_label = ds.get('nickname', dataset_id)
+        gt_filename   = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
 
         dataset_path = output_dir / dataset_dir / dataset_id
         gt_path      = input_dir  / dataset_dir / dataset_id / gt_filename
         runs         = ds.get('runs', [])
 
-        yield dataset_id, dataset_path, gt_path, runs
+        yield dataset_id, dataset_label, dataset_path, gt_path, runs
 
 
 def iter_datasets(
     config: dict,
     root: Path,
-) -> Iterator[Tuple[str, Path, Path]]:
+) -> Iterator[Tuple[str, str, Path, Path]]:
     """
-    Yield (dataset_id, dataset_path, gt_path) for each enabled dataset in config.
+    Yield (dataset_id, dataset_label, dataset_path, gt_path) for each enabled
+    dataset in config.
 
     Parameters
     ----------
@@ -106,8 +112,9 @@ def iter_datasets(
 
     Yields
     ------
-    tuple of (str, Path, Path)
-        dataset_id, output dataset directory, ground truth file path.
+    tuple of (str, str, Path, Path)
+        dataset_id, dataset_label (nickname if set else dataset_id), output
+        dataset directory, ground truth file path.
     """
     if not isinstance(config, dict):
         raise TypeError(f"config must be dict, got {type(config)}")
@@ -131,13 +138,16 @@ def iter_datasets(
         if not (should_run[0] if isinstance(should_run, list) else should_run):
             continue
 
-        dataset_id  = ds['dataset_id']
-        gt_filename = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
+        dataset_id    = ds['dataset_id']
+        # dataset_label : str — nickname used for plot labels; defaults to
+        # dataset_id when 'nickname' is absent from the dataset config entry.
+        dataset_label = ds.get('nickname', dataset_id)
+        gt_filename   = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
 
         dataset_path = output_dir / dataset_dir / dataset_id
         gt_path      = input_dir  / dataset_dir / dataset_id / gt_filename
 
-        yield dataset_id, dataset_path, gt_path
+        yield dataset_id, dataset_label, dataset_path, gt_path
 
 
 def load_metric(
@@ -175,7 +185,7 @@ def load_metric(
 
     all_values: Dict[str, List[float]] = {}
 
-    for _, dataset_path, _ in iter_datasets(config, root):
+    for _, _, dataset_path, _ in iter_datasets(config, root):
         csv_path = dataset_path / metric_csv
         if not csv_path.exists():
             print(f"Warning: {csv_path} not found, skipping.")

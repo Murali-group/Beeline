@@ -167,9 +167,13 @@ class PlotEPRHeatmap(Plotter):
             print("No datasets found for EPR heatmap.")
             return
 
-        dataset_ids   = [r[0] for r in rows]
-        dataset_paths = [r[1] for r in rows]
-        gt_paths      = [r[2] for r in rows]
+        dataset_ids    = [r[0] for r in rows]
+        # dataset_labels : list[str] — per-dataset display labels for column
+        # headers; uses 'nickname' from config when set, else falls back to
+        # dataset_id.
+        dataset_labels = [r[1] for r in rows]
+        dataset_paths  = [r[2] for r in rows]
+        gt_paths       = [r[3] for r in rows]
 
         # Compute per-dataset random-predictor baselines for each metric type.
         b_total: Dict[str, float] = {}
@@ -268,7 +272,7 @@ class PlotEPRHeatmap(Plotter):
                 col_x_start=col_x_start,
                 palette=palette,
                 rand_cutoff=1.0,
-                dataset_ids=dataset_ids,
+                dataset_ids=dataset_labels,
                 section_label=label,
             )
 

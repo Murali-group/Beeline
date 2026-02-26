@@ -152,9 +152,13 @@ class PlotSummaryHeatmap(Plotter):
             print("No datasets found for summary heatmap.")
             return
 
-        dataset_ids   = [r[0] for r in rows]
-        dataset_paths = [r[1] for r in rows]
-        gt_paths      = [r[2] for r in rows]
+        dataset_ids    = [r[0] for r in rows]
+        # dataset_labels : list[str] — per-dataset display labels for column
+        # headers; uses 'nickname' from config when set, else falls back to
+        # dataset_id.
+        dataset_labels = [r[1] for r in rows]
+        dataset_paths  = [r[2] for r in rows]
+        gt_paths       = [r[3] for r in rows]
 
         auprc_ratios = _load_auprc_ratios(dataset_ids, dataset_paths, gt_paths)
         spearman     = _load_spearman(dataset_ids, dataset_paths)
@@ -220,7 +224,7 @@ class PlotSummaryHeatmap(Plotter):
             col_x_start=1,
             palette=auprc_palette,
             rand_cutoff=0.0,
-            dataset_ids=dataset_ids,
+            dataset_ids=dataset_labels,
             section_label='Median AUPRC ratios',
         )
         _draw_section(
@@ -228,7 +232,7 @@ class PlotSummaryHeatmap(Plotter):
             col_x_start=n_datasets + 2,
             palette=spear_palette,
             rand_cutoff=0.0,
-            dataset_ids=dataset_ids,
+            dataset_ids=dataset_labels,
             section_label='Median stability scores',
             switch_text=False,
         )
