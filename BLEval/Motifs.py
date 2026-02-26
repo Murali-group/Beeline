@@ -207,10 +207,8 @@ class Motifs(Evaluator):
                     no_self = ranked_edges_df[
                         ranked_edges_df['Gene1'] != ranked_edges_df['Gene2']
                     ]
-                    top_k_edges = set(zip(
-                        no_self.nlargest(k, 'EdgeWeight')['Gene1'],
-                        no_self.nlargest(k, 'EdgeWeight')['Gene2'],
-                    ))
+                    top_k_df = no_self.iloc[no_self['EdgeWeight'].abs().argsort()[::-1]].head(k)
+                    top_k_edges = set(zip(top_k_df['Gene1'], top_k_df['Gene2']))
 
                     pred_fbl, pred_ffl, pred_mi = _motif_counts(top_k_edges)
 

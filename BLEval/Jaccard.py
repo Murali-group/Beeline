@@ -33,7 +33,7 @@ def _top_k_edges(ranked_edges: pd.DataFrame, k: int) -> Set[Tuple[str, str]]:
         raise TypeError(f"k must be int, got {type(k)}")
 
     no_self = ranked_edges[ranked_edges['Gene1'] != ranked_edges['Gene2']]
-    top = no_self.nlargest(k, 'EdgeWeight')
+    top = no_self.iloc[no_self['EdgeWeight'].abs().argsort()[::-1]].head(k)
     return set(zip(top['Gene1'], top['Gene2']))
 
 

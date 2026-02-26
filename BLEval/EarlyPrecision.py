@@ -52,8 +52,8 @@ def _compute_early_precision(
     if predicted.empty:
         return float('nan')
 
-    # Sort descending by edge weight and take the top-k predictions
-    top_k = predicted.nlargest(k, 'EdgeWeight')
+    # Sort descending by absolute edge weight and take the top-k predictions
+    top_k = predicted.iloc[predicted['EdgeWeight'].abs().argsort()[::-1]].head(k)
 
     true_positives = sum(
         1 for edge in zip(top_k['Gene1'], top_k['Gene2'])
