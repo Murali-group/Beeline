@@ -1,13 +1,11 @@
 import math
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Dict, Iterable, Iterator, List, Tuple
+from typing import Dict, Iterator, List, Tuple
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from matplotlib.backends.backend_pdf import PdfPages
-
 
 def get_algo_ids(config: dict) -> List[str]:
     """
@@ -149,54 +147,6 @@ def iter_datasets(
 
         yield dataset_id, dataset_label, dataset_path, gt_path
 
-
-def load_metric(
-    config: dict,
-    metric_csv: str,
-    root: Path,
-) -> Dict[str, List[float]]:
-    """
-    Aggregate per-algorithm metric values from pre-computed CSV files.
-
-    Reads {dataset_path}/{metric_csv} for each enabled dataset. The CSV is
-    expected to have rows = algorithms (index column 'Algorithm') and columns
-    = run_ids. Missing files are skipped with a warning.
-
-    Parameters
-    ----------
-    config : dict
-        Parsed YAML configuration.
-    metric_csv : str
-        Filename of the metric CSV (e.g. 'AUPRC.csv').
-    root : Path
-        Working directory from which config paths are resolved.
-
-    Returns
-    -------
-    dict[str, list[float]]
-        Algorithm name -> list of all non-NaN values across all datasets/runs.
-    """
-    if not isinstance(config, dict):
-        raise TypeError(f"config must be dict, got {type(config)}")
-    if not isinstance(metric_csv, str):
-        raise TypeError(f"metric_csv must be str, got {type(metric_csv)}")
-    if not isinstance(root, Path):
-        raise TypeError(f"root must be Path, got {type(root)}")
-
-    all_values: Dict[str, List[float]] = {}
-
-    for _, _, dataset_path, _ in iter_datasets(config, root):
-        csv_path = dataset_path / metric_csv
-        if not csv_path.exists():
-            print(f"Warning: {csv_path} not found, skipping.")
-            continue
-
-        df = pd.read_csv(csv_path, index_col=0)
-        for algo in df.index:
-            values = [v for v in df.loc[algo].tolist() if not math.isnan(v)]
-            all_values.setdefault(str(algo), []).extend(values)
-
-    return all_values
 
 
 def random_classifier_baseline(gt_path: Path) -> float:
@@ -345,77 +295,6 @@ def make_box_figure(
     return fig
 
 
-def write_pdf(
-    out_path: Path,
-    figures: Iterable,
-    metric_name: str,
-) -> None:
-    """
-    Write an iterable of figures to a multi-page PDF.
-
-    None entries in the iterable are skipped so callers can pass generator
-    expressions that return None for datasets with no data.
-
-    Parameters
-    ----------
-    out_path : Path
-        Destination PDF file path.
-    figures : iterable of plt.Figure or None
-        Figures to save. Each figure is closed after saving.
-    metric_name : str
-        Human-readable metric name used in progress/warning messages.
-    """
-    if not isinstance(out_path, Path):
-        raise TypeError(f"out_path must be Path, got {type(out_path)}")
-
-    pages_written = 0
-    with PdfPages(out_path) as pdf:
-        for fig in figures:
-            if fig is None:
-                continue
-            pdf.savefig(fig)
-            plt.close(fig)
-            pages_written += 1
-
-    if pages_written:
-        print(f"Saved {pages_written} plot(s) to {out_path}")
-    else:
-        print(f"No {metric_name} data found; {out_path} not written.")
-
-
-def box_plot(
-    values: Dict[str, List[float]],
-    title: str,
-    ylabel: str,
-    output_path: Path,
-) -> None:
-    """
-    Save a single-page box plot PDF.
-
-    Convenience wrapper around make_box_figure for callers that produce one
-    plot per file. The figure is closed after saving.
-
-    Parameters
-    ----------
-    values : dict[str, list[float]]
-        Algorithm name -> list of observed metric values.
-    title : str
-        Plot title.
-    ylabel : str
-        Y-axis label.
-    output_path : Path
-        Destination file path (PDF).
-    """
-    if not isinstance(output_path, Path):
-        raise TypeError(f"output_path must be Path, got {type(output_path)}")
-
-    fig = make_box_figure(values, title, ylabel)
-    if fig is None:
-        return
-    fig.savefig(output_path)
-    plt.close(fig)
-    print(f"Saved plot to {output_path}")
-
 
 class Plotter(ABC):
     """
@@ -424,7 +303,8 @@ class Plotter(ABC):
     Each subclass implements __call__ to read pre-computed evaluation CSVs and
     write one or more plot files to a caller-specified output directory.
     Shared loading and rendering helpers are provided as module-level functions
-    in this module: iter_datasets, load_metric, box_plot.
+    in this module: iter_datasets, iter_datasets_with_runs, load_dataset_metric,
+    make_box_figure, random_classifier_baseline.
     """
 
     @abstractmethod
