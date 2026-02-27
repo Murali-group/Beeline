@@ -27,7 +27,3 @@ fi
 eval "$(conda shell.bash hook)"
 conda activate BEELINE
 
-# Install the PRROC package for computing area under PR curve
-# TODO: Write the PRROC AUC function and make it BEELINE package without using rpy2
-
-R -e "install.packages('https://cran.r-project.org/src/contrib/Archive/PRROC/PRROC_1.3.1.tar.gz', type = 'source')"
