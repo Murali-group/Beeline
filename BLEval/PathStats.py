@@ -151,7 +151,7 @@ class PathStats(Evaluator):
     Evaluator that characterises false positive predicted edges by their
     shortest-path distance in the ground truth network.
 
-    For each algorithm, the top-k predicted edges (k = |reference edges|) are
+    For each algorithm, the top-k predicted edges (k = \|reference edges\|) are
     split into true positives and false positives. Each false positive (u, v)
     is looked up in the reference graph; if a directed path from u to v exists
     its length is binned (2–5); otherwise it is counted as having no path.

@@ -1,5 +1,6 @@
 name: BEELINE
 channels:
+  - conda-forge
   - defaults
 dependencies:
   - python=3.7.1
@@ -14,3 +15,7 @@ dependencies:
   - scikit-learn==0.21.2
   - PyYAML==5.4
   - bioconda::mygene==3.2.2
+
+  # for building documentation only
+  - conda-forge::sphinx
+  - conda-forge::sphinx_rtd_theme

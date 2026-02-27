@@ -3,5 +3,7 @@ __pycache__
 .vscode
 
 # BEELINE specific files
+configs/
 outputs/
 inputs/
+plotting_examples/
