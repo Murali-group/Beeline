@@ -10,14 +10,24 @@ Full documentation: [https://murali-group.github.io/Beeline/](https://murali-gro
 
 **1. Install the conda environment**
 ```bash
-bash setupAnacondaVENV.sh
+bash utils/setupAnacondaVENV.sh
 ```
 
 **2. Pull algorithm Docker images**
+
+`utils/initialize.sh` manages Docker images for all supported BEELINE algorithms. By default it pulls pre-built images from the [grnbeeline DockerHub organisation](https://hub.docker.com/u/grnbeeline). Pass `--build` to build images locally from source in `Algorithms/` instead.
+
 ```bash
-bash initialize.sh
+bash utils/initialize.sh [OPTIONS]
 ```
-Pass the `--build` flag to build images locally instead of pulling from DockerHub.
+
+| Flag | Description |
+|------|-------------|
+| `-b` / `--build` | Build images locally from source instead of pulling from DockerHub. |
+| `-v` / `--verbose` | Enable verbose Docker output. |
+| `--remove-local-images` | Remove locally built BEELINE images. If combined with `--build`, images are removed then rebuilt. |
+| `--remove-grnbeeline-images` | Remove pulled DockerHub (grnbeeline) images. If combined with `--build`, images are removed then rebuilt. |
+| `-h` / `--help` | Display usage information and exit. |
 
 **3. Activate the environment**
 ```bash
@@ -163,6 +173,49 @@ output_dir/[experiment_id/]dataset_id/run_id/algorithm_id/rankedEdges.csv
 
 ---
 
+## Preparing Inputs — `generateExpInputs.py`
+
+`generateExpInputs.py` is a preprocessing utility for filtering real scRNA-seq expression data down to a biologically meaningful gene subset before running the BEELINE pipeline. It reads a full expression matrix and a gene-ordering file (containing per-gene p-values and optionally variance), retains only genes that pass a significance threshold, and writes a filtered expression matrix and (optionally) a filtered ground truth network.
+
+**Basic usage**
+```bash
+python generateExpInputs.py \
+    -e ExpressionData.csv \
+    -g GeneOrdering.csv \
+    -f STRING-network.csv \
+    -i human-tfs.csv \
+    -p 0.01 \
+    -n 500 \
+    -o my-dataset
+```
+
+This produces `my-dataset-ExpressionData.csv` and `my-dataset-network.csv` in the working directory.
+
+**Arguments**
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `-e` / `--expFile` | `ExpressionData.csv` | Full expression matrix (genes × cells). Rows are genes (index column), columns are cells. |
+| `-g` / `--geneOrderingFile` | `GeneOrdering.csv` | Gene ordering file indexed by gene name. First column must be a p-value; second column (optional) is per-gene variance used when `--sort-variance` is active. |
+| `-f` / `--netFile` | *(omit to skip)* | Ground truth network CSV with `Gene1` and `Gene2` columns. When provided, the network is filtered to the retained gene set, self-loops and duplicate edges are removed, and the result is written alongside the expression output. |
+| `-i` / `--TFFile` | `human-tfs.csv` | Single-column CSV of transcription factor names. Used to force-include significantly varying TFs regardless of the non-TF gene count limit. |
+| `-p` / `--pVal` | `0.01` | Nominal p-value cutoff. Genes with a p-value at or above this threshold are excluded. Set to `0` to disable p-value filtering entirely. |
+| `-n` / `--numGenes` | `500` | Number of non-TF genes to include after TFs have been separated out. Set to `0` to include TFs only. |
+| `-o` / `--outPrefix` | `BL-` | Prefix for output filenames. Outputs are written as `<prefix>-ExpressionData.csv` and `<prefix>-network.csv`. |
+| `-c` / `--BFcorr` | enabled | Apply Bonferroni correction to the p-value cutoff (divides `-p` by the number of tested genes). Disable with `--no-BFcorr`. |
+| `-t` / `--TFs` | enabled | Force-include all TFs that pass the p-value cutoff, regardless of the `-n` gene count limit. Disable with `--no-TFs`. |
+| `-s` / `--sort-variance` | enabled | Select the top `-n` non-TF genes by variance (highest first). Disable with `--no-sort-variance` to select by p-value rank instead. |
+
+**Gene selection logic**
+
+1. Genes in the ordering file that are absent from the expression matrix are warned about and dropped.
+2. The ordering file is sorted by p-value (ascending) and filtered to genes below the cutoff (Bonferroni-corrected if enabled).
+3. If `--TFs` is set, TFs that pass the cutoff are separated from the non-TF pool and kept unconditionally.
+4. Up to `-n` non-TF genes are selected — by variance (default) or by p-value rank.
+5. The final gene set is the union of the selected non-TF genes and the retained TFs, sorted alphabetically.
+
+---
+
 ## Supported Algorithms
 
 | Algorithm | Default `image` | Runner file |
@@ -205,15 +258,18 @@ Pratapa, A., Jalihal, A.P., Law, J.N., Bharadwaj, A., Murali, T.M. (2020) "Bench
 
 ```
 .
-├── BLRunner.py          # Entry point: run algorithms
-├── BLEvaluator.py       # Entry point: evaluate results
-├── BLPlotter.py         # Entry point: generate plots
-├── initialize.sh        # Pull or build Docker images
-├── setupAnacondaVENV.sh # Create/update BEELINE conda environment
-├── BLRun/               # Algorithm runner classes
-├── BLEval/              # Evaluation metric implementations
-├── BLPlot/              # Plot generation implementations
-├── config-files/        # YAML configuration files
-├── inputs/              # Input datasets
-└── outputs/             # Algorithm outputs (mirrors inputs/ structure)
+├── BLRunner.py             # Entry point: run algorithms
+├── BLEvaluator.py          # Entry point: evaluate results
+├── BLPlotter.py            # Entry point: generate plots
+├── BLRun/                  # Algorithm runner classes
+├── BLEval/                 # Evaluation metric implementations
+├── BLPlot/                 # Plot generation implementations
+├── config-files/           # YAML configuration files
+├── inputs/                 # Input datasets
+├── outputs/                # Algorithm outputs (mirrors inputs/ structure)
+└── utils/
+    ├── generateExpInputs.py    # Utility: filter expression data and network for a gene subset
+    ├── initialize.sh           # Pull or build Docker images
+    ├── setupAnacondaVENV.sh    # Create/update BEELINE conda environment
+    └── environment.yml         # Conda environment specification
 ```

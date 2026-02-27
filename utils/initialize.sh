@@ -1,7 +1,8 @@
 #!/bin/bash
 
 set -e # abandon script on error
-BASEDIR="$(dirname "$(readlink -f "$0")")" # set env variable for current directory
+BASEDIR="$(dirname "$(readlink -f "$0")")" # set env variable for current directory (utils/)
+ROOTDIR="$(dirname "$BASEDIR")"           # parent directory of BASEDIR (repo root)
 
 BUILD=false
 HELP=false
@@ -139,7 +140,7 @@ if [[ "$BUILD" = true ]]; then
     echo "This may take a while..."
     
     # You may remove the -q flag if you want to see the docker build status
-    pushd $BASEDIR/Algorithms/ARBORETO
+    pushd $ROOTDIR/Algorithms/ARBORETO
     docker build -t arboreto:base .
     if ([ $? = 0 ] && [ "$(docker images -q arboreto:base 2> /dev/null)" != "" ]); then
         echo "Docker container for ARBORETO is built and tagged as arboreto:base"
@@ -150,7 +151,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/GRISLI/
+    pushd $ROOTDIR/Algorithms/GRISLI/
     docker build -t grisli:base .
     if ([ $? = 0 ] && [ "$(docker images -q grisli:base 2> /dev/null)" != "" ]); then
         echo "Docker container for GRISLI is built and tagged as grisli:base"
@@ -161,7 +162,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/GRNVBEM/
+    pushd $ROOTDIR/Algorithms/GRNVBEM/
     docker build -t grnvbem:base .
     if ([ $? = 0 ] && [[ "$(docker images -q grnvbem:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for GRNVBEM is built and tagged as  grnvbem:base"
@@ -172,7 +173,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/JUMP3/
+    pushd $ROOTDIR/Algorithms/JUMP3/
     docker build -t jump3:base .
     if ([ $? = 0 ] && [[ "$(docker images -q jump3:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for JUMP3 is built and tagged as  jump3:base"
@@ -183,7 +184,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/LEAP/
+    pushd $ROOTDIR/Algorithms/LEAP/
     docker build --tag=leap:base .
     if ([ $? = 0 ] && [[ "$(docker images -q leap:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for LEAP is built and tagged as  leap:base"
@@ -194,7 +195,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/PIDC/
+    pushd $ROOTDIR/Algorithms/PIDC/
     docker build -t pidc:base .
     if ([ $? = 0 ] && [[ "$(docker images -q pidc:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for PIDC is built and tagged as pidc:base"
@@ -205,7 +206,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/PNI/
+    pushd $ROOTDIR/Algorithms/PNI/
     docker build -t pni:base .
     if ([ $? = 0 ] && [[ "$(docker images -q pni:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for PNI is built and tagged as pni:base"
@@ -216,7 +217,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/PPCOR/
+    pushd $ROOTDIR/Algorithms/PPCOR/
     docker build -t ppcor:base .
     if ([ $? = 0 ] && [[ "$(docker images -q ppcor:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for PPCOR is built and tagged as ppcor:base"
@@ -227,7 +228,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/SINGE/
+    pushd $ROOTDIR/Algorithms/SINGE/
     docker build -t singe:base .
     if ([ $? = 0 ] && [[ "$(docker images -q singe:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for SINGE is built and tagged as singe:base"
@@ -238,7 +239,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/SCNS/
+    pushd $ROOTDIR/Algorithms/SCNS/
     docker build -t scns:base .
     if ([ $? = 0 ] && [[ "$(docker images -q scns:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for SCNS is built and tagged as scns:base"
@@ -249,7 +250,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/SCODE/
+    pushd $ROOTDIR/Algorithms/SCODE/
     docker build -t scode:base .
     if ([ $? = 0 ] && [[ "$(docker images -q scode:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for SCODE is built and tagged as scode:base"
@@ -260,7 +261,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/SCRIBE/
+    pushd $ROOTDIR/Algorithms/SCRIBE/
     docker build -t scribe:base .
     if ([ $? = 0 ] && [[ "$(docker images -q scribe:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for SCRIBE is built and tagged as scribe:base"
@@ -271,7 +272,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/SINCERITIES/
+    pushd $ROOTDIR/Algorithms/SINCERITIES/
     docker build -t sincerities:base .
     if ([ $? = 0 ] && [ "$(docker images -q sincerities:base 2> /dev/null)" != "" ]); then
         echo "Docker container for SINCERITIES is built and tagged as sincerities:base"
@@ -282,7 +283,7 @@ if [[ "$BUILD" = true ]]; then
     fi
     popd
 
-    pushd $BASEDIR/Algorithms/SCSGL/
+    pushd $ROOTDIR/Algorithms/SCSGL/
     docker build -t scsgl:base .
     if ([ $? = 0 ] && [[ "$(docker images -q scsgl:base 2> /dev/null)" != "" ]]); then
         echo "Docker container for SCSGL is built and tagged as scsgl:base"
