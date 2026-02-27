@@ -12,7 +12,7 @@ for a given model.
 
 .. code:: bash
 
-   python src/BoolODE.py --path=data/test_vars.txt --max-time=5 --num-cells 10
+   python boolode.py --config config-files/example-config.yaml
 
 Tutorial
 --------
