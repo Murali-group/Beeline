@@ -13,7 +13,6 @@ from BLPlot.plotter import (
     load_dataset_metric,
     make_box_figure,
     random_classifier_baseline,
-    write_pdf,
 )
 
 
@@ -151,20 +150,25 @@ class PlotAUPRC(Plotter):
 
     For datasets with a single run a precision-recall curve is drawn (one line
     per algorithm). For datasets with multiple runs a box plot is drawn (one box
-    per algorithm, distribution across runs). All pages are written to a single
-    AUPRC.pdf in the output directory.
+    per algorithm, distribution across runs). Each dataset is written as both a
+    PDF and PNG under an AUPRC/ subdirectory of the output directory, named
+    <dataset_label>-AUPRC.pdf and <dataset_label>-AUPRC.png.
     """
 
     def __call__(self, config: dict, output_dir: Path, root: Path) -> None:
         """
-        Generate per-dataset AUPRC graphics and write all pages to AUPRC.pdf.
+        Generate per-dataset AUPRC graphics, writing each to its own PDF and PNG.
+
+        Creates output_dir/AUPRC/ and writes <dataset_label>-AUPRC.pdf and
+        <dataset_label>-AUPRC.png for each enabled dataset. Datasets that
+        produce no figure (missing data or no valid curves) are skipped.
 
         Parameters
         ----------
         config : dict
             Parsed YAML configuration.
         output_dir : Path
-            Directory where AUPRC.pdf is written.
+            Parent directory; an AUPRC/ subdirectory is created inside it.
         root : Path
             Working directory from which config paths are resolved.
 
@@ -179,12 +183,19 @@ class PlotAUPRC(Plotter):
         if not isinstance(root, Path):
             raise TypeError(f"root must be Path, got {type(root)}")
 
+        auprc_dir = output_dir / 'AUPRC'
+        auprc_dir.mkdir(parents=True, exist_ok=True)
+
         algos = get_algo_ids(config)
-        write_pdf(
-            output_dir / 'AUPRC.pdf',
-            (
-                _make_figure(dlabel, dp, gtp, runs, algos)
-                for _, dlabel, dp, gtp, runs in iter_datasets_with_runs(config, root)
-            ),
-            'AUPRC',
-        )
+        for _, dlabel, dp, gtp, runs in iter_datasets_with_runs(config, root):
+            fig = _make_figure(dlabel, dp, gtp, runs, algos)
+            if fig is None:
+                continue
+            # Replace path separators so dataset_ids without a nickname
+            # (e.g. "dyn-BF/dyn-BF-100") produce a valid flat filename.
+            safe_label = dlabel.replace('/', '-')
+            stem = auprc_dir / f'{safe_label}-AUPRC'
+            fig.savefig(stem.with_suffix('.pdf'))
+            fig.savefig(stem.with_suffix('.png'))
+            plt.close(fig)
+            print(f"Saved {stem}.pdf and .png")

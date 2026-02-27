@@ -12,7 +12,6 @@ from BLPlot.plotter import (
     iter_datasets_with_runs,
     load_dataset_metric,
     make_box_figure,
-    write_pdf,
 )
 
 
@@ -151,20 +150,25 @@ class PlotAUROC(Plotter):
 
     For datasets with a single run a ROC curve is drawn (one line per
     algorithm). For datasets with multiple runs a box plot is drawn (one box
-    per algorithm, distribution across runs). All pages are written to a single
-    AUROC.pdf in the output directory.
+    per algorithm, distribution across runs). Each dataset is written as both a
+    PDF and PNG under an AUROC/ subdirectory of the output directory, named
+    <dataset_label>-AUROC.pdf and <dataset_label>-AUROC.png.
     """
 
     def __call__(self, config: dict, output_dir: Path, root: Path) -> None:
         """
-        Generate per-dataset AUROC graphics and write all pages to AUROC.pdf.
+        Generate per-dataset AUROC graphics, writing each to its own PDF and PNG.
+
+        Creates output_dir/AUROC/ and writes <dataset_label>-AUROC.pdf and
+        <dataset_label>-AUROC.png for each enabled dataset. Datasets that
+        produce no figure (missing data or no valid curves) are skipped.
 
         Parameters
         ----------
         config : dict
             Parsed YAML configuration.
         output_dir : Path
-            Directory where AUROC.pdf is written.
+            Parent directory; an AUROC/ subdirectory is created inside it.
         root : Path
             Working directory from which config paths are resolved.
 
@@ -179,12 +183,17 @@ class PlotAUROC(Plotter):
         if not isinstance(root, Path):
             raise TypeError(f"root must be Path, got {type(root)}")
 
+        auroc_dir = output_dir / 'AUROC'
+        auroc_dir.mkdir(parents=True, exist_ok=True)
+
         algos = get_algo_ids(config)
-        write_pdf(
-            output_dir / 'AUROC.pdf',
-            (
-                _make_figure(dlabel, dp, gtp, runs, algos)
-                for _, dlabel, dp, gtp, runs in iter_datasets_with_runs(config, root)
-            ),
-            'AUROC',
-        )
+        for _, dlabel, dp, gtp, runs in iter_datasets_with_runs(config, root):
+            fig = _make_figure(dlabel, dp, gtp, runs, algos)
+            if fig is None:
+                continue
+            safe_label = dlabel.replace('/', '-')
+            stem = auroc_dir / f'{safe_label}-AUROC'
+            fig.savefig(stem.with_suffix('.pdf'))
+            fig.savefig(stem.with_suffix('.png'))
+            plt.close(fig)
+            print(f"Saved {stem}.pdf and .png")

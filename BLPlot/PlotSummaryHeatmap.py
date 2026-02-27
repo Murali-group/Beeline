@@ -251,7 +251,8 @@ class PlotSummaryHeatmap(Plotter):
             legend_ax.set_xticks([0.5, len(palette) - 2])
             legend_ax.set_xticklabels(['Low/Poor', 'High/Good'], fontsize=12)
 
-        out_path = output_dir / 'Summary.pdf'
-        plt.savefig(out_path, bbox_inches='tight')
+        stem = output_dir / 'Summary'
+        plt.savefig(stem.with_suffix('.pdf'), bbox_inches='tight')
+        plt.savefig(stem.with_suffix('.png'), bbox_inches='tight')
         plt.close(fig)
-        print(f"Saved summary heatmap to {out_path}")
+        print(f"Saved summary heatmap to {stem}.pdf and .png")

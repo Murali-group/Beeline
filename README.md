@@ -69,14 +69,14 @@ Generates publication-style figures from evaluation output.
 python BLPlotter.py -c config-files/Curated/VSC.yaml -o ./plots [flags]
 ```
 
-| Flag | Output file | Description |
-|------|-------------|-------------|
-| `-a` / `--auprc` | `AUPRC.pdf` | Per-dataset AUPRC plots. One run: precision-recall curve. Multiple runs: box plots. |
-| `-r` / `--auroc` | `AUROC.pdf` | Per-dataset AUROC plots. One run: ROC curve. Multiple runs: box plots. |
-| `-e` / `--epr` | `EPR.pdf` | Box plot of early precision values per algorithm |
-| `--summary` | `Summary.pdf` | Heatmap of median AUPRC ratio and Spearman stability |
-| `--epr-summary` | `EPRSummary.pdf` | Heatmap of AUPRC ratio, EPR ratio, and signed EPR ratios |
-| `--all` | all of the above | Run all plots |
+| Flag | Output | Description |
+|------|--------|-------------|
+| `-a` / `--auprc` | `AUPRC/<dataset>-AUPRC.{pdf,png}` | Per-dataset AUPRC plots. One run: precision-recall curve. Multiple runs: box plots. |
+| `-r` / `--auroc` | `AUROC/<dataset>-AUROC.{pdf,png}` | Per-dataset AUROC plots. One run: ROC curve. Multiple runs: box plots. |
+| `-e` / `--epr` | `EPR/<dataset>-EPR.{pdf,png}` | Per-dataset box plot of early precision values per algorithm. |
+| `--summary` | `Summary.{pdf,png}` | Heatmap of median AUPRC ratio and Spearman stability. |
+| `--epr-summary` | `EPRSummary.{pdf,png}` | Heatmap of AUPRC ratio, EPR ratio, and signed EPR ratios. |
+| `--all` | all of the above | Run all plots. |
 
 ---
 

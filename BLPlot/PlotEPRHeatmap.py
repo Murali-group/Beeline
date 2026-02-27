@@ -315,7 +315,8 @@ class PlotEPRHeatmap(Plotter):
             legend_ax.set_xticks(ticks)
             legend_ax.set_xticklabels(labels, fontsize=12)
 
-        out_path = output_dir / 'EPRSummary.pdf'
-        plt.savefig(out_path, bbox_inches='tight')
+        stem = output_dir / 'EPRSummary'
+        plt.savefig(stem.with_suffix('.pdf'), bbox_inches='tight')
+        plt.savefig(stem.with_suffix('.png'), bbox_inches='tight')
         plt.close(fig)
-        print(f"Saved EPR heatmap to {out_path}")
+        print(f"Saved EPR heatmap to {stem}.pdf and .png")
