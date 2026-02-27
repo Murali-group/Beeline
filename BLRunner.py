@@ -63,6 +63,10 @@ def get_datasets(input_settings):
     of dicts). Each variant becomes a separate runnable dataset. The dataset
     'dataset_id' is appended to dataset_dir so the runner resolves the correct path.
 
+    If a dataset has 'scan_run_subdirectories: true', subdirectories of
+    input_dir/dataset_dir/dataset_id/ are discovered at runtime and used as
+    runs instead of an explicit 'runs' list.
+
     If 'datasets' is absent, returns an empty list (caller handles auto-discovery).
     """
     if 'datasets' not in input_settings:
@@ -70,14 +74,31 @@ def get_datasets(input_settings):
 
     datasets = []
     dataset_dir = input_settings.get('dataset_dir', '')
+    input_dir   = Path.cwd() / input_settings['input_dir']
 
     for ds in input_settings['datasets']:
         if not ds.get('should_run', [True])[0]:
             continue
 
-        if 'runs' not in ds:
-            raise KeyError(f"Dataset '{ds['dataset_id']}' is missing required 'runs' field.")
-        runs = ds['runs']
+        if ds.get('scan_run_subdirectories'):
+            # Discover runs by scanning subdirectories of the dataset input path.
+            # ds_input_path : Path — input_dir/dataset_dir/dataset_id/
+            ds_input_path = input_dir / dataset_dir / ds['dataset_id']
+            if not ds_input_path.is_dir():
+                raise FileNotFoundError(
+                    f"scan_run_subdirectories is set for dataset '{ds['dataset_id']}' "
+                    f"but input directory '{ds_input_path}' does not exist."
+                )
+            runs = [{'run_id': d.name} for d in sorted(ds_input_path.iterdir()) if d.is_dir()]
+            if not runs:
+                raise RuntimeError(
+                    f"scan_run_subdirectories is set for dataset '{ds['dataset_id']}' "
+                    f"but no subdirectories were found in '{ds_input_path}'."
+                )
+        else:
+            if 'runs' not in ds:
+                raise KeyError(f"Dataset '{ds['dataset_id']}' is missing required 'runs' field.")
+            runs = ds['runs']
         # runs may be a single dict or a list of dicts
         if isinstance(runs, dict):
             runs = [runs]

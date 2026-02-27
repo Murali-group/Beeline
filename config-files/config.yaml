@@ -15,6 +15,10 @@ input_settings:
     #       Shared across all runs within the dataset. Needed for evaluation.
     #   nickname: (optional) Short display label used by the plotter for plot
     #       titles and heatmap column headers. Defaults to dataset_id when absent.
+    #   scan_run_subdirectories: (optional) If true, the pipeline automatically
+    #       discovers runs by scanning all subdirectories of the dataset's input
+    #       directory. Mutually exclusive with 'runs'; an error is raised if no
+    #       subdirectories are found.
     #
     #   runs: A list of runs within the dataset, each with the following parameters:
     #       run_id: Identifier for this specific run. Used as the input subdirectory name.

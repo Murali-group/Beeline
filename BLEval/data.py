@@ -138,9 +138,30 @@ class EvaluationData:
             dataset_id: str = ds['dataset_id']
             # outputs / dataset_dir / dataset_id
             dataset_path: Path = output_dir / dataset_dir / dataset_id
+
+            # Resolve the run list: either scan input subdirectories or use the
+            # explicit 'runs' list from the config.
+            if ds.get('scan_run_subdirectories'):
+                # ds_input_path : Path — input_dir/dataset_dir/dataset_id/
+                ds_input_path: Path = input_dir / dataset_dir / dataset_id
+                if not ds_input_path.is_dir():
+                    raise FileNotFoundError(
+                        f"scan_run_subdirectories is set for dataset '{dataset_id}' "
+                        f"but input directory '{ds_input_path}' does not exist."
+                    )
+                run_dicts = [{'run_id': d.name}
+                             for d in sorted(ds_input_path.iterdir()) if d.is_dir()]
+                if not run_dicts:
+                    raise RuntimeError(
+                        f"scan_run_subdirectories is set for dataset '{dataset_id}' "
+                        f"but no subdirectories were found in '{ds_input_path}'."
+                    )
+            else:
+                run_dicts = ds.get('runs', [])
+
             runs: List[RunResult] = []
 
-            for run in ds.get('runs', []):
+            for run in run_dicts:
                 run_id: str = run['run_id']
                 gt_filename: str = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
 

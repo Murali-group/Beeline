@@ -128,7 +128,8 @@ output_settings:
 | `should_run` | No | `[True]` | Set to `[False]` to skip this dataset entirely. |
 | `groundTruthNetwork` | No | `GroundTruthNetwork.csv` | Filename of the ground truth edge list CSV, located in the dataset group directory (shared across all runs). |
 | `nickname` | No | `dataset_id` | Short display label used by the plotter for plot titles and heatmap column headers. Does not affect any file paths. |
-| `runs` | Yes | — | List of individual run variants. See **Run fields** below. |
+| `scan_run_subdirectories` | No | `false` | When `true`, runs are discovered automatically by scanning all subdirectories of `input_dir/dataset_dir/dataset_id/`. Mutually exclusive with `runs`; an error is raised if no subdirectories are found. |
+| `runs` | No* | — | List of individual run variants. Required unless `scan_run_subdirectories` is set. See **Run fields** below. |
 
 #### Run fields
 
