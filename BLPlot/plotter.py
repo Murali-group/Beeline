@@ -68,12 +68,11 @@ def iter_datasets_with_runs(
 
     input_dir  = root / input_settings['input_dir']
     output_dir = root / output_settings['output_dir']
-    # run_id : str — optional; when set, a run_id segment is inserted
-    # between output_dir and the dataset path.
-    run_id = output_settings.get('run_id', '')
-    if run_id:
-        output_dir = output_dir / run_id
-    dataset_dir = input_settings.get('dataset_dir', '')
+    # experiment_id : str — optional; when set, an experiment_id segment is
+    # inserted between output_dir and the dataset path.
+    experiment_id = output_settings.get('experiment_id', '')
+    if experiment_id:
+        output_dir = output_dir / experiment_id
 
     for ds in input_settings.get('datasets', []):
         should_run = ds.get('should_run', [True])
@@ -86,14 +85,14 @@ def iter_datasets_with_runs(
         dataset_label = ds.get('nickname', dataset_id)
         gt_filename   = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
 
-        dataset_path = output_dir / dataset_dir / dataset_id
-        gt_path      = input_dir  / dataset_dir / dataset_id / gt_filename
+        dataset_path = output_dir / dataset_id
+        gt_path      = input_dir  / dataset_id / gt_filename
 
         # Resolve the run list: either scan input subdirectories or use the
         # explicit 'runs' list from the config.
         if ds.get('scan_run_subdirectories'):
-            # ds_input_path : Path — input_dir/dataset_dir/dataset_id/
-            ds_input_path = input_dir / dataset_dir / dataset_id
+            # ds_input_path : Path — input_dir/dataset_id/
+            ds_input_path = input_dir / dataset_id
             if not ds_input_path.is_dir():
                 raise FileNotFoundError(
                     f"scan_run_subdirectories is set for dataset '{dataset_id}' "
@@ -143,12 +142,11 @@ def iter_datasets(
 
     input_dir  = root / input_settings['input_dir']
     output_dir = root / output_settings['output_dir']
-    # run_id : str — optional; when set, a run_id segment is inserted
-    # between output_dir and the dataset path.
-    run_id = output_settings.get('run_id', '')
-    if run_id:
-        output_dir = output_dir / run_id
-    dataset_dir = input_settings.get('dataset_dir', '')
+    # experiment_id : str — optional; when set, an experiment_id segment is
+    # inserted between output_dir and the dataset path.
+    experiment_id = output_settings.get('experiment_id', '')
+    if experiment_id:
+        output_dir = output_dir / experiment_id
 
     for ds in input_settings.get('datasets', []):
         should_run = ds.get('should_run', [True])
@@ -161,8 +159,8 @@ def iter_datasets(
         dataset_label = ds.get('nickname', dataset_id)
         gt_filename   = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
 
-        dataset_path = output_dir / dataset_dir / dataset_id
-        gt_path      = input_dir  / dataset_dir / dataset_id / gt_filename
+        dataset_path = output_dir / dataset_id
+        gt_path      = input_dir  / dataset_id / gt_filename
 
         yield dataset_id, dataset_label, dataset_path, gt_path
 

@@ -3,10 +3,7 @@
 input_settings:
 
     # Base input directory
-    input_dir : "inputs"
-
-    # Subdirectory of inputs that datasets are placed in
-    dataset_dir: "example"
+    input_dir : "inputs/example"
 
     # datasets: A list of datasets. Each dataset has the following parameters:
     #   dataset_id: Identifier for the dataset group. Used to resolve the input path.
@@ -150,18 +147,19 @@ input_settings:
     datasets:
         - dataset_id: "GSD"
           should_run: [True]
+          scan_run_subdirectories: True
           groundTruthNetwork: "GroundTruthNetwork.csv"
           # nickname: "Gonadal Sex Determination"  # optional: overrides dataset_id in plot labels
-          runs:
-            - run_id: "ex1"
-              exprData: "ExpressionData.csv"
-              pseudoTimeData: "PseudoTime.csv"
+          # runs:
+          #   - run_id: "ex1"
+          #     exprData: "ExpressionData.csv"
+          #     pseudoTimeData: "PseudoTime.csv"
 
 # Output Settings: configure where results are written
 output_settings:
 
     # Base output directory
     output_dir: "outputs"
-    # Optional: if set, outputs are written to output_dir/run_id/...
+    # Optional: if set, outputs are written to output_dir/experiment_id/...
     # so multiple experiment runs can coexist under the same base directory.
-    run_id: "example_run_GSD"
+    experiment_id: "example_run_GSD"

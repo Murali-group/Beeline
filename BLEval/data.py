@@ -23,7 +23,7 @@ class RunResult:
         # run_id : str  — matches run_id from the config 'runs' list
         # ranked_edges : dict[str, pd.DataFrame]  — keyed by algorithm_id
         # ground_truth_path : Path  — path to the ground truth edge list file
-        # run_path : Path  — output directory for this run (output_dir/dataset_dir/dataset_id/run_id)
+        # run_path : Path  — output directory for this run (output_dir/dataset_id/run_id)
         if not isinstance(run_id, str):
             raise TypeError(f"run_id must be str, got {type(run_id)}")
         if not isinstance(ranked_edges, dict):
@@ -52,7 +52,7 @@ class DatasetGroup:
     def __init__(self, dataset_id: str, runs: List[RunResult], dataset_path: Path) -> None:
         # dataset_id : str    — matches dataset_id from the config 'datasets' list
         # runs : list[RunResult]  — one entry per run in the config 'runs' list
-        # dataset_path : Path — output directory for this dataset (output_dir/dataset_dir/dataset_id)
+        # dataset_path : Path — output directory for this dataset (output_dir/dataset_id)
         if not isinstance(dataset_id, str):
             raise TypeError(f"dataset_id must be str, got {type(dataset_id)}")
         if not isinstance(runs, list) or not all(isinstance(r, RunResult) for r in runs):
@@ -112,13 +112,11 @@ class EvaluationData:
 
         input_dir  = root / input_settings['input_dir']
         output_dir = root / output_settings['output_dir']
-        # run_id : str — optional; when set, a run_id segment is inserted
-        # between output_dir and the dataset path.
-        run_id = output_settings.get('run_id', '')
-        if run_id:
-            output_dir = output_dir / run_id
-        dataset_dir = input_settings.get('dataset_dir', '')
-
+        # experiment_id : str — optional; when set, an experiment_id segment is
+        # inserted between output_dir and the dataset path.
+        experiment_id = output_settings.get('experiment_id', '')
+        if experiment_id:
+            output_dir = output_dir / experiment_id
         # Collect algorithm IDs that are enabled in the config.
         # should_run values may be bare booleans or single-element lists.
         algos: List[str] = [
@@ -136,14 +134,14 @@ class EvaluationData:
                 continue
 
             dataset_id: str = ds['dataset_id']
-            # outputs / dataset_dir / dataset_id
-            dataset_path: Path = output_dir / dataset_dir / dataset_id
+            # outputs / dataset_id
+            dataset_path: Path = output_dir / dataset_id
 
             # Resolve the run list: either scan input subdirectories or use the
             # explicit 'runs' list from the config.
             if ds.get('scan_run_subdirectories'):
-                # ds_input_path : Path — input_dir/dataset_dir/dataset_id/
-                ds_input_path: Path = input_dir / dataset_dir / dataset_id
+                # ds_input_path : Path — input_dir/dataset_id/
+                ds_input_path: Path = input_dir / dataset_id
                 if not ds_input_path.is_dir():
                     raise FileNotFoundError(
                         f"scan_run_subdirectories is set for dataset '{dataset_id}' "
@@ -165,11 +163,11 @@ class EvaluationData:
                 run_id: str = run['run_id']
                 gt_filename: str = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
 
-                # Ground truth: inputs / dataset_dir / dataset_id / filename
-                gt_path: Path = input_dir / dataset_dir / dataset_id / gt_filename
+                # Ground truth: inputs / dataset_id / filename
+                gt_path: Path = input_dir / dataset_id / gt_filename
 
-                # outputs / dataset_dir / dataset_id / run_id
-                run_path: Path = output_dir / dataset_dir / dataset_id / run_id
+                # outputs / dataset_id / run_id
+                run_path: Path = output_dir / dataset_id / run_id
 
                 # Ranked edges: run_path / algo / rankedEdges.csv
                 ranked_edges: Dict[str, pd.DataFrame] = {}

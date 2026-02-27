@@ -1,5 +1,4 @@
 import argparse
-import os
 from pathlib import Path
 import yaml
 from tqdm import tqdm
@@ -59,13 +58,13 @@ def get_datasets(input_settings):
     """
     Return a flat list of dataset dicts from input_settings.
 
-    Each dataset entry in the config may have a 'variants' field (dict or list
-    of dicts). Each variant becomes a separate runnable dataset. The dataset
-    'dataset_id' is appended to dataset_dir so the runner resolves the correct path.
+    Each dataset entry in the config becomes a separate runnable dataset, with
+    each run forming a flat entry keyed by run_id. The dataset_id is used
+    directly as the path segment beneath input_dir.
 
     If a dataset has 'scan_run_subdirectories: true', subdirectories of
-    input_dir/dataset_dir/dataset_id/ are discovered at runtime and used as
-    runs instead of an explicit 'runs' list.
+    input_dir/dataset_id/ are discovered at runtime and used as runs instead
+    of an explicit 'runs' list.
 
     If 'datasets' is absent, returns an empty list (caller handles auto-discovery).
     """
@@ -73,8 +72,7 @@ def get_datasets(input_settings):
         return []
 
     datasets = []
-    dataset_dir = input_settings.get('dataset_dir', '')
-    input_dir   = Path.cwd() / input_settings['input_dir']
+    input_dir = Path.cwd() / input_settings['input_dir']
 
     for ds in input_settings['datasets']:
         if not ds.get('should_run', [True])[0]:
@@ -82,8 +80,8 @@ def get_datasets(input_settings):
 
         if ds.get('scan_run_subdirectories'):
             # Discover runs by scanning subdirectories of the dataset input path.
-            # ds_input_path : Path — input_dir/dataset_dir/dataset_id/
-            ds_input_path = input_dir / dataset_dir / ds['dataset_id']
+            # ds_input_path : Path — input_dir/dataset_id/
+            ds_input_path = input_dir / ds['dataset_id']
             if not ds_input_path.is_dir():
                 raise FileNotFoundError(
                     f"scan_run_subdirectories is set for dataset '{ds['dataset_id']}' "
@@ -103,15 +101,12 @@ def get_datasets(input_settings):
         if isinstance(runs, dict):
             runs = [runs]
 
-        # Append dataset_id to dataset_dir so runner paths resolve correctly
-        variant_dataset_dir = os.path.join(dataset_dir, ds['dataset_id']) if dataset_dir else ds['dataset_id']
-
         for run in runs:
             datasets.append({
-                'dataset_dir': variant_dataset_dir,
-                'dataset_id': run['run_id'],
-                'exprData': run.get('exprData', 'ExpressionData.csv'),
-                'pseudoTimeData': run.get('pseudoTimeData', 'PseudoTime.csv'),
+                'dataset_id':        ds['dataset_id'],
+                'run_id':            run['run_id'],
+                'exprData':          run.get('exprData', 'ExpressionData.csv'),
+                'pseudoTimeData':    run.get('pseudoTimeData', 'PseudoTime.csv'),
                 'groundTruthNetwork': ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv'),
             })
 
@@ -125,17 +120,17 @@ def build_runner(algo_name, image, params, dataset, input_settings, output_setti
     runner_config = {
         'input': {
             'input_dir': input_settings['input_dir'],
-            'dataset_dir': dataset['dataset_dir'],
         },
         'dataset': {
             'dataset_id':          dataset['dataset_id'],
+            'run_id':              dataset['run_id'],
             'exprData':            dataset['exprData'],
             'pseudoTimeData':      dataset['pseudoTimeData'],
             'groundTruthNetwork':  dataset['groundTruthNetwork'],
         },
         'output_settings': {
-            'output_dir': output_settings['output_dir'],
-            'run_id':     output_settings.get('run_id', ''),
+            'output_dir':      output_settings['output_dir'],
+            'experiment_id':   output_settings.get('experiment_id', ''),
         },
         'algo_name': algo_name,
         'image': image,
@@ -181,7 +176,7 @@ def get_working_dirs(config):
     root            = Path.cwd()
     input_settings  = config['input_settings']
     output_settings = config['output_settings']
-    run_id          = output_settings.get('run_id', '')
+    experiment_id   = output_settings.get('experiment_id', '')
     output_dir      = Path(output_settings['output_dir'])
     datasets        = get_datasets(input_settings)
     algorithms      = input_settings.get('algorithms', [])
@@ -192,11 +187,9 @@ def get_working_dirs(config):
             if not algo.get('should_run', [False])[0]:
                 continue
             base_output = output_dir if output_dir.is_absolute() else root / output_dir
-            if run_id:
-                base_output = base_output / run_id
-            if dataset['dataset_dir']:
-                base_output = base_output / dataset['dataset_dir']
-            base_output = base_output / dataset['dataset_id'] / algo['algorithm_id']
+            if experiment_id:
+                base_output = base_output / experiment_id
+            base_output = base_output / dataset['dataset_id'] / dataset['run_id'] / algo['algorithm_id']
             paths.append(base_output / 'working_dir')
 
     return paths

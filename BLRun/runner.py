@@ -22,9 +22,9 @@ class Runner(ABC):
             Expected structure:
               input:
                 input_dir:   <str>  input directory (absolute, or relative to root)
-                dataset_dir: <str>  optional subdirectory (may be empty)
               dataset:
-                dataset_id:          <str>  subdirectory name / dataset label
+                dataset_id:          <str>  dataset group label (path segment under input_dir)
+                run_id:              <str>  run label (path segment under dataset_id)
                 exprData:            <str>  expression data filename
                 pseudoTimeData:      <str>  pseudotime data filename
                 groundTruthNetwork:  <str>  ground truth network filename
@@ -38,27 +38,23 @@ class Runner(ABC):
 
         input_dir_path  = Path(inp['input_dir'])
         output_dir_path = Path(config['output_settings']['output_dir'])
-        # run_id : str — optional; when set, a run_id segment is inserted
-        # between output_dir and the dataset path so multiple experiment runs
-        # can coexist under the same base output directory.
-        run_id_prefix = config['output_settings'].get('run_id', '')
+        # experiment_id : str — optional; when set, an experiment_id segment is
+        # inserted between output_dir and the dataset path so multiple experiment
+        # runs can coexist under the same base output directory.
+        experiment_id_prefix = config['output_settings'].get('experiment_id', '')
 
         base_input = input_dir_path if input_dir_path.is_absolute() else root / input_dir_path
-        if inp.get('dataset_dir'):
-            base_input = base_input / inp['dataset_dir']
 
         base_output = output_dir_path if output_dir_path.is_absolute() else root / output_dir_path
-        if run_id_prefix:
-            base_output = base_output / run_id_prefix
-        if inp.get('dataset_dir'):
-            base_output = base_output / inp['dataset_dir']
-        base_output = base_output / ds['dataset_id'] / config['algo_name']
+        if experiment_id_prefix:
+            base_output = base_output / experiment_id_prefix
+        base_output = base_output / ds['dataset_id'] / ds['run_id'] / config['algo_name']
 
         base_input.resolve()
         base_output.resolve()
 
         # input_dir: run-level input directory (expression data, pseudo-time).
-        self.input_dir  = base_input / ds['dataset_id']
+        self.input_dir  = base_input / ds['dataset_id'] / ds['run_id']
         self.output_dir = base_output
         self.working_dir = base_output / "working_dir"
 
@@ -73,17 +69,15 @@ class Runner(ABC):
         self.working_dir.mkdir(parents=True, exist_ok=True)
         
         # Precompute progress message for CLI output.
-        dataset_id = Path(inp['dataset_dir']).name if inp.get('dataset_dir') else ds['dataset_id']
-        run_id     = ds['dataset_id']
         self.running_message = (
-            f"Running {config['algo_name']} | dataset: {dataset_id} | run: {run_id}"
+            f"Running {config['algo_name']} | dataset: {ds['dataset_id']} | run: {ds['run_id']}"
         )
 
         self.exprData           = ds.get('exprData',           'ExpressionData.csv')
         self.pseudoTimeData     = ds.get('pseudoTimeData',     'PseudoTime.csv')
         self.groundTruthNetwork = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
         # ground_truth_file: full path to the dataset-level ground truth CSV.
-        self.ground_truth_file  = base_input / self.groundTruthNetwork
+        self.ground_truth_file  = base_input / ds['dataset_id'] / self.groundTruthNetwork
         
         # image: Docker image name used to run this algorithm (e.g. "grnbeeline/genie3:base").
         # Mandatory — every algorithm entry in the config must supply this field.

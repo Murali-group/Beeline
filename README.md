@@ -39,7 +39,7 @@ Runs one or more GRN inference algorithms on the specified datasets.
 python BLRunner.py -c config-files/Curated/VSC.yaml
 ```
 
-Each algorithm's output is written to `outputs/<dataset_dir>/<dataset_id>/<run_id>/<algorithm_id>/rankedEdges.csv`.
+Each algorithm's output is written to `outputs/<dataset_id>/<run_id>/<algorithm_id>/rankedEdges.csv`.
 
 ### 2. Evaluate results — `BLEvaluator.py`
 
@@ -86,14 +86,14 @@ Config files are YAML and follow this structure:
 
 ```yaml
 input_settings:
-    input_dir: "inputs"
-    dataset_dir: "Curated"
+    input_dir: "inputs/Curated"
     datasets:
-        - dataset_id: "mHSC-E"
+        - dataset_id: "mHSC"
+          nickname: "mHSC-E"      # optional: overrides dataset_id in plot labels
           groundTruthNetwork: "GroundTruthNetwork.csv"
           runs:
-            - run_id: "mHSC-E-500-1"
-            - run_id: "mHSC-E-500-2"
+            - run_id: "mHSC-500-1"
+            - run_id: "mHSC-500-2"
 
     algorithms:
         - algorithm_id: "GENIE3"
@@ -116,7 +116,6 @@ output_settings:
 | Field | Required | Description |
 |-------|----------|-------------|
 | `input_dir` | Yes | Base directory containing all input datasets. Can be absolute or relative to the working directory. |
-| `dataset_dir` | No | Subdirectory of `input_dir` that groups datasets by collection (e.g., `"Curated"`, `"Synthetic"`). |
 | `datasets` | Yes | List of dataset groups. See **Dataset fields** below. |
 | `algorithms` | Yes | List of algorithms to run. See **Algorithm fields** below. |
 
@@ -124,16 +123,16 @@ output_settings:
 
 | Field | Required | Default | Description |
 |-------|----------|---------|-------------|
-| `dataset_id` | Yes | — | Name of the dataset group. Used as a subdirectory under `dataset_dir`. |
+| `dataset_id` | Yes | — | Name of the dataset group. Used as a subdirectory under `input_dir`. |
 | `should_run` | No | `[True]` | Set to `[False]` to skip this dataset entirely. |
 | `groundTruthNetwork` | No | `GroundTruthNetwork.csv` | Filename of the ground truth edge list CSV, located in the dataset group directory (shared across all runs). |
 | `nickname` | No | `dataset_id` | Short display label used by the plotter for plot titles and heatmap column headers. Does not affect any file paths. |
-| `scan_run_subdirectories` | No | `false` | When `true`, runs are discovered automatically by scanning all subdirectories of `input_dir/dataset_dir/dataset_id/`. Mutually exclusive with `runs`; an error is raised if no subdirectories are found. |
+| `scan_run_subdirectories` | No | `false` | When `true`, runs are discovered automatically by scanning all subdirectories of `input_dir/dataset_id/`. Mutually exclusive with `runs`; an error is raised if no subdirectories are found. |
 | `runs` | No* | — | List of individual run variants. Required unless `scan_run_subdirectories` is set. See **Run fields** below. |
 
 #### Run fields
 
-Each entry under `runs` represents one replicate or condition variant. Input files are expected at `input_dir/dataset_dir/dataset_id/run_id/`.
+Each entry under `runs` represents one replicate or condition variant. Input files are expected at `input_dir/dataset_id/run_id/`.
 
 | Field | Required | Default | Description |
 |-------|----------|---------|-------------|
@@ -155,11 +154,11 @@ Each entry under `runs` represents one replicate or condition variant. Input fil
 | Field | Required | Default | Description |
 |-------|----------|---------|-------------|
 | `output_dir` | Yes | — | Base directory for all output files. Can be absolute or relative to the working directory. |
-| `run_id` | No | — | When set, inserts an extra path segment between `output_dir` and `dataset_dir`. Useful for keeping outputs from separate experiment runs (e.g., different parameter sweeps) in the same base directory without overwriting each other. |
+| `experiment_id` | No | — | When set, inserts an extra path segment between `output_dir` and the dataset path. Useful for keeping outputs from separate experiment runs (e.g., different parameter sweeps) in the same base directory without overwriting each other. |
 
 Output files are written to:
 ```
-output_dir/[run_id/]dataset_dir/dataset_id/run_id/algorithm_id/rankedEdges.csv
+output_dir/[experiment_id/]dataset_id/run_id/algorithm_id/rankedEdges.csv
 ```
 
 ---
