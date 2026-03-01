@@ -1,0 +1,70 @@
+# Input Settings: initialize base input folder names,
+# dataset collections, and algorithms to run over
+input_settings:
+
+    # Base input directory
+    input_dir: "inputs/Synthetic/"
+
+    # Each dataset entry represents a condition group (same network, same cell
+    # count). Its subdirectories are individual simulation replicates listed
+    # under 'runs'. groundTruthNetwork is taken from replicate 1 and shared
+    # across all runs in the group.
+    datasets:
+
+        - dataset_id: "dyn-CY/dyn-CY-100"
+          nickname: "100"
+          should_run: [True]
+          groundTruthNetwork: "GroundTruthNetwork.csv"
+          runs:
+            - run_id: "dyn-CY-100-1"
+
+        - dataset_id: "dyn-CY/dyn-CY-200"
+          nickname: "200"
+          should_run: [True]
+          groundTruthNetwork: "GroundTruthNetwork.csv"
+          runs:
+            - run_id: "dyn-CY-200-1"
+
+        - dataset_id: "dyn-CY/dyn-CY-500"
+          nickname: "500"
+          should_run: [True]
+          groundTruthNetwork: "GroundTruthNetwork.csv"
+          runs:
+            - run_id: "dyn-CY-500-1"
+
+        - dataset_id: "dyn-CY/dyn-CY-2000"
+          nickname: "2000"
+          should_run: [True]
+          groundTruthNetwork: "GroundTruthNetwork.csv"
+          runs:
+            - run_id: "dyn-CY-2000-1"
+
+    algorithms:
+
+        - algorithm_id: "PPCOR"
+          image: "grnbeeline/ppcor:base"
+          should_run: [True]
+          params:
+              # p-value cutoff
+              # Used in parsing output
+              pVal: [0.01]
+
+        - algorithm_id: "EXPERIMENTAL"
+          image: "local"
+          should_run: [True]
+
+        - algorithm_id: "GENETIC"
+          image: "local"
+          should_run: [True]
+
+        - algorithm_id: "PEARSON"
+          image: "local"
+          should_run: [True]
+
+
+# Output Settings: initialize base output folder names
+output_settings:
+
+    # Base output directory
+    output_dir: "outputs"
+    experiment_id: "new_algorithms"

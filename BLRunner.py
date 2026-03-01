@@ -17,6 +17,7 @@ from BLRun.scsglRunner import SCSGLRunner
 from BLRun.sinceritiesRunner import SINCERITIESRunner
 from BLRun.singeRunner import SINGERunner
 from BLRun.pearsonRunner import PearsonRunner
+from BLRun.experimentalRunner import ExperimentalRunner, GeneticRunner
 
 RUNNERS = {
     'GENIE3':       GENIE3Runner,
@@ -25,6 +26,8 @@ RUNNERS = {
     'GRNVBEM':      GRNVBEMRunner,
     'JUMP3':        JUMP3Runner,
     'LEAP':         LEAPRunner,
+    'EXPERIMENTAL': ExperimentalRunner,
+    'GENETIC':      GeneticRunner,
     'PEARSON':      PearsonRunner,
     'PIDC':         PIDCRunner,
     'PPCOR':        PPCORRunner,
