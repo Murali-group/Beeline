@@ -244,12 +244,24 @@ class PlotEPRHeatmap(Plotter):
 
         _setup_heatmap_axes(ax, n_algos, sorted_algos, total_cols, pad)
 
+        # Measure the maximum y-tick label width in axes-fraction coordinates so
+        # the row backgrounds extend precisely to cover the algorithm labels.
+        # draw() forces text layout before get_window_extent() is called.
+        fig.canvas.draw()
+        renderer = fig.canvas.get_renderer()
+        max_label_px = max(
+            (t.get_window_extent(renderer).width for t in ax.get_yticklabels()),
+            default=0.0,
+        )
+        # Small padding (0.01) leaves a sliver of space between label and edge.
+        label_frac = max_label_px / ax.get_window_extent(renderer).width + 0.01
+
         row_trans = blended_transform_factory(ax.transAxes, ax.transData)
         for row_idx in range(n_algos):
             bg = (0.9, 0.9, 0.9) if row_idx % 2 == 0 else (1.0, 1.0, 1.0)
             ax.add_artist(patches.Rectangle(
-                (-0.15, n_algos - row_idx - 0.5),
-                width=1.15, height=1,
+                (-label_frac, n_algos - row_idx - 0.5),
+                width=1.0 + label_frac, height=1,
                 transform=row_trans,
                 clip_on=False,
                 edgecolor=(1, 1, 1), facecolor=bg,
