@@ -1,28 +1,5 @@
-.. _beeline:
-
-
-BEELINE
-=======
-
-Overview
---------
-
-BEELINE provides a set of tools for evaluating methods that infer gene
-regulatory networks (GRN) from single-cell gene expression
-data. The BEELINE framework is divided into the following modules:
-
-* :ref:`blrun` : contains BEELINE's Runner module, a Python
-  wrapper for 14 GRN inference algorithms with options to add new
-  methods.
-* :ref:`bleval` : contains BEELINE's Evaluation module that
-  provides easy-to-use tools for evaluating GRN reconstructions.
-* :ref:`blplot` : contains BEELINE's plotting module for
-  visualizing output from BLEval.
-
-
-
 Getting Started
----------------
+===============
 
 The BEELINE pipeline interfaces with the implementations of various
 algorithms through Docker containers.  Please follow this tutorial on
@@ -49,7 +26,7 @@ terminal
 
           . utils/initialize.sh
 
-.. note:: This step will take a while!
+.. note:: This step may take a while!
 
 We recommend using `Anaconda <https://www.anaconda.com>`_ for Python. Run the following command to automatically create an Anaconda virtual environment named BEELINE and install necessary libraries
 
@@ -76,10 +53,40 @@ To display the complete list of evaluation options, run
 
           python BLEvaluator.py --help
 
-.. toctree::
-   :maxdepth: 2
-   :caption: User Guide
+Project Outline
+---------------
 
-   beeline-tutorial
-   algorithms
-   beeline-developer
+This tutorial will first explain the structure of the BEELINE repository,
+with a walkthrough of the different components that the user can customize.
+
+
+.. code:: text
+
+          BEELINE
+          |-- inputs/
+          |-- config-files/
+          |   `-- config.yaml
+          |-- BLRun/
+          |   |-- runner.py
+          |   |-- sinceritiesRunner.py
+          |   `-- ...
+          |-- BLPlot/
+          |   |-- plotter.py
+          |   |-- PlotAUPRC.py
+          |   |-- PlotAUROC.py
+          |   |-- PlotEPR.py
+          |   `-- ...
+          |-- BLEval/
+          |   |-- evaluator.py
+          |   |-- BLTime.py
+          |   `-- ...
+          |-- Algorithms/
+          |     |-- SINCERITIES/
+          |     `-- ...
+          |-- utils/
+          |   |-- initialize.sh
+          |   `-- setupAnacondaVENV.sh
+          |-- LICENSE
+          |-- BLRunner.py
+          |-- BLEvaluator.py
+          `-- README.md

@@ -32,6 +32,11 @@ extensions = [
 # is not present in the repository (e.g. the external BoolODE src package).
 autodoc_mock_imports = ['src']
 
+# Suppress the "A mocked object is detected" warning that autodoc emits for
+# every member of a mocked module.  These warnings are expected when src/ is
+# absent and are not actionable.
+suppress_warnings = ['autodoc']
+
 templates_path = ['_templates']
 exclude_patterns = []
 

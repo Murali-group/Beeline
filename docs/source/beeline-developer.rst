@@ -1,7 +1,13 @@
+Developer Guide
+===============
+
+BEELINE is designed to be extensible. This section describes how to add new
+GRN inference methods and new evaluation techniques to the pipeline.
+
 .. _blrunguide:
 
 Adding a new GRN inference method
-##################################
+----------------------------------
 
 Please follow the following steps to add a new GRN inference method to BEELINE.
 
@@ -82,7 +88,7 @@ where the first line contains the column names, and the subsequent lines contain
 .. _blevalguide:
 
 Adding a new evaluation technique
-###################################
+----------------------------------
 
 BEELINE currently supports several evaluation techniques, namely, area under ROC and PR curves, early precision, early signed precision, time and memory consumption, network motifs, Jaccard similarities, Spearman coefficients, Borda aggregation, and path length statistics. A new evaluation technique can be easily added to BEELINE using the following procedure.
 
