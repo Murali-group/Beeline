@@ -1,72 +1,60 @@
 import os
 import pandas as pd
-from pathlib import Path
-import numpy as np
 
-def generateInputs(RunnerObj):
-    '''
-    Function to generate desired inputs for GENIE3.
-    If the folder/files under RunnerObj.datadir exist, 
-    this function will not do anything.
-
-    :param RunnerObj: An instance of the :class:`BLRun`
-    '''
-    if not RunnerObj.inputDir.joinpath("GENIE3").exists():
-        print("Input folder for GENIE3 does not exist, creating input folder...")
-        RunnerObj.inputDir.joinpath("GENIE3").mkdir(exist_ok = False)
-        
-    if not RunnerObj.inputDir.joinpath("GENIE3/ExpressionData.csv").exists():
-        # input data
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
-                                     header = 0, index_col = 0)
-
-        # Write .csv file
-        ExpressionData.T.to_csv(RunnerObj.inputDir.joinpath("GENIE3/ExpressionData.csv"),
-                             sep = '\t', header  = True, index = True)
-    
-def run(RunnerObj):
-    '''
-    Function to run GENIE3 algorithm
-
-    :param RunnerObj: An instance of the :class:`BLRun`
-    '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
-                    "/GENIE3/ExpressionData.csv"
-    # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GENIE3/"
-    os.makedirs(outDir, exist_ok = True)
-    
-    outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
-                         'grnbeeline/arboreto:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'python runArboreto.py --algo=GENIE3',
-                         '--inFile='+inputPath, '--outFile='+outPath, '\"'])
-
-    print(cmdToRun)
-    os.system(cmdToRun)
+from BLRun.runner import Runner
 
 
+class GENIE3Runner(Runner):
+    """Concrete runner for the GENIE3 GRN inference algorithm."""
 
-def parseOutput(RunnerObj):
-    '''
-    Function to parse outputs from GENIE3.
+    def generateInputs(self):
+        '''
+        Function to generate desired inputs for GENIE3.
+        If the folder/files under self.input_dir exist,
+        this function will not do anything.
+        '''
 
-    :param RunnerObj: An instance of the :class:`BLRun`
-    '''
-    # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GENIE3/"
+        # Create ExpressionData.csv file in the created input directory
+        GENIE3_EXPRESSION_FILE = self.working_dir / "ExpressionData.csv"
+        if not GENIE3_EXPRESSION_FILE.exists():
+            # input data
+            ExpressionData = pd.read_csv(self.input_dir / self.exprData,
+                                         header = 0, index_col = 0)
 
-        
-    # Read output
-    OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
-    
-    if not Path(outDir+'outFile.txt').exists():
-        print(outDir+'outFile.txt'+'does not exist, skipping...')
-        return
-    
-    outFile = open(outDir + 'rankedEdges.csv','w')
-    outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
+            # Write .csv file — arboreto expects cells as rows, genes as columns
+            ExpressionData.T.to_csv(GENIE3_EXPRESSION_FILE,
+                                 sep = '\t', header  = True, index = True)
 
-    for idx, row in OutDF.iterrows():
-        outFile.write('\t'.join([row['TF'],row['target'],str(row['importance'])])+'\n')
-    outFile.close()
-    
+    def run(self):
+        '''
+        Function to run GENIE3 algorithm
+        '''
+
+        cmdToRun = ' '.join(['docker run --rm',
+                            f"-v {self.working_dir}:/usr/working_dir",
+                            '--expose=41269',
+                            f'{self.image} /bin/sh -c \"time -v -o',
+                            "/usr/working_dir/time.txt",
+                            'python runArboreto.py --algo=GENIE3',
+                            '--inFile=/usr/working_dir/ExpressionData.csv', '--outFile=/usr/working_dir/outFile.txt', '\"'])
+
+        self._run_docker(cmdToRun)
+
+    def parseOutput(self):
+        '''
+        Function to parse outputs from GENIE3.
+        '''
+        workDir = self.working_dir
+        outFile = workDir / 'outFile.txt'
+
+        # Quit if output file does not exist
+        if not outFile.exists():
+            print(str(outFile) + ' does not exist, skipping...')
+            return
+
+        # Read output
+        OutDF = pd.read_csv(outFile, sep = '\t', header = 0)
+
+        self._write_ranked_edges(OutDF.rename(columns={
+            'TF': 'Gene1', 'target': 'Gene2', 'importance': 'EdgeWeight'
+        })[['Gene1', 'Gene2', 'EdgeWeight']])

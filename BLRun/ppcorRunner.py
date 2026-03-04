@@ -1,72 +1,71 @@
 import os
 import pandas as pd
-from pathlib import Path
-import numpy as np
 
-def generateInputs(RunnerObj):
-    '''
-    Function to generate desired inputs for PPCOR.
-    If the folder/files under RunnerObj.datadir exist, 
-    this function will not do anything.
-    '''
-    if not RunnerObj.inputDir.joinpath("PPCOR").exists():
-        print("Input folder for PPCOR does not exist, creating input folder...")
-        RunnerObj.inputDir.joinpath("PPCOR").mkdir(exist_ok = False)
-        
-    if not RunnerObj.inputDir.joinpath("PPCOR/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
-                                     header = 0, index_col = 0)
-        
-        newExpressionData = ExpressionData.copy()
-        
-        # Write .csv file
-        newExpressionData.to_csv(RunnerObj.inputDir.joinpath("PPCOR/ExpressionData.csv"),
-                             sep = ',', header  = True, index = True)
-    
-def run(RunnerObj):
-    '''
-    Function to run PPCOR algorithm
-    '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
-                    "/PPCOR/ExpressionData.csv"
-    
-    # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/PPCOR/"
-    os.makedirs(outDir, exist_ok = True)
-    
-    outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ grnbeeline/ppcor:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'Rscript runPPCOR.R',
-                         inputPath, outPath, '\"'])
-    print(cmdToRun)
-    os.system(cmdToRun)
+from BLRun.runner import Runner
 
 
+class PPCORRunner(Runner):
+    """Concrete runner for the PPCOR GRN inference algorithm."""
 
-def parseOutput(RunnerObj):
-    '''
-    Function to parse outputs from PPCOR.
-    '''
-    # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/PPCOR/"
-    if not Path(outDir+'outFile.txt').exists():
-        print(outDir+'outFile.txt'+'does not exist, skipping...')
-        return
-        
-    # Read output
-    OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
-    # edges with significant p-value
-    part1 = OutDF.loc[OutDF['pValue'] <= float(RunnerObj.params['pVal'])]
-    part1 = part1.assign(absCorVal = part1['corVal'].abs())
-    # edges without significant p-value
-    part2 = OutDF.loc[OutDF['pValue'] > float(RunnerObj.params['pVal'])]
-    
-    outFile = open(outDir + 'rankedEdges.csv','w')
-    outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
+    def generateInputs(self):
+        '''
+        Function to generate desired inputs for PPCOR.
+        If the folder/files under self.input_dir exist,
+        this function will not do anything.
+        '''
 
-    for idx, row in part1.sort_values('absCorVal', ascending = False).iterrows():
-        outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(row['corVal'])])+'\n')
-    
-    for idx, row in part2.iterrows():
-        outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(0)])+'\n')
-    outFile.close()
-    
+        # Create ExpressionData.csv file in the created input directory
+        PPCOR_EXPRESSION_FILE = self.working_dir / "ExpressionData.csv"
+        if not PPCOR_EXPRESSION_FILE.exists():
+            ExpressionData = pd.read_csv(self.input_dir / self.exprData,
+                                         header = 0, index_col = 0)
+
+            newExpressionData = ExpressionData.copy()
+
+            # Write .csv file
+            newExpressionData.to_csv(PPCOR_EXPRESSION_FILE,
+                                 sep = ',', header  = True, index = True)
+
+    def run(self):
+        '''
+        Function to run PPCOR algorithm
+        '''
+
+        cmdToRun = ' '.join(['docker run --rm',
+                            f"-v {self.working_dir}:/usr/working_dir",
+                            f'{self.image} /bin/sh -c \"time -v -o',
+                            "/usr/working_dir/time.txt",
+                            'Rscript runPPCOR.R',
+                            "/usr/working_dir/ExpressionData.csv", "/usr/working_dir/outFile.txt", '\"'])
+
+        # Run command
+        self._run_docker(cmdToRun)
+
+    def parseOutput(self):
+        '''
+        Function to parse outputs from PPCOR.
+        '''
+        workDir = self.working_dir
+        outFile = workDir / 'outFile.txt'
+
+        # Quit if output file does not exist
+        if not outFile.exists():
+            print(str(outFile) + ' does not exist, skipping...')
+            return
+
+        # Read output
+        OutDF = pd.read_csv(outFile, sep = '\t', header = 0)
+        # edges with significant p-value
+        part1 = OutDF.loc[OutDF['pValue'] <= float(self.params['pVal'])]
+        part1 = part1.assign(absCorVal = part1['corVal'].abs())
+        # edges without significant p-value
+        part2 = OutDF.loc[OutDF['pValue'] > float(self.params['pVal'])]
+
+        part1_sorted = part1.sort_values('absCorVal', ascending=False)
+        part2_out = part2[['Gene1', 'Gene2']].copy()
+        part2_out['EdgeWeight'] = 0.0
+
+        self._write_ranked_edges(pd.concat([
+            part1_sorted[['Gene1', 'Gene2']].assign(EdgeWeight=part1_sorted['corVal']),
+            part2_out,
+        ], ignore_index=True)[['Gene1', 'Gene2', 'EdgeWeight']])

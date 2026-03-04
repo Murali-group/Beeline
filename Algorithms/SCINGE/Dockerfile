@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-LABEL Maintainer = "Aditya Pratapa <adyprat@vt.edu>"
+LABEL maintainer="Aditya Pratapa <adyprat@vt.edu>"
 
 USER root
 
@@ -21,9 +21,9 @@ RUN mkdir runSCINGE/
 
 COPY runSCINGE/ /runSCINGE/
 
-WORKDIR runSCINGE/
+WORKDIR /runSCINGE/
 
-ENV LD_LIBRARY_PATH /opt/mcr/v96/runtime/glnxa64:/opt/mcr/v96/bin/glnxa64
+ENV LD_LIBRARY_PATH=/opt/mcr/v96/runtime/glnxa64:/opt/mcr/v96/bin/glnxa64
 
 RUN mkdir data/
 
