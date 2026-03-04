@@ -12,7 +12,6 @@ import seaborn as sns
 from matplotlib.transforms import blended_transform_factory
 
 from BLPlot._heatmap import (
-    _DARK_COL,
     _draw_section,
     _setup_heatmap_axes,
 )
@@ -197,10 +196,8 @@ class PlotSummaryHeatmap(Plotter):
         asp_ratio  = (total_cols + pad) / (n_algos + pad)
         fig_size   = (height * asp_ratio + 0.5, height)
 
-        # Gridspec: row 0 = heatmap (spans both columns), row 1 = palette legends.
         fig = plt.figure(figsize=(fig_size[0], fig_size[1] + 0.5))
-        gs = fig.add_gridspec(2, 2, height_ratios=[n_algos + pad, 0.5], hspace=0.05)
-        ax = fig.add_subplot(gs[0, :])
+        ax  = fig.add_subplot(1, 1, 1)
 
         _setup_heatmap_axes(ax, n_algos, sorted_algos, total_cols, pad)
 
@@ -249,9 +246,14 @@ class PlotSummaryHeatmap(Plotter):
             switch_text=False,
         )
 
-        # Color range legend: one palette bar per section at the bottom.
-        for levl_idx, palette in enumerate([auprc_palette, spear_palette]):
-            legend_ax = fig.add_subplot(gs[1, levl_idx])
+        # Legend geometry — same fixed-width approach as PlotEPRHeatmap.
+        lw = 5.0 / (total_cols + 1)   # legend width as axes fraction
+        lh = 0.5 / (n_algos + pad)    # legend height as axes fraction
+        ly = -lh - 0.05               # just below the heatmap
+
+        # Two legends placed at the centre of each section's half of the axes.
+        for cx, palette in [(1/4, auprc_palette), (3/4, spear_palette)]:
+            legend_ax = ax.inset_axes([cx - lw / 2, ly, lw, lh])
             legend_ax.imshow(
                 np.arange(len(palette)).reshape(1, len(palette)),
                 cmap=mpl.colors.ListedColormap(list(palette)),
