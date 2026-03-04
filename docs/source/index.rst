@@ -44,6 +44,7 @@ data. The BEELINE framework is divided into the following modules:
    Home <self>
    getting-started
    running-beeline
+   reproducing-results
    algorithms
    beeline-developer
    BoolODE

@@ -249,6 +249,8 @@ Pratapa, A., Jalihal, A.P., Law, J.N., Bharadwaj, A., Murali, T.M. (2020) "Bench
 ## Related Resources
 
 - Input datasets: [https://doi.org/10.5281/zenodo.3378975](https://doi.org/10.5281/zenodo.3378975)
+  - Use dataset version **v4** for BEELINE v1.1
+  - Use dataset version **v3** for earlier versions of BEELINE
 - BoolODE (synthetic data generator): [https://github.com/Murali-group/BoolODE](https://github.com/Murali-group/BoolODE)
 - Docker images: [https://hub.docker.com/u/grnbeeline](https://hub.docker.com/u/grnbeeline)
 
