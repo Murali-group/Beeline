@@ -50,8 +50,8 @@ class Runner(ABC):
             base_output = base_output / experiment_id_prefix
         base_output = base_output / ds['dataset_id'] / ds['run_id'] / config['algo_name']
 
-        base_input.resolve()
-        base_output.resolve()
+        base_input = base_input.resolve()
+        base_output = base_output.resolve()
 
         # input_dir: run-level input directory (expression data, pseudo-time).
         self.input_dir  = base_input / ds['dataset_id'] / ds['run_id']

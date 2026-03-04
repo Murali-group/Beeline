@@ -110,8 +110,8 @@ class EvaluationData:
         input_settings  = config['input_settings']
         output_settings = config['output_settings']
 
-        input_dir  = root / input_settings['input_dir']
-        output_dir = root / output_settings['output_dir']
+        input_dir  = (root / input_settings['input_dir']).resolve()
+        output_dir = (root / output_settings['output_dir']).resolve()
         # experiment_id : str — optional; when set, an experiment_id segment is
         # inserted between output_dir and the dataset path.
         experiment_id = output_settings.get('experiment_id', '')

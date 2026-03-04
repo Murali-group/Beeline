@@ -64,7 +64,7 @@ class PearsonRunner(Runner):
         '''
         outFile = self.working_dir / 'outFile.txt'
         if not outFile.exists():
-            print(str(outFile) + 'does not exist, skipping...')
+            print(str(outFile) + ' does not exist, skipping...')
             return
 
         # Read square correlation matrix (genes x genes)
