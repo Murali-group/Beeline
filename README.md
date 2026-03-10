@@ -275,3 +275,6 @@ Pratapa, A., Jalihal, A.P., Law, J.N., Bharadwaj, A., Murali, T.M. (2020) "Bench
     ├── setupAnacondaVENV.sh    # Create/update BEELINE conda environment
     └── environment.yml         # Conda environment specification
 ```
+
+## Use of Generative AI
+*For BEELINE v1.1, we prepared portions of this codebase and documentation with assistance from Claude Sonnet 4.6, an AI assistant developed by Anthropic. The authors have reviewed and approved all content and take full responsibility for its accuracy.*
