@@ -1,101 +1,71 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>BoolODE &mdash; BEELINE  documentation</title>
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BoolODE &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
 
   
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="src package" href="src.html" />
-    <link rel="prev" title="BLPlot package" href="BLPlot.html" /> 
+    <link rel="next" title="Defining an input model" href="boolode-tutorial.html" />
+    <link rel="prev" title="Developer Guide" href="beeline-developer.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="index.html" class="icon icon-home"> BEELINE
           
-
-          
-            
-            <img src="_static/beeline.svg" class="logo" alt="Logo"/>
-          
+          <a href="index.html" class="icon icon-home">
+            BEELINE
+              <img src="_static/beeline-group.svg" class="logo" alt="Logo"/>
           </a>
-
-          
-            
-            
-          
-
-          
+              <div class="version">
+                v1.1
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="BEELINE.html">BEELINE</a></li>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beeline-developer.html">Developer Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">BoolODE</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#tutorial">Tutorial</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#defining-an-input-model">Defining an input model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#running-boolode">Running BoolODE</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#working-with-boolode-output">Working with BoolODE output</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#generating-inputs-for-beeline">Generating inputs for BEELINE</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#compute-pseudotime-using-slingshot">Compute Pseudotime using Slingshot</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#generate-dropouts-from-expression-data">Generate dropouts from expression data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="boolode-tutorial.html">Defining an input model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolode-tutorial.html#running-boolode">Running BoolODE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolode-tutorial.html#working-with-boolode-output">Working with BoolODE output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolode-processing.html">Generating inputs for BEELINE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolode-processing.html#compute-pseudotime-using-slingshot">Compute Pseudotime using Slingshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolode-processing.html#generate-dropouts-from-expression-data">Generate dropouts from expression data</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#command-line-options">Command Line Options</a></li>
@@ -105,461 +75,70 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
 </ul>
 
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">BEELINE</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>BoolODE</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">BoolODE</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="_sources/BoolODE.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="boolode">
-<span id="id1"></span><h1>BoolODE<a class="headerlink" href="#boolode" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+             
+  <section id="boolode">
+<span id="id1"></span><h1>BoolODE<a class="headerlink" href="#boolode" title="Permalink to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
 <p>The BoolODE package converts a Boolean model to an ODE model and carries out stochastic
 simulations. It reads a model definition file, and outputs the simulated expression data
 for a given model.</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">BoolODE</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">path</span><span class="o">=</span><span class="n">data</span><span class="o">/</span><span class="n">test_vars</span><span class="o">.</span><span class="n">txt</span> <span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">time</span><span class="o">=</span><span class="mi">5</span> <span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">cells</span> <span class="mi">10</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>src/BoolODE.py<span class="w"> </span>--path<span class="o">=</span>data/test_vars.txt<span class="w"> </span>--max-time<span class="o">=</span><span class="m">5</span><span class="w"> </span>--num-cells<span class="w"> </span><span class="m">10</span>
 </pre></div>
 </div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">BoolODE Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="boolode-tutorial.html">Defining an input model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolode-tutorial.html#running-boolode">Running BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolode-tutorial.html#working-with-boolode-output">Working with BoolODE output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolode-processing.html">Generating inputs for BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolode-processing.html#compute-pseudotime-using-slingshot">Compute Pseudotime using Slingshot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="boolode-processing.html#generate-dropouts-from-expression-data">Generate dropouts from expression data</a></li>
+</ul>
 </div>
-<div class="section" id="tutorial">
-<h2>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="defining-an-input-model">
-<h3>Defining an input model<a class="headerlink" href="#defining-an-input-model" title="Permalink to this headline">¶</a></h3>
-<p>Consider a toy gene regulatory network with a series of mutual
-inhibition motifs as illustrated below:</p>
-<div class="figure align-center" id="id2">
-<img alt="_images/boolode-example.png" src="_images/boolode-example.png" />
-<p class="caption"><span class="caption-text">If there is an equal probabiliy of taking either the left hand branch
-or the right hand branch starting at (g1=high,g2=high), this network will
-result in 8 distinct steady states, with one of the eight extreme genes being
-active in each steady state.</span></p>
-</div>
-<p>BoolODE can be used to generate gene expression data of a sample of cells undergoing
-a developmental process controlled by a gene regulatory network with a wiring diagram
-as shown above.</p>
-<p>The above network diagram can be represented as a Boolean model as follows:</p>
-<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Gene</span>  <span class="n">Rule</span>
-<span class="n">g1</span>    <span class="p">(</span> <span class="n">g1</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g2</span> <span class="p">)</span>
-<span class="n">g2</span>    <span class="p">(</span> <span class="n">g2</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g1</span> <span class="p">)</span>
-<span class="n">g11</span>   <span class="p">(</span> <span class="n">g1</span> <span class="ow">or</span> <span class="n">g11</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g12</span> <span class="p">)</span>
-<span class="n">g12</span>   <span class="p">(</span> <span class="n">g1</span> <span class="ow">or</span> <span class="n">g12</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g11</span> <span class="p">)</span>
-<span class="n">g21</span>   <span class="p">(</span> <span class="n">g2</span> <span class="ow">or</span> <span class="n">g21</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g22</span> <span class="p">)</span>
-<span class="n">g22</span>   <span class="p">(</span> <span class="n">g2</span> <span class="ow">or</span> <span class="n">g22</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g21</span> <span class="p">)</span>
-<span class="n">g111</span>  <span class="p">(</span> <span class="n">g11</span> <span class="ow">or</span> <span class="n">g111</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g112</span> <span class="p">)</span>
-<span class="n">g112</span>  <span class="p">(</span> <span class="n">g11</span> <span class="ow">or</span> <span class="n">g112</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g111</span> <span class="p">)</span>
-<span class="n">g121</span>  <span class="p">(</span> <span class="n">g12</span> <span class="ow">or</span> <span class="n">g121</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g122</span> <span class="p">)</span>
-<span class="n">g122</span>  <span class="p">(</span> <span class="n">g12</span> <span class="ow">or</span> <span class="n">g122</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g121</span> <span class="p">)</span>
-<span class="n">g211</span>  <span class="p">(</span> <span class="n">g21</span> <span class="ow">or</span> <span class="n">g211</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g212</span> <span class="p">)</span>
-<span class="n">g212</span>  <span class="p">(</span> <span class="n">g21</span> <span class="ow">or</span> <span class="n">g212</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g211</span> <span class="p">)</span>
-<span class="n">g221</span>  <span class="p">(</span> <span class="n">g22</span> <span class="ow">or</span> <span class="n">g221</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g222</span> <span class="p">)</span>
-<span class="n">g222</span>  <span class="p">(</span> <span class="n">g22</span> <span class="ow">or</span> <span class="n">g222</span> <span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span> <span class="n">g221</span> <span class="p">)</span>
+</section>
+<section id="command-line-options">
+<span id="boolodeoptions"></span><h2>Command Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this heading"></a></h2>
+<p>For a full list of available command line options, run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>src/BoolODE.py<span class="w"> </span>--help
 </pre></div>
 </div>
-<p>In order to test BoolODE, copy the rules  above into a file, say <code class="docutils literal notranslate"><span class="pre">multistate.txt</span></code>,
-in the <code class="docutils literal notranslate"><span class="pre">/data</span></code> folder in the BoolODE folder.</p>
+</section>
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h2>
 <div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">BoolODE expects a tab separated rule file! Make sure the
-input file has tabs between the <code class="docutils literal notranslate"><span class="pre">Gene</span></code> and <code class="docutils literal notranslate"><span class="pre">Rule</span></code> column.</p>
+<p class="admonition-title">Note</p>
+<p>BoolODE is an external package. The following pages document its
+module structure; docstring content will only appear if the <code class="docutils literal notranslate"><span class="pre">src/</span></code>
+package is present on the Python path at build time.</p>
 </div>
-<p>Notice that the <code class="docutils literal notranslate"><span class="pre">g1&lt;-&gt;g2</span></code> interaction is central to the behavior of
-the model.  Let us choose an initial condition such that these genes
-have a medium/high value. Biologically, this can be interpreted as the
-initial undifferentiated cells have genes <code class="docutils literal notranslate"><span class="pre">g1</span></code> and <code class="docutils literal notranslate"><span class="pre">g2</span></code> ‘ON’, and
-all other genes ‘OFF’.  We can specify this initial state by creating a file with the
-following lines:</p>
-<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Genes</span> <span class="n">Values</span>
-<span class="p">[</span><span class="s1">&#39;g1&#39;</span><span class="p">,</span><span class="s1">&#39;g2&#39;</span><span class="p">]</span>   <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>The first column takes a list of genes formatted like a python list of
-strings. The second column takes a list of values to assign to the
-list of genes, again formatted as a python list of values. <strong>Any gene not
-listed in this file will be assigned an initial value of 0 by default.</strong></p>
-<p>Let us save the initial condition specification in
-<code class="docutils literal notranslate"><span class="pre">/data/multistate_ics.txt</span></code>.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">The initial condition file should also be tab
-separated. Also, pay attention to the capitalization
-of the column names.</p>
-</div>
-<div class="admonition tip">
-<p class="first admonition-title">Tip</p>
-<p class="last">We recommend starting off with initial condition values
-between 0 and 2, since larger values might cause numerical
-instability.</p>
-</div>
-</div>
-<div class="section" id="running-boolode">
-<h3>Running BoolODE<a class="headerlink" href="#running-boolode" title="Permalink to this headline">¶</a></h3>
-<p>A few more decisions before we get our simulated dataset of gene expression
-values:</p>
-<ol class="arabic simple">
-<li>How long do you want to simulate this model? Let’s choose 8 time units</li>
-<li>How many cells do you want to simulate? 2000 seems like a good number.</li>
-<li>Where would you like to store the simulation output? Say, <code class="docutils literal notranslate"><span class="pre">./test/</span></code>. BoolODE will create any folders that don’t already exist.</li>
-<li>Do you want to speed up the simulations by running simulations in parallel? Yes!</li>
-</ol>
-<p>One last option that we will add is <code class="docutils literal notranslate"><span class="pre">--sample-cells</span></code>, which will instruct BoolODE
-to sample one cell from each simulated trajectory.</p>
-<p>This is all we need to call BoolODE on this model! The following
-directive puts together all the information collected so far</p>
-<div class="code bash highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">src</span><span class="o">/</span><span class="n">BoolODE</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="n">path</span> <span class="n">data</span><span class="o">/</span><span class="n">multistate</span><span class="o">.</span><span class="n">txt</span> \    <span class="c1"># path to the Boolean rules file</span>
-                      <span class="o">--</span><span class="n">ics</span> <span class="n">data</span><span class="o">/</span><span class="n">multistate_ics</span><span class="o">.</span><span class="n">txt</span> \ <span class="c1"># path to initial condition specification</span>
-                      <span class="o">--</span><span class="nb">max</span><span class="o">-</span><span class="n">time</span> <span class="mi">8</span> \                  <span class="c1"># maximum time of simulation</span>
-                      <span class="o">--</span><span class="n">num</span><span class="o">-</span><span class="n">cells</span> <span class="mi">2000</span> \              <span class="c1"># number of cells/simulations to perform</span>
-                      <span class="o">--</span><span class="n">outPrefix</span> <span class="n">test</span><span class="o">/</span> \             <span class="c1"># relative path to destination</span>
-                      <span class="o">--</span><span class="n">do</span><span class="o">-</span><span class="n">parallel</span> \                 <span class="c1"># do parallel simulations</span>
-                      <span class="o">--</span><span class="n">sample</span><span class="o">-</span><span class="n">cells</span>                  <span class="c1"># sample one cell from each simulation</span>
-</pre></div>
-</div>
-<p>For a full list of available options, see <a class="reference internal" href="#boolodeoptions"><span class="std std-ref">Command Line Options</span></a></p>
-</div>
-<div class="section" id="working-with-boolode-output">
-<h3>Working with BoolODE output<a class="headerlink" href="#working-with-boolode-output" title="Permalink to this headline">¶</a></h3>
-<p>The simulations will take about 5 minutes to complete. At the end of a successful run, the
-output directory should like this:</p>
-<div class="code text highlight-default notranslate"><div class="highlight"><pre><span></span>test/                      # User specified destination
-|-- parameters.txt         # Parameter names and values generated for input model
-|-- ExpressionData.csv     # Gene expression dataset
-|-- PseudoTime.csv         # Simulation time of each sample time point/cell
-|-- refNetwork.csv         # Boolean network represented as an edge list, the ground truth network
-`-- simulations/
-    |-- E1.csv
-    |-- E2.csv
-    ...
-</pre></div>
-</div>
-<p>Where <code class="docutils literal notranslate"><span class="pre">E1.csv,</span> <span class="pre">E2.csv,</span> <span class="pre">...</span></code> are individual simulations. Each column in these
-files, the cell IDs, has the form <code class="docutils literal notranslate"><span class="pre">E&lt;simulation</span> <span class="pre">number&gt;_&lt;timepoint&gt;</span></code>.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">By default BoolODE will store the entire simulated time
-course for every simulation. Specifying the <code class="docutils literal notranslate"><span class="pre">--sample-cells</span></code>
-option will result in BoolODE sampling cells and creating an
-<code class="docutils literal notranslate"><span class="pre">ExpressionData.csv</span></code> file with genes as rows, and cells as columns.
-If the option is not specified, you can write a custom script to
-sample cells from each simulation</p>
-</div>
-<p>In order to visualize the entire dataset, we can carry out dimensionality reduction using
-t-SNE. A script like the one below is a good starting point for this.</p>
-<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">sklearn.manifold</span> <span class="k">import</span> <span class="n">TSNE</span>
-<span class="kn">import</span> <span class="nn">matplotlib</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="k">def</span> <span class="nf">vis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-    <span class="n">tsne</span> <span class="o">=</span> <span class="n">TSNE</span><span class="p">(</span><span class="n">n_components</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">perplexity</span><span class="o">=</span><span class="n">p</span><span class="p">)</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">values</span><span class="p">)</span>
-    <span class="n">tdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tsne</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;t-SNE 1&#39;</span><span class="p">,</span> <span class="s1">&#39;t-SNE 2&#39;</span><span class="p">],</span><span class="n">index</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-    <span class="n">tdf</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;test/tsne.csv&#39;</span><span class="p">)</span>
-    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">tsne</span><span class="p">[:,</span><span class="mi">0</span><span class="p">],</span> <span class="n">tsne</span><span class="p">[:,</span><span class="mi">1</span><span class="p">],</span> <span class="n">c</span> <span class="o">=</span> <span class="p">[</span><span class="nb">float</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span>
-    <span class="n">ax</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;off&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s1">&#39;test/tree.png&#39;</span><span class="p">)</span>
-
-<span class="n">df</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;test/ExpressionData.csv&#39;</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-<span class="n">vis</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>Here, the time point of each cell is inferred from the cell ID, and this information
-is used to color each cell in the scatter plot. Darker colors imply early time points in the
-simulation. The output should look like the following</p>
-<div class="figure align-center" id="id3">
-<img alt="_images/tree.png" src="_images/tree.png" />
-<p class="caption"><span class="caption-text">t-SNE visualization of BoolODE output</span></p>
-</div>
-<p>Notice the eight steady state clusters! This dataset can now be
-processed further using the tools described in  <a class="reference internal" href="#geninputs"><span class="std std-ref">Generating inputs for BEELINE</span></a> to produce
-input datasets for the BEELINE pipeline.</p>
-</div>
-</div>
-<div class="section" id="generating-inputs-for-beeline">
-<span id="geninputs"></span><h2>Generating inputs for BEELINE<a class="headerlink" href="#generating-inputs-for-beeline" title="Permalink to this headline">¶</a></h2>
-<p>BoolODE provides additional scripts, located in <code class="docutils literal notranslate"><span class="pre">scripts/</span></code> to
-process simulation output to be used by BEELINE.</p>
-<div class="section" id="compute-pseudotime-using-slingshot">
-<h3>Compute Pseudotime using Slingshot<a class="headerlink" href="#compute-pseudotime-using-slingshot" title="Permalink to this headline">¶</a></h3>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">runSlingshot.py requires the SlingShot docker file! Please make sure
-docker has been setup and the container built.</p>
-</div>
-<p>Slingshot computes pseudotime trajectories for a given dataset by
-first carrying out dimensionality reduction, then carrying out
-<em>k</em>-means clustering on the low dimensional embedding in order to
-compute trajectories. The number of clusters expected depend on the
-features of the dataset. For instance, a dataset with two steady state
-clusters should be specified with <code class="docutils literal notranslate"><span class="pre">--nClusters</span> <span class="pre">3</span></code>, specifying an
-additional initial state cluster.</p>
-<dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">runSlingshot.py</span></code> takes the following command line arguments</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>show this help message and exit</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Prefix for output files.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-e <var>EXPR</var></span>, <span class="option">--expr=<var>EXPR</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to expression data file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-p <var>PSEUDO</var></span>, <span class="option">--pseudo=<var>PSEUDO</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to ‘pseudotime’ file generated by BoolODE</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-c <var>NCLUSTERS</var></span>, <span class="option">--nClusters=<var>NCLUSTERS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of expected clusters in the dataset.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--noEnd</span></kbd></td>
-<td>Do not force SlingShot to have an end state.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-r <var>PERPLEXITY</var></span>, <span class="option">--perplexity=<var>PERPLEXITY</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Perplexity for tSNE.</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last"><code class="docutils literal notranslate"><span class="pre">runslingshot.py</span></code> requires a ‘pseudotime’ file passed
-using the <code class="docutils literal notranslate"><span class="pre">--pseudo</span></code> option. This file should contain the
-actual simulation time from BoolODE, which can then be used
-to compare the quality of the inferred trajectory with the
-actual simulation time values. This file is NOT required by
-Slingshot itself.</p>
-</div>
-</div>
-<div class="section" id="generate-dropouts-from-expression-data">
-<h3>Generate dropouts from expression data<a class="headerlink" href="#generate-dropouts-from-expression-data" title="Permalink to this headline">¶</a></h3>
-<p>In order to mimic real single-cell expression datasets, BoolODE
-includes <code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> which implements dropouts as described in
-the paper, by dropping expression values below <code class="docutils literal notranslate"><span class="pre">DROP_CUTOFF</span></code> using a
-probability of <code class="docutils literal notranslate"><span class="pre">DROP_PROB</span></code>. This script samples <code class="docutils literal notranslate"><span class="pre">NCELLS</span></code> from the
-columns in the expression dataset <code class="docutils literal notranslate"><span class="pre">EXPR</span></code>, and will throw an error if
-the number is greater than the number of columns.</p>
-<dl class="docutils">
-<dt><code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> takes the following command line arguments</dt>
-<dd><table class="first last docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>show this help message and exit</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Prefix for output files.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-e <var>EXPR</var></span>, <span class="option">--expr=<var>EXPR</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to expression data file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-p <var>PSEUDO</var></span>, <span class="option">--pseudo=<var>PSEUDO</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to pseudotime file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-r <var>REFNET</var></span>, <span class="option">--refNet=<var>REFNET</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to reference network file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-n <var>NCELLS</var></span>, <span class="option">--nCells=<var>NCELLS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of cells to sample.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-d</span>, <span class="option">--dropout</span></kbd></td>
-<td>Carry out dropout analysis? [Optional]</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--drop-cutoff=<var>DROP_CUTOFF</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Specify percentile cutoff on gene expression</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--drop-prob=<var>DROP_PROB</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Specify the probability of dropping a gene below
-quantile q. Ensure 0 &lt; DROP_PROB &lt; 1.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-i <var>SAMPLENUM</var></span>, <span class="option">--samplenum=<var>SAMPLENUM</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Sample Number</td></tr>
-</tbody>
-</table>
-</dd>
-</dl>
-<div class="admonition attention">
-<p class="first admonition-title">Attention</p>
-<p class="last">Ensure the <code class="docutils literal notranslate"><span class="pre">--dropout</span></code> option is passed. If not, <code class="docutils literal notranslate"><span class="pre">genDropouts</span></code>
-will still randomly sample cells but not dropout any values.</p>
-</div>
-</div>
-</div>
-<div class="section" id="command-line-options">
-<span id="boolodeoptions"></span><h2>Command Line Options<a class="headerlink" href="#command-line-options" title="Permalink to this headline">¶</a></h2>
-<blockquote>
-<div><table class="docutils option-list" frame="void" rules="none">
-<col class="option" />
-<col class="description" />
-<tbody valign="top">
-<tr><td class="option-group">
-<kbd><span class="option">-h</span>, <span class="option">--help</span></kbd></td>
-<td>show this help message and exit</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--max-time=<var>MAX_TIME</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Total time of simulation. (Default = 20)</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--num-cells=<var>NUM_CELLS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of cells sample. (Default = 100)</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--sample-cells</span></kbd></td>
-<td>Sample a single cell from each trajectory? By default
-will store full trajectory of each simulation (Default
-= False)</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--add-dummy</span></kbd></td>
-<td>Add dummy genes</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-n</span>, <span class="option">--normalize-trajectory</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Min-Max normalize genes across all experiments</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-i</span>, <span class="option">--identical-pars</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Set single value to similar parameters NOTE: Consider
-setting this if you are using –sample-pars.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-s</span>, <span class="option">--sample-pars</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Sample rate parameters around the hardcoded means ,
-using 10% stand. dev.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--std=<var>STD</var></span></kbd></td>
-<td>If sampling parameters, specify standard deviation.
-(Default 0.1)</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--write-protein</span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Write both protein and RNA values to file. Useful for
-debugging.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">-b</span>, <span class="option">--burn-in</span></kbd></td>
-<td>Treats the first 25% of the time course as burnin ,
-samples from the rest.</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--outPrefix=<var>OUTPREFIX</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Prefix for output files.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--path=<var>PATH</var></span></kbd></td>
-<td>Path to boolean model file</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--inputs=<var>INPUTS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to input parameter files. This is different from
-specifying a parameter set!</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--pset=<var>PSET</var></span></kbd></td>
-<td>Path to pre-generated parameter set.</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--ics=<var>ICS</var></span></kbd></td>
-<td>Path to list of initial conditions</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--strengths=<var>STRENGTHS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to list of interaction strengths</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--species-type=<var>SPECIES_TYPE</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Path to list of molecular species type file.Useful to
-specify proteins/genes</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">-c <var>NCLUSTERS</var></span>, <span class="option">--nClusters=<var>NCLUSTERS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of expected clusters in the dataset. (Default =1)</td></tr>
-<tr><td class="option-group" colspan="2">
-<kbd><span class="option">--max-parents=<var>MAX_PARENTS</var></span></kbd></td>
-</tr>
-<tr><td>&#160;</td><td>Number of parents to add to dummy genes. (Default = 1)</td></tr>
-<tr><td class="option-group">
-<kbd><span class="option">--do-parallel</span></kbd></td>
-<td>Run simulations in parallel. Recommended for &gt; 50
-simulations</td></tr>
-</tbody>
-</table>
-</div></blockquote>
-</div>
-<div class="section" id="api-reference">
-<h2>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="src.html">src package</a><ul>
@@ -571,56 +150,38 @@ simulations</td></tr>
 </li>
 </ul>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="src.html" class="btn btn-neutral float-right" title="src package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="BLPlot.html" class="btn btn-neutral float-left" title="BLPlot package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="beeline-developer.html" class="btn btn-neutral float-left" title="Developer Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="boolode-tutorial.html" class="btn btn-neutral float-right" title="Defining an input model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2019, Aditya Pratapa
-
-    </p>
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

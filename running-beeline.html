@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Running BEELINE &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Reproducing BEELINE Results" href="reproducing-results.html" />
+    <link rel="prev" title="Getting Started" href="getting-started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BEELINE
+              <img src="_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Running BEELINE</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#input-datasets">Input Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#config-files">Config Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-pipeline">Running the Pipeline</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-evaluation-scripts">Running the Evaluation Scripts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-plotter-script">Running the Plotter Script</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Running BEELINE</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/running-beeline.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="running-beeline">
+<h1>Running BEELINE<a class="headerlink" href="#running-beeline" title="Permalink to this heading"></a></h1>
+<p>This section describes how to prepare inputs, configure, and run the
+BEELINE pipeline end-to-end.</p>
+<section id="input-datasets">
+<span id="id1"></span><h2>Input Datasets<a class="headerlink" href="#input-datasets" title="Permalink to this heading"></a></h2>
+<p>The sample input data set provided is generated by <a class="reference internal" href="BoolODE.html#boolode"><span class="std std-ref">BoolODE</span></a>
+using the Boolean model of <a class="reference external" href="https://www.ncbi.nlm.nih.gov/pubmed/26573569">Gonadal Sex Determination</a> as input.  Note that
+this dataset has been pre-processed to produce three files that are
+required in the BEELINE pipeline.</p>
+<ol class="arabic simple">
+<li><p><cite>ExpressionData.csv</cite> contains the RNAseq data, with genes as
+rows and cell IDs as columns. This file is a required input to the
+pipeline. Here is a <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/inputs/example/GSD/ExpressionData.csv">sample ExpressionData.csv file</a></p></li>
+<li><p><cite>PseudoTime.csv</cite> contains the pseudotime values for the cells in
+<cite>ExpressionData.csv</cite>.  We recommend using the Slingshot method to
+obtain the pseudotime for a dataset. Many algorithms in the
+pipeline require a pseudotime file as input. Here is a <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/inputs/example/GSD/PseudoTime.csv">sample
+PseudoTime file</a>.</p></li>
+<li><p><cite>GroundTruthNetwork.csv</cite> contains the ground truth network underlying the
+interactions between genes in <cite>ExpressionData.csv</cite>. Typically this
+network is not available, and will have to be curated from various
+Transcription Factor databases. While this file is not a
+requirement to run the base pipeline, a reference network is
+required to run some of the performance evaluations in
+<a class="reference internal" href="BLEval.html#bleval"><span class="std std-ref">BLEval package</span></a>.  Here is a <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/inputs/example/GSD/GroundTruthNetwork.csv">sample GroundTruthNetwork.csv file</a></p></li>
+</ol>
+<p>The figure below shows the t-SNE visualization of the expression
+data from the example dataset.</p>
+<img alt="_images/SlingshotOutputVis.png" src="_images/SlingshotOutputVis.png" />
+<p>This dataset shows a bifurcating
+trajectory, as is evidenced by the part (a) of the figure, where
+each ‘cell’ is colored by the timepoint at which it was sampled
+in the simulation (the darker colors indicate earlier time points).
+Clustering the simulation confirms the two trajectories, indicated
+in red and blue respectively in part (b). Finally, running Slingshot
+on this dataset and specifying the cluster of cells corresponding to
+the early time points yields two pseudotime trajectories, shown in part (c).
+For details on the generation of this simulated dataset, see <a class="reference internal" href="BoolODE.html#boolode"><span class="std std-ref">BoolODE</span></a>.</p>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Please ensure that any input dataset you create is
+comma separated, and contains the correct style of
+column names.</p>
+</div>
+</section>
+<section id="config-files">
+<span id="configfiles"></span><h2>Config Files<a class="headerlink" href="#config-files" title="Permalink to this heading"></a></h2>
+<p>Beeline uses <a class="reference external" href="https://yaml.org/">YAML</a> files to allow users to
+flexibly specify inputs and algorithm run parameters. A sample config
+file is provided <a class="reference external" href="https://github.com/Murali-group/Beeline/blob/master/config-files/config.yaml">here</a>. A
+config file should contain at minimum</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>input_settings:
+    input_dir : &quot;Base input directory (recommended: inputs)&quot;
+    datasets:
+        - dataset_id: &quot;Dataset group label&quot;
+          should_run: [True]
+          groundTruthNetwork: &quot;Ground truth network filename&quot;
+          runs:
+              - run_id: &quot;Run subdirectory name&quot;
+    algorithms:
+        - algorithm_id: &quot;Algorithm name&quot;
+          image: &quot;Docker image tag&quot;
+          should_run: [True]  # or [False]
+          params:
+              # Any algorithm-specific parameters
+
+output_settings:
+    output_dir : &quot;Base output directory (recommended: outputs)&quot;
+</pre></div>
+</div>
+<p>Apart from indicating the path to the base input directory, the config file
+specifies which datasets and runs to process, which algorithms should be run,
+and the parameters to pass to each algorithm. For a list of parameters
+that the pipeline currently supports, see <a class="reference internal" href="algorithms.html#algorithms"><span class="std std-ref">Supported Algorithms</span></a>. The config
+also specifies <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>, where all outputs are written.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">datasets</span></code> list groups runs that share the same ground truth network
+under a common <code class="docutils literal notranslate"><span class="pre">dataset_id</span></code>. Each <code class="docutils literal notranslate"><span class="pre">run_id</span></code> corresponds to a
+subdirectory of <code class="docutils literal notranslate"><span class="pre">input_dir/dataset_id/</span></code> containing the expression,
+pseudotime, and ground truth files for that replicate.</p>
+<p>For example, if the config file contains:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>input_settings:
+    input_dir : &quot;inputs&quot;
+    datasets:
+        - dataset_id: &quot;GSD&quot;
+          should_run: [True]
+          groundTruthNetwork: &quot;GroundTruthNetwork.csv&quot;
+          runs:
+              - run_id: &quot;GSD-1&quot;
+    algorithms:
+        - algorithm_id: &quot;PIDC&quot;
+          image: &quot;grnbeeline/pidc:base&quot;
+          should_run: [True]
+          params: {}
+        - algorithm_id: &quot;SCODE&quot;
+          image: &quot;grnbeeline/scode:base&quot;
+          should_run: [False]
+          params:
+              z: [10]
+              nIter: [1000]
+              nRep: [6]
+
+output_settings:
+    output_dir : &quot;outputs&quot;
+</pre></div>
+</div>
+<p>BEELINE would interpret this as follows:</p>
+<ul class="simple">
+<li><p>The input files for run <code class="docutils literal notranslate"><span class="pre">GSD-1</span></code> are located at <code class="docutils literal notranslate"><span class="pre">inputs/GSD/GSD-1/</span></code>, e.g.
+<code class="docutils literal notranslate"><span class="pre">inputs/GSD/GSD-1/ExpressionData.csv</span></code>. The ground truth network is read
+from <code class="docutils literal notranslate"><span class="pre">inputs/GSD/GSD-1/GroundTruthNetwork.csv</span></code>.</p></li>
+<li><p>SCODE will be skipped because <code class="docutils literal notranslate"><span class="pre">should_run</span></code> is set to <code class="docutils literal notranslate"><span class="pre">[False]</span></code>.</p></li>
+<li><p>Outputs for each algorithm are written under
+<code class="docutils literal notranslate"><span class="pre">outputs/GSD/GSD-1/&lt;algorithm_id&gt;/</span></code>. For example, PIDC results will
+be at <code class="docutils literal notranslate"><span class="pre">outputs/GSD/GSD-1/PIDC/rankedEdges.csv</span></code>.</p></li>
+</ul>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Please ensure that the YAML file is correctly indented!</p>
+</div>
+</section>
+<section id="running-the-pipeline">
+<h2>Running the Pipeline<a class="headerlink" href="#running-the-pipeline" title="Permalink to this heading"></a></h2>
+<p>Once the input dataset has been generated and formatted as described
+in Section <a class="reference internal" href="#input-datasets"><span class="std std-ref">Input Datasets</span></a>, and the config file has been
+created as described in <a class="reference internal" href="#configfiles"><span class="std std-ref">Config Files</span></a>, the pipeline can be
+executed by calling <code class="docutils literal notranslate"><span class="pre">BLRunner.py</span></code> with the config file
+passed using the <code class="docutils literal notranslate"><span class="pre">--config</span></code> option.</p>
+<p>To run the pipeline, simply invoke</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>PATH/TO/CONFIG/FILE
+</pre></div>
+</div>
+<p>For details about the implementation of <a class="reference internal" href="BLRun.html#module-BLRun" title="BLRun"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLRun</span></code></a>, see <a class="reference internal" href="beeline-developer.html#blrunguide"><span class="std std-ref">Adding a new GRN inference method</span></a>.</p>
+</section>
+<section id="running-the-evaluation-scripts">
+<h2>Running the Evaluation Scripts<a class="headerlink" href="#running-the-evaluation-scripts" title="Permalink to this heading"></a></h2>
+<p>Each algorithm outputs an inferred network in the form of a ranked edge list.
+BEELINE implements a consistent interface using the config file in order to retrieve
+the predictions of multiple algorithms and evaluate them using a variety of methods.</p>
+<p>The evaluation of the inferred networks is done by calling the
+<code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code> script.  Like <code class="docutils literal notranslate"><span class="pre">BLRunner.py</span></code>, the
+evaluator script takes the config file as input. Every subsequent
+option passed to this script calls a different evaluation script. For instance,
+in order to analyze the AUROC and AUPRC values and also analyze network motifs,
+use the following command</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>BLEvaluator.py<span class="w"> </span>--config<span class="w"> </span>PATH/TO/CONFIG/FILE<span class="w"> </span><span class="se">\</span>
+<span class="w">                           </span>--auc<span class="w"> </span><span class="se">\ </span><span class="w">  </span><span class="c1"># calls the computeAUC script</span>
+<span class="w">                           </span>--motifs<span class="w">  </span><span class="c1"># calls the computeNetMotifs script</span>
+</pre></div>
+</div>
+<p>The full list of available evaluation functions and their corresponding options
+to be passed to <code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code> are given below:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 37.5%" />
+<col style="width: 62.5%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>-h, –help</p></td>
+<td><p>show the help message and exit</p></td>
+</tr>
+<tr class="row-even"><td><p>-c, –config &lt;file-name&gt;</p></td>
+<td><p>Configuration file containing list of datasets, algorithms, and output specifications.</p></td>
+</tr>
+<tr class="row-odd"><td><p>-a, –auc</p></td>
+<td><p>Compute median of areas under Precision-Recall and ROC curves. Calls <a class="reference internal" href="BLEval.html#module-BLEval.AUPRC" title="BLEval.AUPRC"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.AUPRC</span></code></a> and <a class="reference internal" href="BLEval.html#module-BLEval.AUROC" title="BLEval.AUROC"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.AUROC</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>-j, –jaccard</p></td>
+<td><p>Compute median Jaccard index of predicted top-k networks
+for each algorithm for a given set of datasets generated from the same
+ground truth network. Calls <a class="reference internal" href="BLEval.html#module-BLEval.Jaccard" title="BLEval.Jaccard"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.Jaccard</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>-r, –spearman</p></td>
+<td><p>Compute median Spearman Corr. of predicted edges for each algorithm for a given set of datasets generated from the same ground truth network. Calls <a class="reference internal" href="BLEval.html#module-BLEval.Spearman" title="BLEval.Spearman"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.Spearman</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>-t, –time</p></td>
+<td><p>Analyze time taken by each algorithm. Calls <a class="reference internal" href="BLEval.html#module-BLEval.BLTime" title="BLEval.BLTime"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.BLTime</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>-e, –epr</p></td>
+<td><p>Compute median early precision. Calls <a class="reference internal" href="BLEval.html#module-BLEval.EarlyPrecision" title="BLEval.EarlyPrecision"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.EarlyPrecision</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>-s, –sepr</p></td>
+<td><p>Analyze median (signed) early precision for activation and inhibitory edges. Calls <a class="reference internal" href="BLEval.html#module-BLEval.SignedEarlyPrecision" title="BLEval.SignedEarlyPrecision"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.SignedEarlyPrecision</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>-m, –motifs</p></td>
+<td><p>Compute network motifs in the predicted top-k networks. Calls <a class="reference internal" href="BLEval.html#module-BLEval.Motifs" title="BLEval.Motifs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.Motifs</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>-p, –paths</p></td>
+<td><p>Compute path length statistics on the predicted top-k networks. Calls <a class="reference internal" href="BLEval.html#module-BLEval.PathStats" title="BLEval.PathStats"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.PathStats</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>-b, –borda</p></td>
+<td><p>Compute edge ranked list using the various Borda aggregation methods. Calls <a class="reference internal" href="BLEval.html#module-BLEval.Borda" title="BLEval.Borda"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLEval.Borda</span></code></a>.</p></td>
+</tr>
+</tbody>
+</table>
+<p>For details about the implementation of <a class="reference internal" href="BLEval.html#module-BLEval" title="BLEval"><code class="xref py py-class docutils literal notranslate"><span class="pre">BLEval</span></code></a>, see <a class="reference internal" href="beeline-developer.html#blevalguide"><span class="std std-ref">Adding a new evaluation technique</span></a>.</p>
+</section>
+<section id="running-the-plotter-script">
+<h2>Running the Plotter Script<a class="headerlink" href="#running-the-plotter-script" title="Permalink to this heading"></a></h2>
+<p>Once evaluation has been run with <code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code>, results can be
+visualised by calling <code class="docutils literal notranslate"><span class="pre">BLPlotter.py</span></code> with the same config file and an
+output directory for the generated plots.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>BLPlotter.py<span class="w"> </span>--config<span class="w"> </span>PATH/TO/CONFIG/FILE<span class="w"> </span>--output<span class="w"> </span>PATH/TO/OUTPUT/DIR
+</pre></div>
+</div>
+<p>The full list of available plot types and their corresponding options are
+given below:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 37.5%" />
+<col style="width: 62.5%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>-h, –help</p></td>
+<td><p>show the help message and exit</p></td>
+</tr>
+<tr class="row-even"><td><p>-c, –config &lt;file-name&gt;</p></td>
+<td><p>Configuration file containing list of datasets and algorithms. The same file used with BLEvaluator.py may be used here.</p></td>
+</tr>
+<tr class="row-odd"><td><p>-o, –output &lt;dir&gt;</p></td>
+<td><p>Output directory for generated plots (default: current directory).</p></td>
+</tr>
+<tr class="row-even"><td><p>-a, –auprc</p></td>
+<td><p>Produce per-dataset AUPRC plots (<code class="docutils literal notranslate"><span class="pre">AUPRC.pdf</span></code>). Datasets with a single run output a precision-recall curve; datasets with multiple runs output a box plot. Calls <a class="reference internal" href="BLPlot.html#module-BLPlot.PlotAUPRC" title="BLPlot.PlotAUPRC"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLPlot.PlotAUPRC</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>-r, –auroc</p></td>
+<td><p>Produce per-dataset AUROC plots (<code class="docutils literal notranslate"><span class="pre">AUROC.pdf</span></code>). Datasets with a single run output a ROC curve; datasets with multiple runs output a box plot. Calls <a class="reference internal" href="BLPlot.html#module-BLPlot.PlotAUROC" title="BLPlot.PlotAUROC"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLPlot.PlotAUROC</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>-e, –epr</p></td>
+<td><p>Produce a box plot of early precision values for the evaluated algorithms (<code class="docutils literal notranslate"><span class="pre">EPR.pdf</span></code>). Calls <a class="reference internal" href="BLPlot.html#module-BLPlot.PlotEPR" title="BLPlot.PlotEPR"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLPlot.PlotEPR</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>–summary</p></td>
+<td><p>Produce a heatmap of median AUPRC ratios and median Spearman stability per algorithm and dataset (<code class="docutils literal notranslate"><span class="pre">Summary.pdf</span></code>). Calls <a class="reference internal" href="BLPlot.html#module-BLPlot.PlotSummaryHeatmap" title="BLPlot.PlotSummaryHeatmap"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLPlot.PlotSummaryHeatmap</span></code></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p>–epr-summary</p></td>
+<td><p>Produce a heatmap of median AUPRC ratio, EPR ratio, and signed EPR ratios per algorithm and dataset (<code class="docutils literal notranslate"><span class="pre">EPRSummary.pdf</span></code>). Calls <a class="reference internal" href="BLPlot.html#module-BLPlot.PlotEPRHeatmap" title="BLPlot.PlotEPRHeatmap"><code class="xref py py-mod docutils literal notranslate"><span class="pre">BLPlot.PlotEPRHeatmap</span></code></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>–all</p></td>
+<td><p>Run all plots.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting-started.html" class="btn btn-neutral float-left" title="Getting Started" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="reproducing-results.html" class="btn btn-neutral float-right" title="Reproducing BEELINE Results" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

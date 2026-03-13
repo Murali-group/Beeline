@@ -1,7 +1,7 @@
-BLPlot
-======
+src
+===
 
 .. toctree::
    :maxdepth: 4
 
-   BLPlot
+   src

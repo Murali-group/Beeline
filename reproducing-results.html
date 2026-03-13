@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reproducing BEELINE Results &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Supported Algorithms" href="algorithms.html" />
+    <link rel="prev" title="Running BEELINE" href="running-beeline.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BEELINE
+              <img src="_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reproducing BEELINE Results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#environment-setup">Environment Setup</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloading-data-from-zenodo">Downloading Data from Zenodo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#synthetic-and-curated-datasets-figures-2-and-4">Synthetic and Curated Datasets (Figures 2 and 4)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#experimental-datasets-figures-5-and-6">Experimental Datasets (Figures 5 and 6)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reproducing BEELINE Results</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/reproducing-results.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reproducing-beeline-results">
+<h1>Reproducing BEELINE Results<a class="headerlink" href="#reproducing-beeline-results" title="Permalink to this heading"></a></h1>
+<p>This page describes how to reproduce the results from the original BEELINE paper
+(Pratapa et al., <em>Nature Methods</em>, 2020).</p>
+<section id="environment-setup">
+<h2>Environment Setup<a class="headerlink" href="#environment-setup" title="Permalink to this heading"></a></h2>
+<p>Before running any experiments, complete the standard BEELINE setup described in
+<a class="reference internal" href="getting-started.html"><span class="doc">Getting Started</span></a>:</p>
+<ol class="arabic">
+<li><p>Install and configure Docker.</p></li>
+<li><p>Create the BEELINE conda environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.<span class="w"> </span>utils/setupAnacondaVENV.sh
+</pre></div>
+</div>
+</li>
+<li><p>Pull the algorithm Docker images:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>.<span class="w"> </span>utils/initialize.sh
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="downloading-data-from-zenodo">
+<h2>Downloading Data from Zenodo<a class="headerlink" href="#downloading-data-from-zenodo" title="Permalink to this heading"></a></h2>
+<p>The datasets used in the paper are available on Zenodo at
+<a class="reference external" href="https://doi.org/10.5281/zenodo.3378975">https://doi.org/10.5281/zenodo.3378975</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>BEELINE v1.1 requires Zenodo dataset version v4.</strong> Earlier versions of
+BEELINE should use Zenodo dataset version v3. If you are using an older
+version of BEELINE, please refer to the documentation for that version rather
+than this page. The significant change is a streamlined dircetory structure
+that allows users to easily replicate certain figures.</p>
+</div>
+<p>The archive contains two top-level items:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BEELINE-data/</span></code> — the expression, pseudotime, and ground truth files for the
+Synthetic and Curated datasets, as well as the raw scRNA-seq experimental data.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">BEELINE-Networks/</span></code> — reference networks (ChIP-seq and STRING) and transcription
+factor lists used for preprocessing the experimental datasets.</p></li>
+</ul>
+<p><strong>Extracting the data</strong></p>
+<p>Copy the contents of <code class="docutils literal notranslate"><span class="pre">BEELINE-data/inputs/</span></code> into the <code class="docutils literal notranslate"><span class="pre">inputs/</span></code> directory at the
+root of this repository, and place <code class="docutils literal notranslate"><span class="pre">BEELINE-Networks/</span></code> at the repository root as
+well:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>inputs/
+├── Curated/
+│   ├── GSD/            (GroundTruthNetwork.csv + 10 run subdirectories)
+│   ├── GSD-q50/        (50% dropout variant)
+│   ├── GSD-q70/        (70% dropout variant)
+│   ├── HSC/
+│   ├── HSC-q50/
+│   ├── HSC-q70/
+│   ├── mCAD/
+│   ├── mCAD-q50/
+│   ├── mCAD-q70/
+│   ├── VSC/
+│   ├── VSC-q50/
+│   └── VSC-q70/
+├── Synthetic/
+│   ├── dyn-BF/
+│   │   ├── dyn-BF-100/ (10 run subdirectories)
+│   │   ├── dyn-BF-200/
+│   │   ├── dyn-BF-500/
+│   │   ├── dyn-BF-2000/
+│   │   └── dyn-BF-5000/
+│   ├── dyn-BFC/        (same cell-count structure)
+│   ├── dyn-CY/
+│   ├── dyn-LI/
+│   ├── dyn-LL/
+│   └── dyn-TF/
+└── scRNA-Seq/
+    ├── hESC/
+    ├── hHep/
+    ├── mDC/
+    ├── mESC/
+    ├── mHSC-E/
+    ├── mHSC-GM/
+    └── mHSC-L/
+
+BEELINE-Networks/
+├── Networks/
+│   ├── human/      (ChIP-seq and STRING networks)
+│   └── mouse/      (ChIP-seq and STRING networks)
+├── human-tfs.csv
+└── mouse-tfs.csv
+</pre></div>
+</div>
+</section>
+<section id="synthetic-and-curated-datasets-figures-2-and-4">
+<h2>Synthetic and Curated Datasets (Figures 2 and 4)<a class="headerlink" href="#synthetic-and-curated-datasets-figures-2-and-4" title="Permalink to this heading"></a></h2>
+<p>Figures 2 and 4 evaluate algorithm performance on BoolODE-simulated (Synthetic)
+and curated biological (Curated) datasets.</p>
+<p>Each of the four Curated datasets (GSD, HSC, mCAD, VSC) is split into three
+top-level directories by dropout level: full cell count (e.g. <code class="docutils literal notranslate"><span class="pre">GSD</span></code>), 50%
+dropout (<code class="docutils literal notranslate"><span class="pre">GSD-q50</span></code>), and 70% dropout (<code class="docutils literal notranslate"><span class="pre">GSD-q70</span></code>). Each directory contains a
+shared <code class="docutils literal notranslate"><span class="pre">GroundTruthNetwork.csv</span></code> and 10 run subdirectories (e.g. <code class="docutils literal notranslate"><span class="pre">GSD-2000-1</span></code>
+through <code class="docutils literal notranslate"><span class="pre">GSD-2000-10</span></code>), each with <code class="docutils literal notranslate"><span class="pre">ExpressionData.csv</span></code> and <code class="docutils literal notranslate"><span class="pre">PseudoTime.csv</span></code>.</p>
+<p>Each of the six Synthetic networks (dyn-BF, dyn-BFC, dyn-CY, dyn-LI, dyn-LL,
+dyn-TF) contains five cell-count subdirectories (100, 200, 500, 2000, 5000
+cells), each with 10 replicate run directories (e.g.
+<code class="docutils literal notranslate"><span class="pre">dyn-BF/dyn-BF-100/dyn-BF-100-1/</span></code>). Each leaf run directory contains
+<code class="docutils literal notranslate"><span class="pre">ExpressionData.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">PseudoTime.csv</span></code>, and <code class="docutils literal notranslate"><span class="pre">GroundTruthNetwork.csv</span></code>.</p>
+<p><strong>Step 1: Run the inference algorithms</strong></p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>SCNS is not included in BEELINE v1.1 due to its long run time.</p>
+</div>
+<p>Config files for each dataset are in <code class="docutils literal notranslate"><span class="pre">config-files/Curated/</span></code> and
+<code class="docutils literal notranslate"><span class="pre">config-files/Synthetic/</span></code>. Run <code class="docutils literal notranslate"><span class="pre">BLRunner.py</span></code> once for each config file:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Curated/GSD.yaml
+python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Curated/HSC.yaml
+python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Curated/mCAD.yaml
+python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Curated/VSC.yaml
+python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Synthetic/dyn-BF.yaml
+python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Synthetic/dyn-BFC.yaml
+python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Synthetic/dyn-CY.yaml
+python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Synthetic/dyn-LI.yaml
+python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Synthetic/dyn-LL.yaml
+python<span class="w"> </span>BLRunner.py<span class="w"> </span>--config<span class="w"> </span>config-files/Synthetic/dyn-TF.yaml
+</pre></div>
+</div>
+<p><strong>Step 2: Evaluate algorithm output</strong></p>
+<p>Use <code class="docutils literal notranslate"><span class="pre">BLEvaluator.py</span></code> with the plot config files, which aggregate results across
+all datasets for a given collection:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Synthetic networks</span>
+python<span class="w"> </span>BLEvaluator.py<span class="w"> </span>--config<span class="w"> </span>config-files/Synthetic/PlotCuratedNetworks.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--auc<span class="w"> </span>--spearman<span class="w"> </span>--epr<span class="w"> </span>--sepr
+
+<span class="c1"># Curated networks</span>
+python<span class="w"> </span>BLEvaluator.py<span class="w"> </span>--config<span class="w"> </span>config-files/Curated/PlotSimulatedNetworks.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--auc<span class="w"> </span>--spearman<span class="w"> </span>--epr<span class="w"> </span>--sepr
+</pre></div>
+</div>
+<p><strong>Step 3: Generate plots</strong></p>
+<p><em>Figure 2</em> — AUPRC ratio and Spearman stability summary heatmap:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>BLPlotter.py<span class="w"> </span>--config<span class="w"> </span>config-files/Synthetic/PlotCuratedNetworks.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>outputs/plots/Synthetic<span class="w"> </span>--summary
+
+python<span class="w"> </span>BLPlotter.py<span class="w"> </span>--config<span class="w"> </span>config-files/Curated/PlotSimulatedNetworks.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>outputs/plots/Curated<span class="w"> </span>--summary
+</pre></div>
+</div>
+<p><em>Figure 4</em> — EPR and signed EPR summary heatmap:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>BLPlotter.py<span class="w"> </span>--config<span class="w"> </span>config-files/Synthetic/PlotCuratedNetworks.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>outputs/plots/Synthetic<span class="w"> </span>--epr-summary
+
+python<span class="w"> </span>BLPlotter.py<span class="w"> </span>--config<span class="w"> </span>config-files/Curated/PlotSimulatedNetworks.yaml<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>outputs/plots/Curated<span class="w"> </span>--epr-summary
+</pre></div>
+</div>
+<p>Output PDFs are written to the specified <code class="docutils literal notranslate"><span class="pre">--output</span></code> directories as
+<code class="docutils literal notranslate"><span class="pre">Summary.pdf</span></code> and <code class="docutils literal notranslate"><span class="pre">EPRSummary.pdf</span></code> respectively.</p>
+</section>
+<section id="experimental-datasets-figures-5-and-6">
+<h2>Experimental Datasets (Figures 5 and 6)<a class="headerlink" href="#experimental-datasets-figures-5-and-6" title="Permalink to this heading"></a></h2>
+<p>Figures 5 and 6 include evaluation on seven real experimental scRNA-seq datasets
+from <code class="docutils literal notranslate"><span class="pre">inputs/scRNA-Seq/</span></code>:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>hESC</strong></p></td>
+<td><p>Human embryonic stem cells</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>hHep</strong></p></td>
+<td><p>Human mature hepatocytes</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>mDC</strong></p></td>
+<td><p>Mouse dendritic cells</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>mESC</strong></p></td>
+<td><p>Mouse embryonic stem cells</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>mHSC-E</strong></p></td>
+<td><p>Mouse hematopoietic stem cells — erythroid lineage</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>mHSC-GM</strong></p></td>
+<td><p>Mouse hematopoietic stem cells — granulocyte/monocyte lineage</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>mHSC-L</strong></p></td>
+<td><p>Mouse hematopoietic stem cells — lymphoid lineage</p></td>
+</tr>
+</tbody>
+</table>
+<p>Each dataset directory contains <code class="docutils literal notranslate"><span class="pre">ExpressionData.csv</span></code>, <code class="docutils literal notranslate"><span class="pre">PseudoTime.csv</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">GeneOrdering.csv</span></code> (a ranked list of genes with p-values and variance statistics).
+These datasets do <strong>not</strong> include a pre-built ground truth network file; reference
+networks must be sourced from <code class="docutils literal notranslate"><span class="pre">BEELINE-Networks/</span></code>.</p>
+<p><strong>Preprocessing with generateExpInputs.py</strong></p>
+<p>The script <code class="docutils literal notranslate"><span class="pre">utils/generateExpInputs.py</span></code> produces a filtered <code class="docutils literal notranslate"><span class="pre">ExpressionData.csv</span></code>
+by selecting the most variable and statistically significant genes. It can
+optionally restrict a reference network to only those genes. Run it once per
+dataset/configuration you want to evaluate. For example, for hESC with 500
+non-TF genes against the ChIP-seq reference network:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>utils/generateExpInputs.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--expFile<span class="w"> </span>inputs/scRNA-Seq/hESC/ExpressionData.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--geneOrderingFile<span class="w"> </span>inputs/scRNA-Seq/hESC/GeneOrdering.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--TFFile<span class="w"> </span>BEELINE-Networks/human-tfs.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--netFile<span class="w"> </span>BEELINE-Networks/Networks/human/hESC-ChIP-seq-network.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--pVal<span class="w"> </span><span class="m">0</span>.01<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--numGenes<span class="w"> </span><span class="m">500</span><span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--outPrefix<span class="w"> </span>inputs/Experimental/hESC/hESC-500
+</pre></div>
+</div>
+<p>For mouse datasets, substitute <code class="docutils literal notranslate"><span class="pre">BEELINE-Networks/mouse-tfs.csv</span></code> and the
+appropriate file from <code class="docutils literal notranslate"><span class="pre">BEELINE-Networks/Networks/mouse/</span></code>. Run
+<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">utils/generateExpInputs.py</span> <span class="pre">--help</span></code> for the full list of options.</p>
+<p>The output files should be placed in the appropriate subdirectory of <code class="docutils literal notranslate"><span class="pre">inputs/</span></code>
+and referenced from a BEELINE config file as described in <a class="reference internal" href="running-beeline.html#configfiles"><span class="std std-ref">Config Files</span></a>.</p>
+<p><strong>Note on reproducibility</strong></p>
+<p>Figures 5 and 6 are the result of a large number of runs across all seven
+experimental datasets with significantly customized configurations. Fully
+replicating these figures requires several weeks of compute time, and step-by-step
+instructions for reproducing them exactly are not available. A user familiar with
+BEELINE can configure the pipeline to reproduce these results from the
+data available on Zenodo.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="running-beeline.html" class="btn btn-neutral float-left" title="Running BEELINE" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="algorithms.html" class="btn btn-neutral float-right" title="Supported Algorithms" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

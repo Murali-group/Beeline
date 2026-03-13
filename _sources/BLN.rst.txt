@@ -1,13 +1,13 @@
-src package
+BLN package
 ===========
 
 Submodules
 ----------
 
-src.parseTime module
+BLN.parseTime module
 --------------------
 
-.. automodule:: src.parseTime
+.. automodule:: BLN.parseTime
     :members:
     :undoc-members:
     :show-inheritance:
@@ -16,7 +16,7 @@ src.parseTime module
 Module contents
 ---------------
 
-.. automodule:: src
+.. automodule:: BLN
     :members:
     :undoc-members:
     :show-inheritance:
