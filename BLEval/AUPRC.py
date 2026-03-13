@@ -1,4 +1,5 @@
-from typing import Dict, Set, Tuple
+from itertools import permutations
+from typing import Dict
 
 import pandas as pd
 from sklearn.metrics import auc, precision_recall_curve
@@ -9,21 +10,28 @@ from BLEval.data import EvaluationData
 
 def _compute_auprc(
     ranked_edges: pd.DataFrame,
-    true_edges: Set[Tuple[str, str]],
+    gt_df: pd.DataFrame,
 ) -> float:
     """
     Compute the area under the Precision-Recall curve for one algorithm on one run.
 
-    Self-loops are excluded before scoring. Returns float('nan') if no true
-    edges appear in the predicted list (PR curve is undefined).
+    Scores are computed over the fixed universe of all possible directed pairs
+    among ground truth genes (all permutations of length 2, self-loops excluded).
+    Predicted edges absent from the universe receive score 0. Edge weights are
+    taken as absolute values so that both positive (activating) and negative
+    (inhibitory) predictions are ranked by confidence magnitude. Duplicate
+    (Gene1, Gene2) pairs in ranked_edges are deduplicated by keeping the row with
+    the highest absolute EdgeWeight. Returns float('nan') if no true edges appear
+    in the scored universe (PR curve is undefined).
 
     Parameters
     ----------
     ranked_edges : pd.DataFrame
         Predicted edge list with columns Gene1, Gene2, EdgeWeight.
-        Higher EdgeWeight indicates greater confidence.
-    true_edges : set of (str, str)
-        Ground truth directed edges.
+        Higher absolute EdgeWeight indicates greater confidence.
+    gt_df : pd.DataFrame
+        Ground truth network with columns Gene1, Gene2. Used to derive both the
+        set of true edges and the fixed scoring universe.
 
     Returns
     -------
@@ -32,26 +40,32 @@ def _compute_auprc(
     """
     if not isinstance(ranked_edges, pd.DataFrame):
         raise TypeError(f"ranked_edges must be DataFrame, got {type(ranked_edges)}")
-    if not isinstance(true_edges, set):
-        raise TypeError(f"true_edges must be set, got {type(true_edges)}")
+    if not isinstance(gt_df, pd.DataFrame):
+        raise TypeError(f"gt_df must be DataFrame, got {type(gt_df)}")
 
-    # Remove self-loops — they are never meaningful predictions
-    predicted = ranked_edges[ranked_edges['Gene1'] != ranked_edges['Gene2']].copy()
+    # Fixed universe: all directed pairs among GT genes, self-loops excluded
+    gt_genes = sorted(set(gt_df['Gene1']).union(set(gt_df['Gene2'])))
+    possible_edges = list(permutations(gt_genes, 2))
 
-    if predicted.empty:
+    true_edge_set = set(zip(gt_df['Gene1'], gt_df['Gene2']))
+
+    # Deduplicate predicted edges: per (Gene1, Gene2), keep highest abs weight.
+    # Self-loops removed before deduplication as they are never valid predictions.
+    pred = ranked_edges[ranked_edges['Gene1'] != ranked_edges['Gene2']].copy()
+    pred['_abs'] = pred['EdgeWeight'].abs()
+    pred = pred.sort_values('_abs', ascending=False).drop_duplicates(
+        subset=['Gene1', 'Gene2']
+    )
+    pred_lookup = dict(zip(zip(pred['Gene1'], pred['Gene2']), pred['_abs'].astype(float)))
+
+    true_labels = [1 if e in true_edge_set else 0 for e in possible_edges]
+    pred_scores = [pred_lookup.get(e, 0.0) for e in possible_edges]
+
+    # PR curve is undefined when no positive examples exist in the universe
+    if sum(true_labels) == 0:
         return float('nan')
 
-    labels = [
-        1 if edge in true_edges else 0
-        for edge in zip(predicted['Gene1'], predicted['Gene2'])
-    ]
-    scores = predicted['EdgeWeight'].values
-
-    # PR curve is undefined when no positive examples appear in the predictions
-    if sum(labels) == 0:
-        return float('nan')
-
-    precision, recall, _ = precision_recall_curve(labels, scores)
+    precision, recall, _ = precision_recall_curve(true_labels, pred_scores)
     return float(auc(recall, precision))
 
 
@@ -93,10 +107,10 @@ class AUPRC(Evaluator):
                     )
                     continue
 
-                true_edges = self._load_ground_truth(run.ground_truth_path)
+                gt_df = self._load_ground_truth(run.ground_truth_path)
 
                 for algo, ranked_edges_df in run.ranked_edges.items():
-                    score = _compute_auprc(ranked_edges_df, true_edges)
+                    score = _compute_auprc(ranked_edges_df, gt_df)
                     results.setdefault(algo, {})[run.run_id] = score
 
             if not results:

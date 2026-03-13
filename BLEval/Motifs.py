@@ -174,7 +174,8 @@ class Motifs(Evaluator):
             ref_edges: Set[Tuple[str, str]] = None
             for run in dataset_group:
                 if run.ground_truth_path.exists():
-                    ref_edges = self._load_ground_truth(run.ground_truth_path)
+                    gt_df = self._load_ground_truth(run.ground_truth_path)
+                    ref_edges = set(zip(gt_df['Gene1'], gt_df['Gene2']))
                     break
 
             if ref_edges is None:

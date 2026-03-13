@@ -11,9 +11,12 @@ def _top_k_edges(ranked_edges: pd.DataFrame, k: int) -> Set[Tuple[str, str]]:
     """
     Return the set of top-k predicted edges after removing self-loops.
 
-    Edges are assumed to be pre-sorted by EdgeWeight descending (as written by
-    _write_ranked_edges). Self-loops are excluded before selecting k edges so
-    that the cutoff always reflects k meaningful predictions.
+    Duplicate (Gene1, Gene2) pairs are deduplicated by keeping the row with
+    the highest absolute EdgeWeight. A tie-aware cutoff is applied at rank k:
+    bestVal = max(nonZeroMin, edgeWeightTopk) expands the selected set to
+    include all predictions tied at the boundary, avoiding the large block of
+    zero-weight unpredicted edges when the k-th prediction has weight 0.
+    k is capped at the number of available predictions to avoid index errors.
 
     Parameters
     ----------
@@ -25,16 +28,40 @@ def _top_k_edges(ranked_edges: pd.DataFrame, k: int) -> Set[Tuple[str, str]]:
     Returns
     -------
     set of (Gene1, Gene2) tuples
-        The top-k predicted directed edges.
+        The top-k predicted directed edges (expanded to include ties).
     """
     if not isinstance(ranked_edges, pd.DataFrame):
         raise TypeError(f"ranked_edges must be DataFrame, got {type(ranked_edges)}")
     if not isinstance(k, int):
         raise TypeError(f"k must be int, got {type(k)}")
 
-    no_self = ranked_edges[ranked_edges['Gene1'] != ranked_edges['Gene2']]
-    top = no_self.iloc[no_self['EdgeWeight'].abs().argsort()[::-1]].head(k)
-    return set(zip(top['Gene1'], top['Gene2']))
+    no_self = ranked_edges[ranked_edges['Gene1'] != ranked_edges['Gene2']].copy()
+
+    if no_self.empty:
+        return set()
+
+    # Deduplicate: per (Gene1, Gene2), keep the row with the highest abs weight
+    no_self['_abs'] = no_self['EdgeWeight'].abs()
+    no_self = no_self.sort_values('_abs', ascending=False).drop_duplicates(
+        subset=['Gene1', 'Gene2']
+    )
+
+    if no_self.empty:
+        return set()
+
+    # Cap k at the number of available predictions to avoid index errors
+    maxk = min(len(no_self), k)
+    edge_weight_topk = float(no_self.iloc[maxk - 1]['_abs'])
+
+    nonzero = no_self.loc[no_self['_abs'] > 0, '_abs']
+    non_zero_min = float(nonzero.min()) if not nonzero.empty else 0.0
+
+    # Expand selection to include all ties at the boundary; avoids pulling in
+    # the large block of zero-weight edges when edgeWeightTopk is 0.
+    best_val = max(non_zero_min, edge_weight_topk)
+    selected = no_self[no_self['_abs'] >= best_val]
+
+    return set(zip(selected['Gene1'], selected['Gene2']))
 
 
 def _jaccard(set_a: Set, set_b: Set) -> float:
@@ -69,12 +96,14 @@ def _jaccard(set_a: Set, set_b: Set) -> float:
 
 def _compute_jaccard(
     run_edge_sets: Dict[str, Set[Tuple[str, str]]],
-) -> float:
+) -> Tuple[float, float]:
     """
-    Compute the median pairwise Jaccard index across a collection of run edge sets.
+    Compute the median and mean absolute deviation of pairwise Jaccard indices
+    across a collection of run edge sets.
 
-    All pairs of runs are compared and the median Jaccard is returned. Returns
-    float('nan') when fewer than two runs are available (no pairs to compare).
+    All pairs of runs are compared and both the median and mean absolute
+    deviation (MAD) of pairwise Jaccard scores are returned. Returns
+    (nan, nan) when fewer than two runs are available (no pairs to compare).
 
     Parameters
     ----------
@@ -83,8 +112,9 @@ def _compute_jaccard(
 
     Returns
     -------
-    float
-        Median Jaccard index across all run pairs, or nan if fewer than 2 runs.
+    tuple of (float, float)
+        Median Jaccard index and mean absolute deviation across all run pairs,
+        or (nan, nan) if fewer than 2 runs.
     """
     if not isinstance(run_edge_sets, dict):
         raise TypeError(f"run_edge_sets must be dict, got {type(run_edge_sets)}")
@@ -92,14 +122,17 @@ def _compute_jaccard(
     run_ids = list(run_edge_sets.keys())
 
     if len(run_ids) < 2:
-        return float('nan')
+        return float('nan'), float('nan')
 
     scores: List[float] = [
         _jaccard(run_edge_sets[ri], run_edge_sets[rj])
         for ri, rj in combinations(run_ids, 2)
     ]
 
-    return float(pd.Series(scores).median())
+    s = pd.Series(scores)
+    median = float(s.median())
+    mad = float((s - s.mean()).abs().mean())
+    return median, mad
 
 
 class Jaccard(Evaluator):
@@ -145,8 +178,11 @@ class Jaccard(Evaluator):
             k: int = 0
             for run in dataset_group:
                 if run.ground_truth_path.exists():
-                    true_edges = self._load_ground_truth(run.ground_truth_path)
-                    k = sum(1 for g1, g2 in true_edges if g1 != g2)
+                    gt_df = self._load_ground_truth(run.ground_truth_path)
+                    k = sum(
+                        1 for g1, g2 in zip(gt_df['Gene1'], gt_df['Gene2'])
+                        if g1 != g2
+                    )
                     break
 
             if k == 0:
@@ -172,8 +208,8 @@ class Jaccard(Evaluator):
                 continue
 
             # For each algorithm, build a run_id → edge set mapping and compute
-            # the median pairwise Jaccard across all run pairs.
-            results: Dict[str, float] = {}
+            # the median and MAD of pairwise Jaccard across all run pairs.
+            results: Dict[str, Tuple[float, float]] = {}
             for algo in sorted(algos):
                 per_run = {
                     run_id: sets[algo]
@@ -183,7 +219,7 @@ class Jaccard(Evaluator):
                 results[algo] = _compute_jaccard(per_run)
 
             out_df = pd.DataFrame.from_dict(
-                results, orient='index', columns=['MedianJaccard']
+                results, orient='index', columns=['MedianJaccard', 'MADJaccard']
             )
             out_df.index.name = 'Algorithm'
 

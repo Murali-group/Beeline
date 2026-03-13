@@ -57,39 +57,50 @@ def _compute_signed_early_precision(
     inhibitory_edges: Set[Tuple[str, str]],
     ka: int,
     ki: int,
+    n_possible: int,
 ) -> Tuple[float, float]:
     """
-    Compute early precision separately for activation and inhibitory edges.
+    Compute Early Precision Ratio separately for activation and inhibitory edges.
 
-    Self-loops are excluded from predictions before ranking. For each edge
-    type, the top-k predictions (by EdgeWeight) are inspected and true
-    positives counted against the corresponding ground truth set. Returns
-    float('nan') for a type when its k is zero or the predicted list is empty.
+    Self-loops are excluded from predictions before ranking. Predictions are
+    ranked by absolute EdgeWeight (magnitude = confidence). For each edge type,
+    opposite-sign ground truth edges are removed from the candidate pool before
+    selecting the top-k. A tie-handling cutoff (bestVal = max(nonZeroMin,
+    edgeWeightTopk)) expands the selected set to include all tied predictions at
+    the boundary, so the denominator is the actual number of selected predictions
+    rather than a fixed k. The raw early precision is divided by the random
+    predictor baseline (k / n_possible) to produce an EPR, consistent with
+    EarlyPrecision.py. Returns float('nan') for a type when its k is zero,
+    n_possible is zero, or no candidates remain after filtering.
 
     Parameters
     ----------
     ranked_edges : pd.DataFrame
         Predicted edge list with columns Gene1, Gene2, EdgeWeight.
-        Higher EdgeWeight indicates greater confidence.
+        Higher absolute EdgeWeight indicates greater confidence.
     activation_edges : set of (str, str)
         Ground truth directed edges with Type == '+'.
     inhibitory_edges : set of (str, str)
         Ground truth directed edges with Type == '-'.
     ka : int
         Number of activation edges in the ground truth (excluding self-loops).
-        Serves as both the rank cutoff and the precision denominator.
+        Used as the rank cutoff for selecting top-k activation candidates.
     ki : int
         Number of inhibitory edges in the ground truth (excluding self-loops).
-        Serves as both the rank cutoff and the precision denominator.
+        Used as the rank cutoff for selecting top-k inhibitory candidates.
+    n_possible : int
+        Total number of possible directed non-self-loop edges among all genes
+        in the ground truth network (n*(n-1)). Used to compute the random
+        predictor baseline for each edge type.
 
     Returns
     -------
     ep_activation : float
-        Fraction of true activation edges in the top-ka predictions,
-        or nan if ka == 0 or no predictions remain after filtering.
+        EPR for activation edges (raw precision / random baseline), or nan if
+        ka == 0, n_possible == 0, or no candidates remain.
     ep_inhibitory : float
-        Fraction of true inhibitory edges in the top-ki predictions,
-        or nan if ki == 0 or no predictions remain after filtering.
+        EPR for inhibitory edges (raw precision / random baseline), or nan if
+        ki == 0, n_possible == 0, or no candidates remain.
     """
     if not isinstance(ranked_edges, pd.DataFrame):
         raise TypeError(f"ranked_edges must be DataFrame, got {type(ranked_edges)}")
@@ -101,6 +112,8 @@ def _compute_signed_early_precision(
         raise TypeError(f"ka must be int, got {type(ka)}")
     if not isinstance(ki, int):
         raise TypeError(f"ki must be int, got {type(ki)}")
+    if not isinstance(n_possible, int):
+        raise TypeError(f"n_possible must be int, got {type(n_possible)}")
 
     # Remove self-loops — they are never meaningful predictions
     predicted = ranked_edges[ranked_edges['Gene1'] != ranked_edges['Gene2']].copy()
@@ -108,22 +121,70 @@ def _compute_signed_early_precision(
     if predicted.empty:
         return float('nan'), float('nan')
 
-    # Sort once descending by edge weight; reuse for both cutoffs
-    predicted_sorted = predicted.sort_values('EdgeWeight', ascending=False)
+    # Rank by absolute edge weight so that both positive (activating) and
+    # negative (inhibitory) predictions are ordered by confidence magnitude.
+    predicted['_abs'] = predicted['EdgeWeight'].abs()
+    predicted_sorted = predicted.sort_values('_abs', ascending=False)
 
-    def _ep(true_edges: Set[Tuple[str, str]], k: int) -> float:
-        """Fraction of true positives in the top-k sorted predictions."""
+    def _ep(
+        true_edges: Set[Tuple[str, str]],
+        opposite_edges: Set[Tuple[str, str]],
+        k: int,
+    ) -> float:
+        """
+        Early precision for one edge type.
+
+        Removes edges confirmed to belong to the opposite sign from the
+        candidate pool, then applies a tie-aware cutoff at rank k. The
+        denominator is the number of selected predictions, not a fixed k,
+        so tied predictions at the boundary are counted consistently.
+        """
         if k == 0:
             return float('nan')
-        top_k = predicted_sorted.head(k)
+
+        # Exclude predictions confirmed to be the opposite sign
+        edge_tuples = list(zip(predicted_sorted['Gene1'], predicted_sorted['Gene2']))
+        keep_mask = pd.Series(
+            [e not in opposite_edges for e in edge_tuples],
+            index=predicted_sorted.index,
+        )
+        candidates = predicted_sorted[keep_mask]
+
+        if candidates.empty:
+            return float('nan')
+
+        # Cutoff at rank k; expand to include all ties at the boundary.
+        # bestVal = max(nonZeroMin, edgeWeightTopk) avoids including the large
+        # block of zero-weight unpredicted edges when edgeWeightTopk is 0.
+        top_k = candidates.head(k)
+        if top_k.empty:
+            return float('nan')
+
+        edge_weight_topk = float(top_k.iloc[-1]['_abs'])
+
+        nonzero_weights = candidates.loc[candidates['_abs'] > 0, '_abs']
+        non_zero_min = float(nonzero_weights.min()) if not nonzero_weights.empty else 0.0
+
+        best_val = max(non_zero_min, edge_weight_topk)
+        selected = candidates[candidates['_abs'] >= best_val]
+
+        if selected.empty:
+            return float('nan')
+
         true_positives = sum(
-            1 for edge in zip(top_k['Gene1'], top_k['Gene2'])
+            1 for edge in zip(selected['Gene1'], selected['Gene2'])
             if edge in true_edges
         )
-        return true_positives / k
+        early_precision = true_positives / len(selected)
+        # Divide by random baseline to produce EPR, consistent with EarlyPrecision.py.
+        random_baseline = k / n_possible
+        return early_precision / random_baseline
 
-    ep_activation = _ep(activation_edges, ka)
-    ep_inhibitory = _ep(inhibitory_edges, ki)
+    if n_possible == 0:
+        return float('nan'), float('nan')
+
+    ep_activation = _ep(activation_edges, inhibitory_edges, ka)
+    ep_inhibitory = _ep(inhibitory_edges, activation_edges, ki)
 
     return ep_activation, ep_inhibitory
 
@@ -193,9 +254,15 @@ class SignedEarlyPrecision(Evaluator):
                 ka = sum(1 for g1, g2 in activation_edges if g1 != g2)
                 ki = sum(1 for g1, g2 in inhibitory_edges if g1 != g2)
 
+                # n_possible : int — total directed non-self-loop pairs among all
+                # genes in the ground truth; the denominator of the random baseline.
+                all_genes = set(g for e in activation_edges | inhibitory_edges for g in e)
+                n = len(all_genes)
+                n_possible = n * (n - 1)
+
                 for algo, ranked_edges_df in run.ranked_edges.items():
                     ep_act, ep_inh = _compute_signed_early_precision(
-                        ranked_edges_df, activation_edges, inhibitory_edges, ka, ki
+                        ranked_edges_df, activation_edges, inhibitory_edges, ka, ki, n_possible
                     )
                     results_act.setdefault(algo, {})[run.run_id] = ep_act
                     results_inh.setdefault(algo, {})[run.run_id] = ep_inh

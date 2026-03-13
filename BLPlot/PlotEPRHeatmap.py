@@ -191,12 +191,15 @@ class PlotEPRHeatmap(Plotter):
 
         auprc_ratios    = _load_ratio_section(
             dataset_ids, dataset_paths, 'AUPRC.csv', b_total)
+        # EarlyPrecision.csv already stores EPR values (ratio to random baseline),
+        # so pass unit baselines to avoid dividing by the baseline a second time.
+        unit_baselines  = {d: 1.0 for d in dataset_ids}
         epr_ratios      = _load_ratio_section(
-            dataset_ids, dataset_paths, 'EarlyPrecision.csv', b_total)
+            dataset_ids, dataset_paths, 'EarlyPrecision.csv', unit_baselines)
         epr_act_ratios  = _load_ratio_section(
-            dataset_ids, dataset_paths, 'EarlyPrecisionActivation.csv', b_act)
+            dataset_ids, dataset_paths, 'EarlyPrecisionActivation.csv', unit_baselines)
         epr_inh_ratios  = _load_ratio_section(
-            dataset_ids, dataset_paths, 'EarlyPrecisionInhibitory.csv', b_inh)
+            dataset_ids, dataset_paths, 'EarlyPrecisionInhibitory.csv', unit_baselines)
 
         all_algos = sorted(
             set(auprc_ratios)

@@ -246,6 +246,7 @@ def make_box_figure(
     title: str,
     ylabel: str,
     rand_value: float = None,
+    ylim: 'Tuple[float, float] | None' = (0.0, 1.0),
 ) -> 'plt.Figure | None':
     """
     Create and return a box plot figure without saving it.
@@ -266,6 +267,10 @@ def make_box_figure(
     rand_value : float or None
         If provided, a dashed grey horizontal line is drawn at this y value to
         indicate the random-predictor baseline.
+    ylim : tuple of (float, float) or None
+        Y-axis limits. Pass None to let matplotlib auto-scale (required for
+        metrics like EPR whose values can exceed 1.0). Defaults to (0.0, 1.0),
+        which is appropriate for AUPRC and AUROC.
 
     Returns
     -------
@@ -303,7 +308,8 @@ def make_box_figure(
         alpha=0.5, color='k', ax=ax,
     )
 
-    ax.set_ylim([0.0, 1.0])
+    if ylim is not None:
+        ax.set_ylim(ylim)
     ax.set_title(title)
     ax.set_ylabel(ylabel, fontsize=18)
     ax.set_xlabel('Algorithm', fontsize=18)

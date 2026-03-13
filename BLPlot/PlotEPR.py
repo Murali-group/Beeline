@@ -6,7 +6,6 @@ from BLPlot.plotter import (
     iter_datasets_with_runs,
     load_dataset_metric,
     make_box_figure,
-    random_classifier_baseline,
 )
 
 
@@ -55,11 +54,9 @@ class PlotEPR(Plotter):
         for _, dataset_label, dataset_path, gt_path, _ in iter_datasets_with_runs(config, root):
             fig = make_box_figure(
                 load_dataset_metric(dataset_path, 'EarlyPrecision.csv'),
-                f'Early Precision — {dataset_label}', 'Early Precision',
-                rand_value=(
-                    random_classifier_baseline(gt_path)
-                    if gt_path.exists() else None
-                ),
+                f'Early Precision Ratio — {dataset_label}', 'EPR',
+                rand_value=1.0,
+                ylim=None,
             )
             if fig is None:
                 continue

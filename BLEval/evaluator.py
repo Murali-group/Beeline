@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Set, Tuple
 
 import pandas as pd
 
@@ -33,23 +32,22 @@ class Evaluator(ABC):
         """
         ...
 
-    def _load_ground_truth(self, gt_path: Path) -> Set[Tuple[str, str]]:
+    def _load_ground_truth(self, gt_path: Path) -> pd.DataFrame:
         """
-        Load the ground truth network and return the set of true directed edges.
+        Load the ground truth network and return it as a DataFrame.
 
         Parameters
         ----------
         gt_path : Path
-            Path to a CSV file with columns Gene1, Gene2, Type.
+            Path to a CSV file with at least columns Gene1, Gene2.
 
         Returns
         -------
-        set of (Gene1, Gene2) tuples
-            Each tuple represents a directed edge present in the ground truth.
+        pd.DataFrame
+            Raw ground truth DataFrame with header row preserved.
         """
         if not isinstance(gt_path, Path):
             raise TypeError(f"gt_path must be Path, got {type(gt_path)}")
 
-        gt_df = pd.read_csv(gt_path, header=0)
-        return set(zip(gt_df['Gene1'], gt_df['Gene2']))
+        return pd.read_csv(gt_path, header=0)
 

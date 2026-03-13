@@ -195,7 +195,8 @@ class PathStats(Evaluator):
                     )
                     continue
 
-                true_edges = self._load_ground_truth(run.ground_truth_path)
+                gt_df = self._load_ground_truth(run.ground_truth_path)
+                true_edges = set(zip(gt_df['Gene1'], gt_df['Gene2']))
                 ref_graph  = _build_ref_graph(true_edges)
 
                 # results[algo] = path stats dict
@@ -211,6 +212,7 @@ class PathStats(Evaluator):
                 out_df = pd.DataFrame(results).T
                 out_df.index.name = 'Algorithm'
 
-                out_path = dataset_group.dataset_path / f'PathStats_{run.run_id}.csv'
+                out_path = dataset_group.dataset_path / run.run_id / 'PathStats.csv'
+                out_path.parent.mkdir(parents=True, exist_ok=True)
                 out_df.to_csv(out_path)
                 print(f"Wrote PathStats results to {out_path}")

@@ -139,6 +139,12 @@ class Runner(ABC):
             f.write(result.stdout)
             f.write(result.stderr)
 
+        if result.returncode != 0:
+            raise RuntimeError(
+                f"Docker command failed (exit {result.returncode}). "
+                f"See {self.output_dir / 'output.txt'} for details."
+            )
+
     def _write_ranked_edges(self, df: pd.DataFrame) -> None:
         """
         Write a ranked edge list to self.output_dir/rankedEdges.csv.
