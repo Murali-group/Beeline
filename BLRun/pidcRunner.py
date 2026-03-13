@@ -1,59 +1,58 @@
 import os
 import pandas as pd
-from pathlib import Path
-import numpy as np
 
-def generateInputs(RunnerObj):
-    '''
-    Function to generate desired inputs for SCODE.
-    If the folder/files under RunnerObj.datadir exist, 
-    this function will not do anything.
-    '''
-    if not RunnerObj.inputDir.joinpath("PIDC").exists():
-        print("Input folder for PIDC does not exist, creating input folder...")
-        RunnerObj.inputDir.joinpath("PIDC").mkdir(exist_ok = False)
-        
-    if not RunnerObj.inputDir.joinpath("PIDC/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
-                                     header = 0, index_col = 0)
-        ExpressionData.to_csv(RunnerObj.inputDir.joinpath("PIDC/ExpressionData.csv"),
-                             sep = '\t', header  = True, index = True)
-    
-def run(RunnerObj):
-    '''
-    Function to run PIDC algorithm
-    '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
-                    "/PIDC/ExpressionData.csv"
-    
-    # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/PIDC/"
-    os.makedirs(outDir, exist_ok = True)
-    
-    outPath = 'data/'+ str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data grnbeeline/pidc:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'julia runPIDC.jl',
-                         inputPath, outPath, '\"'])
-    print(cmdToRun)
-    os.system(cmdToRun)
+from BLRun.runner import Runner
 
 
+class PIDCRunner(Runner):
+    """Concrete runner for the PIDC GRN inference algorithm."""
 
-def parseOutput(RunnerObj):
-    '''
-    Function to parse outputs from SCODE.
-    '''
-    # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/PIDC/"
-    if not Path(outDir+'outFile.txt').exists():
-        print(outDir+'outFile.txt'+'does not exist, skipping...')
-        return
-        
-    # Read output
-    OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = None)
-    outFile = open(outDir + 'rankedEdges.csv','w')
-    outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
+    def generateInputs(self):
+        '''
+        Function to generate desired inputs for PIDC.
+        If the folder/files under self.input_dir exist,
+        this function will not do anything.
+        '''
 
-    for idx, row in OutDF.iterrows():
-        outFile.write('\t'.join([row[0],row[1],str(row[2])])+'\n')
-    outFile.close()
-    
+        # Create ExpressionData.csv file in the created input directory
+        PIDC_EXPRESSION_FILE = self.working_dir / "ExpressionData.csv"
+        if not PIDC_EXPRESSION_FILE.exists():
+            ExpressionData = pd.read_csv(self.input_dir / self.exprData,
+                                         header = 0, index_col = 0)
+            ExpressionData.to_csv(PIDC_EXPRESSION_FILE,
+                                 sep = '\t', header  = True, index = True)
+
+    def run(self):
+        '''
+        Function to run PIDC algorithm
+        '''
+
+        cmdToRun = ' '.join(['docker run --rm',
+                            f"-v {self.working_dir}:/usr/working_dir",
+                            f'{self.image} /bin/sh -c \"time -v -o',
+                            "/usr/working_dir/time.txt",
+                            'julia runPIDC.jl',
+                            "/usr/working_dir/ExpressionData.csv", "/usr/working_dir/outFile.txt", '\"'])
+
+        self._run_docker(cmdToRun)
+
+    def parseOutput(self):
+        '''
+        Function to parse outputs from PIDC.
+        '''
+        workDir = self.working_dir
+        outFile = workDir / 'outFile.txt'
+
+        # Quit if output file does not exist
+        if not outFile.exists():
+            print(str(outFile) + ' does not exist, skipping...')
+            return
+
+        # Read output (headerless: col 0 = Gene1, col 1 = Gene2, col 2 = EdgeWeight)
+        OutDF = pd.read_csv(outFile, sep = '\t', header = None)
+
+        self._write_ranked_edges(pd.DataFrame({
+            'Gene1':      OutDF[0],
+            'Gene2':      OutDF[1],
+            'EdgeWeight': OutDF[2],
+        }))

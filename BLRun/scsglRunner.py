@@ -1,92 +1,76 @@
 import os
 import pandas as pd
-from pathlib import Path
-import numpy as np
 
-def generateInputs(RunnerObj):
-    '''
-    Function to generate desired inputs for scSGL.
-    If the folder/files under RunnerObj.datadir exist, 
-    this function will not do anything.
-    :param RunnerObj: An instance of the :class:`BLRun`
-    '''
-    if not RunnerObj.inputDir.joinpath("SCSGL").exists():
-        print("Input folder for SCSGL does not exist, creating input folder...")
-        RunnerObj.inputDir.joinpath("SCSGL").mkdir(exist_ok = False)
-        
-    if not RunnerObj.inputDir.joinpath("SCSGL/ExpressionData.csv").exists():
-        # input data
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
-                                     header = 0, index_col = 0)
-
-        # Write gene expression data in SCSGL folder 
-        ExpressionData.to_csv(RunnerObj.inputDir.joinpath("SCSGL/ExpressionData.csv"),
-                             sep = ',', header  = True)
-
-    if not RunnerObj.inputDir.joinpath("SCSGL/GroundTruthNetwork.csv").exists():
-        groundTruthNetworkData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.groundTruthNetwork),
-                                     header = 0, index_col = 0)
-
-	  # Write reference network data in SCSGL folder 
-        groundTruthNetworkData.to_csv(RunnerObj.inputDir.joinpath("SCSGL/GroundTruthNetwork.csv"),
-                             sep = ',', header  = True)    
-
-    
-def run(RunnerObj):
-    '''
-    Function to run SCSGL algorithm
-    :param RunnerObj: An instance of the :class:`BLRun`
-    '''
-    # Get path for ExpressionData.csv generated in SCSGL folder for certain type of network in inputs
-    expressionDataPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
-                    "/SCSGL/ExpressionData.csv"
-
-    # Get path for refNetwor.csv generated in SCSGL folder for certain type of network in inputs
-    groundTruthNetworkPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
-                    "/SCSGL/GroundTruthNetwork.csv"
-
-    pos_density = str(RunnerObj.params['pos_density'])
-    neg_density = str(RunnerObj.params['neg_density'])
-    assoc = str(RunnerObj.params['assoc'])
-
-    # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCSGL/"
-    os.makedirs(outDir, exist_ok = True)
-    
-    outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
-                         'scsgl:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 'python run_scSGL.py',
-                         '--expression_file='+expressionDataPath, '--ground_truth_net_file='+groundTruthNetworkPath, '--out_file='+outPath, 
-                         '--pos_density='+pos_density, '--neg_density='+neg_density, '--assoc='+assoc,
-                         '\"'])
-
-    print(cmdToRun)
-    os.system(cmdToRun)
+from BLRun.runner import Runner
 
 
-def parseOutput(RunnerObj):
-    '''
-    Function to parse outputs from SCSGL.
-    :param RunnerObj: An instance of the :class:`BLRun`
-    '''
-    # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/SCSGL/"
+class SCSGLRunner(Runner):
+    """Concrete runner for the scSGL GRN inference algorithm."""
 
-        
-    # Read output file
-    OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
+    def generateInputs(self):
+        '''
+        Function to generate desired inputs for scSGL.
+        If the folder/files under self.input_dir exist,
+        this function will not do anything.
+        '''
 
-    OutDF.sort_values(by="EdgeWeight", ascending=False, inplace=True)
-    
-    if not Path(outDir+'outFile.txt').exists():
-        print(outDir+'outFile.txt'+'does not exist, skipping...')
-        return
-    
-    # Formats the outFile into a ranked edgelist comma-separated file
-    outFile = open(outDir + 'rankedEdges.csv','w')
-    outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
+        # Create ExpressionData.csv file in the created input directory
+        SCSGL_EXPRESSION_FILE = self.working_dir / "ExpressionData.csv"
+        if not SCSGL_EXPRESSION_FILE.exists():
+            # input data
+            ExpressionData = pd.read_csv(self.input_dir / self.exprData,
+                                         header = 0, index_col = 0)
 
-    for idx, row in OutDF.iterrows():
-        # TODO: might need to sort
-        outFile.write('\t'.join([row['Gene1'],row['Gene2'],str(row['EdgeWeight'])])+'\n')
-    outFile.close()
+            # Write gene expression data in SCSGL folder
+            ExpressionData.to_csv(SCSGL_EXPRESSION_FILE,
+                                 sep = ',', header  = True)
+
+        SCSGL_GROUND_TRUTH_FILE = self.working_dir / "GroundTruthNetwork.csv"
+        if not SCSGL_GROUND_TRUTH_FILE.exists():
+            groundTruthNetworkData = pd.read_csv(self.ground_truth_file,
+                                         header = 0, index_col = 0)
+
+            # Write reference network data in SCSGL folder
+            groundTruthNetworkData.to_csv(SCSGL_GROUND_TRUTH_FILE,
+                                 sep = ',', header  = True)
+
+    def run(self):
+        '''
+        Function to run SCSGL algorithm
+        '''
+
+        pos_density = str(self.params['pos_density'])
+        neg_density = str(self.params['neg_density'])
+        assoc = str(self.params['assoc'])
+
+        cmdToRun = ' '.join(['docker run --rm',
+                            f"-v {self.working_dir}:/usr/working_dir",
+                            '--expose=41269',
+                            f'{self.image} /bin/sh -c \"time -v -o',
+                            "/usr/working_dir/time.txt", 'python run_scSGL.py',
+                            '--expression_file=/usr/working_dir/ExpressionData.csv',
+                            '--ground_truth_net_file=/usr/working_dir/GroundTruthNetwork.csv',
+                            '--out_file=/usr/working_dir/outFile.txt',
+                            '--pos_density='+pos_density, '--neg_density='+neg_density, '--assoc='+assoc,
+                            '\"'])
+
+        self._run_docker(cmdToRun)
+
+    def parseOutput(self):
+        '''
+        Function to parse outputs from SCSGL.
+        '''
+        workDir = self.working_dir
+        outFile = workDir / 'outFile.txt'
+
+        # Quit if output file does not exist
+        if not outFile.exists():
+            print(str(outFile) + ' does not exist, skipping...')
+            return
+
+        # Read output file
+        OutDF = pd.read_csv(outFile, sep = '\t', header = 0)
+
+        OutDF.sort_values(by="EdgeWeight", ascending=False, inplace=True)
+
+        self._write_ranked_edges(OutDF[['Gene1', 'Gene2', 'EdgeWeight']])

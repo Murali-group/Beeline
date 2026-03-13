@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-LABEL Maintainer = "Aditya Pratapa <adyprat@vt.edu>"
+LABEL maintainer="Aditya Pratapa <adyprat@vt.edu>"
 
 
 RUN apt-get -qq update && apt-get -qq install -y unzip xorg wget curl libstdc++6
@@ -19,9 +19,9 @@ RUN mkdir JUMP3/
 
 COPY J3p/ /JUMP3/
 
-WORKDIR JUMP3/
+WORKDIR /JUMP3/
 
-ENV LD_LIBRARY_PATH /opt/mcr/v96/runtime/glnxa64:/opt/mcr/v96/bin/glnxa64
+ENV LD_LIBRARY_PATH=/opt/mcr/v96/runtime/glnxa64:/opt/mcr/v96/bin/glnxa64
 
 RUN mkdir data/
 

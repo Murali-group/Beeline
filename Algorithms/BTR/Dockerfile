@@ -1,6 +1,6 @@
 FROM r-base:3.5.3
 
-LABEL maintainer = "Aditya Pratapa <adyprat@vt.edu>"
+LABEL maintainer="Aditya Pratapa <adyprat@vt.edu>"
 
 USER root
 
@@ -16,9 +16,6 @@ RUN R -e "install.packages('https://cran.r-project.org/src/contrib/BTR_1.2.4.tar
 
 RUN mkdir data/
 
-WORKDIR data/
+WORKDIR /data/
 
 COPY runBTR.R /data/runBTR.R
-
-
-

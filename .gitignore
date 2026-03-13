@@ -1,7 +1,9 @@
-inputs/
-__pycache__/
+# Common env outputs
+__pycache__
+.vscode
+
+# BEELINE specific files
+configs/
 outputs/
-src/.*
-*.ipynb_checkpoints*
-.DS_Store
-.idea/
+inputs/
+plotting_examples/

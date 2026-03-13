@@ -1,63 +1,59 @@
 import os
 import pandas as pd
-from pathlib import Path
-import numpy as np
 
-def generateInputs(RunnerObj):
-    '''
-    Function to generate desired inputs for GRNBoost2.
-    If the folder/files under RunnerObj.datadir exist, 
-    this function will not do anything.
-    '''
-    if not RunnerObj.inputDir.joinpath("GRNBOOST2").exists():
-        print("Input folder for GRNBOOST2 does not exist, creating input folder...")
-        RunnerObj.inputDir.joinpath("GRNBOOST2").mkdir(exist_ok = False)
-        
-    if not RunnerObj.inputDir.joinpath("GRNBOOST2/ExpressionData.csv").exists():
-        ExpressionData = pd.read_csv(RunnerObj.inputDir.joinpath(RunnerObj.exprData),
-                                     header = 0, index_col = 0)
-
-        # Write .csv file
-        ExpressionData.T.to_csv(RunnerObj.inputDir.joinpath("GRNBOOST2/ExpressionData.csv"),
-                             sep = '\t', header  = True, index = True)
-    
-def run(RunnerObj):
-    '''
-    Function to run GRNBOOST2 algorithm
-    '''
-    inputPath = "data" + str(RunnerObj.inputDir).split(str(Path.cwd()))[1] + \
-                    "/GRNBOOST2/ExpressionData.csv"
-    # make output dirs if they do not exist:
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNBOOST2/"
-    os.makedirs(outDir, exist_ok = True)
-
-    
-    outPath = "data/" +  str(outDir) + 'outFile.txt'
-    cmdToRun = ' '.join(['docker run --rm -v', str(Path.cwd())+':/data/ --expose=41269', 
-                         'grnbeeline/arboreto:base /bin/sh -c \"time -v -o', "data/" + str(outDir) + 'time.txt', 
-                         'python runArboreto.py --algo=GRNBoost2',
-                         '--inFile='+inputPath, '--outFile='+outPath, '\"'])
-    print(cmdToRun)
-    os.system(cmdToRun)
+from BLRun.runner import Runner
 
 
-def parseOutput(RunnerObj):
-    '''
-    Function to parse outputs from GRNBOOST2.
-    '''
-    # Quit if output directory does not exist
-    outDir = "outputs/"+str(RunnerObj.inputDir).split("inputs/")[1]+"/GRNBOOST2/"
-    
-    if not Path(outDir+'outFile.txt').exists():
-        print(outDir+'outFile.txt'+'does not exist, skipping...')
-        return
-    # Read output
-    OutDF = pd.read_csv(outDir+'outFile.txt', sep = '\t', header = 0)
-    
-    outFile = open(outDir + 'rankedEdges.csv','w')
-    outFile.write('Gene1'+'\t'+'Gene2'+'\t'+'EdgeWeight'+'\n')
+class GRNBoost2Runner(Runner):
+    """Concrete runner for the GRNBoost2 GRN inference algorithm."""
 
-    for idx, row in OutDF.iterrows():
-        outFile.write('\t'.join([row['TF'],row['target'],str(row['importance'])])+'\n')
-    outFile.close()
-    
+    def generateInputs(self):
+        '''
+        Function to generate desired inputs for GRNBoost2.
+        If the folder/files under self.input_dir exist,
+        this function will not do anything.
+        '''
+
+        # Create ExpressionData.csv file in the created input directory
+        GRNBOOST2_EXPRESSION_FILE = self.working_dir / "ExpressionData.csv"
+        if not GRNBOOST2_EXPRESSION_FILE.exists():
+            ExpressionData = pd.read_csv(self.input_dir / self.exprData,
+                                         header = 0, index_col = 0)
+
+            # Write .csv file
+            ExpressionData.T.to_csv(GRNBOOST2_EXPRESSION_FILE,
+                                 sep = '\t', header  = True, index = True)
+
+    def run(self):
+        '''
+        Function to run GRNBOOST2 algorithm
+        '''
+
+        cmdToRun = ' '.join(['docker run --rm',
+                            f"-v {self.working_dir}:/usr/working_dir",
+                            '--expose=41269',
+                            f'{self.image} /bin/sh -c \"time -v -o',
+                            "/usr/working_dir/time.txt",
+                            'python runArboreto.py --algo=GRNBoost2',
+                            '--inFile=/usr/working_dir/ExpressionData.csv', '--outFile=/usr/working_dir/outFile.txt', '\"'])
+
+        self._run_docker(cmdToRun)
+
+    def parseOutput(self):
+        '''
+        Function to parse outputs from GRNBOOST2.
+        '''
+        workDir = self.working_dir
+        outFile = workDir / 'outFile.txt'
+
+        # Quit if output file does not exist
+        if not outFile.exists():
+            print(str(outFile) + ' does not exist, skipping...')
+            return
+
+        # Read output
+        OutDF = pd.read_csv(outFile, sep = '\t', header = 0)
+
+        self._write_ranked_edges(OutDF.rename(columns={
+            'TF': 'Gene1', 'target': 'Gene2', 'importance': 'EdgeWeight'
+        })[['Gene1', 'Gene2', 'EdgeWeight']])

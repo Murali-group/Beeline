@@ -15,21 +15,21 @@ RUN apt-get install -y build-essential patch
 RUN apt-get install -y fsharp \ 
 	mono-xbuild
 RUN git clone https://github.com/Z3Prover/z3
-WORKDIR z3
+WORKDIR /z3
 RUN git checkout d6df51951f4cdc95f0dfd3b1297d04a465d8f2ca 
 
 RUN python2 scripts/mk_make.py --python
 RUN cd build && make
 RUN cd build && make install
-WORKDIR ..
+WORKDIR /
 
 RUN export PATH="$PATH:/z3/build/"
 
 RUN  git clone https://github.com/swoodhouse/SCNS-Toolkit
-WORKDIR SCNS-Toolkit
+WORKDIR /SCNS-Toolkit
 RUN git checkout 27cb7a349f239d450a9571b270abc38b053ad6b2
 
-WORKDIR SynthesisEngine
+WORKDIR /SCNS-Toolkit/SynthesisEngine
 
 RUN xbuild SynthesisEngine.sln
 
