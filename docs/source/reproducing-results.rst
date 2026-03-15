@@ -50,7 +50,7 @@ The archive contains two top-level items:
 
 Copy the contents of ``BEELINE-data/inputs/`` into the ``inputs/`` directory at the
 root of this repository, and place ``BEELINE-Networks/`` at the repository root as
-well:
+well. Move the config files from ``configs`` to the config-files directory:
 
 .. code:: text
 
@@ -100,8 +100,8 @@ well:
 Synthetic and Curated Datasets (Figures 2 and 4)
 -------------------------------------------------
 
-Figures 2 and 4 evaluate algorithm performance on BoolODE-simulated (Synthetic)
-and curated biological (Curated) datasets.
+Figures 2 and 4 evaluate algorithm performance on BoolODE-simulated Synthetic
+and BoolODE-simulated Curated datasets.
 
 Each of the four Curated datasets (GSD, HSC, mCAD, VSC) is split into three
 top-level directories by dropout level: full cell count (e.g. ``GSD``), 50%
@@ -145,11 +145,11 @@ all datasets for a given collection:
 .. code:: bash
 
    # Synthetic networks
-   python BLEvaluator.py --config config-files/Synthetic/PlotCuratedNetworks.yaml \
+   python BLEvaluator.py --config config-files/Curated/PlotCuratedNetworks.yaml \
        --auc --spearman --epr --sepr
 
    # Curated networks
-   python BLEvaluator.py --config config-files/Curated/PlotSimulatedNetworks.yaml \
+   python BLEvaluator.py --config config-files/Synthetic/PlotSyntheticNetworks.yaml \
        --auc --spearman --epr --sepr
 
 **Step 3: Generate plots**
@@ -158,21 +158,21 @@ all datasets for a given collection:
 
 .. code:: bash
 
-   python BLPlotter.py --config config-files/Synthetic/PlotCuratedNetworks.yaml \
-       --output outputs/plots/Synthetic --summary
-
-   python BLPlotter.py --config config-files/Curated/PlotSimulatedNetworks.yaml \
+   python BLPlotter.py --config config-files/Curated/PlotCuratedNetworks.yaml \
        --output outputs/plots/Curated --summary
+
+   python BLPlotter.py --config config-files/Synthetic/PlotSyntheticNetworks.yaml \
+       --output outputs/plots/Synthetic --summary
 
 *Figure 4* — EPR and signed EPR summary heatmap:
 
 .. code:: bash
 
-   python BLPlotter.py --config config-files/Synthetic/PlotCuratedNetworks.yaml \
-       --output outputs/plots/Synthetic --epr-summary
-
-   python BLPlotter.py --config config-files/Curated/PlotSimulatedNetworks.yaml \
+   python BLPlotter.py --config config-files/Curated/PlotCuratedNetworks.yaml \
        --output outputs/plots/Curated --epr-summary
+
+   python BLPlotter.py --config config-files/Synthetic/PlotSyntheticNetworks.yaml \
+       --output outputs/plots/Synthetic --epr-summary
 
 Output PDFs are written to the specified ``--output`` directories as
 ``Summary.pdf`` and ``EPRSummary.pdf`` respectively.
