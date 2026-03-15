@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLEval.EarlyPrecision &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            BEELINE
+              <img src="../../_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BLEval.EarlyPrecision</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BLEval.EarlyPrecision</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">permutations</span><span class="p">,</span> <span class="n">product</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">BLEval.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
+<span class="kn">from</span> <span class="nn">BLEval.data</span> <span class="kn">import</span> <span class="n">EvaluationData</span>
+
+
+<span class="k">def</span> <span class="nf">_build_edge_universe</span><span class="p">(</span>
+    <span class="n">gt_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">tf_edges</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the candidate edge universe and the set of true edges from a GT DataFrame.</span>
+
+<span class="sd">    When tf_edges is False the universe is all directed non-self-loop pairs</span>
+<span class="sd">    among GT genes. When tf_edges is True the universe is restricted to edges</span>
+<span class="sd">    whose source gene appears as Gene1 in the ground truth (i.e. TF→gene edges),</span>
+<span class="sd">    which is appropriate for experimental scRNA-seq data where regulators are</span>
+<span class="sd">    known. True edges are the intersection of GT edges with the universe so</span>
+<span class="sd">    that the random-baseline computation is consistent with the candidate pool.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gt_df : pd.DataFrame</span>
+<span class="sd">        Ground truth network with at least columns Gene1, Gene2. Self-loops</span>
+<span class="sd">        and duplicate rows are removed internally.</span>
+<span class="sd">    tf_edges : bool</span>
+<span class="sd">        When True, restrict the universe to TF→gene edges (no self-loops).</span>
+<span class="sd">        When False, use all directed non-self-loop gene pairs.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    possible_edges : set of (str, str)</span>
+<span class="sd">        Complete candidate edge universe (no self-loops).</span>
+<span class="sd">    true_edges : set of (str, str)</span>
+<span class="sd">        Ground truth edges within the candidate universe (no self-loops).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gt_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;gt_df must be DataFrame, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">gt_df</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tf_edges</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tf_edges must be bool, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">tf_edges</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">gt_no_self</span> <span class="o">=</span> <span class="n">gt_df</span><span class="p">[</span><span class="n">gt_df</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">gt_df</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">()</span>
+    <span class="n">unique_nodes</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">gt_df</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">gt_df</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">])))</span>
+
+    <span class="k">if</span> <span class="n">tf_edges</span><span class="p">:</span>
+        <span class="n">tf_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">gt_no_self</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">])</span>
+        <span class="n">all_genes</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">unique_nodes</span><span class="p">)</span>
+        <span class="c1"># All TF→gene edges: source is a known TF, target is any gene, no self-loops</span>
+        <span class="n">possible_edges</span> <span class="o">=</span> <span class="p">{(</span><span class="n">tf</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span> <span class="k">for</span> <span class="n">tf</span> <span class="ow">in</span> <span class="n">tf_genes</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">all_genes</span> <span class="k">if</span> <span class="n">tf</span> <span class="o">!=</span> <span class="n">g</span><span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">possible_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">permutations</span><span class="p">(</span><span class="n">unique_nodes</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">all_gt_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">gt_no_self</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">],</span> <span class="n">gt_no_self</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]))</span>
+    <span class="c1"># Intersect with universe so true_edges is consistent with possible_edges</span>
+    <span class="n">true_edges</span> <span class="o">=</span> <span class="n">all_gt_edges</span> <span class="o">&amp;</span> <span class="n">possible_edges</span>
+
+    <span class="k">return</span> <span class="n">possible_edges</span><span class="p">,</span> <span class="n">true_edges</span>
+
+
+<span class="k">def</span> <span class="nf">_compute_early_precision</span><span class="p">(</span>
+    <span class="n">ranked_edges</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">true_edges</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">possible_edges</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">tf_edges</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Early Precision Ratio (EPR) for one algorithm on one run.</span>
+
+<span class="sd">    EPR = early_precision / random_precision, where early precision is the</span>
+<span class="sd">    fraction of true positives among the selected top-k predictions and</span>
+<span class="sd">    random_precision = |true_edges| / |possible_edges|. k is the number of</span>
+<span class="sd">    true edges (the size of the ground truth network). A tie-aware cutoff</span>
+<span class="sd">    (bestVal = max(nonZeroMin, edgeWeightTopk)) expands the selected set to</span>
+<span class="sd">    include all tied predictions at the boundary, avoiding the large block of</span>
+<span class="sd">    zero-weight edges when the k-th prediction has weight 0. The denominator</span>
+<span class="sd">    is the actual number of selected predictions (not fixed k), consistent</span>
+<span class="sd">    with the tie-expansion. Returns 0 when no predictions remain after</span>
+<span class="sd">    filtering, and nan when the universe or ground truth is empty.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ranked_edges : pd.DataFrame</span>
+<span class="sd">        Predicted edge list with columns Gene1, Gene2, EdgeWeight.</span>
+<span class="sd">        Higher absolute EdgeWeight indicates greater confidence.</span>
+<span class="sd">    true_edges : set of (str, str)</span>
+<span class="sd">        Ground truth directed edges within the candidate universe.</span>
+<span class="sd">    possible_edges : set of (str, str)</span>
+<span class="sd">        Complete candidate edge universe; used to compute the random baseline</span>
+<span class="sd">        and, when tf_edges is True, to filter predictions.</span>
+<span class="sd">    tf_edges : bool</span>
+<span class="sd">        When True, predictions are pre-filtered to the candidate universe</span>
+<span class="sd">        before ranking. When False, all non-self-loop predictions are ranked.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        EPR value (&gt;1 = better than random, =1 = at random, &lt;1 = below random),</span>
+<span class="sd">        0 if no predictions remain after filtering, or nan if the metric</span>
+<span class="sd">        cannot be computed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ranked_edges</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ranked_edges must be DataFrame, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">ranked_edges</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">true_edges</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;true_edges must be set, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">true_edges</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">possible_edges</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;possible_edges must be set, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">possible_edges</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tf_edges</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tf_edges must be bool, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">tf_edges</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">num_edges</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">true_edges</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">num_edges</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_edges</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+
+    <span class="n">random_eprc</span> <span class="o">=</span> <span class="n">num_edges</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">possible_edges</span><span class="p">)</span>
+
+    <span class="c1"># Remove self-loops; deduplicate by (Gene1, Gene2) keeping highest abs weight</span>
+    <span class="n">predicted</span> <span class="o">=</span> <span class="n">ranked_edges</span><span class="p">[</span><span class="n">ranked_edges</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ranked_edges</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">predicted</span><span class="p">[</span><span class="s1">&#39;_abs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">predicted</span><span class="p">[</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+    <span class="n">predicted</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">predicted</span>
+        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;_abs&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">,</span> <span class="s1">&#39;Gene2&#39;</span><span class="p">])</span>
+        <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">tf_edges</span><span class="p">:</span>
+        <span class="c1"># Restrict predictions to the TF→gene candidate universe</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="p">[(</span><span class="n">r</span><span class="o">.</span><span class="n">Gene1</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">Gene2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">possible_edges</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">predicted</span><span class="o">.</span><span class="n">itertuples</span><span class="p">()]</span>
+        <span class="n">predicted</span> <span class="o">=</span> <span class="n">predicted</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">predicted</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Tie-aware cutoff at rank k, capped at the number of available predictions</span>
+    <span class="n">maxk</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">predicted</span><span class="p">),</span> <span class="n">num_edges</span><span class="p">)</span>
+    <span class="n">edge_weight_topk</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">predicted</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">maxk</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;_abs&#39;</span><span class="p">])</span>
+
+    <span class="n">nonzero</span> <span class="o">=</span> <span class="n">predicted</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">predicted</span><span class="p">[</span><span class="s1">&#39;_abs&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;_abs&#39;</span><span class="p">]</span>
+    <span class="n">non_zero_min</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nonzero</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">nonzero</span><span class="o">.</span><span class="n">empty</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Expand to include all tied predictions at the boundary; avoids pulling in</span>
+    <span class="c1"># the large block of zero-weight edges when edgeWeightTopk is 0</span>
+    <span class="n">best_val</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">non_zero_min</span><span class="p">,</span> <span class="n">edge_weight_topk</span><span class="p">)</span>
+    <span class="n">selected</span> <span class="o">=</span> <span class="n">predicted</span><span class="p">[</span><span class="n">predicted</span><span class="p">[</span><span class="s1">&#39;_abs&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">best_val</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">selected</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="n">selected_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">selected</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">],</span> <span class="n">selected</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]))</span>
+    <span class="n">intersection</span> <span class="o">=</span> <span class="n">selected_edges</span> <span class="o">&amp;</span> <span class="n">true_edges</span>
+
+    <span class="c1"># Denominator is the actual selected count, not fixed k, to account for ties</span>
+    <span class="n">eprec</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">intersection</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_edges</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">eprec</span> <span class="o">/</span> <span class="n">random_eprc</span>
+
+
+<div class="viewcode-block" id="EarlyPrecision"><a class="viewcode-back" href="../../BLEval.html#BLEval.EarlyPrecision.EarlyPrecision">[docs]</a><span class="k">class</span> <span class="nc">EarlyPrecision</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluator that computes the Early Precision Ratio (EPR) for each algorithm</span>
+<span class="sd">    against the ground truth network.</span>
+
+<span class="sd">    EPR equals early precision (fraction of true positives in top-k predictions)</span>
+<span class="sd">    divided by the expected precision of a random predictor over the candidate</span>
+<span class="sd">    edge universe. k equals the number of ground truth edges excluding self-loops.</span>
+<span class="sd">    EPR &gt; 1 indicates better-than-random performance; EPR = 1 is the random</span>
+<span class="sd">    baseline; EPR &lt; 1 is below random.</span>
+
+<span class="sd">    When tf_edges is True, the candidate universe and predictions are restricted</span>
+<span class="sd">    to TF→gene edges (appropriate for experimental scRNA-seq data). When False,</span>
+<span class="sd">    all directed non-self-loop gene pairs form the universe (appropriate for</span>
+<span class="sd">    synthetic/simulated data).</span>
+
+<span class="sd">    For each DatasetGroup, writes EarlyPrecision.csv to dataset_path. Rows are</span>
+<span class="sd">    algorithms and columns are run_ids.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tf_edges</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tf_edges : bool, optional</span>
+<span class="sd">            When True, restrict the candidate universe and predictions to</span>
+<span class="sd">            TF→gene edges. Default is False (use all directed non-self-loop</span>
+<span class="sd">            gene pairs), appropriate for synthetic data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tf_edges</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tf_edges must be bool, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">tf_edges</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tf_edges</span> <span class="o">=</span> <span class="n">tf_edges</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evaluation_data</span><span class="p">:</span> <span class="n">EvaluationData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute EPR per algorithm per run and write results to</span>
+<span class="sd">        dataset_path/EarlyPrecision.csv.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        evaluation_data : EvaluationData</span>
+<span class="sd">            Loaded predicted networks organised by dataset and run.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">evaluation_data</span><span class="p">,</span> <span class="n">EvaluationData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;evaluation_data must be EvaluationData, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">evaluation_data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dataset_group</span> <span class="ow">in</span> <span class="n">evaluation_data</span><span class="p">:</span>
+            <span class="c1"># Load the ground truth once per group; all runs share the same GT.</span>
+            <span class="n">gt_path</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">run</span><span class="o">.</span><span class="n">ground_truth_path</span> <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">dataset_group</span>
+                 <span class="k">if</span> <span class="n">run</span><span class="o">.</span><span class="n">ground_truth_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()),</span>
+                <span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">gt_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Warning: no ground truth found for dataset &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">dataset_group</span><span class="o">.</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">&#39;, skipping EarlyPrecision.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="n">gt_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_ground_truth</span><span class="p">(</span><span class="n">gt_path</span><span class="p">)</span>
+            <span class="n">possible_edges</span><span class="p">,</span> <span class="n">true_edges</span> <span class="o">=</span> <span class="n">_build_edge_universe</span><span class="p">(</span><span class="n">gt_df</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_edges</span><span class="p">)</span>
+
+            <span class="c1"># results[algo][run_id] = EPR score</span>
+            <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">dataset_group</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">algo</span><span class="p">,</span> <span class="n">ranked_edges_df</span> <span class="ow">in</span> <span class="n">run</span><span class="o">.</span><span class="n">ranked_edges</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">score</span> <span class="o">=</span> <span class="n">_compute_early_precision</span><span class="p">(</span>
+                        <span class="n">ranked_edges_df</span><span class="p">,</span> <span class="n">true_edges</span><span class="p">,</span> <span class="n">possible_edges</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tf_edges</span>
+                    <span class="p">)</span>
+                    <span class="n">results</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="p">{})[</span><span class="n">run</span><span class="o">.</span><span class="n">run_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Build output DataFrame: rows = algorithms, columns = run_ids</span>
+            <span class="n">out_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+            <span class="n">out_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Algorithm&#39;</span>
+
+            <span class="n">dataset_group</span><span class="o">.</span><span class="n">dataset_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">out_path</span> <span class="o">=</span> <span class="n">dataset_group</span><span class="o">.</span><span class="n">dataset_path</span> <span class="o">/</span> <span class="s1">&#39;EarlyPrecision.csv&#39;</span>
+            <span class="n">out_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote EarlyPrecision results to </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

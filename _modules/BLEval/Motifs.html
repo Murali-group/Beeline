@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLEval.Motifs &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            BEELINE
+              <img src="../../_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BLEval.Motifs</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BLEval.Motifs</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">BLEval.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
+<span class="kn">from</span> <span class="nn">BLEval.data</span> <span class="kn">import</span> <span class="n">EvaluationData</span><span class="p">,</span> <span class="n">DatasetGroup</span>
+
+
+<span class="k">def</span> <span class="nf">_build_digraph</span><span class="p">(</span><span class="n">edges</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a directed graph from a set of edges, excluding self-loops.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    edges : set of (str, str)</span>
+<span class="sd">        Directed edges as (Gene1, Gene2) tuples.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    nx.DiGraph</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">edges</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;edges must be set, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">((</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">edges</span> <span class="k">if</span> <span class="n">a</span> <span class="o">!=</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">G</span>
+
+
+<span class="k">def</span> <span class="nf">_count_mi</span><span class="p">(</span><span class="n">G</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Count two-node mutual interactions (MI) in a directed graph.</span>
+
+<span class="sd">    A mutual interaction exists when both A→B and B→A are present.</span>
+<span class="sd">    Each pair {A, B} is counted once.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    G : nx.DiGraph</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Number of mutual interaction pairs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">edges</span><span class="p">()</span> <span class="k">if</span> <span class="n">G</span><span class="o">.</span><span class="n">has_edge</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span> <span class="o">//</span> <span class="mi">2</span>
+
+
+<span class="k">def</span> <span class="nf">_count_fbl</span><span class="p">(</span><span class="n">G</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Count three-node feedback loops (FBL) in a directed graph.</span>
+
+<span class="sd">    A feedback loop is a directed cycle of exactly three distinct nodes:</span>
+<span class="sd">    A→B→C→A. Each cycle is counted once regardless of its starting node.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    G : nx.DiGraph</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Number of three-node feedback loops.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">cycle</span> <span class="ow">in</span> <span class="n">nx</span><span class="o">.</span><span class="n">simple_cycles</span><span class="p">(</span><span class="n">G</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cycle</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_count_ffl</span><span class="p">(</span><span class="n">G</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Count three-node feedforward loops (FFL) in a directed graph.</span>
+
+<span class="sd">    A feedforward loop consists of three distinct nodes A, B, C where</span>
+<span class="sd">    A→B, A→C, and B→C all exist. Node A is the source that regulates</span>
+<span class="sd">    both B (directly and indirectly via B→C) and C directly.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    G : nx.DiGraph</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        Number of three-node feedforward loops.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">nodes</span><span class="p">():</span>
+        <span class="n">out_a</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">G</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="n">a</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">out_a</span><span class="p">:</span>
+            <span class="c1"># C must be a successor of B, a successor of A, and distinct from A and B</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">G</span><span class="o">.</span><span class="n">successors</span><span class="p">(</span><span class="n">b</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">out_a</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">a</span> <span class="ow">and</span> <span class="n">c</span> <span class="o">!=</span> <span class="n">b</span><span class="p">:</span>
+                    <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">count</span>
+
+
+<span class="k">def</span> <span class="nf">_motif_counts</span><span class="p">(</span><span class="n">edges</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute FBL, FFL, and MI motif counts for a set of directed edges.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    edges : set of (str, str)</span>
+<span class="sd">        Directed edges as (Gene1, Gene2) tuples.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of (int, int, int)</span>
+<span class="sd">        Counts of (FBL, FFL, MI) motifs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="n">_build_digraph</span><span class="p">(</span><span class="n">edges</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_count_fbl</span><span class="p">(</span><span class="n">G</span><span class="p">),</span> <span class="n">_count_ffl</span><span class="p">(</span><span class="n">G</span><span class="p">),</span> <span class="n">_count_mi</span><span class="p">(</span><span class="n">G</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_safe_ratio</span><span class="p">(</span><span class="n">numerator</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">denominator</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute numerator / denominator, returning nan when denominator is zero.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    numerator : int</span>
+<span class="sd">    denominator : int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">denominator</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">numerator</span> <span class="o">/</span> <span class="n">denominator</span>
+
+
+<div class="viewcode-block" id="Motifs"><a class="viewcode-back" href="../../BLEval.html#BLEval.Motifs.Motifs">[docs]</a><span class="k">class</span> <span class="nc">Motifs</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluator that computes ratios of three-node feedback loop (FBL),</span>
+<span class="sd">    three-node feedforward loop (FFL), and two-node mutual interaction (MI)</span>
+<span class="sd">    motif counts between the predicted top-k network and the reference network.</span>
+
+<span class="sd">    For each algorithm and run, the top-k predicted edges (k = number of</span>
+<span class="sd">    ground truth edges, excluding self-loops) are used to build a directed</span>
+<span class="sd">    graph. Motif counts in that graph are divided by the corresponding counts</span>
+<span class="sd">    in the ground truth network to produce dimensionless ratios.</span>
+
+<span class="sd">    For each DatasetGroup, writes three CSV files to dataset_path:</span>
+<span class="sd">        - motifs_FBL.csv  — three-node feedback loop ratios</span>
+<span class="sd">        - motifs_FFL.csv  — three-node feedforward loop ratios</span>
+<span class="sd">        - motifs_MI.csv   — two-node mutual interaction ratios</span>
+
+<span class="sd">    Each CSV has algorithms as rows and run_ids as columns.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evaluation_data</span><span class="p">:</span> <span class="n">EvaluationData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute motif ratios per algorithm per run and write results to</span>
+<span class="sd">        dataset_path/motifs_{FBL,FFL,MI}.csv.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        evaluation_data : EvaluationData</span>
+<span class="sd">            Loaded predicted networks organised by dataset and run.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">evaluation_data</span><span class="p">,</span> <span class="n">EvaluationData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;evaluation_data must be EvaluationData, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">evaluation_data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dataset_group</span> <span class="ow">in</span> <span class="n">evaluation_data</span><span class="p">:</span>
+            <span class="c1"># Load the reference network from the first run with an accessible</span>
+            <span class="c1"># ground truth. All runs in a DatasetGroup share the same ground truth.</span>
+            <span class="n">ref_edges</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">dataset_group</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">run</span><span class="o">.</span><span class="n">ground_truth_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="n">gt_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_ground_truth</span><span class="p">(</span><span class="n">run</span><span class="o">.</span><span class="n">ground_truth_path</span><span class="p">)</span>
+                    <span class="n">ref_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">gt_df</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">],</span> <span class="n">gt_df</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]))</span>
+                    <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">ref_edges</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Warning: no ground truth found for dataset &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="n">dataset_group</span><span class="o">.</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">&#39;, skipping motif computation.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># k = number of ground truth edges excluding self-loops</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="mi">1</span> <span class="k">for</span> <span class="n">g1</span><span class="p">,</span> <span class="n">g2</span> <span class="ow">in</span> <span class="n">ref_edges</span> <span class="k">if</span> <span class="n">g1</span> <span class="o">!=</span> <span class="n">g2</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Warning: ground truth for dataset &#39;</span><span class="si">{</span><span class="n">dataset_group</span><span class="o">.</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">&#39; &quot;</span>
+                    <span class="s2">&quot;has no non-self-loop edges, skipping motif computation.&quot;</span>
+                <span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Motif counts in the reference network</span>
+            <span class="n">ref_fbl</span><span class="p">,</span> <span class="n">ref_ffl</span><span class="p">,</span> <span class="n">ref_mi</span> <span class="o">=</span> <span class="n">_motif_counts</span><span class="p">(</span><span class="n">ref_edges</span><span class="p">)</span>
+
+            <span class="c1"># results_X[algo][run_id] = ratio for motif X</span>
+            <span class="n">results_fbl</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">results_ffl</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">results_mi</span><span class="p">:</span>  <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">dataset_group</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">algo</span><span class="p">,</span> <span class="n">ranked_edges_df</span> <span class="ow">in</span> <span class="n">run</span><span class="o">.</span><span class="n">ranked_edges</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="c1"># Select top-k predicted edges, excluding self-loops</span>
+                    <span class="n">no_self</span> <span class="o">=</span> <span class="n">ranked_edges_df</span><span class="p">[</span>
+                        <span class="n">ranked_edges_df</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ranked_edges_df</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]</span>
+                    <span class="p">]</span>
+                    <span class="n">top_k_df</span> <span class="o">=</span> <span class="n">no_self</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">no_self</span><span class="p">[</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                    <span class="n">top_k_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">top_k_df</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">],</span> <span class="n">top_k_df</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]))</span>
+
+                    <span class="n">pred_fbl</span><span class="p">,</span> <span class="n">pred_ffl</span><span class="p">,</span> <span class="n">pred_mi</span> <span class="o">=</span> <span class="n">_motif_counts</span><span class="p">(</span><span class="n">top_k_edges</span><span class="p">)</span>
+
+                    <span class="n">results_fbl</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="p">{})[</span><span class="n">run</span><span class="o">.</span><span class="n">run_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_safe_ratio</span><span class="p">(</span><span class="n">pred_fbl</span><span class="p">,</span> <span class="n">ref_fbl</span><span class="p">)</span>
+                    <span class="n">results_ffl</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="p">{})[</span><span class="n">run</span><span class="o">.</span><span class="n">run_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_safe_ratio</span><span class="p">(</span><span class="n">pred_ffl</span><span class="p">,</span> <span class="n">ref_ffl</span><span class="p">)</span>
+                    <span class="n">results_mi</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span>  <span class="p">{})[</span><span class="n">run</span><span class="o">.</span><span class="n">run_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">_safe_ratio</span><span class="p">(</span><span class="n">pred_mi</span><span class="p">,</span>  <span class="n">ref_mi</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">results_fbl</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">dataset_group</span><span class="o">.</span><span class="n">dataset_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">label</span><span class="p">,</span> <span class="n">results</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;FBL&#39;</span><span class="p">,</span> <span class="n">results_fbl</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;FFL&#39;</span><span class="p">,</span> <span class="n">results_ffl</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;MI&#39;</span><span class="p">,</span> <span class="n">results_mi</span><span class="p">)]:</span>
+                <span class="n">out_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">out_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Algorithm&#39;</span>
+                <span class="n">out_path</span> <span class="o">=</span> <span class="n">dataset_group</span><span class="o">.</span><span class="n">dataset_path</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;motifs_</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s1">.csv&#39;</span>
+                <span class="n">out_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote motif (</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">) results to </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

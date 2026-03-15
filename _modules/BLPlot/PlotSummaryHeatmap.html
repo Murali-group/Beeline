@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLPlot.PlotSummaryHeatmap &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            BEELINE
+              <img src="../../_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BLPlot.PlotSummaryHeatmap</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BLPlot.PlotSummaryHeatmap</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">statistics</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+<span class="kn">import</span> <span class="nn">matplotlib.patches</span> <span class="k">as</span> <span class="nn">patches</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<span class="kn">from</span> <span class="nn">matplotlib.transforms</span> <span class="kn">import</span> <span class="n">blended_transform_factory</span>
+
+<span class="kn">from</span> <span class="nn">BLPlot._heatmap</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_draw_section</span><span class="p">,</span>
+    <span class="n">_setup_heatmap_axes</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">BLPlot.plotter</span> <span class="kn">import</span> <span class="n">Plotter</span><span class="p">,</span> <span class="n">iter_datasets_with_runs</span><span class="p">,</span> <span class="n">random_classifier_baseline</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s2">&quot;font.size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">12</span>
+
+
+<span class="k">def</span> <span class="nf">_load_auprc_ratios</span><span class="p">(</span>
+    <span class="n">dataset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">dataset_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+    <span class="n">gt_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute median AUPRC ratio per algorithm per dataset.</span>
+
+<span class="sd">    For each dataset, reads AUPRC.csv and divides each per-run value by the</span>
+<span class="sd">    random classifier baseline for that dataset, then takes the median across</span>
+<span class="sd">    runs. Datasets with missing CSV or missing ground truth are skipped.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset_ids : list[str]</span>
+<span class="sd">        Ordered dataset identifiers.</span>
+<span class="sd">    dataset_paths : list[Path]</span>
+<span class="sd">        Output directory for each dataset (same order as dataset_ids).</span>
+<span class="sd">    gt_paths : list[Path]</span>
+<span class="sd">        Ground truth CSV path for each dataset (same order as dataset_ids).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict[str, dict[str, float]]</span>
+<span class="sd">        algo -&gt; {dataset_id -&gt; median AUPRC ratio}, nan where unavailable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">dataset_id</span><span class="p">,</span> <span class="n">dataset_path</span><span class="p">,</span> <span class="n">gt_path</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dataset_ids</span><span class="p">,</span> <span class="n">dataset_paths</span><span class="p">,</span> <span class="n">gt_paths</span><span class="p">):</span>
+        <span class="n">csv_path</span> <span class="o">=</span> <span class="n">dataset_path</span> <span class="o">/</span> <span class="s1">&#39;AUPRC.csv&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">csv_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">csv_path</span><span class="si">}</span><span class="s2"> not found, skipping.&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">gt_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">gt_path</span><span class="si">}</span><span class="s2"> not found, skipping.&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">baseline</span> <span class="o">=</span> <span class="n">random_classifier_baseline</span><span class="p">(</span><span class="n">gt_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">baseline</span><span class="p">)</span> <span class="ow">or</span> <span class="n">baseline</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: random baseline undefined for </span><span class="si">{</span><span class="n">gt_path</span><span class="si">}</span><span class="s2">, skipping.&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">algo</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">algo</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+            <span class="n">ratio</span> <span class="o">=</span> <span class="n">statistics</span><span class="o">.</span><span class="n">median</span><span class="p">([</span><span class="n">v</span> <span class="o">/</span> <span class="n">baseline</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">vals</span><span class="p">])</span> <span class="k">if</span> <span class="n">vals</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">algo</span><span class="p">),</span> <span class="p">{})[</span><span class="n">dataset_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">ratio</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<span class="k">def</span> <span class="nf">_load_spearman</span><span class="p">(</span>
+    <span class="n">dataset_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">dataset_paths</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load median Spearman stability per algorithm per dataset.</span>
+
+<span class="sd">    Reads Spearman.csv from each dataset&#39;s output directory. Datasets with</span>
+<span class="sd">    missing CSV are skipped with a warning.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dataset_ids : list[str]</span>
+<span class="sd">        Ordered dataset identifiers.</span>
+<span class="sd">    dataset_paths : list[Path]</span>
+<span class="sd">        Output directory for each dataset (same order as dataset_ids).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict[str, dict[str, float]]</span>
+<span class="sd">        algo -&gt; {dataset_id -&gt; MedianSpearman}, nan where unavailable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">dataset_id</span><span class="p">,</span> <span class="n">dataset_path</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">dataset_ids</span><span class="p">,</span> <span class="n">dataset_paths</span><span class="p">):</span>
+        <span class="n">csv_path</span> <span class="o">=</span> <span class="n">dataset_path</span> <span class="o">/</span> <span class="s1">&#39;Spearman.csv&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">csv_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">csv_path</span><span class="si">}</span><span class="s2"> not found, skipping.&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">csv_path</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">algo</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">algo</span><span class="p">,</span> <span class="s1">&#39;MedianSpearman&#39;</span><span class="p">]</span>
+            <span class="n">result</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">algo</span><span class="p">),</span> <span class="p">{})[</span><span class="n">dataset_id</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span>
+
+
+<div class="viewcode-block" id="PlotSummaryHeatmap"><a class="viewcode-back" href="../../BLPlot.html#BLPlot.PlotSummaryHeatmap.PlotSummaryHeatmap">[docs]</a><span class="k">class</span> <span class="nc">PlotSummaryHeatmap</span><span class="p">(</span><span class="n">Plotter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Replicates Figure 2 of Pratapa et al. 2020 (BEELINE).</span>
+
+<span class="sd">    Produces a two-section heatmap: median AUPRC ratios (left) and median</span>
+<span class="sd">    Spearman stability scores (right). Algorithms (rows) are sorted by</span>
+<span class="sd">    decreasing median AUPRC ratio; datasets are columns. Each cell contains a</span>
+<span class="sd">    rounded square sized and colored by its value. Values above the random</span>
+<span class="sd">    predictor baseline (ratio &gt;= 1) are drawn full-size with their raw value</span>
+<span class="sd">    as white text. Alternating row backgrounds aid readability. Writes</span>
+<span class="sd">    Summary.pdf to the output directory.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">output_dir</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the summary heatmap and write it to output_dir/Summary.pdf.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        config : dict</span>
+<span class="sd">            Parsed YAML configuration.</span>
+<span class="sd">        output_dir : Path</span>
+<span class="sd">            Directory where Summary.pdf is written.</span>
+<span class="sd">        root : Path</span>
+<span class="sd">            Working directory from which config paths are resolved.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;config must be dict, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">config</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">output_dir</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;output_dir must be Path, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">output_dir</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">Path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;root must be Path, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iter_datasets_with_runs</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">root</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rows</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No datasets found for summary heatmap.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">dataset_ids</span>    <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+        <span class="c1"># dataset_labels : list[str] — per-dataset display labels for column</span>
+        <span class="c1"># headers; uses &#39;nickname&#39; from config when set, else falls back to</span>
+        <span class="c1"># dataset_id.</span>
+        <span class="n">dataset_labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+        <span class="n">dataset_paths</span>  <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+        <span class="n">gt_paths</span>       <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">rows</span><span class="p">]</span>
+
+        <span class="n">auprc_ratios</span> <span class="o">=</span> <span class="n">_load_auprc_ratios</span><span class="p">(</span><span class="n">dataset_ids</span><span class="p">,</span> <span class="n">dataset_paths</span><span class="p">,</span> <span class="n">gt_paths</span><span class="p">)</span>
+        <span class="n">spearman</span>     <span class="o">=</span> <span class="n">_load_spearman</span><span class="p">(</span><span class="n">dataset_ids</span><span class="p">,</span> <span class="n">dataset_paths</span><span class="p">)</span>
+
+        <span class="n">all_algos</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">auprc_ratios</span><span class="p">)</span> <span class="o">|</span> <span class="nb">set</span><span class="p">(</span><span class="n">spearman</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_algos</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No data found for summary heatmap.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Sort algorithms by decreasing median-of-medians AUPRC ratio.</span>
+        <span class="k">def</span> <span class="nf">_median_auprc_ratio</span><span class="p">(</span><span class="n">algo</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">auprc_ratios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">algo</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">v</span><span class="p">)]</span>
+            <span class="k">return</span> <span class="n">statistics</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="k">if</span> <span class="n">vals</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+        <span class="n">sorted_algos</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">all_algos</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">_median_auprc_ratio</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">n_algos</span>    <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sorted_algos</span><span class="p">)</span>
+        <span class="n">n_datasets</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">dataset_ids</span><span class="p">)</span>
+
+        <span class="c1"># Build raw value arrays (n_algos × n_datasets), sorted_algos[0] = best.</span>
+        <span class="n">auprc_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">auprc_ratios</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dataset_ids</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">sorted_algos</span>
+        <span class="p">])</span>
+        <span class="n">spear_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="p">[</span><span class="n">spearman</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">))</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">dataset_ids</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">sorted_algos</span>
+        <span class="p">])</span>
+
+        <span class="c1"># --- Figure layout (mirrors old_heatmap.py) ---</span>
+        <span class="c1"># Section 1 cols: x = 1 .. n_datasets</span>
+        <span class="c1"># Gap:            x = n_datasets + 1</span>
+        <span class="c1"># Section 2 cols: x = n_datasets + 2 .. n_datasets * 2 + 1</span>
+        <span class="n">total_cols</span> <span class="o">=</span> <span class="n">n_datasets</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">pad</span>        <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">height</span>     <span class="o">=</span> <span class="mi">7</span>
+        <span class="n">asp_ratio</span>  <span class="o">=</span> <span class="p">(</span><span class="n">total_cols</span> <span class="o">+</span> <span class="n">pad</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_algos</span> <span class="o">+</span> <span class="n">pad</span><span class="p">)</span>
+        <span class="n">fig_size</span>   <span class="o">=</span> <span class="p">(</span><span class="n">height</span> <span class="o">*</span> <span class="n">asp_ratio</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">fig_size</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fig_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span><span class="p">))</span>
+        <span class="n">ax</span>  <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">_setup_heatmap_axes</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">n_algos</span><span class="p">,</span> <span class="n">sorted_algos</span><span class="p">,</span> <span class="n">total_cols</span><span class="p">,</span> <span class="n">pad</span><span class="p">)</span>
+
+        <span class="c1"># Measure the maximum y-tick label width in axes-fraction coordinates so</span>
+        <span class="c1"># the row backgrounds extend precisely to cover the algorithm labels.</span>
+        <span class="c1"># draw() forces text layout before get_window_extent() is called.</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span><span class="p">()</span>
+        <span class="n">renderer</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_renderer</span><span class="p">()</span>
+        <span class="n">max_label_px</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">(</span><span class="n">renderer</span><span class="p">)</span><span class="o">.</span><span class="n">width</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_yticklabels</span><span class="p">()),</span>
+            <span class="n">default</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="c1"># Small padding (0.01) leaves a sliver of space between label and edge.</span>
+        <span class="n">label_frac</span> <span class="o">=</span> <span class="n">max_label_px</span> <span class="o">/</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_window_extent</span><span class="p">(</span><span class="n">renderer</span><span class="p">)</span><span class="o">.</span><span class="n">width</span> <span class="o">+</span> <span class="mf">0.01</span>
+
+        <span class="n">row_trans</span> <span class="o">=</span> <span class="n">blended_transform_factory</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">transAxes</span><span class="p">,</span> <span class="n">ax</span><span class="o">.</span><span class="n">transData</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">row_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_algos</span><span class="p">):</span>
+            <span class="n">bg</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">)</span> <span class="k">if</span> <span class="n">row_idx</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">patches</span><span class="o">.</span><span class="n">Rectangle</span><span class="p">(</span>
+                <span class="p">(</span><span class="o">-</span><span class="n">label_frac</span><span class="p">,</span> <span class="n">n_algos</span> <span class="o">-</span> <span class="n">row_idx</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">),</span>
+                <span class="n">width</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">label_frac</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">transform</span><span class="o">=</span><span class="n">row_trans</span><span class="p">,</span>
+                <span class="n">clip_on</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">edgecolor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">facecolor</span><span class="o">=</span><span class="n">bg</span><span class="p">,</span>
+            <span class="p">))</span>
+
+        <span class="c1"># Color palettes: viridis for AUPRC, cool (blue) for stability.</span>
+        <span class="n">auprc_palette</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">color_palette</span><span class="p">(</span><span class="s2">&quot;viridis&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+        <span class="n">spear_palette</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">cubehelix_palette</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">_draw_section</span><span class="p">(</span>
+            <span class="n">ax</span><span class="p">,</span> <span class="n">auprc_arr</span><span class="p">,</span> <span class="n">n_algos</span><span class="p">,</span> <span class="n">n_datasets</span><span class="p">,</span>
+            <span class="n">col_x_start</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+            <span class="n">palette</span><span class="o">=</span><span class="n">auprc_palette</span><span class="p">,</span>
+            <span class="n">rand_cutoff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">dataset_ids</span><span class="o">=</span><span class="n">dataset_labels</span><span class="p">,</span>
+            <span class="n">section_label</span><span class="o">=</span><span class="s1">&#39;Median AUPRC ratios&#39;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">_draw_section</span><span class="p">(</span>
+            <span class="n">ax</span><span class="p">,</span> <span class="n">spear_arr</span><span class="p">,</span> <span class="n">n_algos</span><span class="p">,</span> <span class="n">n_datasets</span><span class="p">,</span>
+            <span class="n">col_x_start</span><span class="o">=</span><span class="n">n_datasets</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="n">palette</span><span class="o">=</span><span class="n">spear_palette</span><span class="p">,</span>
+            <span class="n">rand_cutoff</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">dataset_ids</span><span class="o">=</span><span class="n">dataset_labels</span><span class="p">,</span>
+            <span class="n">section_label</span><span class="o">=</span><span class="s1">&#39;Median stability scores&#39;</span><span class="p">,</span>
+            <span class="n">switch_text</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Legend geometry — same fixed-width approach as PlotEPRHeatmap.</span>
+        <span class="n">lw</span> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_cols</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>   <span class="c1"># legend width as axes fraction</span>
+        <span class="n">lh</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">/</span> <span class="p">(</span><span class="n">n_algos</span> <span class="o">+</span> <span class="n">pad</span><span class="p">)</span>    <span class="c1"># legend height as axes fraction</span>
+        <span class="n">ly</span> <span class="o">=</span> <span class="o">-</span><span class="n">lh</span> <span class="o">-</span> <span class="mf">0.05</span>               <span class="c1"># just below the heatmap</span>
+
+        <span class="c1"># Two legends placed at the centre of each section&#39;s half of the axes.</span>
+        <span class="k">for</span> <span class="n">cx</span><span class="p">,</span> <span class="n">palette</span> <span class="ow">in</span> <span class="p">[(</span><span class="mi">1</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">auprc_palette</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="o">/</span><span class="mi">4</span><span class="p">,</span> <span class="n">spear_palette</span><span class="p">)]:</span>
+            <span class="n">legend_ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">inset_axes</span><span class="p">([</span><span class="n">cx</span> <span class="o">-</span> <span class="n">lw</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ly</span><span class="p">,</span> <span class="n">lw</span><span class="p">,</span> <span class="n">lh</span><span class="p">])</span>
+            <span class="n">legend_ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">palette</span><span class="p">))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">palette</span><span class="p">)),</span>
+                <span class="n">cmap</span><span class="o">=</span><span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">ListedColormap</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">palette</span><span class="p">)),</span>
+                <span class="n">interpolation</span><span class="o">=</span><span class="s1">&#39;nearest&#39;</span><span class="p">,</span> <span class="n">aspect</span><span class="o">=</span><span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">legend_ax</span><span class="o">.</span><span class="n">yaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+            <span class="n">legend_ax</span><span class="o">.</span><span class="n">xaxis</span><span class="o">.</span><span class="n">set_ticks_position</span><span class="p">(</span><span class="s1">&#39;none&#39;</span><span class="p">)</span>
+            <span class="n">legend_ax</span><span class="o">.</span><span class="n">set_yticklabels</span><span class="p">([])</span>
+            <span class="n">legend_ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">([</span><span class="mf">0.5</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">palette</span><span class="p">)</span> <span class="o">-</span> <span class="mi">2</span><span class="p">])</span>
+            <span class="n">legend_ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">([</span><span class="s1">&#39;Low/Poor&#39;</span><span class="p">,</span> <span class="s1">&#39;High/Good&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+        <span class="n">stem</span> <span class="o">=</span> <span class="n">output_dir</span> <span class="o">/</span> <span class="s1">&#39;Summary&#39;</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">stem</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.pdf&#39;</span><span class="p">),</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">stem</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.png&#39;</span><span class="p">),</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved summary heatmap to </span><span class="si">{</span><span class="n">stem</span><span class="si">}</span><span class="s2">.pdf and .png&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

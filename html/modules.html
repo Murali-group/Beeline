@@ -1,202 +1,363 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>src &mdash; BEELINE 0.1 documentation</title>
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Reference &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
 
   
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script type="text/javascript" src="_static/jquery.js"></script>
-        <script type="text/javascript" src="_static/underscore.js"></script>
-        <script type="text/javascript" src="_static/doctools.js"></script>
-        <script type="text/javascript" src="_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="search.html" /> 
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="BLRun package" href="BLRun.html" />
+    <link rel="prev" title="src package" href="src.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="index.html" class="icon icon-home"> BEELINE
           
-
-          
+          <a href="index.html" class="icon icon-home">
+            BEELINE
+              <img src="_static/beeline-group.svg" class="logo" alt="Logo"/>
           </a>
-
-          
-            
-            
-          
-
-          
+              <div class="version">
+                v1.1
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <!-- Local TOC -->
-              <div class="local-toc"><ul>
-<li><a class="reference internal" href="#">src</a></li>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">API Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html">BLRun package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html">BLEval package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html">BLPlot package</a></li>
 </ul>
-</div>
-            
-          
+</li>
+</ul>
+
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="index.html">BEELINE</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="index.html">Docs</a> &raquo;</li>
-        
-      <li>src</li>
-    
-    
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Reference</li>
       <li class="wy-breadcrumbs-aside">
-        
-            
             <a href="_sources/modules.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="src">
-<h1>src<a class="headerlink" href="#src" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="api-reference">
+<h1>API Reference<a class="headerlink" href="#api-reference" title="Permalink to this heading"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="src.html">src package</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="src.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#module-src.parseTime">src.parseTime module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="src.html#module-src">Module contents</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BLRun.html">BLRun package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.genie3Runner">BLRun.genie3Runner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.genie3Runner.GENIE3Runner"><code class="docutils literal notranslate"><span class="pre">GENIE3Runner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.genie3Runner.GENIE3Runner.generateInputs"><code class="docutils literal notranslate"><span class="pre">GENIE3Runner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.genie3Runner.GENIE3Runner.parseOutput"><code class="docutils literal notranslate"><span class="pre">GENIE3Runner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.genie3Runner.GENIE3Runner.run"><code class="docutils literal notranslate"><span class="pre">GENIE3Runner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.grisliRunner">BLRun.grisliRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.grisliRunner.GRISLIRunner"><code class="docutils literal notranslate"><span class="pre">GRISLIRunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.grisliRunner.GRISLIRunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">GRISLIRunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.grisliRunner.GRISLIRunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">GRISLIRunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.grisliRunner.GRISLIRunner.run"><code class="docutils literal notranslate"><span class="pre">GRISLIRunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.grnboost2Runner">BLRun.grnboost2Runner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.grnboost2Runner.GRNBoost2Runner"><code class="docutils literal notranslate"><span class="pre">GRNBoost2Runner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.grnboost2Runner.GRNBoost2Runner.generateInputs"><code class="docutils literal notranslate"><span class="pre">GRNBoost2Runner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.grnboost2Runner.GRNBoost2Runner.parseOutput"><code class="docutils literal notranslate"><span class="pre">GRNBoost2Runner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.grnboost2Runner.GRNBoost2Runner.run"><code class="docutils literal notranslate"><span class="pre">GRNBoost2Runner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.grnvbemRunner">BLRun.grnvbemRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.grnvbemRunner.GRNVBEMRunner"><code class="docutils literal notranslate"><span class="pre">GRNVBEMRunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.grnvbemRunner.GRNVBEMRunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">GRNVBEMRunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.grnvbemRunner.GRNVBEMRunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">GRNVBEMRunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.grnvbemRunner.GRNVBEMRunner.run"><code class="docutils literal notranslate"><span class="pre">GRNVBEMRunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.jump3Runner">BLRun.jump3Runner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.jump3Runner.JUMP3Runner"><code class="docutils literal notranslate"><span class="pre">JUMP3Runner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.jump3Runner.JUMP3Runner.generateInputs"><code class="docutils literal notranslate"><span class="pre">JUMP3Runner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.jump3Runner.JUMP3Runner.parseOutput"><code class="docutils literal notranslate"><span class="pre">JUMP3Runner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.jump3Runner.JUMP3Runner.run"><code class="docutils literal notranslate"><span class="pre">JUMP3Runner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.leapRunner">BLRun.leapRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.leapRunner.LEAPRunner"><code class="docutils literal notranslate"><span class="pre">LEAPRunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.leapRunner.LEAPRunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">LEAPRunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.leapRunner.LEAPRunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">LEAPRunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.leapRunner.LEAPRunner.run"><code class="docutils literal notranslate"><span class="pre">LEAPRunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.pearsonRunner">BLRun.pearsonRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.pearsonRunner.PearsonRunner"><code class="docutils literal notranslate"><span class="pre">PearsonRunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.pearsonRunner.PearsonRunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">PearsonRunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.pearsonRunner.PearsonRunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">PearsonRunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.pearsonRunner.PearsonRunner.run"><code class="docutils literal notranslate"><span class="pre">PearsonRunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.pidcRunner">BLRun.pidcRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.pidcRunner.PIDCRunner"><code class="docutils literal notranslate"><span class="pre">PIDCRunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.pidcRunner.PIDCRunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">PIDCRunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.pidcRunner.PIDCRunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">PIDCRunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.pidcRunner.PIDCRunner.run"><code class="docutils literal notranslate"><span class="pre">PIDCRunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.ppcorRunner">BLRun.ppcorRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.ppcorRunner.PPCORRunner"><code class="docutils literal notranslate"><span class="pre">PPCORRunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.ppcorRunner.PPCORRunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">PPCORRunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.ppcorRunner.PPCORRunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">PPCORRunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.ppcorRunner.PPCORRunner.run"><code class="docutils literal notranslate"><span class="pre">PPCORRunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.runner">BLRun.runner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.runner.Runner"><code class="docutils literal notranslate"><span class="pre">Runner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.runner.Runner.generateInputs"><code class="docutils literal notranslate"><span class="pre">Runner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.runner.Runner.parseOutput"><code class="docutils literal notranslate"><span class="pre">Runner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.runner.Runner.run"><code class="docutils literal notranslate"><span class="pre">Runner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.scodeRunner">BLRun.scodeRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.scodeRunner.SCODERunner"><code class="docutils literal notranslate"><span class="pre">SCODERunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.scodeRunner.SCODERunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">SCODERunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.scodeRunner.SCODERunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">SCODERunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.scodeRunner.SCODERunner.run"><code class="docutils literal notranslate"><span class="pre">SCODERunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.scribeRunner">BLRun.scribeRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.scribeRunner.SCRIBERunner"><code class="docutils literal notranslate"><span class="pre">SCRIBERunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.scribeRunner.SCRIBERunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">SCRIBERunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.scribeRunner.SCRIBERunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">SCRIBERunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.scribeRunner.SCRIBERunner.run"><code class="docutils literal notranslate"><span class="pre">SCRIBERunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.scsglRunner">BLRun.scsglRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.scsglRunner.SCSGLRunner"><code class="docutils literal notranslate"><span class="pre">SCSGLRunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.scsglRunner.SCSGLRunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">SCSGLRunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.scsglRunner.SCSGLRunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">SCSGLRunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.scsglRunner.SCSGLRunner.run"><code class="docutils literal notranslate"><span class="pre">SCSGLRunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.sinceritiesRunner">BLRun.sinceritiesRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.sinceritiesRunner.SINCERITIESRunner"><code class="docutils literal notranslate"><span class="pre">SINCERITIESRunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.sinceritiesRunner.SINCERITIESRunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">SINCERITIESRunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.sinceritiesRunner.SINCERITIESRunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">SINCERITIESRunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.sinceritiesRunner.SINCERITIESRunner.run"><code class="docutils literal notranslate"><span class="pre">SINCERITIESRunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun.singeRunner">BLRun.singeRunner module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLRun.html#BLRun.singeRunner.SINGERunner"><code class="docutils literal notranslate"><span class="pre">SINGERunner</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.singeRunner.SINGERunner.generateInputs"><code class="docutils literal notranslate"><span class="pre">SINGERunner.generateInputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.singeRunner.SINGERunner.parseOutput"><code class="docutils literal notranslate"><span class="pre">SINGERunner.parseOutput()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="BLRun.html#BLRun.singeRunner.SINGERunner.run"><code class="docutils literal notranslate"><span class="pre">SINGERunner.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html#module-BLRun">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BLEval.html">BLEval package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.AUPRC">BLEval.AUPRC module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.AUPRC.AUPRC"><code class="docutils literal notranslate"><span class="pre">AUPRC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.AUROC">BLEval.AUROC module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.AUROC.AUROC"><code class="docutils literal notranslate"><span class="pre">AUROC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.BLTime">BLEval.BLTime module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.BLTime.BLTime"><code class="docutils literal notranslate"><span class="pre">BLTime</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.Borda">BLEval.Borda module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.Borda.Borda"><code class="docutils literal notranslate"><span class="pre">Borda</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.EarlyPrecision">BLEval.EarlyPrecision module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.EarlyPrecision.EarlyPrecision"><code class="docutils literal notranslate"><span class="pre">EarlyPrecision</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.Jaccard">BLEval.Jaccard module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.Jaccard.Jaccard"><code class="docutils literal notranslate"><span class="pre">Jaccard</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.Motifs">BLEval.Motifs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.Motifs.Motifs"><code class="docutils literal notranslate"><span class="pre">Motifs</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.PathStats">BLEval.PathStats module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.PathStats.PathStats"><code class="docutils literal notranslate"><span class="pre">PathStats</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.SignedEarlyPrecision">BLEval.SignedEarlyPrecision module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.SignedEarlyPrecision.SignedEarlyPrecision"><code class="docutils literal notranslate"><span class="pre">SignedEarlyPrecision</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.Spearman">BLEval.Spearman module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.Spearman.Spearman"><code class="docutils literal notranslate"><span class="pre">Spearman</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.data">BLEval.data module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.data.DatasetGroup"><code class="docutils literal notranslate"><span class="pre">DatasetGroup</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.data.EvaluationData"><code class="docutils literal notranslate"><span class="pre">EvaluationData</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.data.RunResult"><code class="docutils literal notranslate"><span class="pre">RunResult</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval.evaluator">BLEval.evaluator module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLEval.html#BLEval.evaluator.Evaluator"><code class="docutils literal notranslate"><span class="pre">Evaluator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html#module-BLEval">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="BLPlot.html">BLPlot package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#module-BLPlot.PlotAUPRC">BLPlot.PlotAUPRC module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.PlotAUPRC.PlotAUPRC"><code class="docutils literal notranslate"><span class="pre">PlotAUPRC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#module-BLPlot.PlotAUROC">BLPlot.PlotAUROC module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.PlotAUROC.PlotAUROC"><code class="docutils literal notranslate"><span class="pre">PlotAUROC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#module-BLPlot.PlotEPR">BLPlot.PlotEPR module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.PlotEPR.PlotEPR"><code class="docutils literal notranslate"><span class="pre">PlotEPR</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#module-BLPlot.PlotEPRHeatmap">BLPlot.PlotEPRHeatmap module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.PlotEPRHeatmap.PlotEPRHeatmap"><code class="docutils literal notranslate"><span class="pre">PlotEPRHeatmap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#module-BLPlot.PlotSummaryHeatmap">BLPlot.PlotSummaryHeatmap module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.PlotSummaryHeatmap.PlotSummaryHeatmap"><code class="docutils literal notranslate"><span class="pre">PlotSummaryHeatmap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#module-BLPlot.plotter">BLPlot.plotter module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.plotter.Plotter"><code class="docutils literal notranslate"><span class="pre">Plotter</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.plotter.get_algo_ids"><code class="docutils literal notranslate"><span class="pre">get_algo_ids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.plotter.iter_datasets"><code class="docutils literal notranslate"><span class="pre">iter_datasets()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.plotter.iter_datasets_with_runs"><code class="docutils literal notranslate"><span class="pre">iter_datasets_with_runs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.plotter.load_dataset_metric"><code class="docutils literal notranslate"><span class="pre">load_dataset_metric()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.plotter.make_box_figure"><code class="docutils literal notranslate"><span class="pre">make_box_figure()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="BLPlot.html#BLPlot.plotter.random_classifier_baseline"><code class="docutils literal notranslate"><span class="pre">random_classifier_baseline()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BLPlot.html#module-BLPlot">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </div>
-</div>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-  
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="src.html" class="btn btn-neutral float-left" title="src package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="BLRun.html" class="btn btn-neutral float-right" title="BLRun package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2019, Aditya
-
-    </p>
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

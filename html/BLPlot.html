@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLPlot package &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="BLEval package" href="BLEval.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BEELINE
+              <img src="_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="BLRun.html">BLRun package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BLEval.html">BLEval package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">BLPlot package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-BLPlot.PlotAUPRC">BLPlot.PlotAUPRC module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.PlotAUPRC.PlotAUPRC"><code class="docutils literal notranslate"><span class="pre">PlotAUPRC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-BLPlot.PlotAUROC">BLPlot.PlotAUROC module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.PlotAUROC.PlotAUROC"><code class="docutils literal notranslate"><span class="pre">PlotAUROC</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-BLPlot.PlotEPR">BLPlot.PlotEPR module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.PlotEPR.PlotEPR"><code class="docutils literal notranslate"><span class="pre">PlotEPR</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-BLPlot.PlotEPRHeatmap">BLPlot.PlotEPRHeatmap module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.PlotEPRHeatmap.PlotEPRHeatmap"><code class="docutils literal notranslate"><span class="pre">PlotEPRHeatmap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-BLPlot.PlotSummaryHeatmap">BLPlot.PlotSummaryHeatmap module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.PlotSummaryHeatmap.PlotSummaryHeatmap"><code class="docutils literal notranslate"><span class="pre">PlotSummaryHeatmap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-BLPlot.plotter">BLPlot.plotter module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.plotter.Plotter"><code class="docutils literal notranslate"><span class="pre">Plotter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.plotter.get_algo_ids"><code class="docutils literal notranslate"><span class="pre">get_algo_ids()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.plotter.iter_datasets"><code class="docutils literal notranslate"><span class="pre">iter_datasets()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.plotter.iter_datasets_with_runs"><code class="docutils literal notranslate"><span class="pre">iter_datasets_with_runs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.plotter.load_dataset_metric"><code class="docutils literal notranslate"><span class="pre">load_dataset_metric()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.plotter.make_box_figure"><code class="docutils literal notranslate"><span class="pre">make_box_figure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#BLPlot.plotter.random_classifier_baseline"><code class="docutils literal notranslate"><span class="pre">random_classifier_baseline()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-BLPlot">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">API Reference</a></li>
+      <li class="breadcrumb-item active">BLPlot package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/BLPlot.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="blplot-package">
+<span id="blplot"></span><h1>BLPlot package<a class="headerlink" href="#blplot-package" title="Permalink to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+</section>
+<section id="module-BLPlot.PlotAUPRC">
+<span id="blplot-plotauprc-module"></span><h2>BLPlot.PlotAUPRC module<a class="headerlink" href="#module-BLPlot.PlotAUPRC" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="BLPlot.PlotAUPRC.PlotAUPRC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BLPlot.PlotAUPRC.</span></span><span class="sig-name descname"><span class="pre">PlotAUPRC</span></span><a class="reference internal" href="_modules/BLPlot/PlotAUPRC.html#PlotAUPRC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.PlotAUPRC.PlotAUPRC" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#BLPlot.plotter.Plotter" title="BLPlot.plotter.Plotter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plotter</span></code></a></p>
+<p>Plotter that produces one AUPRC graphic per dataset.</p>
+<p>For datasets with a single run a precision-recall curve is drawn (one line
+per algorithm). For datasets with multiple runs a box plot is drawn (one box
+per algorithm, distribution across runs). Each dataset is written as both a
+PDF and PNG under an AUPRC/ subdirectory of the output directory, named
+&lt;dataset_label&gt;-AUPRC.pdf and &lt;dataset_label&gt;-AUPRC.png.</p>
+</dd></dl>
+
+</section>
+<section id="module-BLPlot.PlotAUROC">
+<span id="blplot-plotauroc-module"></span><h2>BLPlot.PlotAUROC module<a class="headerlink" href="#module-BLPlot.PlotAUROC" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="BLPlot.PlotAUROC.PlotAUROC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BLPlot.PlotAUROC.</span></span><span class="sig-name descname"><span class="pre">PlotAUROC</span></span><a class="reference internal" href="_modules/BLPlot/PlotAUROC.html#PlotAUROC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.PlotAUROC.PlotAUROC" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#BLPlot.plotter.Plotter" title="BLPlot.plotter.Plotter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plotter</span></code></a></p>
+<p>Plotter that produces one AUROC graphic per dataset.</p>
+<p>For datasets with a single run a ROC curve is drawn (one line per
+algorithm). For datasets with multiple runs a box plot is drawn (one box
+per algorithm, distribution across runs). Each dataset is written as both a
+PDF and PNG under an AUROC/ subdirectory of the output directory, named
+&lt;dataset_label&gt;-AUROC.pdf and &lt;dataset_label&gt;-AUROC.png.</p>
+</dd></dl>
+
+</section>
+<section id="module-BLPlot.PlotEPR">
+<span id="blplot-plotepr-module"></span><h2>BLPlot.PlotEPR module<a class="headerlink" href="#module-BLPlot.PlotEPR" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="BLPlot.PlotEPR.PlotEPR">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BLPlot.PlotEPR.</span></span><span class="sig-name descname"><span class="pre">PlotEPR</span></span><a class="reference internal" href="_modules/BLPlot/PlotEPR.html#PlotEPR"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.PlotEPR.PlotEPR" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#BLPlot.plotter.Plotter" title="BLPlot.plotter.Plotter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plotter</span></code></a></p>
+<p>Plotter that produces one early precision box plot per dataset.</p>
+<p>For each dataset, reads EarlyPrecision.csv and draws a box plot with
+one box per algorithm showing the distribution across runs. A dashed
+reference line marks the random-predictor EPR baseline. Each dataset is
+written as both a PDF and PNG under an EPR/ subdirectory of the output
+directory, named &lt;dataset_label&gt;-EPR.pdf and &lt;dataset_label&gt;-EPR.png.</p>
+</dd></dl>
+
+</section>
+<section id="module-BLPlot.PlotEPRHeatmap">
+<span id="blplot-ploteprheatmap-module"></span><h2>BLPlot.PlotEPRHeatmap module<a class="headerlink" href="#module-BLPlot.PlotEPRHeatmap" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="BLPlot.PlotEPRHeatmap.PlotEPRHeatmap">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BLPlot.PlotEPRHeatmap.</span></span><span class="sig-name descname"><span class="pre">PlotEPRHeatmap</span></span><a class="reference internal" href="_modules/BLPlot/PlotEPRHeatmap.html#PlotEPRHeatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.PlotEPRHeatmap.PlotEPRHeatmap" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#BLPlot.plotter.Plotter" title="BLPlot.plotter.Plotter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plotter</span></code></a></p>
+<p>Replicates Figure 4 of Pratapa et al. 2020 (BEELINE).</p>
+<p>Produces a four-section heatmap: median AUPRC ratio, median EPR ratio,
+median EPR for activating edges, and median EPR for inhibitory edges.
+Algorithms (rows) are sorted by decreasing median AUPRC ratio. Each
+section uses a distinct colour palette; cells below the random-predictor
+cutoff are shown in dark grey. Writes EPRSummary.pdf to the output
+directory.</p>
+</dd></dl>
+
+</section>
+<section id="module-BLPlot.PlotSummaryHeatmap">
+<span id="blplot-plotsummaryheatmap-module"></span><h2>BLPlot.PlotSummaryHeatmap module<a class="headerlink" href="#module-BLPlot.PlotSummaryHeatmap" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="BLPlot.PlotSummaryHeatmap.PlotSummaryHeatmap">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BLPlot.PlotSummaryHeatmap.</span></span><span class="sig-name descname"><span class="pre">PlotSummaryHeatmap</span></span><a class="reference internal" href="_modules/BLPlot/PlotSummaryHeatmap.html#PlotSummaryHeatmap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.PlotSummaryHeatmap.PlotSummaryHeatmap" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#BLPlot.plotter.Plotter" title="BLPlot.plotter.Plotter"><code class="xref py py-class docutils literal notranslate"><span class="pre">Plotter</span></code></a></p>
+<p>Replicates Figure 2 of Pratapa et al. 2020 (BEELINE).</p>
+<p>Produces a two-section heatmap: median AUPRC ratios (left) and median
+Spearman stability scores (right). Algorithms (rows) are sorted by
+decreasing median AUPRC ratio; datasets are columns. Each cell contains a
+rounded square sized and colored by its value. Values above the random
+predictor baseline (ratio &gt;= 1) are drawn full-size with their raw value
+as white text. Alternating row backgrounds aid readability. Writes
+Summary.pdf to the output directory.</p>
+</dd></dl>
+
+</section>
+<section id="module-BLPlot.plotter">
+<span id="blplot-plotter-module"></span><h2>BLPlot.plotter module<a class="headerlink" href="#module-BLPlot.plotter" title="Permalink to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="BLPlot.plotter.Plotter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">BLPlot.plotter.</span></span><span class="sig-name descname"><span class="pre">Plotter</span></span><a class="reference internal" href="_modules/BLPlot/plotter.html#Plotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.plotter.Plotter" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<p>Abstract base class for BEELINE plot generators.</p>
+<p>Each subclass implements __call__ to read pre-computed evaluation CSVs and
+write one or more plot files to a caller-specified output directory.
+Shared loading and rendering helpers are provided as module-level functions
+in this module: iter_datasets, iter_datasets_with_runs, load_dataset_metric,
+make_box_figure, random_classifier_baseline.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BLPlot.plotter.get_algo_ids">
+<span class="sig-prename descclassname"><span class="pre">BLPlot.plotter.</span></span><span class="sig-name descname"><span class="pre">get_algo_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/BLPlot/plotter.html#get_algo_ids"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.plotter.get_algo_ids" title="Permalink to this definition"></a></dt>
+<dd><p>Return the list of enabled algorithm IDs from the config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Parsed YAML configuration.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Algorithm IDs whose should_run flag is truthy.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BLPlot.plotter.iter_datasets">
+<span class="sig-prename descclassname"><span class="pre">BLPlot.plotter.</span></span><span class="sig-name descname"><span class="pre">iter_datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/BLPlot/plotter.html#iter_datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.plotter.iter_datasets" title="Permalink to this definition"></a></dt>
+<dd><p>Yield (dataset_id, dataset_label, dataset_path, gt_path) for each enabled
+dataset in config.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Parsed YAML configuration.</p></li>
+<li><p><strong>root</strong> (<em>Path</em>) – Working directory from which config paths are resolved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple of (str, str, Path, Path)</em> – dataset_id, dataset_label (nickname if set else dataset_id), output
+dataset directory, ground truth file path.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BLPlot.plotter.iter_datasets_with_runs">
+<span class="sig-prename descclassname"><span class="pre">BLPlot.plotter.</span></span><span class="sig-name descname"><span class="pre">iter_datasets_with_runs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Iterator" title="(in Python v3.14)"><span class="pre">Iterator</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/BLPlot/plotter.html#iter_datasets_with_runs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.plotter.iter_datasets_with_runs" title="Permalink to this definition"></a></dt>
+<dd><p>Yield (dataset_id, dataset_label, dataset_path, gt_path, runs) for each
+enabled dataset.</p>
+<p>Extends iter_datasets by also yielding the raw list of run dicts from the
+config, so callers can determine run count and resolve per-run paths via
+dataset_path / run[‘run_id’].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Parsed YAML configuration.</p></li>
+<li><p><strong>root</strong> (<em>Path</em>) – Working directory from which config paths are resolved.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p><em>tuple of (str, str, Path, Path, list)</em> – dataset_id, dataset_label (nickname if set else dataset_id), output
+dataset directory, ground truth file path, list of run dicts from
+config (each has at least ‘run_id’).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BLPlot.plotter.load_dataset_metric">
+<span class="sig-prename descclassname"><span class="pre">BLPlot.plotter.</span></span><span class="sig-name descname"><span class="pre">load_dataset_metric</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric_csv</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/BLPlot/plotter.html#load_dataset_metric"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.plotter.load_dataset_metric" title="Permalink to this definition"></a></dt>
+<dd><p>Load per-algorithm metric values from one dataset’s pre-computed CSV.</p>
+<p>The CSV is expected to have rows = algorithms (index column) and columns
+= run_ids. Returns an empty dict (with a warning) if the file is missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset_path</strong> (<em>Path</em>) – Output directory for the dataset (contains the metric CSV).</p></li>
+<li><p><strong>metric_csv</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Filename of the metric CSV (e.g. ‘AUPRC.csv’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Algorithm name -&gt; list of non-NaN run values for this dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>]]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BLPlot.plotter.make_box_figure">
+<span class="sig-prename descclassname"><span class="pre">BLPlot.plotter.</span></span><span class="sig-name descname"><span class="pre">make_box_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><span class="pre">Dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylabel</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">rand_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ylim</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">1.0)</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">plt.Figure</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></span><a class="reference internal" href="_modules/BLPlot/plotter.html#make_box_figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.plotter.make_box_figure" title="Permalink to this definition"></a></dt>
+<dd><p>Create and return a box plot figure without saving it.</p>
+<p>Renders a seaborn box plot with individual data points overlaid as a swarm
+plot. When rand_value is provided, a dashed grey reference line marks the
+expected performance of a random predictor. Returns None when values is
+empty so callers can skip adding an empty page to a multi-page PDF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>values</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em><em>]</em>) – Algorithm name -&gt; list of observed metric values.</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Plot title.</p></li>
+<li><p><strong>ylabel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Y-axis label.</p></li>
+<li><p><strong>rand_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>None</em>) – If provided, a dashed grey horizontal line is drawn at this y value to
+indicate the random-predictor baseline.</p></li>
+<li><p><strong>ylim</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em> of </em><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>) or </em><em>None</em>) – Y-axis limits. Pass None to let matplotlib auto-scale (required for
+metrics like EPR whose values can exceed 1.0). Defaults to (0.0, 1.0),
+which is appropriate for AUPRC and AUROC.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The created figure, or None if values is empty.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plt.Figure or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="BLPlot.plotter.random_classifier_baseline">
+<span class="sig-prename descclassname"><span class="pre">BLPlot.plotter.</span></span><span class="sig-name descname"><span class="pre">random_classifier_baseline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gt_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span></span><a class="reference internal" href="_modules/BLPlot/plotter.html#random_classifier_baseline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#BLPlot.plotter.random_classifier_baseline" title="Permalink to this definition"></a></dt>
+<dd><p>Compute the expected precision of a random predictor for a dataset.</p>
+<p>Equals k / (n*(n-1)) where k is the number of non-self-loop ground truth
+edges and n is the number of unique genes. This is the random baseline for
+both AUPRC and early precision (the PR curve of a random predictor is flat
+at height k / n_possible).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>gt_path</strong> (<em>Path</em>) – Path to the ground truth edge list CSV (columns Gene1, Gene2).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Random predictor baseline in (0, 1], or nan if undefined (empty network).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-BLPlot">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-BLPlot" title="Permalink to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="BLEval.html" class="btn btn-neutral float-left" title="BLEval package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLEval.PathStats &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            BEELINE
+              <img src="../../_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BLEval.PathStats</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BLEval.PathStats</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">import</span> <span class="nn">networkx</span> <span class="k">as</span> <span class="nn">nx</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">BLEval.evaluator</span> <span class="kn">import</span> <span class="n">Evaluator</span>
+<span class="kn">from</span> <span class="nn">BLEval.data</span> <span class="kn">import</span> <span class="n">EvaluationData</span>
+
+
+<span class="k">def</span> <span class="nf">_build_ref_graph</span><span class="p">(</span><span class="n">true_edges</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build a directed reference graph from a set of ground truth edges.</span>
+
+<span class="sd">    Self-loops are excluded since they are not meaningful for path analysis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    true_edges : set of (str, str)</span>
+<span class="sd">        Ground truth directed edges.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    nx.DiGraph</span>
+<span class="sd">        Directed graph containing all non-self-loop ground truth edges.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">true_edges</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;true_edges must be set, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">true_edges</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">G</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="n">G</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">((</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">true_edges</span> <span class="k">if</span> <span class="n">u</span> <span class="o">!=</span> <span class="n">v</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">G</span>
+
+
+<span class="k">def</span> <span class="nf">_path_stats</span><span class="p">(</span>
+    <span class="n">pred_graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
+    <span class="n">ref_graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute path statistics between a predicted graph and a reference graph.</span>
+
+<span class="sd">    For each false positive edge (u, v) in the predicted graph, the shortest</span>
+<span class="sd">    directed path from u to v in the reference graph is looked up. Path lengths</span>
+<span class="sd">    are binned into {2, 3, 4, 5}; edges with no path in the reference graph</span>
+<span class="sd">    increment numFP_noPath. The key 0 is included for compatibility with the</span>
+<span class="sd">    reference format but is never incremented (path length 0 implies u == v,</span>
+<span class="sd">    which is excluded as a self-loop).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pred_graph : nx.DiGraph</span>
+<span class="sd">        Top-k predicted network.</span>
+<span class="sd">    ref_graph : nx.DiGraph</span>
+<span class="sd">        Ground truth directed network.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Keys: &#39;0&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39; (path length counts), numPred, numTP,</span>
+<span class="sd">        numFP_withPath, numFP_noPath.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pred_graph</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pred_graph must be nx.DiGraph, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">pred_graph</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_graph</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ref_graph must be nx.DiGraph, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">ref_graph</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">ref_edges</span>  <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">ref_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
+    <span class="n">pred_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">pred_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
+
+    <span class="n">true_positives</span>  <span class="o">=</span> <span class="n">pred_edges</span> <span class="o">&amp;</span> <span class="n">ref_edges</span>
+    <span class="n">false_positives</span> <span class="o">=</span> <span class="n">pred_edges</span> <span class="o">-</span> <span class="n">ref_edges</span>
+
+    <span class="n">nopath</span>   <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">yespath</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">path_length_counts</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">false_positives</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">dijkstra_path</span><span class="p">(</span><span class="n">ref_graph</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+            <span class="n">path_len</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">yespath</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">path_len</span> <span class="ow">in</span> <span class="n">path_length_counts</span><span class="p">:</span>
+                <span class="n">path_length_counts</span><span class="p">[</span><span class="n">path_len</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">except</span> <span class="p">(</span><span class="n">nx</span><span class="o">.</span><span class="n">NetworkXNoPath</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">NodeNotFound</span><span class="p">):</span>
+            <span class="n">nopath</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="o">**</span><span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">k</span><span class="p">):</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">path_length_counts</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
+        <span class="s1">&#39;numPred&#39;</span><span class="p">:</span>        <span class="nb">len</span><span class="p">(</span><span class="n">pred_edges</span><span class="p">),</span>
+        <span class="s1">&#39;numTP&#39;</span><span class="p">:</span>          <span class="nb">len</span><span class="p">(</span><span class="n">true_positives</span><span class="p">),</span>
+        <span class="s1">&#39;numFP_withPath&#39;</span><span class="p">:</span> <span class="n">yespath</span><span class="p">,</span>
+        <span class="s1">&#39;numFP_noPath&#39;</span><span class="p">:</span>   <span class="n">nopath</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_compute_path_stats</span><span class="p">(</span>
+    <span class="n">ranked_edges</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">ref_graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute path statistics for one algorithm on one run.</span>
+
+<span class="sd">    Filters self-loops, zero-weight edges, and duplicates before taking the</span>
+<span class="sd">    top-k predictions (k = number of reference graph edges). Returns None when</span>
+<span class="sd">    there are no predictions or the reference graph is empty.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ranked_edges : pd.DataFrame</span>
+<span class="sd">        Predicted edge list with columns Gene1, Gene2, EdgeWeight.</span>
+<span class="sd">    ref_graph : nx.DiGraph</span>
+<span class="sd">        Ground truth directed network used as the path reference.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict or None</span>
+<span class="sd">        Path statistics dict (see _path_stats), or None if the metric cannot</span>
+<span class="sd">        be computed.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ranked_edges</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ranked_edges must be DataFrame, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">ranked_edges</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_graph</span><span class="p">,</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ref_graph must be nx.DiGraph, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">ref_graph</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ref_graph</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Filter self-loops, round and take absolute value, drop zeros and duplicates</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">ranked_edges</span><span class="p">[</span><span class="n">ranked_edges</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ranked_edges</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">pred</span><span class="p">[</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>
+    <span class="n">pred</span> <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">pred</span><span class="p">[</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">pred</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s1">&#39;first&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">pred</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">pred</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Take top-k by EdgeWeight; use the weight at position k-1 as the cutoff</span>
+    <span class="n">maxk</span>      <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pred</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span>
+    <span class="n">threshold</span> <span class="o">=</span> <span class="n">pred</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">maxk</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span>
+    <span class="n">top_k</span>     <span class="o">=</span> <span class="n">pred</span><span class="p">[</span><span class="n">pred</span><span class="p">[</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">]</span>
+
+    <span class="n">pred_graph</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">DiGraph</span><span class="p">()</span>
+    <span class="n">pred_graph</span><span class="o">.</span><span class="n">add_edges_from</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">top_k</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">],</span> <span class="n">top_k</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]))</span>
+
+    <span class="k">return</span> <span class="n">_path_stats</span><span class="p">(</span><span class="n">pred_graph</span><span class="p">,</span> <span class="n">ref_graph</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PathStats"><a class="viewcode-back" href="../../BLEval.html#BLEval.PathStats.PathStats">[docs]</a><span class="k">class</span> <span class="nc">PathStats</span><span class="p">(</span><span class="n">Evaluator</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evaluator that characterises false positive predicted edges by their</span>
+<span class="sd">    shortest-path distance in the ground truth network.</span>
+
+<span class="sd">    For each algorithm, the top-k predicted edges (k = \|reference edges\|) are</span>
+<span class="sd">    split into true positives and false positives. Each false positive (u, v)</span>
+<span class="sd">    is looked up in the reference graph; if a directed path from u to v exists</span>
+<span class="sd">    its length is binned (2–5); otherwise it is counted as having no path.</span>
+
+<span class="sd">    For each DatasetGroup, one CSV per run is written to dataset_path:</span>
+
+<span class="sd">        dataset_path/PathStats_{run_id}.csv</span>
+
+<span class="sd">    Rows are algorithms; columns are &#39;0&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, numPred, numTP,</span>
+<span class="sd">    numFP_withPath, numFP_noPath. Runs whose ground truth file is missing are</span>
+<span class="sd">    skipped with a warning.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evaluation_data</span><span class="p">:</span> <span class="n">EvaluationData</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute path statistics per algorithm per run and write results to</span>
+<span class="sd">        dataset_path/PathStats_{run_id}.csv.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        evaluation_data : EvaluationData</span>
+<span class="sd">            Loaded predicted networks organised by dataset and run.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">evaluation_data</span><span class="p">,</span> <span class="n">EvaluationData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;evaluation_data must be EvaluationData, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">evaluation_data</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">dataset_group</span> <span class="ow">in</span> <span class="n">evaluation_data</span><span class="p">:</span>
+            <span class="n">dataset_group</span><span class="o">.</span><span class="n">dataset_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">dataset_group</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">run</span><span class="o">.</span><span class="n">ground_truth_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Warning: ground truth not found at </span><span class="si">{</span><span class="n">run</span><span class="o">.</span><span class="n">ground_truth_path</span><span class="si">}</span><span class="s2">, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;skipping run &#39;</span><span class="si">{</span><span class="n">run</span><span class="o">.</span><span class="n">run_id</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="k">continue</span>
+
+                <span class="n">gt_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_ground_truth</span><span class="p">(</span><span class="n">run</span><span class="o">.</span><span class="n">ground_truth_path</span><span class="p">)</span>
+                <span class="n">true_edges</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">gt_df</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">],</span> <span class="n">gt_df</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]))</span>
+                <span class="n">ref_graph</span>  <span class="o">=</span> <span class="n">_build_ref_graph</span><span class="p">(</span><span class="n">true_edges</span><span class="p">)</span>
+
+                <span class="c1"># results[algo] = path stats dict</span>
+                <span class="n">results</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+                <span class="k">for</span> <span class="n">algo</span><span class="p">,</span> <span class="n">ranked_edges_df</span> <span class="ow">in</span> <span class="n">run</span><span class="o">.</span><span class="n">ranked_edges</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">stats</span> <span class="o">=</span> <span class="n">_compute_path_stats</span><span class="p">(</span><span class="n">ranked_edges_df</span><span class="p">,</span> <span class="n">ref_graph</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">stats</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="n">results</span><span class="p">[</span><span class="n">algo</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">results</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">out_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+                <span class="n">out_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Algorithm&#39;</span>
+
+                <span class="n">out_path</span> <span class="o">=</span> <span class="n">dataset_group</span><span class="o">.</span><span class="n">dataset_path</span> <span class="o">/</span> <span class="n">run</span><span class="o">.</span><span class="n">run_id</span> <span class="o">/</span> <span class="s1">&#39;PathStats.csv&#39;</span>
+                <span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">out_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Wrote PathStats results to </span><span class="si">{</span><span class="n">out_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

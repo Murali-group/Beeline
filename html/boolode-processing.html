@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generating inputs for BEELINE &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="src package" href="src.html" />
+    <link rel="prev" title="Defining an input model" href="boolode-tutorial.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BEELINE
+              <img src="_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="BoolODE.html">BoolODE</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="BoolODE.html#overview">Overview</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="boolode-tutorial.html">Defining an input model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolode-tutorial.html#running-boolode">Running BoolODE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="boolode-tutorial.html#working-with-boolode-output">Working with BoolODE output</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Generating inputs for BEELINE</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compute-pseudotime-using-slingshot">Compute Pseudotime using Slingshot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generate-dropouts-from-expression-data">Generate dropouts from expression data</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="BoolODE.html#command-line-options">Command Line Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BoolODE.html#api-reference">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="BoolODE.html">BoolODE</a></li>
+      <li class="breadcrumb-item active">Generating inputs for BEELINE</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/boolode-processing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="generating-inputs-for-beeline">
+<span id="geninputs"></span><h1>Generating inputs for BEELINE<a class="headerlink" href="#generating-inputs-for-beeline" title="Permalink to this heading"></a></h1>
+<p>BoolODE provides additional scripts, located in <code class="docutils literal notranslate"><span class="pre">scripts/</span></code>, to
+process simulation output for use with BEELINE.</p>
+</section>
+<section id="compute-pseudotime-using-slingshot">
+<h1>Compute Pseudotime using Slingshot<a class="headerlink" href="#compute-pseudotime-using-slingshot" title="Permalink to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>runSlingshot.py requires the Slingshot Docker container. Please make sure
+Docker has been set up and the container has been built.</p>
+</div>
+<p>Slingshot computes pseudotime trajectories for a given dataset by
+first carrying out dimensionality reduction, then carrying out
+<em>k</em>-means clustering on the low dimensional embedding in order to
+compute trajectories. The number of clusters expected depends on the
+features of the dataset. For instance, a dataset with two steady state
+clusters should be specified with <code class="docutils literal notranslate"><span class="pre">--nClusters</span> <span class="pre">3</span></code>, specifying an
+additional initial state cluster.</p>
+<p><code class="docutils literal notranslate"><span class="pre">runSlingshot.py</span></code> takes the following command line arguments:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>-h, --help            show this help message and exit
+--outPrefix=OUTPREFIX
+                      Prefix for output files.
+-e EXPR, --expr=EXPR  Path to expression data file
+-p PSEUDO, --pseudo=PSEUDO
+                      Path to &#39;pseudotime&#39; file generated by BoolODE
+-c NCLUSTERS, --nClusters=NCLUSTERS
+                      Number of expected clusters in the dataset.
+--noEnd               Do not force Slingshot to have an end state.
+-r PERPLEXITY, --perplexity=PERPLEXITY
+                      Perplexity for tSNE.
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">runSlingshot.py</span></code> requires a ‘pseudotime’ file passed
+using the <code class="docutils literal notranslate"><span class="pre">--pseudo</span></code> option. This file should contain the
+actual simulation time from BoolODE, which can then be used
+to compare the quality of the inferred trajectory with the
+actual simulation time values. This file is NOT required by
+Slingshot itself.</p>
+</div>
+</section>
+<section id="generate-dropouts-from-expression-data">
+<h1>Generate dropouts from expression data<a class="headerlink" href="#generate-dropouts-from-expression-data" title="Permalink to this heading"></a></h1>
+<p>In order to mimic real single-cell expression datasets, BoolODE
+includes <code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> which implements dropouts as described in
+the paper, by dropping expression values below <code class="docutils literal notranslate"><span class="pre">DROP_CUTOFF</span></code> using a
+probability of <code class="docutils literal notranslate"><span class="pre">DROP_PROB</span></code>. This script samples <code class="docutils literal notranslate"><span class="pre">NCELLS</span></code> from the
+columns in the expression dataset <code class="docutils literal notranslate"><span class="pre">EXPR</span></code>, and will throw an error if
+the number is greater than the number of columns.</p>
+<p><code class="docutils literal notranslate"><span class="pre">genDropouts.py</span></code> takes the following command line arguments:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>-h, --help            show this help message and exit
+--outPrefix=OUTPREFIX
+                      Prefix for output files.
+-e EXPR, --expr=EXPR  Path to expression data file
+-p PSEUDO, --pseudo=PSEUDO
+                      Path to pseudotime file
+-r REFNET, --refNet=REFNET
+                      Path to reference network file
+-n NCELLS, --nCells=NCELLS
+                      Number of cells to sample.
+-d, --dropout         Carry out dropout analysis? [Optional]
+--drop-cutoff=DROP_CUTOFF
+                      Specify percentile cutoff on gene expression
+--drop-prob=DROP_PROB
+                      Specify the probability of dropping a gene below
+                      quantile q. Ensure 0 &lt; DROP_PROB &lt; 1.
+-i SAMPLENUM, --samplenum=SAMPLENUM
+                      Sample Number
+</pre></div>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Ensure the <code class="docutils literal notranslate"><span class="pre">--dropout</span></code> option is passed. If not, <code class="docutils literal notranslate"><span class="pre">genDropouts</span></code>
+will still randomly sample cells but will not drop out any values.</p>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="boolode-tutorial.html" class="btn btn-neutral float-left" title="Defining an input model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="src.html" class="btn btn-neutral float-right" title="src package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

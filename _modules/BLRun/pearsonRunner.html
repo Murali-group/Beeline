@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLRun.pearsonRunner &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            BEELINE
+              <img src="../../_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">BLRun.pearsonRunner</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for BLRun.pearsonRunner</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">BLRun.runner</span> <span class="kn">import</span> <span class="n">Runner</span>
+
+
+<div class="viewcode-block" id="PearsonRunner"><a class="viewcode-back" href="../../BLRun.html#BLRun.pearsonRunner.PearsonRunner">[docs]</a><span class="k">class</span> <span class="nc">PearsonRunner</span><span class="p">(</span><span class="n">Runner</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Concrete runner for pairwise Pearson correlation GRN inference.</span>
+<span class="sd">    Runs entirely within the BEELINE conda environment; no Docker image is used.</span>
+<span class="sd">    The image field in the config should be set to &#39;local&#39;.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="PearsonRunner.generateInputs"><a class="viewcode-back" href="../../BLRun.html#BLRun.pearsonRunner.PearsonRunner.generateInputs">[docs]</a>    <span class="k">def</span> <span class="nf">generateInputs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Verifies that the expression data file exists in the input directory.</span>
+<span class="sd">        No file copying is required because Pearson runs locally without Docker.</span>
+
+<span class="sd">        :param self.input_dir: Path — directory containing input files</span>
+<span class="sd">        :param self.exprData: str — expression data filename</span>
+<span class="sd">        :raises FileNotFoundError: if the expression data file is missing</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">exprData</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Expression data file not found: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="bp">self</span><span class="o">.</span><span class="n">exprData</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PearsonRunner.run"><a class="viewcode-back" href="../../BLRun.html#BLRun.pearsonRunner.PearsonRunner.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Computes pairwise Pearson correlation between all gene pairs.</span>
+<span class="sd">        Each gene&#39;s expression is first normalized by its maximum expression value</span>
+<span class="sd">        across all cells, bringing values into the range [0, 1] for non-negative data.</span>
+<span class="sd">        Genes with zero maximum expression are left unnormalized (divisor replaced with 1).</span>
+<span class="sd">        Writes the full (genes x genes) correlation matrix to working_dir/outFile.txt.</span>
+
+<span class="sd">        :param self.input_dir: Path — directory containing expression data</span>
+<span class="sd">        :param self.exprData: str — CSV filename; rows = genes, columns = cells</span>
+<span class="sd">        :param self.working_dir: Path — output location for outFile.txt</span>
+<span class="sd">        :output working_dir/outFile.txt: tab-separated (genes x genes) correlation matrix</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># Read expression data: rows = genes, columns = cells</span>
+        <span class="n">ExpressionData</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_dir</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">exprData</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ExpressionData</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ExpressionData must be a DataFrame, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">ExpressionData</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Normalize each gene (row) by its maximum expression value.</span>
+        <span class="c1"># max=0 is replaced with 1 to avoid division by zero for silent genes.</span>
+        <span class="n">max_per_gene</span> <span class="o">=</span> <span class="n">ExpressionData</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">normalized</span> <span class="o">=</span> <span class="n">ExpressionData</span><span class="o">.</span><span class="n">div</span><span class="p">(</span><span class="n">max_per_gene</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Transpose to (cells x genes) so .corr() produces a (genes x genes) matrix.</span>
+        <span class="n">corr</span> <span class="o">=</span> <span class="n">normalized</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">corr</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;pearson&#39;</span><span class="p">)</span>
+
+        <span class="n">corr</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">/</span> <span class="s1">&#39;outFile.txt&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PearsonRunner.parseOutput"><a class="viewcode-back" href="../../BLRun.html#BLRun.pearsonRunner.PearsonRunner.parseOutput">[docs]</a>    <span class="k">def</span> <span class="nf">parseOutput</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Reads the gene x gene correlation matrix from working_dir/outFile.txt and</span>
+<span class="sd">        writes a ranked edge list to output_dir/rankedEdges.csv.</span>
+<span class="sd">        Both directions of each gene pair are included (the matrix is symmetric).</span>
+<span class="sd">        Self-correlations (Gene1 == Gene2) are excluded.</span>
+<span class="sd">        Edges are ranked by absolute correlation value, descending.</span>
+
+<span class="sd">        :param self.working_dir: Path — directory containing outFile.txt</span>
+<span class="sd">        :output output_dir/rankedEdges.csv: tab-separated edge list with columns</span>
+<span class="sd">            Gene1 (str), Gene2 (str), EdgeWeight (float, signed Pearson r)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">outFile</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">working_dir</span> <span class="o">/</span> <span class="s1">&#39;outFile.txt&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">outFile</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">outFile</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; does not exist, skipping...&#39;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Read square correlation matrix (genes x genes)</span>
+        <span class="n">CorrDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">outFile</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">CorrDF</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;CorrDF must be a DataFrame, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">CorrDF</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Convert to long-format edge list and drop self-correlations</span>
+        <span class="n">stacked</span> <span class="o">=</span> <span class="n">CorrDF</span><span class="o">.</span><span class="n">stack</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">stacked</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">,</span> <span class="s1">&#39;Gene2&#39;</span><span class="p">,</span> <span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span>
+        <span class="n">OutDF</span> <span class="o">=</span> <span class="n">stacked</span><span class="p">[</span><span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">stacked</span><span class="p">[</span><span class="s1">&#39;Gene2&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Rank by absolute correlation value, descending; retain signed EdgeWeight</span>
+        <span class="n">OutDF</span> <span class="o">=</span> <span class="n">OutDF</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">OutDF</span><span class="p">[</span><span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">argsort</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_ranked_edges</span><span class="p">(</span><span class="n">OutDF</span><span class="p">[[</span><span class="s1">&#39;Gene1&#39;</span><span class="p">,</span> <span class="s1">&#39;Gene2&#39;</span><span class="p">,</span> <span class="s1">&#39;EdgeWeight&#39;</span><span class="p">]])</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

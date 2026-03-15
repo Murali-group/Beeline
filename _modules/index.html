@@ -1,184 +1,148 @@
-
-
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Overview: module code &mdash; BEELINE 0.1 documentation</title>
-  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Overview: module code &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css" />
 
   
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
-  
-  
-
-  
-  <script type="text/javascript" src="../_static/js/modernizr.min.js"></script>
-  
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script type="text/javascript" src="../_static/jquery.js"></script>
-        <script type="text/javascript" src="../_static/underscore.js"></script>
-        <script type="text/javascript" src="../_static/doctools.js"></script>
-        <script type="text/javascript" src="../_static/language_data.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
 
           
-            <a href="../index.html" class="icon icon-home"> BEELINE
           
-
-          
+          <a href="../index.html" class="icon icon-home">
+            BEELINE
+              <img src="../_static/beeline-group.svg" class="logo" alt="Logo"/>
           </a>
-
-          
-            
-            
-          
-
-          
+              <div class="version">
+                v1.1
+              </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../algorithms.html">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">API Reference</a></li>
+</ul>
 
-          
-        </div>
-
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
-            
-          
         </div>
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">BEELINE</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
-      <li><a href="../index.html">Docs</a> &raquo;</li>
-        
-      <li>Overview: module code</li>
-    
-    
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Overview: module code</li>
       <li class="wy-breadcrumbs-aside">
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
+             
   <h1>All modules for which code is available</h1>
-<ul><li><a href="src/parseTime.html">src.parseTime</a></li>
+<ul><li><a href="BLEval/AUPRC.html">BLEval.AUPRC</a></li>
+<li><a href="BLEval/AUROC.html">BLEval.AUROC</a></li>
+<li><a href="BLEval/BLTime.html">BLEval.BLTime</a></li>
+<li><a href="BLEval/Borda.html">BLEval.Borda</a></li>
+<li><a href="BLEval/EarlyPrecision.html">BLEval.EarlyPrecision</a></li>
+<li><a href="BLEval/Jaccard.html">BLEval.Jaccard</a></li>
+<li><a href="BLEval/Motifs.html">BLEval.Motifs</a></li>
+<li><a href="BLEval/PathStats.html">BLEval.PathStats</a></li>
+<li><a href="BLEval/SignedEarlyPrecision.html">BLEval.SignedEarlyPrecision</a></li>
+<li><a href="BLEval/Spearman.html">BLEval.Spearman</a></li>
+<li><a href="BLEval/data.html">BLEval.data</a></li>
+<li><a href="BLEval/evaluator.html">BLEval.evaluator</a></li>
+<li><a href="BLPlot/PlotAUPRC.html">BLPlot.PlotAUPRC</a></li>
+<li><a href="BLPlot/PlotAUROC.html">BLPlot.PlotAUROC</a></li>
+<li><a href="BLPlot/PlotEPR.html">BLPlot.PlotEPR</a></li>
+<li><a href="BLPlot/PlotEPRHeatmap.html">BLPlot.PlotEPRHeatmap</a></li>
+<li><a href="BLPlot/PlotSummaryHeatmap.html">BLPlot.PlotSummaryHeatmap</a></li>
+<li><a href="BLPlot/plotter.html">BLPlot.plotter</a></li>
+<li><a href="BLRun/genie3Runner.html">BLRun.genie3Runner</a></li>
+<li><a href="BLRun/grisliRunner.html">BLRun.grisliRunner</a></li>
+<li><a href="BLRun/grnboost2Runner.html">BLRun.grnboost2Runner</a></li>
+<li><a href="BLRun/grnvbemRunner.html">BLRun.grnvbemRunner</a></li>
+<li><a href="BLRun/jump3Runner.html">BLRun.jump3Runner</a></li>
+<li><a href="BLRun/leapRunner.html">BLRun.leapRunner</a></li>
+<li><a href="BLRun/pearsonRunner.html">BLRun.pearsonRunner</a></li>
+<li><a href="BLRun/pidcRunner.html">BLRun.pidcRunner</a></li>
+<li><a href="BLRun/ppcorRunner.html">BLRun.ppcorRunner</a></li>
+<li><a href="BLRun/runner.html">BLRun.runner</a></li>
+<li><a href="BLRun/scodeRunner.html">BLRun.scodeRunner</a></li>
+<li><a href="BLRun/scribeRunner.html">BLRun.scribeRunner</a></li>
+<li><a href="BLRun/scsglRunner.html">BLRun.scsglRunner</a></li>
+<li><a href="BLRun/sinceritiesRunner.html">BLRun.sinceritiesRunner</a></li>
+<li><a href="BLRun/singeRunner.html">BLRun.singeRunner</a></li>
 </ul>
 
            </div>
-           
           </div>
           <footer>
-  
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &copy; Copyright 2019, Aditya
-
-    </p>
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
-
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-   
+  </script> 
 
 </body>
 </html>

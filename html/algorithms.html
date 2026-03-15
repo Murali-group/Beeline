@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supported Algorithms &mdash; BEELINE v1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Developer Guide" href="beeline-developer.html" />
+    <link rel="prev" title="Reproducing BEELINE Results" href="reproducing-results.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            BEELINE
+              <img src="_static/beeline-group.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                v1.1
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="index.html">Home</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running-beeline.html">Running BEELINE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reproducing-results.html">Reproducing BEELINE Results</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Supported Algorithms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="beeline-developer.html">Developer Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BoolODE.html">BoolODE</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BEELINE</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Supported Algorithms</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/algorithms.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="supported-algorithms">
+<span id="algorithms"></span><h1>Supported Algorithms<a class="headerlink" href="#supported-algorithms" title="Permalink to this heading"></a></h1>
+<p>The following table lists the algorithms and the parameters they accept,
+along with default parameter values.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 85.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Algorithm</strong></p></th>
+<th class="head"><p><strong>Input Parameters</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SINCERITIES</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nBins</span></code> : (Default = 10)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>SCODE</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">z</span></code> : (Default = 10)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nIter</span></code> : (Default = 1000)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">nRep</span></code> : (Default = 6)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>SINGE</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lambda</span></code> : (Default = 0.01)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dT</span></code> : (Default = 15)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_lags</span></code> : (Default = 5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kernel_width</span></code> : (Default = 0.5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prob_zero_removal</span></code> : (Default = 0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">prob_remove_samples</span></code> : (Default = 0.0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">family</span></code> : (Default = ‘gaussian’)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_replicates</span></code> : (Default = 6)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>PPCOR</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pVal</span></code> : p-value cutoff (Default = 0.01)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>PIDC</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>PEARSON</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-even"><td><p>LEAP</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">maxLag</span></code> : (Default = 0.33)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>JUMP3</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-even"><td><p>SCRIBE</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">delay</span></code> : (Default = 5)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">method</span></code> : Any of ‘RDI’, ‘uRDI’, ‘cRDI’, or ‘ucRDI’ (Default = ‘ucRDI’)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lowerDetectionLimit</span></code> : (Default = 0)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">expressionFamily</span></code> : If mRNA counts, use ‘negbinomial’ (Default = ‘uninormal’)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">log</span></code> : Log transform expression values (Default = False)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ignorePT</span></code> : Ignore pseudotime (Default = True)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-odd"><td><p>SCSGL</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">pos_density</span></code> : Density of positive edges in the inferred network</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">neg_density</span></code> : Density of negative edges in the inferred network</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assoc</span></code> : Association measure used for graph learning</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>GRNVBEM</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>GRISLI</p></td>
+<td><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">L</span></code> : (Default = 10)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">R</span></code> : (Default = 3000)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">alphaMin</span></code> : (Default = 0.0)</p></li>
+</ul>
+</td>
+</tr>
+<tr class="row-even"><td><p>GENIE3</p></td>
+<td><p>None</p></td>
+</tr>
+<tr class="row-odd"><td><p>GRNBOOST2</p></td>
+<td><p>None</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="reproducing-results.html" class="btn btn-neutral float-left" title="Reproducing BEELINE Results" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="beeline-developer.html" class="btn btn-neutral float-right" title="Developer Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Alexander Morin.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
