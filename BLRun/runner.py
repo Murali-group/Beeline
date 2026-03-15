@@ -132,16 +132,21 @@ class Runner(ABC):
         if not isinstance(append, bool):
             raise TypeError(f"append must be bool, got {type(append)}")
 
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
-
         mode = 'a' if append else 'w'
         with open(self.output_dir / 'output.txt', mode) as f:
-            f.write(result.stdout)
-            f.write(result.stderr)
+            proc = subprocess.Popen(
+                cmd, shell=True,
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                text=True,
+            )
+            for line in proc.stdout:
+                f.write(line)
+                f.flush()
+            proc.wait()
 
-        if result.returncode != 0:
+        if proc.returncode != 0:
             raise RuntimeError(
-                f"Docker command failed (exit {result.returncode}). "
+                f"Docker command failed (exit {proc.returncode}). "
                 f"See {self.output_dir / 'output.txt'} for details."
             )
 
