@@ -2,18 +2,19 @@
 # Corresponds to the CLI call in genInputs.sh
 
 settings:
+  inputDirectory: data
   outputDirectory: gen_inputs_testing
 
 datasets:
 
   #################### MOUSE STRING ####################
 
-  - dataset_id: mouse-mHSC-E-500-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-E-500-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -21,12 +22,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-E-1000-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-E-1000-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -34,12 +35,12 @@ datasets:
     numGenes: 1000      # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-L-500-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-L-500-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -47,12 +48,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-L-1000-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-L-1000-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -60,12 +61,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-GM-500-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-GM-500-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -73,12 +74,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-GM-1000-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-GM-1000-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -86,12 +87,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mESC-500-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mESC-500-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -99,12 +100,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mESC-1000-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mESC-1000-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -112,12 +113,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mDC-500-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mDC-500-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -125,12 +126,12 @@ datasets:
     numGenes: 500         # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mDC-1000-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/STRING-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mDC-1000-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
+    netFile: Networks/mouse/STRING-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -140,12 +141,12 @@ datasets:
 
   #################### MOUSE NON SPECIFIC CHIP SEQ ####################
 
-  - dataset_id: mouse-mHSC-E-500-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-E-500-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -153,12 +154,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-E-1000-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-E-1000-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -166,12 +167,12 @@ datasets:
     numGenes: 1000       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-L-500-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-L-500-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -179,12 +180,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-L-1000-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-L-1000-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -192,12 +193,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-GM-500-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-GM-500-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -205,12 +206,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-GM-1000-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-GM-1000-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -218,12 +219,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mESC-500-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mESC-500-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -231,12 +232,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mESC-1000-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mESC-1000-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -244,12 +245,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mDC-500-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mDC-500-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -257,12 +258,12 @@ datasets:
     numGenes: 500         # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mDC-1000-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/Non-Specific-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mDC-1000-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
+    netFile: Networks/mouse/Non-Specific-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -272,12 +273,12 @@ datasets:
 
   #################### MOUSE CELL TYPE SPECIFIC CHIP SEQ ####################
 
-  - dataset_id: mouse-mHSC-E-500-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mHSC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-E-500-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
+    netFile: Networks/mouse/mHSC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -285,12 +286,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-E-1000-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mHSC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-E-1000-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-E/PseudoTime.csv
+    netFile: Networks/mouse/mHSC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -298,12 +299,12 @@ datasets:
     numGenes: 1000       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-L-500-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mHSC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-L-500-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
+    netFile: Networks/mouse/mHSC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -311,12 +312,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-L-1000-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mHSC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-L-1000-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-L/PseudoTime.csv
+    netFile: Networks/mouse/mHSC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -324,12 +325,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-GM-500-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mHSC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-GM-500-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
+    netFile: Networks/mouse/mHSC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -337,12 +338,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mHSC-GM-1000-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mHSC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mHSC-GM-1000-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mHSC-GM/PseudoTime.csv
+    netFile: Networks/mouse/mHSC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -350,12 +351,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mESC-500-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mESC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mESC-500-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
+    netFile: Networks/mouse/mESC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -363,12 +364,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mESC-1000-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mESC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mESC-1000-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
+    netFile: Networks/mouse/mESC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -376,12 +377,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mDC-500-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mDC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mDC-500-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
+    netFile: Networks/mouse/mDC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -389,12 +390,12 @@ datasets:
     numGenes: 500        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mDC-1000-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mDC-ChIP-seq-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mDC-1000-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/mDC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mDC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mDC/PseudoTime.csv
+    netFile: Networks/mouse/mDC-ChIP-seq-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -404,12 +405,12 @@ datasets:
 
   #################### MOUSE LOF / GOF ####################
 
-  - dataset_id: mouse-mESC-500-lof-gof
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mESC-lofgof-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mESC-500-lof-gof
+    expFile: BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
+    netFile: Networks/mouse/mESC-lofgof-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -417,12 +418,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: mouse-mESC-1000-lof-gof
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
-    netFile: ./data/Networks/mouse/mESC-lofgof-network.csv
-    TFFile: ./data/mouse-tfs.csv
+  - dataset_id: mESC-1000-lof-gof
+    expFile: BEELINE-data/inputs/scRNA-Seq/mESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/mESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/mESC/PseudoTime.csv
+    netFile: Networks/mouse/mESC-lofgof-network.csv
+    TFFile: mouse-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -432,12 +433,12 @@ datasets:
 
   #################### HUMAN STRING ####################
 
-  - dataset_id: human-hESC-500-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
-    netFile: ./data/Networks/human/STRING-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hESC-500-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
+    netFile: Networks/human/STRING-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -445,12 +446,12 @@ datasets:
     numGenes: 500        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: human-hESC-1000-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
-    netFile: ./data/Networks/human/STRING-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hESC-1000-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
+    netFile: Networks/human/STRING-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -458,12 +459,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: human-hHep-500-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
-    netFile: ./data/Networks/human/STRING-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hHep-500-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
+    netFile: Networks/human/STRING-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -471,12 +472,12 @@ datasets:
     numGenes: 500         # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: human-hHep-1000-string
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
-    netFile: ./data/Networks/human/STRING-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hHep-1000-string
+    expFile: BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
+    netFile: Networks/human/STRING-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -486,12 +487,12 @@ datasets:
 
   #################### HUMAN NON SPECIFIC CHIP SEQ ####################
 
-  - dataset_id: human-hESC-500-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
-    netFile: ./data/Networks/human/Non-specific-ChIP-seq-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hESC-500-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
+    netFile: Networks/human/Non-specific-ChIP-seq-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -499,12 +500,12 @@ datasets:
     numGenes: 500        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: human-hESC-1000-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
-    netFile: ./data/Networks/human/Non-specific-ChIP-seq-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hESC-1000-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
+    netFile: Networks/human/Non-specific-ChIP-seq-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -512,12 +513,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: human-hHep-500-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
-    netFile: ./data/Networks/human/Non-specific-ChIP-seq-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hHep-500-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
+    netFile: Networks/human/Non-specific-ChIP-seq-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -525,12 +526,12 @@ datasets:
     numGenes: 500       # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: human-hHep-1000-non-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
-    netFile: ./data/Networks/human/Non-specific-ChIP-seq-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hHep-1000-non-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
+    netFile: Networks/human/Non-specific-ChIP-seq-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -540,12 +541,12 @@ datasets:
 
   #################### HUMAN CELL TYPE SPECIFIC CHIP SEQ ####################
 
-  - dataset_id: human-hESC-500-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
-    netFile: ./data/Networks/human/hESC-ChIP-seq-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hESC-500-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
+    netFile: Networks/human/hESC-ChIP-seq-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -553,12 +554,12 @@ datasets:
     numGenes: 500        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: human-hESC-1000-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
-    netFile: ./data/Networks/human/hESC-ChIP-seq-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hESC-1000-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/hESC/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hESC/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hESC/PseudoTime.csv
+    netFile: Networks/human/hESC-ChIP-seq-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -566,12 +567,12 @@ datasets:
     numGenes: 1000        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: human-hHep-500-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
-    netFile: ./data/Networks/human/HepG2-ChIP-seq-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hHep-500-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
+    netFile: Networks/human/HepG2-ChIP-seq-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal
@@ -579,12 +580,12 @@ datasets:
     numGenes: 500        # number of non-TF genes to include
     sortByVariance: true  # rank non-TF genes by variance (false = rank by p-value)
 
-  - dataset_id: human-hHep-1000-cell-type-specific-chip-seq
-    expFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
-    geneOrderingFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
-    pseudoTimeFile: ./data/BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
-    netFile: ./data/Networks/human/HepG2-ChIP-seq-network.csv
-    TFFile: ./data/human-tfs.csv
+  - dataset_id: hHep-1000-cell-type-specific-chip-seq
+    expFile: BEELINE-data/inputs/scRNA-Seq/hHep/ExpressionData.csv
+    geneOrderingFile: BEELINE-data/inputs/scRNA-Seq/hHep/GeneOrdering.csv
+    pseudoTimeFile: BEELINE-data/inputs/scRNA-Seq/hHep/PseudoTime.csv
+    netFile: Networks/human/HepG2-ChIP-seq-network.csv
+    TFFile: human-tfs.csv
 
     pVal: 0.01          # p-value cutoff for filtering variable genes
     BFcorr: true        # apply Bonferroni correction to pVal

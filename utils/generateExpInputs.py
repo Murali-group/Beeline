@@ -25,15 +25,12 @@ def get_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument('-e', '--expFile', type=str,
-                        default='ExpressionData.csv',
                         help='Path to expression data file. Required.\n')
 
     parser.add_argument('-g', '--geneOrderingFile', type=str,
-                        default='GeneOrdering.csv',
                         help='Path to gene ordering file. Required.\n')
 
     parser.add_argument('-P', '--pseudoTimeFile', type=str,
-                        default='PseudoTime.csv',
                         help='Path to pseudotime file. Copied to output as PseudoTime.csv. Required.\n')
 
     # default=None so omitting -f skips network processing entirely.
@@ -42,7 +39,6 @@ def get_parser() -> argparse.ArgumentParser:
                         help='Path to network file to filter and produce GroundTruthNetwork.csv. Optional.\n')
 
     parser.add_argument('-i', '--TFFile', type=str,
-                        default='human-tfs.csv',
                         help='Path to file containing list of TFs. Required.\n')
 
     parser.add_argument('-p', '--pVal', type=float, default=0.01,
@@ -82,6 +78,13 @@ def get_parser() -> argparse.ArgumentParser:
                              'are sourced from the file; any CLI args supplied alongside -y '
                              'are ignored (a warning is printed).\n')
 
+    parser.add_argument('-b', '--base-directory', dest='base_directory', type=str, default='.',
+                        help='Base directory from which all relative file paths are resolved. '
+                             'In YAML mode, paths in the config are resolved under '
+                             'base-directory/inputDirectory (for inputs) and '
+                             'base-directory/outputDirectory (for outputs). '
+                             'Default is the current working directory.\n')
+
     return parser
 
 
@@ -102,7 +105,7 @@ _YAML_DATASET_REQUIRED_KEYS = {
 # netFile is optional per dataset (may be absent or null).
 
 
-def load_yaml_config(path: str, base_opts: argparse.Namespace) -> list:
+def load_yaml_config(path: str, base_opts: argparse.Namespace, base_dir: str = '.') -> list:
     '''
     Load a YAML config file and return one argparse.Namespace per dataset entry.
 
@@ -110,26 +113,50 @@ def load_yaml_config(path: str, base_opts: argparse.Namespace) -> list:
     a top-level 'datasets' list. Each dataset entry must contain all keys in
     _YAML_DATASET_REQUIRED_KEYS; 'netFile' is optional (defaults to None).
 
+    The 'settings' block may also include an optional 'inputDirectory' key. When
+    present, all per-dataset input file paths (expFile, geneOrderingFile,
+    pseudoTimeFile, netFile, TFFile) are resolved as base_dir/inputDirectory/path.
+    outputDirectory is resolved as base_dir/outputDirectory.
+
     The outPrefix for each dataset is derived as outputDirectory/dataset_id.
 
-    Warns if any CLI arguments other than -y/--config were supplied alongside
-    the YAML path, because the YAML takes full precedence over them.
+    Warns if any CLI arguments other than -y/--config and -b/--base-directory were
+    supplied alongside the YAML path, because the YAML takes full precedence over them.
+    -b/--base-directory is not ignored — it is applied to all paths from the YAML.
 
     :param path:      str. Path to the YAML config file.
     :param base_opts: argparse.Namespace. Parsed CLI arguments; used only as a
                       template — fields are overwritten per dataset from the YAML.
+    :param base_dir:  str. Root directory prepended to all relative paths from the
+                      YAML (outputDirectory and inputDirectory/file paths).
+                      Defaults to '.'.
     :return:          list of argparse.Namespace, one entry per dataset.
     '''
     if not isinstance(path, str):
         raise TypeError(f"path must be str, got {type(path)}")
     if not isinstance(base_opts, argparse.Namespace):
         raise TypeError(f"base_opts must be argparse.Namespace, got {type(base_opts)}")
+    if not isinstance(base_dir, str):
+        raise TypeError(f"base_dir must be str, got {type(base_dir)}")
 
-    # Warn if the user also passed non-config CLI args — YAML wins.
-    extra_args = [
-        a for a in sys.argv[1:]
-        if a not in ('-y', '--config') and not a.endswith('.yaml') and not a.endswith('.yml')
-    ]
+    # Warn if the user also passed non-config, non-base-directory CLI args — YAML wins.
+    # -b/--base-directory is excluded because it IS honoured in YAML mode.
+    _passthrough = {'-y', '--config', '-b', '--base-directory'}
+    _argv = sys.argv[1:]
+    extra_args = []
+    skip_next = False
+    for i, a in enumerate(_argv):
+        if skip_next:
+            skip_next = False
+            continue
+        if a in _passthrough:
+            skip_next = True   # skip the value that follows the flag
+            continue
+        if any(a.startswith(p + '=') for p in _passthrough):
+            continue           # --flag=value form
+        if a.endswith('.yaml') or a.endswith('.yml'):
+            continue
+        extra_args.append(a)
     if extra_args:
         print(
             "WARNING: CLI arguments %s were provided alongside -y/--config. "
@@ -146,7 +173,10 @@ def load_yaml_config(path: str, base_opts: argparse.Namespace) -> list:
         print("ERROR: YAML config must have a 'datasets' list.")
         sys.exit(1)
 
-    output_dir = cfg['settings']['outputDirectory']
+    base_path    = Path(base_dir)
+    input_dir    = cfg['settings'].get('inputDirectory', '.')
+    input_root   = base_path / input_dir
+    output_dir   = str(base_path / cfg['settings']['outputDirectory'])
 
     # Enforce unique dataset_ids across all entries.
     all_ids = [ds.get('dataset_id') for ds in cfg['datasets']]
@@ -168,11 +198,11 @@ def load_yaml_config(path: str, base_opts: argparse.Namespace) -> list:
         opts = copy.copy(base_opts)
         opts.dataset_id       = ds['dataset_id']
         opts.outputDirectory  = output_dir
-        opts.expFile          = ds['expFile']
-        opts.geneOrderingFile = ds['geneOrderingFile']
-        opts.pseudoTimeFile   = ds['pseudoTimeFile']
-        opts.netFile          = ds.get('netFile', None)
-        opts.TFFile           = ds['TFFile']
+        opts.expFile          = str(input_root / ds['expFile'])
+        opts.geneOrderingFile = str(input_root / ds['geneOrderingFile'])
+        opts.pseudoTimeFile   = str(input_root / ds['pseudoTimeFile'])
+        opts.netFile          = str(input_root / ds['netFile']) if ds.get('netFile') else None
+        opts.TFFile           = str(input_root / ds['TFFile'])
         opts.pVal             = float(ds['pVal'])
         opts.BFcorr           = bool(ds['BFcorr'])
         opts.TFs              = bool(ds['TFs'])
@@ -446,11 +476,18 @@ def _process(opts: argparse.Namespace) -> None:
 
 def main():
     opts = parse_arguments()
+    base = Path(opts.base_directory)
 
     if opts.config is not None:
-        all_opts = load_yaml_config(opts.config, opts)
+        all_opts = load_yaml_config(opts.config, opts, base_dir=opts.base_directory)
     else:
-        opts.outPrefix = str(Path(opts.outputDirectory) / opts.dataset_id)
+        opts.expFile          = str(base / opts.expFile)
+        opts.geneOrderingFile = str(base / opts.geneOrderingFile)
+        opts.pseudoTimeFile   = str(base / opts.pseudoTimeFile)
+        if opts.netFile is not None:
+            opts.netFile      = str(base / opts.netFile)
+        opts.TFFile           = str(base / opts.TFFile)
+        opts.outPrefix        = str(base / opts.outputDirectory / opts.dataset_id)
         all_opts = [opts]
 
     for run_opts in all_opts:
