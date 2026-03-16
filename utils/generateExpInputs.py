@@ -147,6 +147,16 @@ def load_yaml_config(path: str, base_opts: argparse.Namespace) -> list:
         sys.exit(1)
 
     output_dir = cfg['settings']['outputDirectory']
+
+    # Enforce unique dataset_ids across all entries.
+    all_ids = [ds.get('dataset_id') for ds in cfg['datasets']]
+    seen, duplicates = set(), set()
+    for did in all_ids:
+        (duplicates if did in seen else seen).add(did)
+    if duplicates:
+        print("ERROR: duplicate dataset_id(s) found in YAML config: %s" % sorted(duplicates))
+        sys.exit(1)
+
     all_opts = []
 
     for i, ds in enumerate(cfg['datasets']):
@@ -343,8 +353,10 @@ def _process(opts: argparse.Namespace) -> None:
 
     print("\nReading %s" % expr_file)
     expr_df = pd.read_csv(expr_file, header=0, index_col=0)
+    expr_df.index = expr_df.index.str.upper()  # normalize to uppercase to match network/TF files
     print("\nReading %s" % gene_ordering_file)
     gene_df = pd.read_csv(gene_ordering_file, header=0, index_col=0)
+    gene_df.index = gene_df.index.str.upper()  # normalize to uppercase to match network/TF files
 
     if include_tfs:
         print("\nReading %s" % tf_file)
@@ -413,17 +425,21 @@ def _process(opts: argparse.Namespace) -> None:
         print("\n#TFs: %d, #Genes: %d, #Edges: %d, Density: %.3f" % (
             num_tfs_stat, num_genes_stat, net_df.shape[0], density_stat))
 
-    # Append one row to dataset_stats.csv in the same directory as the other outputs.
-    # Columns: dataset_id (outPrefix), num_tfs, num_genes, density (NaN when no network).
+    # Write one row to dataset_stats.csv in the same directory as the other outputs.
+    # Columns: dataset_id, num_tfs, num_genes, density (NaN when no network).
+    # If a row with the same dataset_id already exists, it is overwritten in-place.
     stats_path = out_dir.parent / 'dataset_stats.csv'
-    stats_df = pd.DataFrame([{
+    new_row = pd.DataFrame([{
         'dataset_id': opts.dataset_id,
         'num_tfs':    num_tfs_stat,
         'num_genes':  num_genes_stat,
         'density':    density_stat,
     }])
-    write_header = not stats_path.exists()
-    stats_df.to_csv(stats_path, mode='a', header=write_header, index=False)
+    if stats_path.exists():
+        existing = pd.read_csv(stats_path)
+        existing = existing[existing['dataset_id'] != opts.dataset_id]
+        new_row = pd.concat([existing, new_row], ignore_index=True)
+    new_row.to_csv(stats_path, index=False)
 
     print("\n\nDone with %s.\n" % opts.outPrefix)
 
