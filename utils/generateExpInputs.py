@@ -427,11 +427,9 @@ def _process(opts: argparse.Namespace) -> None:
 
     print("\nRestricting to %d genes" % len(variable_genes))
     expr_df = expr_df.loc[variable_genes]
-    print("\nNew shape of Expression Data %d x %d" % (expr_df.shape[0], expr_df.shape[1]))
 
     out_dir = Path(opts.outPrefix)
     out_dir.mkdir(parents=True, exist_ok=True)
-    expr_df.to_csv(out_dir / 'ExpressionData.csv')
 
     # Copy pseudotime file to output directory as PseudoTime.csv.
     pseudo_src = Path(opts.pseudoTimeFile)
@@ -449,11 +447,16 @@ def _process(opts: argparse.Namespace) -> None:
         net_df = filter_network(net_df, variable_genes)
         net_df.to_csv(out_dir / 'GroundTruthNetwork.csv', index=False)
         all_nodes = set(net_df.Gene1.unique()).union(set(net_df.Gene2.unique()))
+        # Restrict expression data to genes that appear as nodes in the network.
+        expr_df = expr_df.loc[expr_df.index.isin(all_nodes)]
         num_tfs_stat   = expr_df[expr_df.index.isin(net_df.Gene1.unique())].shape[0]
-        num_genes_stat = expr_df[expr_df.index.isin(all_nodes)].shape[0]
+        num_genes_stat = expr_df.shape[0]
         density_stat   = net_df.shape[0] / ((num_tfs_stat * num_genes_stat) - num_tfs_stat)
         print("\n#TFs: %d, #Genes: %d, #Edges: %d, Density: %.3f" % (
             num_tfs_stat, num_genes_stat, net_df.shape[0], density_stat))
+
+    print("\nNew shape of Expression Data %d x %d" % (expr_df.shape[0], expr_df.shape[1]))
+    expr_df.to_csv(out_dir / 'ExpressionData.csv')
 
     # Write one row to dataset_stats.csv in the same directory as the other outputs.
     # Columns: dataset_id, num_tfs, num_genes, density (NaN when no network).
