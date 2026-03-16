@@ -88,9 +88,13 @@ def iter_datasets_with_runs(
         dataset_path = output_dir / dataset_id
         gt_path      = input_dir  / dataset_id / gt_filename
 
-        # Resolve the run list: either scan input subdirectories or use the
-        # explicit 'runs' list from the config.
-        if ds.get('scan_run_subdirectories'):
+        # Resolve the run list using one of three modes:
+        #   single_run              — no run subdirectory; run_id is None
+        #   scan_run_subdirectories — auto-discover subdirectories as runs
+        #   runs                    — explicit list of run dicts with run_id
+        if ds.get('single_run'):
+            runs = [{'run_id': None}]
+        elif ds.get('scan_run_subdirectories'):
             # ds_input_path : Path — input_dir/dataset_id/
             ds_input_path = input_dir / dataset_id
             if not ds_input_path.is_dir():

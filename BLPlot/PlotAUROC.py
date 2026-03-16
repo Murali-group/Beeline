@@ -137,7 +137,9 @@ def _make_figure(
     plt.Figure or None
     """
     if len(runs) == 1:
-        run_path = dataset_path / runs[0]['run_id']
+        # In single_run mode run_id is None; output lives directly under dataset_path.
+        run_id = runs[0]['run_id']
+        run_path = dataset_path / run_id if run_id is not None else dataset_path
         return _make_roc_curve_figure(run_path, gt_path, algos, dataset_label)
 
     values = load_dataset_metric(dataset_path, 'AUROC.csv')

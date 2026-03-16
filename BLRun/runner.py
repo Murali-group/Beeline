@@ -48,13 +48,22 @@ class Runner(ABC):
         base_output = output_dir_path if output_dir_path.is_absolute() else root / output_dir_path
         if experiment_id_prefix:
             base_output = base_output / experiment_id_prefix
-        base_output = base_output / ds['dataset_id'] / ds['run_id'] / config['algo_name']
+        # run_id : str or None — when None (single_run mode), the run_id path
+        # segment is omitted from both input and output paths.
+        run_id = ds.get('run_id')
+        if run_id is not None:
+            base_output = base_output / ds['dataset_id'] / run_id / config['algo_name']
+        else:
+            base_output = base_output / ds['dataset_id'] / config['algo_name']
 
         base_input = base_input.resolve()
         base_output = base_output.resolve()
 
         # input_dir: run-level input directory (expression data, pseudo-time).
-        self.input_dir  = base_input / ds['dataset_id'] / ds['run_id']
+        if run_id is not None:
+            self.input_dir = base_input / ds['dataset_id'] / run_id
+        else:
+            self.input_dir = base_input / ds['dataset_id']
         self.output_dir = base_output
         self.working_dir = base_output / "working_dir"
 
@@ -69,9 +78,14 @@ class Runner(ABC):
         self.working_dir.mkdir(parents=True, exist_ok=True)
         
         # Precompute progress message for CLI output.
-        self.running_message = (
-            f"Running {config['algo_name']} | dataset: {ds['dataset_id']} | run: {ds['run_id']}"
-        )
+        if run_id is not None:
+            self.running_message = (
+                f"Running {config['algo_name']} | dataset: {ds['dataset_id']} | run: {run_id}"
+            )
+        else:
+            self.running_message = (
+                f"Running {config['algo_name']} | dataset: {ds['dataset_id']}"
+            )
 
         self.exprData           = ds.get('exprData',           'ExpressionData.csv')
         self.pseudoTimeData     = ds.get('pseudoTimeData',     'PseudoTime.csv')
@@ -145,8 +159,8 @@ class Runner(ABC):
             proc.wait()
 
         if proc.returncode != 0:
-            raise RuntimeError(
-                f"Docker command failed (exit {proc.returncode}). "
+            print(
+                f"ERROR: Docker command failed (exit {proc.returncode}). "
                 f"See {self.output_dir / 'output.txt'} for details."
             )
 
