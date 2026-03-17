@@ -168,27 +168,17 @@ class EarlyPrecision(Evaluator):
     EPR > 1 indicates better-than-random performance; EPR = 1 is the random
     baseline; EPR < 1 is below random.
 
-    When tf_edges is True, the candidate universe and predictions are restricted
-    to TF→gene edges (appropriate for experimental scRNA-seq data). When False,
-    all directed non-self-loop gene pairs form the universe (appropriate for
-    synthetic/simulated data).
+    Whether to restrict the candidate universe to TF→gene edges is controlled
+    per dataset via the experimental_dataset field in the config (default False).
+    Set experimental_dataset: true on experimental datasets and leave it unset
+    (or false) for synthetic/simulated data.
 
     For each DatasetGroup, writes EarlyPrecision.csv to dataset_path. Rows are
     algorithms and columns are run_ids.
     """
 
-    def __init__(self, tf_edges: bool = False) -> None:
-        """
-        Parameters
-        ----------
-        tf_edges : bool, optional
-            When True, restrict the candidate universe and predictions to
-            TF→gene edges. Default is False (use all directed non-self-loop
-            gene pairs), appropriate for synthetic data.
-        """
-        if not isinstance(tf_edges, bool):
-            raise TypeError(f"tf_edges must be bool, got {type(tf_edges)}")
-        self.tf_edges = tf_edges
+    def __init__(self) -> None:
+        pass
 
     def __call__(self, evaluation_data: EvaluationData) -> None:
         """
@@ -224,7 +214,7 @@ class EarlyPrecision(Evaluator):
                 continue
 
             gt_df = self._load_ground_truth(gt_path)
-            possible_edges, true_edges = _build_edge_universe(gt_df, self.tf_edges)
+            possible_edges, true_edges = _build_edge_universe(gt_df, dataset_group.tf_edges)
 
             # results[algo][run_id] = EPR score
             results: Dict[str, Dict[str, float]] = {}
@@ -232,7 +222,7 @@ class EarlyPrecision(Evaluator):
             for run in dataset_group:
                 for algo, ranked_edges_df in run.ranked_edges.items():
                     score = _compute_early_precision(
-                        ranked_edges_df, true_edges, possible_edges, self.tf_edges
+                        ranked_edges_df, true_edges, possible_edges, dataset_group.tf_edges
                     )
                     results.setdefault(algo, {})[run.run_id] = score
 

@@ -52,20 +52,32 @@ class DatasetGroup:
     within a group.
     """
 
-    def __init__(self, dataset_id: str, runs: List[RunResult], dataset_path: Path) -> None:
-        # dataset_id : str    — matches dataset_id from the config 'datasets' list
-        # runs : list[RunResult]  — one entry per run in the config 'runs' list
-        # dataset_path : Path — output directory for this dataset (output_dir/dataset_id)
+    def __init__(
+        self,
+        dataset_id: str,
+        runs: List[RunResult],
+        dataset_path: Path,
+        experimental_dataset: bool = False,
+    ) -> None:
+        # dataset_id : str           — matches dataset_id from the config 'datasets' list
+        # runs : list[RunResult]     — one entry per run in the config 'runs' list
+        # dataset_path : Path        — output directory for this dataset (output_dir/dataset_id)
+        # experimental_dataset : bool — when True, EPR candidate universe is restricted to
+        #   TF→gene edges (appropriate for experimental data); when False, all
+        #   directed non-self-loop gene pairs are used (appropriate for synthetic data)
         if not isinstance(dataset_id, str):
             raise TypeError(f"dataset_id must be str, got {type(dataset_id)}")
         if not isinstance(runs, list) or not all(isinstance(r, RunResult) for r in runs):
             raise TypeError("runs must be a list of RunResult objects")
         if not isinstance(dataset_path, Path):
             raise TypeError(f"dataset_path must be Path, got {type(dataset_path)}")
+        if not isinstance(experimental_dataset, bool):
+            raise TypeError(f"experimental_dataset must be bool, got {type(experimental_dataset)}")
 
         self.dataset_id: str = dataset_id
         self.runs: List[RunResult] = runs
         self.dataset_path: Path = dataset_path
+        self.tf_edges: bool = experimental_dataset
 
     def __iter__(self) -> Iterator[RunResult]:
         return iter(self.runs)
@@ -191,7 +203,8 @@ class EvaluationData:
 
                 runs.append(RunResult(run_id, ranked_edges, gt_path, run_path))
 
-            groups.append(DatasetGroup(dataset_id, runs, dataset_path))
+            experimental_dataset: bool = bool(ds.get('experimental_dataset', False))
+            groups.append(DatasetGroup(dataset_id, runs, dataset_path, experimental_dataset))
 
         return groups
 
