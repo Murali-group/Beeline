@@ -8,6 +8,7 @@ from BLPlot.PlotAUROC import PlotAUROC
 from BLPlot.PlotSummaryHeatmap import PlotSummaryHeatmap
 from BLPlot.PlotEPRHeatmap import PlotEPRHeatmap
 from BLPlot.PlotEPR import PlotEPR
+from BLPlot.PlotFigure5 import PlotFigure5
 
 
 def parse_args():
@@ -47,6 +48,11 @@ def parse_args():
         help="Produce a Figure-4-style heatmap of median AUPRC ratio, EPR "
              "ratio, and signed EPR ratios per algorithm and dataset "
              "(EPRSummary.pdf).\n")
+
+    parser.add_argument('--figure-5', action='store_true', default=False,
+        help="Produce a Figure-5-style table of network statistics and EPR "
+             "values, pairing TFs + 500 genes (left half) and TFs + 1000 "
+             "genes (right half) for each dataset (Figure5.pdf).\n")
 
     parser.add_argument('--all', action='store_true', default=False,
         help="Run all plots.\n")
@@ -96,6 +102,9 @@ def main():
 
     if args.epr_summary or run_all:
         PlotEPRHeatmap()(config, output_dir, root)
+
+    if args.figure_5 or run_all:
+        PlotFigure5()(config, output_dir, root)
 
 
 if __name__ == '__main__':
