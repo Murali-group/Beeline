@@ -212,6 +212,7 @@ def _draw_epr_col(
     cx: float,
     palette: list,
     rand_cutoff: float = 1.0,
+    col_min: float = None,
     col_max: float = None,
     row_annotate: List[bool] = None,
 ) -> None:
@@ -219,10 +220,10 @@ def _draw_epr_col(
     Draw one EPR data column onto ax.
 
     Cells whose value falls below rand_cutoff are filled with _DARK_COL.
-    All other cells are colored by linear normalization between rand_cutoff
-    and col_max, mapped onto the palette. Value labels are drawn only on
-    rows where row_annotate[row_idx] is True (or on all visible cells when
-    row_annotate is None).
+    All other cells are colored by linear normalization between col_min (or
+    rand_cutoff when col_min is None) and col_max, mapped onto the palette.
+    Value labels are drawn only on rows where row_annotate[row_idx] is True
+    (or on all visible cells when row_annotate is None).
 
     Parameters
     ----------
@@ -239,6 +240,10 @@ def _draw_epr_col(
     rand_cutoff : float
         Values strictly below this threshold are shown as _DARK_COL (default
         1.0, matching the EPR random-predictor baseline).
+    col_min : float or None
+        Lower bound for colour normalisation. When None, defaults to
+        rand_cutoff. Pass a half-wide minimum so that all algorithm columns
+        within the same half share the same colour scale floor.
     col_max : float or None
         Maximum value used for normalization. When None, defaults to the
         maximum non-NaN value in col_data. Pass a half-wide max so that all
@@ -250,7 +255,7 @@ def _draw_epr_col(
     col_vals = [v for v in col_data if not math.isnan(v)]
     if col_max is None:
         col_max = max(col_vals) if col_vals else 1.0
-    norm_floor = rand_cutoff if rand_cutoff > 0 else (min(col_vals) if col_vals else 0.0)
+    norm_floor = col_min if col_min is not None else rand_cutoff
     n_pal = len(palette)
 
     for row_idx, raw in enumerate(col_data):
@@ -425,10 +430,11 @@ class PlotFigure5(Plotter):
         # --- Phase 1: collect data for both halves before drawing ---
         # epr_by_half[gc][algo_id] = [float per row]
         # stat_by_half[gc] = [(n_tfs, n_genes, density) or None] per row
-        # half_max_by_half[gc] = float — shared scale max for this half
+        # half_max_by_half[gc] / half_min_by_half[gc] = shared scale bounds per half
         epr_by_half:      Dict[str, Dict[str, List[float]]] = {}
         stat_by_half:     Dict[str, list]                   = {}
         half_max_by_half: Dict[str, float]                  = {}
+        half_min_by_half: Dict[str, float]                  = {}
 
         for half_gc, x_offset in [('500', 0), ('1000', gap_x)]:
             epr_col_data: Dict[str, List[float]] = {a: [] for a in algo_ids}
@@ -461,6 +467,7 @@ class PlotFigure5(Plotter):
             epr_by_half[half_gc]      = epr_col_data
             stat_by_half[half_gc]     = stat_col_data
             half_max_by_half[half_gc] = max(half_non_dark) if half_non_dark else 1.0
+            half_min_by_half[half_gc] = min(half_non_dark) if half_non_dark else 1.0
 
         # --- Phase 2 & 3: per-row max/min and annotation masks per half ---
         # Each half is treated independently: within a half, the highest and
@@ -498,6 +505,7 @@ class PlotFigure5(Plotter):
             epr_col_data = epr_by_half[half_gc]
             stat_col_data = stat_by_half[half_gc]
             half_max = half_max_by_half[half_gc]
+            half_min = half_min_by_half[half_gc]
 
             # Draw network-statistics text columns.
             for row_idx, stats in enumerate(stat_col_data):
@@ -513,7 +521,7 @@ class PlotFigure5(Plotter):
             for algo_id, cx in zip(algo_ids, algo_x):
                 _draw_epr_col(
                     ax, epr_col_data[algo_id], n_rows, cx,
-                    epr_palette, rand_cutoff=1.0, col_max=half_max,
+                    epr_palette, rand_cutoff=1.0, col_min=half_min, col_max=half_max,
                     row_annotate=row_annotate_map[half_gc][algo_id],
                 )
 
