@@ -8,6 +8,8 @@ from BLPlot.PlotAUROC import PlotAUROC
 from BLPlot.PlotSummaryHeatmap import PlotSummaryHeatmap
 from BLPlot.PlotEPRHeatmap import PlotEPRHeatmap
 from BLPlot.PlotEPR import PlotEPR
+from BLPlot.PlotFigure5 import PlotFigure5
+from BLPlot.PlotFigure6 import PlotFigure6
 
 
 def parse_args():
@@ -18,9 +20,10 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Plot BEELINE evaluation results.')
 
-    parser.add_argument('-c', '--config', required=True,
+    parser.add_argument('-c', '--config', default=None,
         help="Configuration file containing list of datasets and algorithms. "
-             "The same file used with BLEvaluator.py may be used here.\n")
+             "The same file used with BLEvaluator.py may be used here. "
+             "Required for all plots except --figure-6.\n")
 
     parser.add_argument('-o', '--output', default='./',
         help="Output directory for generated plots.\n")
@@ -48,6 +51,16 @@ def parse_args():
              "ratio, and signed EPR ratios per algorithm and dataset "
              "(EPRSummary.pdf).\n")
 
+    parser.add_argument('--figure-5', action='store_true', default=False,
+        help="Produce a Figure-5-style table of network statistics and EPR "
+             "values, pairing TFs + 500 genes (left half) and TFs + 1000 "
+             "genes (right half) for each dataset (Figure5.pdf).\n")
+
+    parser.add_argument('--figure-6', metavar='YAML', default=None,
+        help="Produce a Figure-6-style algorithm comparison table from a "
+             "standalone YAML config file (Figure6.pdf). Mutually exclusive "
+             "with -c/--config.\n")
+
     parser.add_argument('--all', action='store_true', default=False,
         help="Run all plots.\n")
 
@@ -73,7 +86,21 @@ def load_config(config_path: str) -> dict:
 
 
 def main():
-    args   = parse_args()
+    args = parse_args()
+
+    if args.figure_6 and args.config:
+        raise SystemExit("error: --figure-6 and -c/--config are mutually exclusive.")
+
+    if args.figure_6:
+        output_dir = Path(args.output)
+        output_dir.mkdir(parents=True, exist_ok=True)
+        fig6_config = load_config(args.figure_6)
+        PlotFigure6()(fig6_config, output_dir)
+        return
+
+    if not args.config:
+        raise SystemExit("error: -c/--config is required unless --figure-6 is used.")
+
     config = load_config(args.config)
     root   = Path.cwd()
 
@@ -96,6 +123,9 @@ def main():
 
     if args.epr_summary or run_all:
         PlotEPRHeatmap()(config, output_dir, root)
+
+    if args.figure_5 or run_all:
+        PlotFigure5()(config, output_dir, root)
 
 
 if __name__ == '__main__':

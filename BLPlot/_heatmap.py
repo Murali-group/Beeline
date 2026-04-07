@@ -152,7 +152,8 @@ def _draw_section(
             else:
                 norm_val = 0.5
 
-            col = palette[min(int(np.floor(norm_val * 10)), 10)]
+            n = len(palette)
+            col = palette[min(int(np.floor(norm_val * (n - 1))), n - 1)]
             _flat_square(ax, cx, cy, col)
 
             # Annotate cells with the raw value.

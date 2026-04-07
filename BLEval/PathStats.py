@@ -212,7 +212,7 @@ class PathStats(Evaluator):
                 out_df = pd.DataFrame(results).T
                 out_df.index.name = 'Algorithm'
 
-                out_path = dataset_group.dataset_path / run.run_id / 'PathStats.csv'
+                out_path = run.run_path / 'PathStats.csv'
                 out_path.parent.mkdir(parents=True, exist_ok=True)
                 out_df.to_csv(out_path)
                 print(f"Wrote PathStats results to {out_path}")

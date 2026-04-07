@@ -78,7 +78,12 @@ def get_datasets(input_settings):
         if not ds.get('should_run', [True])[0]:
             continue
 
-        if ds.get('scan_run_subdirectories'):
+        if ds.get('single_run'):
+            # No run subdirectory: files live directly under input_dir/dataset_id/.
+            # Exactly one run is produced; run_id is None so path construction skips
+            # the run_id segment entirely.
+            runs = [{'run_id': None}]
+        elif ds.get('scan_run_subdirectories'):
             # Discover runs by scanning subdirectories of the dataset input path.
             # ds_input_path : Path — input_dir/dataset_id/
             ds_input_path = input_dir / ds['dataset_id']
@@ -95,7 +100,10 @@ def get_datasets(input_settings):
                 )
         else:
             if 'runs' not in ds:
-                raise KeyError(f"Dataset '{ds['dataset_id']}' is missing required 'runs' field.")
+                raise KeyError(
+                    f"Dataset '{ds['dataset_id']}' must specify one of: "
+                    f"'single_run', 'scan_run_subdirectories', or 'runs'."
+                )
             runs = ds['runs']
         # runs may be a single dict or a list of dicts
         if isinstance(runs, dict):
@@ -104,7 +112,7 @@ def get_datasets(input_settings):
         for run in runs:
             datasets.append({
                 'dataset_id':        ds['dataset_id'],
-                'run_id':            run['run_id'],
+                'run_id':            run.get('run_id'),
                 'exprData':          run.get('exprData', 'ExpressionData.csv'),
                 'pseudoTimeData':    run.get('pseudoTimeData', 'PseudoTime.csv'),
                 'groundTruthNetwork': ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv'),
@@ -189,7 +197,10 @@ def get_working_dirs(config):
             base_output = output_dir if output_dir.is_absolute() else root / output_dir
             if experiment_id:
                 base_output = base_output / experiment_id
-            base_output = base_output / dataset['dataset_id'] / dataset['run_id'] / algo['algorithm_id']
+            if dataset['run_id'] is not None:
+                base_output = base_output / dataset['dataset_id'] / dataset['run_id'] / algo['algorithm_id']
+            else:
+                base_output = base_output / dataset['dataset_id'] / algo['algorithm_id']
             paths.append(base_output / 'working_dir')
 
     return paths

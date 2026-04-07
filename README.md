@@ -49,7 +49,7 @@ Runs one or more GRN inference algorithms on the specified datasets.
 python BLRunner.py -c config-files/Curated/VSC.yaml
 ```
 
-Each algorithm's output is written to `outputs/<dataset_id>/<run_id>/<algorithm_id>/rankedEdges.csv`.
+Each algorithm's output is written to `outputs/<dataset_id>/[<run_id>/]<algorithm_id>/rankedEdges.csv`.
 
 ### 2. Evaluate results — `BLEvaluator.py`
 
@@ -105,6 +105,10 @@ input_settings:
             - run_id: "mHSC-500-1"
             - run_id: "mHSC-500-2"
 
+        - dataset_id: "hESC-500-string"
+          groundTruthNetwork: "GroundTruthNetwork.csv"
+          single_run: true        # files live directly under input_dir/dataset_id/
+
     algorithms:
         - algorithm_id: "GENIE3"
           image: "grnbeeline/arboreto:base"
@@ -137,8 +141,11 @@ output_settings:
 | `should_run` | No | `[True]` | Set to `[False]` to skip this dataset entirely. |
 | `groundTruthNetwork` | No | `GroundTruthNetwork.csv` | Filename of the ground truth edge list CSV, located in the dataset group directory (shared across all runs). |
 | `nickname` | No | `dataset_id` | Short display label used by the plotter for plot titles and heatmap column headers. Does not affect any file paths. |
-| `scan_run_subdirectories` | No | `false` | When `true`, runs are discovered automatically by scanning all subdirectories of `input_dir/dataset_id/`. Mutually exclusive with `runs`; an error is raised if no subdirectories are found. |
-| `runs` | No* | — | List of individual run variants. Required unless `scan_run_subdirectories` is set. See **Run fields** below. |
+| `single_run` | No* | `false` | When `true`, input files are read directly from `input_dir/dataset_id/` with no run subdirectory. Guarantees exactly one run per dataset. Mutually exclusive with `scan_run_subdirectories` and `runs`. |
+| `scan_run_subdirectories` | No* | `false` | When `true`, runs are discovered automatically by scanning all subdirectories of `input_dir/dataset_id/`. Mutually exclusive with `single_run` and `runs`; an error is raised if no subdirectories are found. |
+| `runs` | No* | — | List of individual run variants. Each run has its own subdirectory under the dataset directory. Mutually exclusive with `single_run` and `scan_run_subdirectories`. See **Run fields** below. |
+
+Exactly one of `single_run`, `scan_run_subdirectories`, or `runs` must be specified per dataset entry.
 
 #### Run fields
 
@@ -168,9 +175,8 @@ Each entry under `runs` represents one replicate or condition variant. Input fil
 
 Output files are written to:
 ```
-output_dir/[experiment_id/]dataset_id/run_id/algorithm_id/rankedEdges.csv
+output_dir/[experiment_id/]dataset_id/[run_id/]algorithm_id/rankedEdges.csv
 ```
-
 ---
 
 ## Preparing Inputs — `generateExpInputs.py`

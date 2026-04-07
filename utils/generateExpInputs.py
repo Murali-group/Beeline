@@ -1,9 +1,12 @@
 from __future__ import print_function
 
 import argparse
+import copy
 import sys
+from pathlib import Path
 
 import pandas as pd
+import yaml
 
 
 def get_parser() -> argparse.ArgumentParser:
@@ -15,26 +18,27 @@ def get_parser() -> argparse.ArgumentParser:
         description='Generate experimental scRNA-seq inputs for BEELINE.',
         epilog=(
             'Example usage to generate dataset with all TFs and 500 genes (TFs+500): '
-            'python generateExpInputs.py -e=ExpressionData.csv -g=GeneOrdering.csv '
-            '-f=STRING-network.csv -i=human-tfs.csv -p=0.01 -n=500 -o=temp'
+            'python generateExpInputs.py --outputDirectory=outputs --dataset-id=hESC-500 '
+            '-e=ExpressionData.csv -g=GeneOrdering.csv -P=PseudoTime.csv '
+            '-f=STRING-network.csv -i=human-tfs.csv -p=0.01 -n=500'
         )
     )
 
     parser.add_argument('-e', '--expFile', type=str,
-                        default='ExpressionData.csv',
                         help='Path to expression data file. Required.\n')
 
     parser.add_argument('-g', '--geneOrderingFile', type=str,
-                        default='GeneOrdering.csv',
                         help='Path to gene ordering file. Required.\n')
+
+    parser.add_argument('-P', '--pseudoTimeFile', type=str,
+                        help='Path to pseudotime file. Copied to output as PseudoTime.csv. Required.\n')
 
     # default=None so omitting -f skips network processing entirely.
     parser.add_argument('-f', '--netFile', type=str,
                         default=None,
-                        help='Path to network file to filter and print statistics. Optional.\n')
+                        help='Path to network file to filter and produce GroundTruthNetwork.csv. Optional.\n')
 
     parser.add_argument('-i', '--TFFile', type=str,
-                        default='human-tfs.csv',
                         help='Path to file containing list of TFs. Required.\n')
 
     parser.add_argument('-p', '--pVal', type=float, default=0.01,
@@ -43,8 +47,12 @@ def get_parser() -> argparse.ArgumentParser:
     parser.add_argument('-n', '--numGenes', type=int, default=500,
                         help='Number of non-TF genes to include. Default=500.\n')
 
-    parser.add_argument('-o', '--outPrefix', type=str, default='BL-',
-                        help='Prefix for writing output files.\n')
+    parser.add_argument('--outputDirectory', type=str, default='outputs',
+                        help='Base output directory. Outputs are written to outputDirectory/dataset-id/.\n')
+
+    parser.add_argument('--dataset-id', dest='dataset_id', type=str, default='dataset',
+                        help='Identifier for this dataset. Used as the output subdirectory name '
+                             'and as the dataset_id column in dataset_stats.csv.\n')
 
     # Boolean flag pairs: pass the positive flag to enable, --no-X to disable.
     parser.add_argument('-c', '--BFcorr', dest='BFcorr', action='store_true',
@@ -65,6 +73,18 @@ def get_parser() -> argparse.ArgumentParser:
                         help='Select top-n non-TF genes by p-value order instead of variance.\n')
     parser.set_defaults(sortByVariance=True)
 
+    parser.add_argument('-y', '--config', type=str, default=None,
+                        help='Path to a YAML config file. When provided, all other arguments '
+                             'are sourced from the file; any CLI args supplied alongside -y '
+                             'are ignored (a warning is printed).\n')
+
+    parser.add_argument('-b', '--base-directory', dest='base_directory', type=str, default='.',
+                        help='Base directory from which all relative file paths are resolved. '
+                             'In YAML mode, paths in the config are resolved under '
+                             'base-directory/inputDirectory (for inputs) and '
+                             'base-directory/outputDirectory (for outputs). '
+                             'Default is the current working directory.\n')
+
     return parser
 
 
@@ -76,6 +96,122 @@ def parse_arguments():
     parser = get_parser()
     opts = parser.parse_args()
     return opts
+
+
+_YAML_DATASET_REQUIRED_KEYS = {
+    'dataset_id', 'expFile', 'geneOrderingFile', 'pseudoTimeFile', 'TFFile',
+    'pVal', 'BFcorr', 'TFs', 'numGenes', 'sortByVariance',
+}
+# netFile is optional per dataset (may be absent or null).
+
+
+def load_yaml_config(path: str, base_opts: argparse.Namespace, base_dir: str = '.') -> list:
+    '''
+    Load a YAML config file and return one argparse.Namespace per dataset entry.
+
+    The YAML must have a top-level 'settings' block with 'outputDirectory' and
+    a top-level 'datasets' list. Each dataset entry must contain all keys in
+    _YAML_DATASET_REQUIRED_KEYS; 'netFile' is optional (defaults to None).
+
+    The 'settings' block may also include an optional 'inputDirectory' key. When
+    present, all per-dataset input file paths (expFile, geneOrderingFile,
+    pseudoTimeFile, netFile, TFFile) are resolved as base_dir/inputDirectory/path.
+    outputDirectory is resolved as base_dir/outputDirectory.
+
+    The outPrefix for each dataset is derived as outputDirectory/dataset_id.
+
+    Warns if any CLI arguments other than -y/--config and -b/--base-directory were
+    supplied alongside the YAML path, because the YAML takes full precedence over them.
+    -b/--base-directory is not ignored — it is applied to all paths from the YAML.
+
+    :param path:      str. Path to the YAML config file.
+    :param base_opts: argparse.Namespace. Parsed CLI arguments; used only as a
+                      template — fields are overwritten per dataset from the YAML.
+    :param base_dir:  str. Root directory prepended to all relative paths from the
+                      YAML (outputDirectory and inputDirectory/file paths).
+                      Defaults to '.'.
+    :return:          list of argparse.Namespace, one entry per dataset.
+    '''
+    if not isinstance(path, str):
+        raise TypeError(f"path must be str, got {type(path)}")
+    if not isinstance(base_opts, argparse.Namespace):
+        raise TypeError(f"base_opts must be argparse.Namespace, got {type(base_opts)}")
+    if not isinstance(base_dir, str):
+        raise TypeError(f"base_dir must be str, got {type(base_dir)}")
+
+    # Warn if the user also passed non-config, non-base-directory CLI args — YAML wins.
+    # -b/--base-directory is excluded because it IS honoured in YAML mode.
+    _passthrough = {'-y', '--config', '-b', '--base-directory'}
+    _argv = sys.argv[1:]
+    extra_args = []
+    skip_next = False
+    for i, a in enumerate(_argv):
+        if skip_next:
+            skip_next = False
+            continue
+        if a in _passthrough:
+            skip_next = True   # skip the value that follows the flag
+            continue
+        if any(a.startswith(p + '=') for p in _passthrough):
+            continue           # --flag=value form
+        if a.endswith('.yaml') or a.endswith('.yml'):
+            continue
+        extra_args.append(a)
+    if extra_args:
+        print(
+            "WARNING: CLI arguments %s were provided alongside -y/--config. "
+            "The YAML config file takes precedence; these arguments will be ignored." % extra_args
+        )
+
+    with open(path, 'r') as f:
+        cfg = yaml.safe_load(f)
+
+    if 'settings' not in cfg or 'outputDirectory' not in cfg.get('settings', {}):
+        print("ERROR: YAML config must have a 'settings.outputDirectory' field.")
+        sys.exit(1)
+    if 'datasets' not in cfg or not isinstance(cfg['datasets'], list):
+        print("ERROR: YAML config must have a 'datasets' list.")
+        sys.exit(1)
+
+    base_path    = Path(base_dir)
+    input_dir    = cfg['settings'].get('inputDirectory', '.')
+    input_root   = base_path / input_dir
+    output_dir   = str(base_path / cfg['settings']['outputDirectory'])
+
+    # Enforce unique dataset_ids across all entries.
+    all_ids = [ds.get('dataset_id') for ds in cfg['datasets']]
+    seen, duplicates = set(), set()
+    for did in all_ids:
+        (duplicates if did in seen else seen).add(did)
+    if duplicates:
+        print("ERROR: duplicate dataset_id(s) found in YAML config: %s" % sorted(duplicates))
+        sys.exit(1)
+
+    all_opts = []
+
+    for i, ds in enumerate(cfg['datasets']):
+        missing = _YAML_DATASET_REQUIRED_KEYS - set(ds.keys())
+        if missing:
+            print("ERROR: dataset entry %d is missing required keys: %s" % (i, sorted(missing)))
+            sys.exit(1)
+
+        opts = copy.copy(base_opts)
+        opts.dataset_id       = ds['dataset_id']
+        opts.outputDirectory  = output_dir
+        opts.expFile          = str(input_root / ds['expFile'])
+        opts.geneOrderingFile = str(input_root / ds['geneOrderingFile'])
+        opts.pseudoTimeFile   = str(input_root / ds['pseudoTimeFile'])
+        opts.netFile          = str(input_root / ds['netFile']) if ds.get('netFile') else None
+        opts.TFFile           = str(input_root / ds['TFFile'])
+        opts.pVal             = float(ds['pVal'])
+        opts.BFcorr           = bool(ds['BFcorr'])
+        opts.TFs              = bool(ds['TFs'])
+        opts.numGenes         = int(ds['numGenes'])
+        opts.sortByVariance   = bool(ds['sortByVariance'])
+        opts.outPrefix        = str(Path(output_dir) / ds['dataset_id'])
+        all_opts.append(opts)
+
+    return all_opts
 
 
 def filter_genes_by_pvalue(
@@ -230,9 +366,12 @@ def filter_network(
     return filtered
 
 
-def main():
-    opts = parse_arguments()
+def _process(opts: argparse.Namespace) -> None:
+    '''
+    Run the full input-generation pipeline for a single dataset.
 
+    :param opts: argparse.Namespace with all required fields populated.
+    '''
     include_tfs      = opts.TFs
     expr_file        = opts.expFile
     gene_ordering_file = opts.geneOrderingFile
@@ -244,8 +383,10 @@ def main():
 
     print("\nReading %s" % expr_file)
     expr_df = pd.read_csv(expr_file, header=0, index_col=0)
+    expr_df.index = expr_df.index.str.upper()  # normalize to uppercase to match network/TF files
     print("\nReading %s" % gene_ordering_file)
     gene_df = pd.read_csv(gene_ordering_file, header=0, index_col=0)
+    gene_df.index = gene_df.index.str.upper()  # normalize to uppercase to match network/TF files
 
     if include_tfs:
         print("\nReading %s" % tf_file)
@@ -288,17 +429,69 @@ def main():
     expr_df = expr_df.loc[variable_genes]
     print("\nNew shape of Expression Data %d x %d" % (expr_df.shape[0], expr_df.shape[1]))
 
-    expr_df.to_csv(opts.outPrefix + '-ExpressionData.csv')
+    out_dir = Path(opts.outPrefix)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    expr_df.to_csv(out_dir / 'ExpressionData.csv')
+
+    # Copy pseudotime file to output directory as PseudoTime.csv.
+    pseudo_src = Path(opts.pseudoTimeFile)
+    pseudo_dst = out_dir / 'PseudoTime.csv'
+    pseudo_dst.write_bytes(pseudo_src.read_bytes())
+
+    # Default stats written when no network file is provided.
+    # num_tfs and num_genes fall back to the selected gene set counts.
+    num_tfs_stat  = len(variable_tfs)
+    num_genes_stat = len(variable_genes)
+    density_stat  = float('nan')
 
     if opts.netFile is not None:
         net_df = pd.read_csv(opts.netFile)
         net_df = filter_network(net_df, variable_genes)
-        net_df.to_csv(opts.outPrefix + '-network.csv', index=False)
+        net_df.to_csv(out_dir / 'GroundTruthNetwork.csv', index=False)
         all_nodes = set(net_df.Gene1.unique()).union(set(net_df.Gene2.unique()))
-        n_tfs   = expr_df[expr_df.index.isin(net_df.Gene1.unique())].shape[0]
-        n_genes = expr_df[expr_df.index.isin(all_nodes)].shape[0]
+        num_tfs_stat   = expr_df[expr_df.index.isin(net_df.Gene1.unique())].shape[0]
+        num_genes_stat = expr_df[expr_df.index.isin(all_nodes)].shape[0]
+        density_stat   = net_df.shape[0] / ((num_tfs_stat * num_genes_stat) - num_tfs_stat)
         print("\n#TFs: %d, #Genes: %d, #Edges: %d, Density: %.3f" % (
-            n_tfs, n_genes, net_df.shape[0], net_df.shape[0] / ((n_tfs * n_genes) - n_tfs)))
+            num_tfs_stat, num_genes_stat, net_df.shape[0], density_stat))
+
+    # Write one row to dataset_stats.csv in the same directory as the other outputs.
+    # Columns: dataset_id, num_tfs, num_genes, density (NaN when no network).
+    # If a row with the same dataset_id already exists, it is overwritten in-place.
+    stats_path = out_dir.parent / 'dataset_stats.csv'
+    new_row = pd.DataFrame([{
+        'dataset_id': opts.dataset_id,
+        'num_tfs':    num_tfs_stat,
+        'num_genes':  num_genes_stat,
+        'density':    density_stat,
+    }])
+    if stats_path.exists():
+        existing = pd.read_csv(stats_path)
+        existing = existing[existing['dataset_id'] != opts.dataset_id]
+        new_row = pd.concat([existing, new_row], ignore_index=True)
+    new_row.to_csv(stats_path, index=False)
+
+    print("\n\nDone with %s.\n" % opts.outPrefix)
+
+
+def main():
+    opts = parse_arguments()
+    base = Path(opts.base_directory)
+
+    if opts.config is not None:
+        all_opts = load_yaml_config(opts.config, opts, base_dir=opts.base_directory)
+    else:
+        opts.expFile          = str(base / opts.expFile)
+        opts.geneOrderingFile = str(base / opts.geneOrderingFile)
+        opts.pseudoTimeFile   = str(base / opts.pseudoTimeFile)
+        if opts.netFile is not None:
+            opts.netFile      = str(base / opts.netFile)
+        opts.TFFile           = str(base / opts.TFFile)
+        opts.outPrefix        = str(base / opts.outputDirectory / opts.dataset_id)
+        all_opts = [opts]
+
+    for run_opts in all_opts:
+        _process(run_opts)
 
     print("\n\nExiting...\n")
 

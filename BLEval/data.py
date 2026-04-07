@@ -20,12 +20,15 @@ class RunResult:
         ground_truth_path: Path,
         run_path: Path,
     ) -> None:
-        # run_id : str  — matches run_id from the config 'runs' list
+        # run_id : str or None  — matches run_id from the config 'runs' list;
+        #   None when the dataset uses single_run mode (no run subdirectory).
         # ranked_edges : dict[str, pd.DataFrame]  — keyed by algorithm_id
         # ground_truth_path : Path  — path to the ground truth edge list file
-        # run_path : Path  — output directory for this run (output_dir/dataset_id/run_id)
-        if not isinstance(run_id, str):
-            raise TypeError(f"run_id must be str, got {type(run_id)}")
+        # run_path : Path  — output directory for this run; equals
+        #   output_dir/dataset_id/run_id in normal mode, or output_dir/dataset_id
+        #   in single_run mode.
+        if run_id is not None and not isinstance(run_id, str):
+            raise TypeError(f"run_id must be str or None, got {type(run_id)}")
         if not isinstance(ranked_edges, dict):
             raise TypeError(f"ranked_edges must be dict, got {type(ranked_edges)}")
         if not isinstance(ground_truth_path, Path):
@@ -49,20 +52,32 @@ class DatasetGroup:
     within a group.
     """
 
-    def __init__(self, dataset_id: str, runs: List[RunResult], dataset_path: Path) -> None:
-        # dataset_id : str    — matches dataset_id from the config 'datasets' list
-        # runs : list[RunResult]  — one entry per run in the config 'runs' list
-        # dataset_path : Path — output directory for this dataset (output_dir/dataset_id)
+    def __init__(
+        self,
+        dataset_id: str,
+        runs: List[RunResult],
+        dataset_path: Path,
+        experimental_dataset: bool = False,
+    ) -> None:
+        # dataset_id : str           — matches dataset_id from the config 'datasets' list
+        # runs : list[RunResult]     — one entry per run in the config 'runs' list
+        # dataset_path : Path        — output directory for this dataset (output_dir/dataset_id)
+        # experimental_dataset : bool — when True, EPR candidate universe is restricted to
+        #   TF→gene edges (appropriate for experimental data); when False, all
+        #   directed non-self-loop gene pairs are used (appropriate for synthetic data)
         if not isinstance(dataset_id, str):
             raise TypeError(f"dataset_id must be str, got {type(dataset_id)}")
         if not isinstance(runs, list) or not all(isinstance(r, RunResult) for r in runs):
             raise TypeError("runs must be a list of RunResult objects")
         if not isinstance(dataset_path, Path):
             raise TypeError(f"dataset_path must be Path, got {type(dataset_path)}")
+        if not isinstance(experimental_dataset, bool):
+            raise TypeError(f"experimental_dataset must be bool, got {type(experimental_dataset)}")
 
         self.dataset_id: str = dataset_id
         self.runs: List[RunResult] = runs
         self.dataset_path: Path = dataset_path
+        self.tf_edges: bool = experimental_dataset
 
     def __iter__(self) -> Iterator[RunResult]:
         return iter(self.runs)
@@ -137,9 +152,15 @@ class EvaluationData:
             # outputs / dataset_id
             dataset_path: Path = output_dir / dataset_id
 
-            # Resolve the run list: either scan input subdirectories or use the
-            # explicit 'runs' list from the config.
-            if ds.get('scan_run_subdirectories'):
+            gt_filename: str = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
+
+            # Resolve the run list using one of three modes:
+            #   single_run              — no run subdirectory; run_id is None
+            #   scan_run_subdirectories — auto-discover subdirectories as runs
+            #   runs                    — explicit list of run dicts with run_id
+            if ds.get('single_run'):
+                run_dicts = [{'run_id': None}]
+            elif ds.get('scan_run_subdirectories'):
                 # ds_input_path : Path — input_dir/dataset_id/
                 ds_input_path: Path = input_dir / dataset_id
                 if not ds_input_path.is_dir():
@@ -160,14 +181,16 @@ class EvaluationData:
             runs: List[RunResult] = []
 
             for run in run_dicts:
-                run_id: str = run['run_id']
-                gt_filename: str = ds.get('groundTruthNetwork', 'GroundTruthNetwork.csv')
+                run_id = run.get('run_id')
 
                 # Ground truth: inputs / dataset_id / filename
                 gt_path: Path = input_dir / dataset_id / gt_filename
 
-                # outputs / dataset_id / run_id
-                run_path: Path = output_dir / dataset_id / run_id
+                # outputs / dataset_id / run_id  (run_id omitted in single_run mode)
+                if run_id is not None:
+                    run_path: Path = output_dir / dataset_id / run_id
+                else:
+                    run_path = output_dir / dataset_id
 
                 # Ranked edges: run_path / algo / rankedEdges.csv
                 ranked_edges: Dict[str, pd.DataFrame] = {}
@@ -180,7 +203,8 @@ class EvaluationData:
 
                 runs.append(RunResult(run_id, ranked_edges, gt_path, run_path))
 
-            groups.append(DatasetGroup(dataset_id, runs, dataset_path))
+            experimental_dataset: bool = bool(ds.get('experimental_dataset', False))
+            groups.append(DatasetGroup(dataset_id, runs, dataset_path, experimental_dataset))
 
         return groups
 

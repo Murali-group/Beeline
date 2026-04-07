@@ -271,8 +271,10 @@ class PlotEPRHeatmap(Plotter):
             ))
 
         # Color palettes — viridis for AUPRC, magma for the three EPR sections.
+        # Magma is sampled from 20%–100% of its range so the low end is not
+        # too dark; the full range (0%–100%) produces near-black at the bottom.
         auprc_palette = sns.color_palette("viridis", 11)
-        epr_palette   = sns.color_palette("magma", 11)
+        epr_palette   = [mpl.cm.get_cmap("magma")(v) for v in np.linspace(0.2, 0.93, 11)]
 
         sections = [
             (auprc_arr,   auprc_palette, 'AUPRC Ratio',      1),
