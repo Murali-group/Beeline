@@ -110,25 +110,25 @@ input_settings:
 
         - algorithm_id: "PEARSON"
           image: "local"
-          should_run: True
+          should_run: [True]
           params: {}
 
         - algorithm_id: "PPCOR"
           image: "local"
-          should_run: True
+          should_run: [True]
           params:
               pVal: [0.01]
 
         - algorithm_id: "LEAP"
           image: "local"
-          should_run: True
+          should_run: [True]
           params:
               # Default maxLag value is 0.3; reduced for large cell counts
               maxLag: [0.10]
 
         - algorithm_id: "GRNBOOST2"
           image: "local"
-          should_run: True
+          should_run: [True]
           params: {}
 
 
