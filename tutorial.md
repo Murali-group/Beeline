@@ -12,15 +12,16 @@ Codespace.
 
 ## 1. Open the repo in Codespaces
 
-> **TODO:** Add `.devcontainer/devcontainer.json` so a Codespace boots with
-> miniconda already installed and `bash utils/setupAnacondaVENV.sh` run as the
-> `postCreateCommand`. Until that lands, the manual steps below are also valid
-> on any Linux machine with miniconda installed.
-
 From the GitHub repo page: **Code → Codespaces → Create codespace on
 `ismb-tutorial`**. The default 4-core / 16 GB machine is sufficient.
 
-Alternatively, clone locally:
+The devcontainer at `.devcontainer/devcontainer.json` installs miniconda and
+runs `utils/setupAnacondaVENV.sh` automatically the first time the codespace
+boots, so step 2 below is already done by the time you attach. Expect the
+initial create to take roughly 10-15 minutes for the four conda environments
+to solve.
+
+Alternatively, clone locally and run the setup yourself:
 
 ```bash
 git clone -b ismb-tutorial https://github.com/Murali-group/Beeline.git
@@ -156,7 +157,7 @@ You should see:
 Use this list to track what still needs writing or verification before this
 tutorial is ready to publish:
 
-- [ ] `.devcontainer/devcontainer.json` for one-click Codespaces boot
+- [x] `.devcontainer/devcontainer.json` for one-click Codespaces boot
 - [ ] Confirm and document Zenodo v4 download URL + extraction layout
 - [ ] End-to-end timing on a 4-core Codespace; prune dataset list if slow
 - [ ] Smoke-test `BEELINE-PPCOR` env builds and `runPPCOR.R` runs via `conda run`

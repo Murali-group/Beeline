@@ -1,0 +1,33 @@
+{
+    "name": "BEELINE Tutorial",
+    "image": "mcr.microsoft.com/devcontainers/base:ubuntu-22.04",
+
+    "features": {
+        "ghcr.io/devcontainers/features/conda:1": {
+            "addCondaForge": true
+        }
+    },
+
+    // The conda feature installs to /opt/conda but only edits root's .bashrc.
+    // Put conda on PATH for every process so utils/setupAnacondaVENV.sh works
+    // when invoked non-interactively below.
+    "containerEnv": {
+        "PATH": "/opt/conda/bin:${containerEnv:PATH}"
+    },
+
+    // Build the four conda envs (BEELINE + BEELINE-PPCOR/LEAP/GRNBOOST2) once,
+    // when the codespace is first created. `conda init bash` writes the shell
+    // hook so interactive shells can `conda activate BEELINE` after attach.
+    "onCreateCommand": "conda init bash && bash utils/setupAnacondaVENV.sh",
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "redhat.vscode-yaml"
+            ]
+        }
+    },
+
+    "remoteUser": "vscode"
+}
