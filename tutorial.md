@@ -158,7 +158,7 @@ tutorial is ready to publish:
       (replaced by committing the tutorial subset directly under `inputs/`)
 - [ ] End-to-end timing on a 4-core Codespace; prune dataset list if slow
 - [x] Smoke-test `BEELINE-PPCOR` env builds and `runPPCOR.R` runs via `conda run`
-- [ ] Smoke-test `BEELINE-LEAP` env builds and `runLeap.R` runs via `conda run`
+- [x] Smoke-test `BEELINE-LEAP` env builds and `runLeap.R` runs via `conda run`
 - [ ] Smoke-test `BEELINE-GRNBOOST2` env builds and `runArboreto.py` runs via `conda run`
 - [ ] Verify `BLEvaluator.py -a -e` works against the `image: local` outputs
 - [ ] Verify `BLPlotter.py --all` produces the expected files for this config
