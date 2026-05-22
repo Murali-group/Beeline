@@ -156,7 +156,7 @@ tutorial is ready to publish:
 - [x] Smoke-test `BEELINE-PPCOR` env builds and `runPPCOR.R` runs via `conda run`
 - [x] Smoke-test `BEELINE-LEAP` env builds and `runLeap.R` runs via `conda run`
 - [x] Smoke-test `BEELINE-GRNBOOST2` env builds and `runArboreto.py` runs via `conda run`
-- [ ] Verify `BLEvaluator.py -a -e` works against the `image: local` outputs
+- [x] Verify `BLEvaluator.py -a -e` works against the `image: local` outputs
 - [ ] Verify `BLPlotter.py --all` produces the expected files for this config
 - [ ] Decide whether to include an interpretation section for the Summary plot
 - [ ] (Stretch) Cache the synthetic dataset inside the devcontainer image so
