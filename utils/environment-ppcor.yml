@@ -1,0 +1,6 @@
+name: BEELINE-PPCOR
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - r-ppcor

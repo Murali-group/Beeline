@@ -1,0 +1,9 @@
+name: BEELINE-GRNBOOST2
+channels:
+  - bioconda
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.8
+  - arboreto
+  - pandas

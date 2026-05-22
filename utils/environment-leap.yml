@@ -1,0 +1,6 @@
+name: BEELINE-LEAP
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - r-leap

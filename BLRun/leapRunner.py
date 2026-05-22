@@ -1,8 +1,11 @@
 import os
 import pandas as pd
 import numpy as np
+from pathlib import Path
 
 from BLRun.runner import Runner
+
+_R_SCRIPT = Path(__file__).parent.parent / "Algorithms" / "LEAP" / "runLeap.R"
 
 
 class LEAPRunner(Runner):
@@ -53,14 +56,23 @@ class LEAPRunner(Runner):
 
         colNames = PTData.columns
         for idx in range(len(colNames)):
-            cmdToRun = ' '.join(['docker run --rm',
-                                f"-v {self.working_dir}:/usr/working_dir",
-                                f'{self.image} /bin/sh -c \"time -v -o',
-                                "/usr/working_dir/time" + str(idx) + ".txt",
-                                'Rscript runLeap.R',
-                                "/usr/working_dir/ExpressionData" + str(idx) + ".csv",
-                                maxLag,
-                                "/usr/working_dir/outFile" + str(idx) + ".txt", '\"'])
+            if self.image == 'local':
+                cmdToRun = ' '.join([
+                    'conda run --no-capture-output -n BEELINE-LEAP',
+                    'Rscript', str(_R_SCRIPT),
+                    str(self.working_dir / f'ExpressionData{idx}.csv'),
+                    maxLag,
+                    str(self.working_dir / f'outFile{idx}.txt'),
+                ])
+            else:
+                cmdToRun = ' '.join(['docker run --rm',
+                                    f"-v {self.working_dir}:/usr/working_dir",
+                                    f'{self.image} /bin/sh -c \"time -v -o',
+                                    "/usr/working_dir/time" + str(idx) + ".txt",
+                                    'Rscript runLeap.R',
+                                    "/usr/working_dir/ExpressionData" + str(idx) + ".csv",
+                                    maxLag,
+                                    "/usr/working_dir/outFile" + str(idx) + ".txt", '\"'])
 
             self._run_docker(cmdToRun, append=(idx > 0))
 

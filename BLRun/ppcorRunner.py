@@ -1,7 +1,10 @@
 import os
 import pandas as pd
+from pathlib import Path
 
 from BLRun.runner import Runner
+
+_R_SCRIPT = Path(__file__).parent.parent / "Algorithms" / "PPCOR" / "runPPCOR.R"
 
 
 class PPCORRunner(Runner):
@@ -31,12 +34,20 @@ class PPCORRunner(Runner):
         Function to run PPCOR algorithm
         '''
 
-        cmdToRun = ' '.join(['docker run --rm',
-                            f"-v {self.working_dir}:/usr/working_dir",
-                            f'{self.image} /bin/sh -c \"time -v -o',
-                            "/usr/working_dir/time.txt",
-                            'Rscript runPPCOR.R',
-                            "/usr/working_dir/ExpressionData.csv", "/usr/working_dir/outFile.txt", '\"'])
+        if self.image == 'local':
+            cmdToRun = ' '.join([
+                'conda run --no-capture-output -n BEELINE-PPCOR',
+                'Rscript', str(_R_SCRIPT),
+                str(self.working_dir / 'ExpressionData.csv'),
+                str(self.working_dir / 'outFile.txt'),
+            ])
+        else:
+            cmdToRun = ' '.join(['docker run --rm',
+                                f"-v {self.working_dir}:/usr/working_dir",
+                                f'{self.image} /bin/sh -c \"time -v -o',
+                                "/usr/working_dir/time.txt",
+                                'Rscript runPPCOR.R',
+                                "/usr/working_dir/ExpressionData.csv", "/usr/working_dir/outFile.txt", '\"'])
 
         # Run command
         self._run_docker(cmdToRun)

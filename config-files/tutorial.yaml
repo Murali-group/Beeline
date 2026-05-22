@@ -1,0 +1,197 @@
+# Tutorial config: runs PEARSON, PPCOR, LEAP, and GRNBOOST2 locally (no Docker)
+# against every BoolODE synthetic network at every cell count.
+# Limited to 3 replicates per cell-count group for brevity.
+# Requires algorithm-specific conda envs created by utils/setupAnacondaVENV.sh.
+
+input_settings:
+
+    input_dir: "inputs/Synthetic/"
+
+    # All 6 BoolODE synthetic networks x 5 cell counts x 3 replicates.
+    datasets:
+
+        - dataset_id: "dyn-BF/dyn-BF-100"
+          runs:
+            - run_id: "dyn-BF-100-1"
+            - run_id: "dyn-BF-100-2"
+            - run_id: "dyn-BF-100-3"
+        - dataset_id: "dyn-BF/dyn-BF-200"
+          runs:
+            - run_id: "dyn-BF-200-1"
+            - run_id: "dyn-BF-200-2"
+            - run_id: "dyn-BF-200-3"
+        - dataset_id: "dyn-BF/dyn-BF-500"
+          runs:
+            - run_id: "dyn-BF-500-1"
+            - run_id: "dyn-BF-500-2"
+            - run_id: "dyn-BF-500-3"
+        - dataset_id: "dyn-BF/dyn-BF-2000"
+          runs:
+            - run_id: "dyn-BF-2000-1"
+            - run_id: "dyn-BF-2000-2"
+            - run_id: "dyn-BF-2000-3"
+        - dataset_id: "dyn-BF/dyn-BF-5000"
+          runs:
+            - run_id: "dyn-BF-5000-1"
+            - run_id: "dyn-BF-5000-2"
+            - run_id: "dyn-BF-5000-3"
+
+        - dataset_id: "dyn-BFC/dyn-BFC-100"
+          runs:
+            - run_id: "dyn-BFC-100-1"
+            - run_id: "dyn-BFC-100-2"
+            - run_id: "dyn-BFC-100-3"
+        - dataset_id: "dyn-BFC/dyn-BFC-200"
+          runs:
+            - run_id: "dyn-BFC-200-1"
+            - run_id: "dyn-BFC-200-2"
+            - run_id: "dyn-BFC-200-3"
+        - dataset_id: "dyn-BFC/dyn-BFC-500"
+          runs:
+            - run_id: "dyn-BFC-500-1"
+            - run_id: "dyn-BFC-500-2"
+            - run_id: "dyn-BFC-500-3"
+        - dataset_id: "dyn-BFC/dyn-BFC-2000"
+          runs:
+            - run_id: "dyn-BFC-2000-1"
+            - run_id: "dyn-BFC-2000-2"
+            - run_id: "dyn-BFC-2000-3"
+        - dataset_id: "dyn-BFC/dyn-BFC-5000"
+          runs:
+            - run_id: "dyn-BFC-5000-1"
+            - run_id: "dyn-BFC-5000-2"
+            - run_id: "dyn-BFC-5000-3"
+
+        - dataset_id: "dyn-CY/dyn-CY-100"
+          runs:
+            - run_id: "dyn-CY-100-1"
+            - run_id: "dyn-CY-100-2"
+            - run_id: "dyn-CY-100-3"
+        - dataset_id: "dyn-CY/dyn-CY-200"
+          runs:
+            - run_id: "dyn-CY-200-1"
+            - run_id: "dyn-CY-200-2"
+            - run_id: "dyn-CY-200-3"
+        - dataset_id: "dyn-CY/dyn-CY-500"
+          runs:
+            - run_id: "dyn-CY-500-1"
+            - run_id: "dyn-CY-500-2"
+            - run_id: "dyn-CY-500-3"
+        - dataset_id: "dyn-CY/dyn-CY-2000"
+          runs:
+            - run_id: "dyn-CY-2000-1"
+            - run_id: "dyn-CY-2000-2"
+            - run_id: "dyn-CY-2000-3"
+        - dataset_id: "dyn-CY/dyn-CY-5000"
+          runs:
+            - run_id: "dyn-CY-5000-1"
+            - run_id: "dyn-CY-5000-2"
+            - run_id: "dyn-CY-5000-3"
+
+        - dataset_id: "dyn-LI/dyn-LI-100"
+          runs:
+            - run_id: "dyn-LI-100-1"
+            - run_id: "dyn-LI-100-2"
+            - run_id: "dyn-LI-100-3"
+        - dataset_id: "dyn-LI/dyn-LI-200"
+          runs:
+            - run_id: "dyn-LI-200-1"
+            - run_id: "dyn-LI-200-2"
+            - run_id: "dyn-LI-200-3"
+        - dataset_id: "dyn-LI/dyn-LI-500"
+          runs:
+            - run_id: "dyn-LI-500-1"
+            - run_id: "dyn-LI-500-2"
+            - run_id: "dyn-LI-500-3"
+        - dataset_id: "dyn-LI/dyn-LI-2000"
+          runs:
+            - run_id: "dyn-LI-2000-1"
+            - run_id: "dyn-LI-2000-2"
+            - run_id: "dyn-LI-2000-3"
+        - dataset_id: "dyn-LI/dyn-LI-5000"
+          runs:
+            - run_id: "dyn-LI-5000-1"
+            - run_id: "dyn-LI-5000-2"
+            - run_id: "dyn-LI-5000-3"
+
+        - dataset_id: "dyn-LL/dyn-LL-100"
+          runs:
+            - run_id: "dyn-LL-100-1"
+            - run_id: "dyn-LL-100-2"
+            - run_id: "dyn-LL-100-3"
+        - dataset_id: "dyn-LL/dyn-LL-200"
+          runs:
+            - run_id: "dyn-LL-200-1"
+            - run_id: "dyn-LL-200-2"
+            - run_id: "dyn-LL-200-3"
+        - dataset_id: "dyn-LL/dyn-LL-500"
+          runs:
+            - run_id: "dyn-LL-500-1"
+            - run_id: "dyn-LL-500-2"
+            - run_id: "dyn-LL-500-3"
+        - dataset_id: "dyn-LL/dyn-LL-2000"
+          runs:
+            - run_id: "dyn-LL-2000-1"
+            - run_id: "dyn-LL-2000-2"
+            - run_id: "dyn-LL-2000-3"
+        - dataset_id: "dyn-LL/dyn-LL-5000"
+          runs:
+            - run_id: "dyn-LL-5000-1"
+            - run_id: "dyn-LL-5000-2"
+            - run_id: "dyn-LL-5000-3"
+
+        - dataset_id: "dyn-TF/dyn-TF-100"
+          runs:
+            - run_id: "dyn-TF-100-1"
+            - run_id: "dyn-TF-100-2"
+            - run_id: "dyn-TF-100-3"
+        - dataset_id: "dyn-TF/dyn-TF-200"
+          runs:
+            - run_id: "dyn-TF-200-1"
+            - run_id: "dyn-TF-200-2"
+            - run_id: "dyn-TF-200-3"
+        - dataset_id: "dyn-TF/dyn-TF-500"
+          runs:
+            - run_id: "dyn-TF-500-1"
+            - run_id: "dyn-TF-500-2"
+            - run_id: "dyn-TF-500-3"
+        - dataset_id: "dyn-TF/dyn-TF-2000"
+          runs:
+            - run_id: "dyn-TF-2000-1"
+            - run_id: "dyn-TF-2000-2"
+            - run_id: "dyn-TF-2000-3"
+        - dataset_id: "dyn-TF/dyn-TF-5000"
+          runs:
+            - run_id: "dyn-TF-5000-1"
+            - run_id: "dyn-TF-5000-2"
+            - run_id: "dyn-TF-5000-3"
+
+    algorithms:
+
+        - algorithm_id: "PEARSON"
+          image: "local"
+          should_run: True
+          params: {}
+
+        - algorithm_id: "PPCOR"
+          image: "local"
+          should_run: True
+          params:
+              pVal: [0.01]
+
+        - algorithm_id: "LEAP"
+          image: "local"
+          should_run: True
+          params:
+              # Default maxLag value is 0.3; reduced for large cell counts
+              maxLag: [0.10]
+
+        - algorithm_id: "GRNBOOST2"
+          image: "local"
+          should_run: True
+          params: {}
+
+
+output_settings:
+    output_dir: "outputs"
+    experiment_id: "Tutorial"

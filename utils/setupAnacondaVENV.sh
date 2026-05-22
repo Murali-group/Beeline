@@ -24,6 +24,17 @@ else
     echo "Conda environment '${ENV_NAME}' created."
 fi
 
-eval "$(conda shell.bash hook)"
-conda activate BEELINE
+# Set up per-algorithm environments for local (no-Docker) execution
+for ALG_ENV in BEELINE-PPCOR BEELINE-LEAP BEELINE-GRNBOOST2; do
+    # Derive yml filename: e.g. BEELINE-PPCOR -> environment-ppcor.yml
+    ALG_YML="$BASEDIR/environment-$(echo ${ALG_ENV#BEELINE-} | tr '[:upper:]' '[:lower:]').yml"
+    if conda info --env | grep -q "${ALG_ENV}"; then
+        echo "Conda environment '${ALG_ENV}' already exists. Checking for updates."
+        conda env update --file="$ALG_YML" -n "${ALG_ENV}"
+    else
+        echo "Creating Conda environment '${ALG_ENV}'..."
+        conda env create --file="$ALG_YML"
+        echo "Conda environment '${ALG_ENV}' created."
+    fi
+done
 
