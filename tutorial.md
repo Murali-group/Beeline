@@ -95,10 +95,6 @@ Output lands at `outputs/Tutorial/<network>/<run_id>/<algorithm_id>/rankedEdges.
 > ~30 minutes, prune `tutorial.yaml` further (e.g. drop the 5000-cell variants,
 > or keep only `dyn-LI` and `dyn-BF`).
 
-> **TODO:** Confirm GRNBOOST2 works with the `arboreto` pin in
-> `environment-grnboost2.yml` — newer `dask`/`distributed` versions have
-> sometimes broken arboreto's `Client`-based API.
-
 ---
 
 ## 5. Evaluate the results
@@ -159,7 +155,7 @@ tutorial is ready to publish:
 - [ ] End-to-end timing on a 4-core Codespace; prune dataset list if slow
 - [x] Smoke-test `BEELINE-PPCOR` env builds and `runPPCOR.R` runs via `conda run`
 - [x] Smoke-test `BEELINE-LEAP` env builds and `runLeap.R` runs via `conda run`
-- [ ] Smoke-test `BEELINE-GRNBOOST2` env builds and `runArboreto.py` runs via `conda run`
+- [x] Smoke-test `BEELINE-GRNBOOST2` env builds and `runArboreto.py` runs via `conda run`
 - [ ] Verify `BLEvaluator.py -a -e` works against the `image: local` outputs
 - [ ] Verify `BLPlotter.py --all` produces the expected files for this config
 - [ ] Decide whether to include an interpretation section for the Summary plot
