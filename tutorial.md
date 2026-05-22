@@ -99,14 +99,17 @@ Output lands at `outputs/Tutorial/<network>/<run_id>/<algorithm_id>/rankedEdges.
 
 ## 5. Evaluate the results
 
-Compute AUPRC, AUROC, and Early Precision Ratio against the ground-truth
-networks:
+Compute AUPRC, AUROC, Early Precision Ratio, Spearman stability, and signed
+EPR against the ground-truth networks. The Spearman (`-r`) and signed-EPR
+(`--sepr`) outputs feed the summary heatmaps in step 6 — running with just
+`-a -e` works but the heatmaps will be missing those rows.
 
 ```bash
-python BLEvaluator.py -c config-files/tutorial.yaml -a -e
+python BLEvaluator.py -c config-files/tutorial.yaml -a -e -r --sepr
 ```
 
-Output: `outputs/Tutorial/<network>/-AUPRC.csv`, `-AUROC.csv`, `-EPR.csv`.
+Output: per-dataset-group CSVs at
+`outputs/Tutorial/<network>/<cell_count>/{AUPRC,AUROC,EarlyPrecision,EarlyPrecisionActivation,EarlyPrecisionInhibitory,Spearman}.csv`.
 
 ---
 
@@ -157,7 +160,7 @@ tutorial is ready to publish:
 - [x] Smoke-test `BEELINE-LEAP` env builds and `runLeap.R` runs via `conda run`
 - [x] Smoke-test `BEELINE-GRNBOOST2` env builds and `runArboreto.py` runs via `conda run`
 - [x] Verify `BLEvaluator.py -a -e` works against the `image: local` outputs
-- [ ] Verify `BLPlotter.py --all` produces the expected files for this config
+- [x] Verify `BLPlotter.py --all` produces the expected files for this config
 - [ ] Decide whether to include an interpretation section for the Summary plot
 - [ ] (Stretch) Cache the synthetic dataset inside the devcontainer image so
       step 3 becomes a no-op
