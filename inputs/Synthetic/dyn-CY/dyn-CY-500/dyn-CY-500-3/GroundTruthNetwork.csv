@@ -1,0 +1,7 @@
+Gene1,Gene2,Type
+g1,g2,-
+g2,g3,-
+g5,g1,-
+g3,g4,+
+g4,g5,+
+g1,g6,+

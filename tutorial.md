@@ -61,33 +61,29 @@ conda activate BEELINE
 
 ---
 
-## 3. Get the synthetic dataset
+## 3. Synthetic dataset
 
-The synthetic BoolODE datasets live on Zenodo (v4 for BEELINE v1.1):
-[https://doi.org/10.5281/zenodo.3378975](https://doi.org/10.5281/zenodo.3378975)
+The 54 dataset directories the tutorial config exercises (6 BoolODE networks
+x 3 cell counts x 3 replicates, ~3 MB total) are committed directly under
+`inputs/Synthetic/`. There is nothing to download.
 
-Download and extract under `inputs/`:
-
-```bash
-# TODO: confirm the exact filename on Zenodo v4 once we test the flow
-wget -O BEELINE-data.zip <ZENODO_URL>
-unzip BEELINE-data.zip
-# Resulting structure:
-#   inputs/Synthetic/dyn-BF/dyn-BF-100/dyn-BF-100-1/{ExpressionData,GroundTruthNetwork,PseudoTime}.csv
-#   ... and so on for dyn-BFC, dyn-CY, dyn-LI, dyn-LL, dyn-TF
+```
+inputs/Synthetic/dyn-BF/dyn-BF-100/dyn-BF-100-1/{ExpressionData,GroundTruthNetwork,PseudoTime}.csv
+inputs/Synthetic/dyn-BF/dyn-BF-100/dyn-BF-100-2/...
+... and so on for dyn-BFC, dyn-CY, dyn-LI, dyn-LL, dyn-TF
 ```
 
-> **TODO:** Fill in the actual Zenodo download URL and verify the extracted
-> path matches `inputs/Synthetic/`. If a smaller tarball can be hosted
-> elsewhere (e.g. the repo's GitHub Releases), prefer that to keep startup
-> fast.
+The full v4 dataset (10 replicates per cell count, all curated scRNA-seq
+networks) lives on Zenodo at
+[doi.org/10.5281/zenodo.3378975](https://doi.org/10.5281/zenodo.3378975) if
+you want to extend the tutorial beyond what's in this branch.
 
 ---
 
 ## 4. Run the algorithms
 
 The tutorial config wires up all four local algorithms against every
-synthetic network (6 networks × 5 cell counts × 3 replicates = 90 datasets):
+synthetic network (6 networks × 3 cell counts × 3 replicates = 54 datasets):
 
 ```bash
 python BLRunner.py -c config-files/tutorial.yaml
@@ -158,7 +154,8 @@ Use this list to track what still needs writing or verification before this
 tutorial is ready to publish:
 
 - [x] `.devcontainer/devcontainer.json` for one-click Codespaces boot
-- [ ] Confirm and document Zenodo v4 download URL + extraction layout
+- [x] Confirm and document Zenodo v4 download URL + extraction layout
+      (replaced by committing the tutorial subset directly under `inputs/`)
 - [ ] End-to-end timing on a 4-core Codespace; prune dataset list if slow
 - [ ] Smoke-test `BEELINE-PPCOR` env builds and `runPPCOR.R` runs via `conda run`
 - [ ] Smoke-test `BEELINE-LEAP` env builds and `runLeap.R` runs via `conda run`
