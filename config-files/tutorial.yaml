@@ -1,110 +1,79 @@
 # Tutorial config: runs PEARSON, PPCOR, LEAP, and GRNBOOST2 locally (no Docker)
-# against the BoolODE synthetic networks at small cell counts only.
-# Limited to 3 cell counts (100, 200, 500) x 3 replicates for brevity.
+# against the BoolODE synthetic networks at 500 cells (7 replicates each).
 # Requires algorithm-specific conda envs created by utils/setupAnacondaVENV.sh.
 
 input_settings:
 
     input_dir: "inputs/Synthetic/"
 
-    # All 6 BoolODE synthetic networks x 3 cell counts x 3 replicates.
+    # All 6 BoolODE synthetic networks x 7 replicates at 500 cells.
     datasets:
 
-        - dataset_id: "dyn-BF/dyn-BF-100"
-          runs:
-            - run_id: "dyn-BF-100-1"
-            - run_id: "dyn-BF-100-2"
-            - run_id: "dyn-BF-100-3"
-        - dataset_id: "dyn-BF/dyn-BF-200"
-          runs:
-            - run_id: "dyn-BF-200-1"
-            - run_id: "dyn-BF-200-2"
-            - run_id: "dyn-BF-200-3"
         - dataset_id: "dyn-BF/dyn-BF-500"
+          nickname: "BF"
           runs:
             - run_id: "dyn-BF-500-1"
             - run_id: "dyn-BF-500-2"
             - run_id: "dyn-BF-500-3"
+            - run_id: "dyn-BF-500-4"
+            - run_id: "dyn-BF-500-5"
+            - run_id: "dyn-BF-500-6"
+            - run_id: "dyn-BF-500-7"
 
-        - dataset_id: "dyn-BFC/dyn-BFC-100"
-          runs:
-            - run_id: "dyn-BFC-100-1"
-            - run_id: "dyn-BFC-100-2"
-            - run_id: "dyn-BFC-100-3"
-        - dataset_id: "dyn-BFC/dyn-BFC-200"
-          runs:
-            - run_id: "dyn-BFC-200-1"
-            - run_id: "dyn-BFC-200-2"
-            - run_id: "dyn-BFC-200-3"
         - dataset_id: "dyn-BFC/dyn-BFC-500"
+          nickname: "BFC"
           runs:
             - run_id: "dyn-BFC-500-1"
             - run_id: "dyn-BFC-500-2"
             - run_id: "dyn-BFC-500-3"
+            - run_id: "dyn-BFC-500-4"
+            - run_id: "dyn-BFC-500-5"
+            - run_id: "dyn-BFC-500-6"
+            - run_id: "dyn-BFC-500-7"
 
-        - dataset_id: "dyn-CY/dyn-CY-100"
-          runs:
-            - run_id: "dyn-CY-100-1"
-            - run_id: "dyn-CY-100-2"
-            - run_id: "dyn-CY-100-3"
-        - dataset_id: "dyn-CY/dyn-CY-200"
-          runs:
-            - run_id: "dyn-CY-200-1"
-            - run_id: "dyn-CY-200-2"
-            - run_id: "dyn-CY-200-3"
         - dataset_id: "dyn-CY/dyn-CY-500"
+          nickname: "CY"
           runs:
             - run_id: "dyn-CY-500-1"
             - run_id: "dyn-CY-500-2"
             - run_id: "dyn-CY-500-3"
+            - run_id: "dyn-CY-500-4"
+            - run_id: "dyn-CY-500-5"
+            - run_id: "dyn-CY-500-6"
+            - run_id: "dyn-CY-500-7"
 
-        - dataset_id: "dyn-LI/dyn-LI-100"
-          runs:
-            - run_id: "dyn-LI-100-1"
-            - run_id: "dyn-LI-100-2"
-            - run_id: "dyn-LI-100-3"
-        - dataset_id: "dyn-LI/dyn-LI-200"
-          runs:
-            - run_id: "dyn-LI-200-1"
-            - run_id: "dyn-LI-200-2"
-            - run_id: "dyn-LI-200-3"
         - dataset_id: "dyn-LI/dyn-LI-500"
+          nickname: "LI"
           runs:
             - run_id: "dyn-LI-500-1"
             - run_id: "dyn-LI-500-2"
             - run_id: "dyn-LI-500-3"
+            - run_id: "dyn-LI-500-4"
+            - run_id: "dyn-LI-500-5"
+            - run_id: "dyn-LI-500-6"
+            - run_id: "dyn-LI-500-7"
 
-        - dataset_id: "dyn-LL/dyn-LL-100"
-          runs:
-            - run_id: "dyn-LL-100-1"
-            - run_id: "dyn-LL-100-2"
-            - run_id: "dyn-LL-100-3"
-        - dataset_id: "dyn-LL/dyn-LL-200"
-          runs:
-            - run_id: "dyn-LL-200-1"
-            - run_id: "dyn-LL-200-2"
-            - run_id: "dyn-LL-200-3"
         - dataset_id: "dyn-LL/dyn-LL-500"
+          nickname: "LL"
           runs:
             - run_id: "dyn-LL-500-1"
             - run_id: "dyn-LL-500-2"
             - run_id: "dyn-LL-500-3"
+            - run_id: "dyn-LL-500-4"
+            - run_id: "dyn-LL-500-5"
+            - run_id: "dyn-LL-500-6"
+            - run_id: "dyn-LL-500-7"
 
-        - dataset_id: "dyn-TF/dyn-TF-100"
-          runs:
-            - run_id: "dyn-TF-100-1"
-            - run_id: "dyn-TF-100-2"
-            - run_id: "dyn-TF-100-3"
-        - dataset_id: "dyn-TF/dyn-TF-200"
-          runs:
-            - run_id: "dyn-TF-200-1"
-            - run_id: "dyn-TF-200-2"
-            - run_id: "dyn-TF-200-3"
         - dataset_id: "dyn-TF/dyn-TF-500"
+          nickname: "TF"
           runs:
             - run_id: "dyn-TF-500-1"
             - run_id: "dyn-TF-500-2"
             - run_id: "dyn-TF-500-3"
+            - run_id: "dyn-TF-500-4"
+            - run_id: "dyn-TF-500-5"
+            - run_id: "dyn-TF-500-6"
+            - run_id: "dyn-TF-500-7"
 
     algorithms:
 

@@ -28,7 +28,8 @@
         "vscode": {
             "extensions": [
                 "ms-python.python",
-                "redhat.vscode-yaml"
+                "redhat.vscode-yaml",
+                "tomoki1207.pdf"
             ]
         }
     },

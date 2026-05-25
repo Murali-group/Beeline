@@ -63,15 +63,19 @@ conda activate BEELINE
 
 ## 3. Synthetic dataset
 
-The 54 dataset directories the tutorial config exercises (6 BoolODE networks
-x 3 cell counts x 3 replicates, ~3 MB total) are committed directly under
+The 42 dataset directories the tutorial config exercises (6 BoolODE networks
+x 7 replicates at 500 cells, ~5 MB total) are committed directly under
 `inputs/Synthetic/`. There is nothing to download.
 
 ```
-inputs/Synthetic/dyn-BF/dyn-BF-100/dyn-BF-100-1/{ExpressionData,GroundTruthNetwork,PseudoTime}.csv
-inputs/Synthetic/dyn-BF/dyn-BF-100/dyn-BF-100-2/...
+inputs/Synthetic/dyn-BF/dyn-BF-500/dyn-BF-500-1/{ExpressionData,PseudoTime}.csv
+inputs/Synthetic/dyn-BF/dyn-BF-500/dyn-BF-500-2/...
 ... and so on for dyn-BFC, dyn-CY, dyn-LI, dyn-LL, dyn-TF
 ```
+
+`GroundTruthNetwork.csv` lives one level up at the dataset-group level
+(e.g. `inputs/Synthetic/dyn-BF/dyn-BF-500/GroundTruthNetwork.csv`) and is
+shared across all replicates within that group.
 
 The full v4 dataset (10 replicates per cell count, all curated scRNA-seq
 networks) lives on Zenodo at
@@ -83,17 +87,13 @@ you want to extend the tutorial beyond what's in this branch.
 ## 4. Run the algorithms
 
 The tutorial config wires up all four local algorithms against every
-synthetic network (6 networks × 3 cell counts × 3 replicates = 54 datasets):
+synthetic network (6 networks × 7 replicates at 500 cells = 42 runs):
 
 ```bash
 python BLRunner.py -c config-files/tutorial.yaml
 ```
 
 Output lands at `outputs/Tutorial/<network>/<run_id>/<algorithm_id>/rankedEdges.csv`.
-
-> **TODO:** Time a full run end-to-end on a 4-core Codespace. If it exceeds
-> ~30 minutes, prune `tutorial.yaml` further (e.g. drop the 5000-cell variants,
-> or keep only `dyn-LI` and `dyn-BF`).
 
 ---
 
