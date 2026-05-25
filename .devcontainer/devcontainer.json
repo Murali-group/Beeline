@@ -9,16 +9,20 @@
     },
 
     // The conda feature installs to /opt/conda but only edits root's .bashrc.
-    // Put conda on PATH for every process so utils/setupAnacondaVENV.sh works
-    // when invoked non-interactively below.
-    "containerEnv": {
+    // Use remoteEnv (not containerEnv) so the ${containerEnv:PATH} substitution
+    // actually expands — placing it in containerEnv left a literal
+    // "${containerEnv:PATH}" in the container's PATH, which broke even basic
+    // commands like `sleep` and crashed the container at startup.
+    "remoteEnv": {
         "PATH": "/opt/conda/bin:${containerEnv:PATH}"
     },
 
     // Build the four conda envs (BEELINE + BEELINE-PPCOR/LEAP/GRNBOOST2) once,
     // when the codespace is first created. `conda init bash` writes the shell
     // hook so interactive shells can `conda activate BEELINE` after attach.
-    "onCreateCommand": "conda init bash && bash utils/setupAnacondaVENV.sh",
+    // We prepend /opt/conda/bin here too because onCreateCommand runs before
+    // remoteEnv is applied.
+    "onCreateCommand": "export PATH=/opt/conda/bin:$PATH && conda init bash && bash utils/setupAnacondaVENV.sh",
 
     "customizations": {
         "vscode": {
