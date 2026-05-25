@@ -61,7 +61,32 @@ conda activate BEELINE
 
 ---
 
-## 3. Synthetic dataset
+## 3. Verify the install
+
+Run the verification script before kicking off any algorithms. It exercises
+each conda env and confirms the tutorial data is in place:
+
+```bash
+bash utils/verify-install.sh
+```
+
+Expected output: 11 `PASS` lines and a `0 failed` summary. The script checks:
+
+- `conda` is on PATH and all four envs exist
+- `BEELINE` can import `pandas`, `pyyaml`, `networkx`, `scikit-learn`
+- `BLRunner.py --help` runs (catches BL* import errors)
+- `BEELINE-PPCOR` loads `library(ppcor)`
+- `BEELINE-LEAP` loads `library(LEAP)`
+- `BEELINE-GRNBOOST2` can `from arboreto.algo import grnboost2`
+- The 6 synthetic networks each have a `GroundTruthNetwork.csv`
+- `config-files/tutorial.yaml` parses
+
+If anything fails, the script lists which check failed so you know where to
+look. Don't move on until all checks pass.
+
+---
+
+## 4. Synthetic dataset
 
 The 42 dataset directories the tutorial config exercises (6 BoolODE networks
 x 7 replicates at 500 cells, ~5 MB total) are committed directly under
@@ -84,7 +109,7 @@ you want to extend the tutorial beyond what's in this branch.
 
 ---
 
-## 4. Run the algorithms
+## 5. Run the algorithms
 
 The tutorial config wires up all four local algorithms against every
 synthetic network (6 networks × 7 replicates at 500 cells = 42 runs):
@@ -97,11 +122,11 @@ Output lands at `outputs/Tutorial/<network>/<run_id>/<algorithm_id>/rankedEdges.
 
 ---
 
-## 5. Evaluate the results
+## 6. Evaluate the results
 
 Compute AUPRC, AUROC, Early Precision Ratio, Spearman stability, and signed
 EPR against the ground-truth networks. The Spearman (`-r`) and signed-EPR
-(`--sepr`) outputs feed the summary heatmaps in step 6 — running with just
+(`--sepr`) outputs feed the summary heatmaps in step 7 — running with just
 `-a -e` works but the heatmaps will be missing those rows.
 
 ```bash
@@ -113,7 +138,7 @@ Output: per-dataset-group CSVs at
 
 ---
 
-## 6. Plot the results
+## 7. Plot the results
 
 Generate publication-style figures:
 
@@ -163,4 +188,4 @@ tutorial is ready to publish:
 - [x] Verify `BLPlotter.py --all` produces the expected files for this config
 - [ ] Decide whether to include an interpretation section for the Summary plot
 - [ ] (Stretch) Cache the synthetic dataset inside the devcontainer image so
-      step 3 becomes a no-op
+      step 4 becomes a no-op
