@@ -6,6 +6,7 @@ from BLEval.AUPRC import AUPRC
 from BLEval.AUROC import AUROC
 from BLEval.data import EvaluationData
 from BLEval.EarlyPrecision import EarlyPrecision
+from BLEval.HubAUPRC import HubAUPRC
 from BLEval.SignedEarlyPrecision import SignedEarlyPrecision
 from BLEval.BLTime import BLTime
 from BLEval.Borda import Borda
@@ -48,6 +49,12 @@ def parse_args():
 
     parser.add_argument('-s', '--sepr', action="store_true", default=False,
         help="Analyze median (signed) early precision for activation and inhibitory edges.")
+
+    parser.add_argument('--hub-auprc', action="store_true", default=False,
+        help="Compute AUPRC separately for hub-source and non-hub-source edges.")
+
+    parser.add_argument('--hub-fraction', type=float, default=0.20,
+        help="Fraction of genes requested as hubs by ground-truth out-degree.")
 
     parser.add_argument('-m', '--motifs', action="store_true", default=False,
         help="Compute network motifs in the predicted top-k networks.")
@@ -99,6 +106,11 @@ def main():
 
     if args.sepr:
         SignedEarlyPrecision()(evaluation_data)
+
+    if args.hub_auprc:
+        HubAUPRC(
+            hub_fraction=args.hub_fraction
+        )(evaluation_data)
 
     if args.motifs:
         Motifs()(evaluation_data)
