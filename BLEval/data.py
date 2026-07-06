@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Iterator, List
+from typing import Dict, Iterator, List, Optional
 
 import pandas as pd
 
@@ -49,20 +49,31 @@ class DatasetGroup:
     within a group.
     """
 
-    def __init__(self, dataset_id: str, runs: List[RunResult], dataset_path: Path) -> None:
+    def __init__(
+        self,
+        dataset_id: str,
+        runs: List[RunResult],
+        dataset_path: Path,
+        tf_list_path: Optional[Path] = None,
+    ) -> None:
         # dataset_id : str    — matches dataset_id from the config 'datasets' list
         # runs : list[RunResult]  — one entry per run in the config 'runs' list
         # dataset_path : Path — output directory for this dataset (output_dir/dataset_id)
+        # tf_list_path : Optional[Path] — optional transcription-factor CSV
+        #   path for evaluators that need TF/non-TF classification.
         if not isinstance(dataset_id, str):
             raise TypeError(f"dataset_id must be str, got {type(dataset_id)}")
         if not isinstance(runs, list) or not all(isinstance(r, RunResult) for r in runs):
             raise TypeError("runs must be a list of RunResult objects")
         if not isinstance(dataset_path, Path):
             raise TypeError(f"dataset_path must be Path, got {type(dataset_path)}")
+        if tf_list_path is not None and not isinstance(tf_list_path, Path):
+            raise TypeError(f"tf_list_path must be Path or None, got {type(tf_list_path)}")
 
         self.dataset_id: str = dataset_id
         self.runs: List[RunResult] = runs
         self.dataset_path: Path = dataset_path
+        self.tf_list_path: Optional[Path] = tf_list_path
 
     def __iter__(self) -> Iterator[RunResult]:
         return iter(self.runs)
@@ -137,6 +148,16 @@ class EvaluationData:
             # outputs / dataset_id
             dataset_path: Path = output_dir / dataset_id
 
+            # Optional transcription-factor list for evaluators that split
+            # candidates by TF/non-TF status. Relative paths are resolved from
+            # the repository root, matching other config paths.
+            tf_list_value = ds.get('tf_list')
+            tf_list_path = (
+                (root / tf_list_value).resolve()
+                if tf_list_value
+                else None
+            )
+
             # Resolve the run list: either scan input subdirectories or use the
             # explicit 'runs' list from the config.
             if ds.get('scan_run_subdirectories'):
@@ -180,7 +201,14 @@ class EvaluationData:
 
                 runs.append(RunResult(run_id, ranked_edges, gt_path, run_path))
 
-            groups.append(DatasetGroup(dataset_id, runs, dataset_path))
+            groups.append(
+                DatasetGroup(
+                    dataset_id,
+                    runs,
+                    dataset_path,
+                    tf_list_path=tf_list_path,
+                )
+            )
 
         return groups
 

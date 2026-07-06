@@ -3,6 +3,7 @@ import argparse
 import yaml
 
 from BLEval.AUPRC import AUPRC
+from BLEval.TFAUPRC import TFAUPRC
 from BLEval.AUROC import AUROC
 from BLEval.data import EvaluationData
 from BLEval.EarlyPrecision import EarlyPrecision
@@ -48,6 +49,9 @@ def parse_args():
 
     parser.add_argument('-s', '--sepr', action="store_true", default=False,
         help="Analyze median (signed) early precision for activation and inhibitory edges.")
+
+    parser.add_argument('--tf-auprc', action="store_true", default=False,
+        help="Compute AUPRC separately for TF-to-TF and TF-to-non-TF edges.")
 
     parser.add_argument('-m', '--motifs', action="store_true", default=False,
         help="Compute network motifs in the predicted top-k networks.")
@@ -99,6 +103,9 @@ def main():
 
     if args.sepr:
         SignedEarlyPrecision()(evaluation_data)
+
+    if args.tf_auprc:
+        TFAUPRC()(evaluation_data)
 
     if args.motifs:
         Motifs()(evaluation_data)

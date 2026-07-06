@@ -1,0 +1,124 @@
+input_settings:
+  input_dir: inputs/Curated
+  datasets:
+  - dataset_id: GSD
+    should_run:
+    - true
+    groundTruthNetwork: GroundTruthNetwork.csv
+    runs:
+    - run_id: GSD-2000-1
+    - run_id: GSD-2000-2
+    - run_id: GSD-2000-3
+    - run_id: GSD-2000-4
+    - run_id: GSD-2000-5
+    - run_id: GSD-2000-6
+    - run_id: GSD-2000-7
+    - run_id: GSD-2000-8
+    - run_id: GSD-2000-9
+    - run_id: GSD-2000-10
+    tf_list: BEELINE-Networks/mouse-tfs.csv
+  algorithms:
+  - algorithm_id: PIDC
+    image: grnbeeline/pidc:base
+    should_run:
+    - true
+    params: {}
+  - algorithm_id: GRNVBEM
+    image: grnbeeline/grnvbem:base
+    should_run:
+    - false
+    params: {}
+  - algorithm_id: GENIE3
+    image: grnbeeline/arboreto:base
+    should_run:
+    - false
+    params: {}
+  - algorithm_id: GRNBOOST2
+    image: grnbeeline/arboreto:base
+    should_run:
+    - true
+    params: {}
+  - algorithm_id: PPCOR
+    image: grnbeeline/ppcor:base
+    should_run:
+    - true
+    params:
+      pVal:
+      - 0.01
+  - algorithm_id: SCODE
+    image: grnbeeline/scode:base
+    should_run:
+    - true
+    params:
+      z:
+      - 2
+      nIter:
+      - 100
+      nRep:
+      - 5
+  - algorithm_id: SINCERITIES
+    image: grnbeeline/sincerities:base
+    should_run:
+    - true
+    params:
+      nBins:
+      - 6
+  - algorithm_id: LEAP
+    image: grnbeeline/leap:base
+    should_run:
+    - true
+    params:
+      maxLag:
+      - 0.1
+  - algorithm_id: GRISLI
+    image: grnbeeline/grisli:base
+    should_run:
+    - false
+    params:
+      L:
+      - 10
+      R:
+      - 1500
+      alphaMin:
+      - 0.0
+  - algorithm_id: SINGE
+    image: grnbeeline/singe:0.4.1
+    should_run:
+    - false
+    params:
+      lambda:
+      - 0.01
+      dT:
+      - 15
+      num_lags:
+      - 5
+      kernel_width:
+      - 0.5
+      prob_zero_removal:
+      - 0
+      prob_remove_samples:
+      - 0.0
+      family:
+      - gaussian
+      num_replicates:
+      - 6
+  - algorithm_id: SCRIBE
+    image: grnbeeline/scribe:base
+    should_run:
+    - false
+    params:
+      delay:
+      - 5,25,50,75,100
+      method:
+      - ucRDI
+      lowerDetectionLimit:
+      - 0
+      expressionFamily:
+      - uninormal
+      log:
+      - false
+      ignorePT:
+      - true
+output_settings:
+  output_dir: outputs
+  experiment_id: Curated
