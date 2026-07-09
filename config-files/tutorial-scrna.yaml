@@ -1,0 +1,55 @@
+# Tutorial (scRNA-seq step): runs PEARSON, PPCOR, LEAP, and GRNBOOST2 locally
+# against a real Erythroid-lineage scRNA-seq dataset (Nestorowa et al. 2016,
+# GSE81682) with the Krumsiek 2011 curated HSC network as ground truth.
+#
+# See tutorial.md, "Step 4b: real scRNA-seq" for context and derivation notes.
+
+input_settings:
+
+    input_dir: "inputs/scRNA-Seq/"
+
+    datasets:
+
+        # 1071 Erythroid-lineage cells x 11 curated HSC-network TFs.
+        # Expression is log2(CPM+1) computed from GSE81682 raw HTSeq counts,
+        # restricted to the cell subset that BEELINE's mHSC-E already selected
+        # via Nestorowa's slingshot analysis. Ground truth is the 11-node,
+        # 30-edge Krumsiek Boolean circuit (data/BEELINE-data/inputs/Curated/HSC/).
+        # The "EgrNab" node in Krumsiek is a fusion of Egr1/Egr2/Nab2; we use
+        # Egr1 alone as the representative since it has by far the highest
+        # variance across cells in this dataset.
+        - dataset_id: "mHSC-HSC"
+          nickname: "mHSC-HSC"
+          should_run: [True]
+          runs:
+            - run_id: "Erythroid"
+
+    algorithms:
+
+        - algorithm_id: "PEARSON"
+          image: "local"
+          should_run: [True]
+          params: {}
+
+        - algorithm_id: "PPCOR"
+          image: "local"
+          should_run: [True]
+          params:
+              pVal: [0.01]
+
+        - algorithm_id: "LEAP"
+          image: "local"
+          should_run: [True]
+          params:
+              # Default maxLag value is 0.3; reduced for large cell counts
+              maxLag: [0.10]
+
+        - algorithm_id: "GRNBOOST2"
+          image: "local"
+          should_run: [True]
+          params: {}
+
+
+output_settings:
+    output_dir: "outputs"
+    experiment_id: "Tutorial-scRNA"

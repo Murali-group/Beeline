@@ -160,6 +160,72 @@ You should see:
 
 ---
 
+## 8. Try it on real scRNA-seq data
+
+The synthetic pipeline above is a controlled setting: the ground-truth
+network *is* what generated the expression. Real scRNA-seq is messier —
+technical dropout, biological noise, and a ground truth that is only
+partially known. This step runs the same four algorithms against a real
+dataset so you can see how the numbers shift.
+
+**Dataset:** 1071 Erythroid-lineage cells from Nestorowa et al. 2016
+([GEO GSE81682](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE81682)),
+restricted to the 11 transcription factors of the Krumsiek 2011 HSC
+Boolean circuit (Cebpa, Eklf, EgrNab, Fli1, Fog1, Gata1, Gata2, Gfi1, Pu1,
+Scl, cJun). Expression values are `log2(CPM + 1)` computed directly from
+GSE81682 raw HTSeq counts. Pseudotime is Nestorowa's slingshot output
+along the Erythroid curve.
+
+**Ground truth:** the 30-edge Krumsiek Boolean circuit, shipped with
+BEELINE at `data/BEELINE-data/inputs/Curated/HSC/`.
+
+**About EgrNab:** the Krumsiek circuit models `EgrNab` as a fused Boolean
+node standing in for Egr1, Egr2, and Nab2. Since there is no `EgrNab` gene
+to measure, this dataset uses **Egr1** alone as the representative — the
+choice is data-driven: Egr1 has by far the highest across-cell variance
+(6.75) versus Egr2 (0.27), Nab2 (4.39), or their mean composite (1.25).
+
+Committed at `inputs/scRNA-Seq/mHSC-HSC/`:
+
+```
+inputs/scRNA-Seq/mHSC-HSC/
+    GroundTruthNetwork.csv         # 30 edges from Krumsiek 2011
+    Erythroid/
+        ExpressionData.csv         # 11 genes x 1071 cells, log2(CPM+1)
+        PseudoTime.csv             # 1071 cells, Erythroid pseudotime
+```
+
+Run the pipeline against a separate config that points at this dataset:
+
+```bash
+python BLRunner.py    -c config-files/tutorial-scrna.yaml
+python BLEvaluator.py -c config-files/tutorial-scrna.yaml -a -e -r --sepr
+python BLPlotter.py   -c config-files/tutorial-scrna.yaml -o plots --all
+```
+
+Output lands under `outputs/Tutorial-scRNA/mHSC-HSC/`. Expect the AUPRC
+and EPR scores to be materially lower than on the synthetic networks —
+that gap is the story. The Krumsiek circuit is a very simplified model of
+Erythroid differentiation, and the ChIP-seq / Boolean edges it encodes
+may or may not be reflected as co-expression relationships in the
+Nestorowa data.
+
+Two things to expect in the output:
+
+- `Spearman.csv` will be empty for this dataset. Spearman stability is a
+  cross-replicate metric, and mHSC-HSC has a single run (Erythroid) so
+  there is nothing to compare against. This is not an error.
+- GRNBOOST2's `output.txt` typically contains a `distributed.comm.core.CommClosedError`
+  traceback near the end. This is dask cleanup noise; the ranked edge
+  file is written correctly before it fires.
+
+> **Note:** the tutorial ships the derived dataset directly; you do not
+> need to re-download GSE81682 or re-derive the expression matrix. If you
+> want to see how the file was built, look at `.work/nestorowa/` (not
+> committed) or the derivation notes in this section.
+
+---
+
 ## What's next
 
 - **Try a curated dataset.** Real scRNA-seq networks from
@@ -189,3 +255,13 @@ tutorial is ready to publish:
 - [ ] Decide whether to include an interpretation section for the Summary plot
 - [ ] (Stretch) Cache the synthetic dataset inside the devcontainer image so
       step 4 becomes a no-op
+- [x] Add real-scRNA-seq step (Nestorowa 2016 mHSC + Krumsiek curated HSC network)
+      at `inputs/scRNA-Seq/mHSC-HSC/` with `config-files/tutorial-scrna.yaml`
+- [x] Smoke-test the four local algorithms against `tutorial-scrna.yaml`
+      (PEARSON/PPCOR/LEAP/GRNBOOST2 all produce 110-121 ranked edges;
+      BLEvaluator emits AUPRC/AUROC/EPR/signed-EPR cleanly; Spearman.csv
+      is empty because mHSC-HSC has one run, not a bug)
+- [ ] Verify `BLPlotter.py --all` works against the mHSC-HSC output
+      (heatmaps with a single dataset column may render awkwardly)
+- [ ] Consider whether the `EgrNab -> Egr1` substitution should be documented
+      inline in tutorial.md's step 8 or in a separate methods appendix
