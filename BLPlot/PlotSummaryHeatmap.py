@@ -12,12 +12,13 @@ import seaborn as sns
 from matplotlib.transforms import blended_transform_factory
 
 from BLPlot._heatmap import (
+    _FONTSIZE,
     _draw_section,
     _setup_heatmap_axes,
 )
 from BLPlot.plotter import Plotter, iter_datasets_with_runs, random_classifier_baseline
 
-plt.rcParams["font.size"] = 12
+plt.rcParams["font.size"] = _FONTSIZE
 
 
 def _load_auprc_ratios(
@@ -263,7 +264,7 @@ class PlotSummaryHeatmap(Plotter):
             legend_ax.xaxis.set_ticks_position('none')
             legend_ax.set_yticklabels([])
             legend_ax.set_xticks([0.5, len(palette) - 2])
-            legend_ax.set_xticklabels(['Low/Poor', 'High/Good'], fontsize=12)
+            legend_ax.set_xticklabels(['Low/Poor', 'High/Good'], fontsize=_FONTSIZE)
 
         stem = output_dir / 'Summary'
         plt.savefig(stem.with_suffix('.pdf'), bbox_inches='tight')

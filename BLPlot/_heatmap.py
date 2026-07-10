@@ -15,6 +15,10 @@ import numpy as np
 # Color used for cells whose value falls below the random-predictor cutoff.
 _DARK_COL = '#2E4053'
 
+# Base font size for all heatmap text (section headers, column headers,
+# cell values, y-tick labels). Shared by PlotSummaryHeatmap and PlotEPRHeatmap.
+_FONTSIZE = 16
+
 
 def _flat_square(ax, cx: float, cy: float, col) -> None:
     """
@@ -93,7 +97,7 @@ def _draw_section(
     mid_x = col_x_start + (n_datasets - 1) / 2
     ax.text(
         mid_x, n_algos + 2, section_label,
-        fontsize=12, ha='center', va='center',
+        fontsize=_FONTSIZE, ha='center', va='center',
         bbox=dict(boxstyle='round', ec=(1, 1, 1), fc=(1, 1, 1)),
     )
 
@@ -112,7 +116,7 @@ def _draw_section(
         # Column header — horizontal, centred above data rows
         ax.text(
             cx, n_algos + 1, dataset_ids[col_idx],
-            fontsize=12, rotation=0, ha='center', va='center',
+            fontsize=_FONTSIZE, rotation=0, ha='center', va='center',
             bbox=dict(boxstyle='round', ec=(1, 1, 1, 0), fc=(1, 1, 1, 0)),
         )
 
@@ -138,7 +142,7 @@ def _draw_section(
             raw = data[row_idx, col_idx]
 
             if math.isnan(raw):
-                ax.text(cx, cy, '-', fontsize=12,
+                ax.text(cx, cy, '-', fontsize=_FONTSIZE,
                         ha='center', va='center', color=_DARK_COL)
                 continue
 
@@ -160,15 +164,15 @@ def _draw_section(
             fmt = f'{raw:.1f}' if raw >= 1.0 else f'{raw:.2f}'
             if show_all_values:
                 text_col = text_col_max if norm_val >= 0.5 else text_col_min
-                ax.text(cx, cy, fmt, fontsize=12,
+                ax.text(cx, cy, fmt, fontsize=_FONTSIZE,
                         ha='center', va='center', color=text_col,
                         bbox=dict(boxstyle='round', ec=(1,1,1,0), fc=(1,1,1,0)))
             elif norm_val >= 1.0:
-                ax.text(cx, cy, fmt, fontsize=12,
+                ax.text(cx, cy, fmt, fontsize=_FONTSIZE,
                         ha='center', va='center', color=text_col_max,
                         bbox=dict(boxstyle='round', ec=(1,1,1,0), fc=(1,1,1,0)))
             elif not math.isnan(col_visible_min) and raw <= col_visible_min:
-                ax.text(cx, cy, fmt, fontsize=12,
+                ax.text(cx, cy, fmt, fontsize=_FONTSIZE,
                         ha='center', va='center', color=text_col_min,
                         bbox=dict(boxstyle='round', ec=(1,1,1,0), fc=(1,1,1,0)))
 
@@ -200,7 +204,7 @@ def _setup_heatmap_axes(
     ax.set_yticks(np.arange(0, n_algos + pad))
     # Labels run bottom-to-top; best algo (row 0, drawn at y=n_algos) must
     # align with the topmost label, so the list is reversed.
-    ax.set_yticklabels([""] + sorted_algos[::-1] + [""], fontsize=12)
+    ax.set_yticklabels([""] + sorted_algos[::-1] + [""], fontsize=_FONTSIZE)
 
     ax.set_xticks(np.arange(0, total_cols + pad))
     ax.set_xticklabels([])

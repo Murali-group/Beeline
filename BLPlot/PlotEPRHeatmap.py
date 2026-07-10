@@ -13,12 +13,13 @@ from matplotlib.transforms import blended_transform_factory
 
 from BLPlot._heatmap import (
     _DARK_COL,
+    _FONTSIZE,
     _draw_section,
     _setup_heatmap_axes,
 )
 from BLPlot.plotter import Plotter, iter_datasets_with_runs
 
-plt.rcParams["font.size"] = 12
+plt.rcParams["font.size"] = _FONTSIZE
 
 
 def _signed_random_baselines(
@@ -328,7 +329,7 @@ class PlotEPRHeatmap(Plotter):
             legend_ax.xaxis.set_ticks_position('none')
             legend_ax.set_yticklabels([])
             legend_ax.set_xticks(ticks)
-            legend_ax.set_xticklabels(labels, fontsize=12)
+            legend_ax.set_xticklabels(labels, fontsize=_FONTSIZE)
 
         stem = output_dir / 'EPRSummary'
         plt.savefig(stem.with_suffix('.pdf'), bbox_inches='tight')
