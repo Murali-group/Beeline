@@ -18,8 +18,8 @@ input_settings:
         # The "EgrNab" node in Krumsiek is a fusion of Egr1/Egr2/Nab2; we use
         # Egr1 alone as the representative since it has by far the highest
         # variance across cells in this dataset.
-        - dataset_id: "mHSC-HSC"
-          nickname: "mHSC-HSC"
+        - dataset_id: "mHSC-tutorial"
+          nickname: "mHSC-tutorial"
           should_run: [True]
           runs:
             - run_id: "Erythroid"

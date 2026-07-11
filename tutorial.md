@@ -185,10 +185,10 @@ to measure, this dataset uses **Egr1** alone as the representative — the
 choice is data-driven: Egr1 has by far the highest across-cell variance
 (6.75) versus Egr2 (0.27), Nab2 (4.39), or their mean composite (1.25).
 
-Committed at `inputs/scRNA-Seq/mHSC-HSC/`:
+Committed at `inputs/scRNA-Seq/mHSC-tutorial/`:
 
 ```
-inputs/scRNA-Seq/mHSC-HSC/
+inputs/scRNA-Seq/mHSC-tutorial/
     GroundTruthNetwork.csv         # 30 edges from Krumsiek 2011
     Erythroid/
         ExpressionData.csv         # 11 genes x 1071 cells, log2(CPM+1)
@@ -203,7 +203,7 @@ python BLEvaluator.py -c config-files/tutorial-scrna.yaml -a -e -r --sepr
 python BLPlotter.py   -c config-files/tutorial-scrna.yaml -o plots --all
 ```
 
-Output lands under `outputs/Tutorial-scRNA/mHSC-HSC/`. Expect the AUPRC
+Output lands under `outputs/Tutorial-scRNA/mHSC-tutorial/`. Expect the AUPRC
 and EPR scores to be materially lower than on the synthetic networks —
 that gap is the story. The Krumsiek circuit is a very simplified model of
 Erythroid differentiation, and the ChIP-seq / Boolean edges it encodes
@@ -213,7 +213,7 @@ Nestorowa data.
 Two things to expect in the output:
 
 - `Spearman.csv` will be empty for this dataset. Spearman stability is a
-  cross-replicate metric, and mHSC-HSC has a single run (Erythroid) so
+  cross-replicate metric, and mHSC-tutorial has a single run (Erythroid) so
   there is nothing to compare against. This is not an error.
 - GRNBOOST2's `output.txt` typically contains a `distributed.comm.core.CommClosedError`
   traceback near the end. This is dask cleanup noise; the ranked edge
@@ -256,12 +256,12 @@ tutorial is ready to publish:
 - [ ] (Stretch) Cache the synthetic dataset inside the devcontainer image so
       step 4 becomes a no-op
 - [x] Add real-scRNA-seq step (Nestorowa 2016 mHSC + Krumsiek curated HSC network)
-      at `inputs/scRNA-Seq/mHSC-HSC/` with `config-files/tutorial-scrna.yaml`
+      at `inputs/scRNA-Seq/mHSC-tutorial/` with `config-files/tutorial-scrna.yaml`
 - [x] Smoke-test the four local algorithms against `tutorial-scrna.yaml`
       (PEARSON/PPCOR/LEAP/GRNBOOST2 all produce 110-121 ranked edges;
       BLEvaluator emits AUPRC/AUROC/EPR/signed-EPR cleanly; Spearman.csv
-      is empty because mHSC-HSC has one run, not a bug)
-- [ ] Verify `BLPlotter.py --all` works against the mHSC-HSC output
+      is empty because mHSC-tutorial has one run, not a bug)
+- [ ] Verify `BLPlotter.py --all` works against the mHSC-tutorial output
       (heatmaps with a single dataset column may render awkwardly)
 - [ ] Consider whether the `EgrNab -> Egr1` substitution should be documented
       inline in tutorial.md's step 8 or in a separate methods appendix
